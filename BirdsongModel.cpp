@@ -29,10 +29,10 @@ BirdsongModel::BirdsongModel(double dt, double T_delay) : time(0.0), dt(dt) {
 
 // 論文の式(62), (63)等に対応する微分係数の計算
 void BirdsongModel::calculate_derivatives(const Source& s, double pi_tilde, double& dx_dt, double& dy_dt) const {
-    // f_j(x_j, y_j) の計算 [cite: 438]
+    // f_j(x_j, y_j) の計算 [式(64)]
     double f = -s.params.epsilon * s.x - s.params.b * s.y - s.params.c * s.x * s.x * s.y - s.params.f0;
     
-    // p_tilde_gj の計算 [cite: 439]
+    // p_tilde_gj の計算 [式(65)]
     double p_tilde_g = s.params.ps + (s.params.D * s.y - s.params.A) * (s.params.ps - pi_tilde);
 
     dx_dt = s.y; // dx/dt = y
