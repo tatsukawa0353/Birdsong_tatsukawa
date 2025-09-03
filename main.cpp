@@ -1,6 +1,8 @@
 #include "BirdsongModel.h"
 #include <iostream>
 
+using namespace std;
+
 int main() {
     // シミュレーション設定
     const double dt = 1.0e-7;           // 時間ステップ (秒)
@@ -12,18 +14,18 @@ int main() {
     // モデルのインスタンスを作成
     BirdsongModel model(dt, T_delay);
 
-    std::cout << "Simulation starting..." << std::endl;
+     cout << "Simulation starting..." << endl;
     
     // シミュレーションループ
     int num_steps = static_cast<int>(total_time / dt);
     for (int i = 0; i < num_steps; ++i) {
         model.step();
         if (i % 10000 == 0) { // 進捗表示
-            std::cout << "Progress: " << (100.0 * i / num_steps) << "%\r";
+            cout << "Progress: " << (100.0 * i / num_steps) << "%\r";
         }
     }
 
-    std::cout << "\nSimulation finished. Data saved to simulation_output.csv" << std::endl;
+    cout << "\nSimulation finished. Data saved to simulation_output.csv" << endl;
 
     return 0;
 }
