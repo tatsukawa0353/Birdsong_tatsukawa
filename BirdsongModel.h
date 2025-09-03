@@ -4,12 +4,11 @@
 #include <vector>
 #include <fstream>
 
-// 論文の Table I に対応するパラメータをまとめる構造体
+// パラメータ（TABLE I)
 struct Parameters {
     double epsilon, b, c, f0, ps, x0, h, tau, M;
     double A, D;
     double alpha, beta;
-    // ... 他のパラメータもここに追加 ...
 };
 
 // 左右どちらかの音源の状態を保持する構造体
