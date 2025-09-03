@@ -4,6 +4,8 @@
 #include <vector>
 #include <fstream>
 
+using namespace std;
+
 // パラメータ（TABLE I)
 struct Parameters {
     double epsilon, b, c, f0, ps, x0, h, tau, M;
@@ -36,12 +38,12 @@ private:
     double dt;    // 時間ステップ
 
     // 時間遅延 p_i(t - T) を管理するためのバッファ
-    std::vector<double> pi_history;
+    vector<double> pi_history;
     int history_size;
     int current_pos;
 
     // 結果を保存するファイルストリーム
-    std::ofstream outfile;
+    ofstream outfile;
 
     // 論文の式(62)-(67)に対応する計算
     void calculate_derivatives(const Source& s, double pi_tilde, double& dx_dt, double& dy_dt) const;
