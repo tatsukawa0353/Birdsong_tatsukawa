@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import spectrogram
 
@@ -21,4 +22,5 @@ plt.xlabel('Time [sec]')
 plt.ylim(0, 10000) # 論文の図に合わせて周波数範囲を設定
 plt.title('Spectrogram of Simulated Birdsong (pi)')
 plt.colorbar(label='Intensity [dB]')
-plt.show()
+plt.savefig('sonogram.png') 
+print("グラフを sonogram.png という名前で保存しました。")
