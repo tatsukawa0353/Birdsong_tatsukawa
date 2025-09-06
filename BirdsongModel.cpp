@@ -3,17 +3,25 @@
 #include "BirdsongModel.h"
 #include <iostream>
 
-BirdsongModel::BirdsongModel(double dt, double T_delay) : time(0.0), dt(dt) {
+BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
+ : time(0.0), dt(dt), total_sim_time(total_time) {
+
     // パラメータを論文の Table I から設定
     // 左音源 (left)
     left.params = {3.0e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
     
-    // 右音源 (right) - 同じパラメータで初期化
+    // 右音源 (right) 
+    // Fig. 5(a) のためのパラメータ設定
+    epsilon_start = 3.6e8;
+    epsilon_end = 2.6e8;
+    left.params.epsilon = epsilon_start; // 左音源のepsilonを開始値で初期化
+
     right.params = left.params;
-    right.x = 0.0;
-    right.y = 0.0;
+    right.params.f0 = 1.0e12;
+    //right.x = 0.0;
+    //right.y = 0.0;
 
     gamma = 0.9; // 反射係数
 
@@ -23,7 +31,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay) : time(0.0), dt(dt) {
     current_pos = 0;
 
     // 出力ファイルを開く
-    outfile.open("simulation_output.csv");
+    outfile.open("simulation_output_epsilon.csv");
     outfile << "time,pi,x_left,y_left,x_right,y_right\n";
 }
 
@@ -40,6 +48,14 @@ void BirdsongModel::calculate_derivatives(const Source& s, double pi_tilde, doub
 }
 
 void BirdsongModel::step() {
+ //時間に応じてepsilonを変化させる ---
+    double progress = time / total_sim_time;
+    if (progress > 1.0) { progress = 1.0; } // 1.0を超えないようにする
+    
+    // epsilonを開始値から終了値へ線形に変化させる
+    double current_epsilon = epsilon_start + (epsilon_end - epsilon_start) * progress;
+    left.params.epsilon = current_epsilon;
+
     // 1. p_i(t - T) を履歴から取得
     int past_pos = (current_pos - history_size + pi_history.size()) % pi_history.size();
     double pi_delayed = pi_history[past_pos];

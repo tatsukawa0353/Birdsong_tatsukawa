@@ -12,7 +12,7 @@ int main() {
     const double total_time = 0.1;      // シミュレーション総時間 (秒)
 
     // モデルのインスタンスを作成
-    BirdsongModel model(dt, T_delay);
+    BirdsongModel model(dt, T_delay, total_time);
 
      cout << "Simulation starting..." << endl;
     
@@ -25,7 +25,7 @@ int main() {
         }
     }
 
-    cout << "\nSimulation finished. Data saved to simulation_output.csv" << endl;
+    cout << "\nSimulation finished. Data saved to simulation_output_epsilon.csv" << endl;
 
     return 0;
 }

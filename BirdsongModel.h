@@ -22,7 +22,7 @@ struct Source {
 class BirdsongModel {
 public:
     // コンストラクタ: シミュレーションの時間設定とパラメータ初期化
-    BirdsongModel(double dt, double T_delay);
+    BirdsongModel(double dt, double T_delay, double total_time);
 
     // 1ステップシミュレーションを進める
     void step();
@@ -44,6 +44,11 @@ private:
 
     // 結果を保存するファイルストリーム
     ofstream outfile;
+
+   // 時間変化するパラメータのための変数
+    double total_sim_time;
+    double epsilon_start;
+    double epsilon_end;
 
     // 論文の式(62)-(67)に対応する計算
     void calculate_derivatives(const Source& s, double pi_tilde, double& dx_dt, double& dy_dt) const;
