@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import spectrogram
 
 # CSVファイルを読み込む
-df = pd.read_csv('simulation_output.csv')
+df = pd.read_csv('simulation_output_epsilon.csv')
 
 time = df['time'].values
 pi = df['pi'].values
@@ -22,5 +22,5 @@ plt.xlabel('Time [sec]')
 plt.ylim(0, 10000) # 論文の図に合わせて周波数範囲を設定
 plt.title('Spectrogram of Simulated Birdsong (pi)')
 plt.colorbar(label='Intensity [dB]')
-plt.savefig('sonogram.png') 
-print("グラフを sonogram.png という名前で保存しました。")
+plt.savefig('sonogram_epsilon.png') 
+print("グラフを sonogram_epsilon.png という名前で保存しました。")
