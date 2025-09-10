@@ -8,7 +8,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
 
     // パラメータを論文の Table I から設定
     // 左音源 (left)
-    left.params = {3.0e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 0, 0};
+    left.params = {2.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
     
@@ -19,7 +19,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
 
     // 右音源 (right) 
     //right.params = left.params;
-    right.params = {3.0e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
+    right.params = {1.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
     //right.params.f0 = 1.0e12;
     right.x = 0.0;
     right.y = 0.0;
@@ -32,7 +32,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     current_pos = 0;
 
     // 出力ファイルを開く
-    outfile.open("simulation_output_2(c).csv");
+    outfile.open("simulation_output_2(a).csv");
     outfile << "time,pi,x_left,y_left,x_right,y_right\n";
 }
 
