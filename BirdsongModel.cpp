@@ -65,12 +65,12 @@ void BirdsongModel::step() {
                       right.params.alpha * (right.x - right.params.tau * right.y) + right.params.beta * right.y -
                       gamma * pi_delayed;
 
- 　 // 3. 時刻tにおける微分係数(速度と加速度)を計算
+    // 3. 時刻tにおける微分係数(速度と加速度)を計算
     double dx_l, dy_l, dx_r, dy_r;
     calculate_derivatives(left, pi_tilde, dx_l, dy_l);
     calculate_derivatives(right, pi_tilde, dx_r, dy_r);
 
-　  // 4. p_i(t) の計算 [修正点]
+    // 4. p_i(t) の計算 [修正点]
     // 時刻tの加速度(dy_l, dy_r)を使って、時刻tのpiを計算
     double pi = pi_tilde + left.params.beta * (-left.params.tau * dy_l) + 
                          right.params.beta * (-right.params.tau * dy_r);
