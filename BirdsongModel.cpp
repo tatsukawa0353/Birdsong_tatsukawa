@@ -18,9 +18,8 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
    // left.params.epsilon = epsilon_start; // 左音源のepsilonを開始値で初期化
 
     // 右音源 (right) 
-    //right.params = left.params;
     right.params = {1.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
-    //right.params.f0 = 1.0e12;
+    //right.params.f0 = 1.0e12;→Fig5の再現
     right.x = 0.0;
     right.y = 0.0;
 
@@ -44,8 +43,8 @@ void BirdsongModel::calculate_derivatives(const Source& s, double pi_tilde, doub
     // p_tilde_gj の計算 [式(65)]
     double p_tilde_g = s.params.ps + (s.params.D * s.y - s.params.A) * (s.params.ps - pi_tilde);
 
-    dx_dt = s.y; // dx/dt = y
-    dy_dt = f + p_tilde_g; // dy/dt = f + p_tilde_g [cite: 434, 437]
+    dx_dt = s.y; // 式(62)
+    dy_dt = f + p_tilde_g; // 式(62)
 }
 
 void BirdsongModel::step() {
@@ -61,35 +60,25 @@ void BirdsongModel::step() {
     int past_pos = (current_pos - history_size + pi_history.size()) % pi_history.size();
     double pi_delayed = pi_history[past_pos];
 
-    // 2. p_tilde_i(t) の計算 [cite: 443]
+    // 2. p_tilde_i(t) の計算 式(66)
     double pi_tilde = left.params.alpha * (left.x - left.params.tau * left.y) + left.params.beta * left.y +
                       right.params.alpha * (right.x - right.params.tau * right.y) + right.params.beta * right.y -
                       gamma * pi_delayed;
 
-    // 3. 4次ルンゲ＝クッタ法で x と y を更新
-    // (k1, l1)
-    double k1_l, l1_l, k1_r, l1_r;
-    calculate_derivatives(left, pi_tilde, k1_l, l1_l);
-    calculate_derivatives(right, pi_tilde, k1_r, l1_r);
+ 　 // 3. 時刻tにおける微分係数(速度と加速度)を計算
+    double dx_l, dy_l, dx_r, dy_r;
+    calculate_derivatives(left, pi_tilde, dx_l, dy_l);
+    calculate_derivatives(right, pi_tilde, dx_r, dy_r);
 
-    // ... (k2,l2), (k3,l3), (k4,l4) も同様に計算 ...
-    // (簡単のため、ここではオイラー法で近似します。正確な再現には4次ルンゲ=クッタの実装が必要です)
-    double dx_l = k1_l, dy_l = l1_l;
-    double dx_r = k1_r, dy_r = l1_r;
+　  // 4. p_i(t) の計算 [修正点]
+    // 時刻tの加速度(dy_l, dy_r)を使って、時刻tのpiを計算
+    double pi = pi_tilde + left.params.beta * (-left.params.tau * dy_l) + 
+                         right.params.beta * (-right.params.tau * dy_r);
 
     left.x += dx_l * dt;
     left.y += dy_l * dt;
     right.x += dx_r * dt;
     right.y += dy_r * dt;
-
-    // 4. 新しい加速度 y_dot を計算 (p_i(t)の計算に必要)
-    double y_dot_l, y_dot_r, dummy_x_dot;
-    calculate_derivatives(left, pi_tilde, dummy_x_dot, y_dot_l);
-    calculate_derivatives(right, pi_tilde, dummy_x_dot, y_dot_r);
-
-    // 5. p_i(t) の計算 [cite: 444]
-    double pi = pi_tilde + left.params.beta * (-left.params.tau * y_dot_l) + 
-                         right.params.beta * (-right.params.tau * y_dot_r);
 
     // 6. p_i(t) を履歴に保存
     pi_history[current_pos] = pi;
