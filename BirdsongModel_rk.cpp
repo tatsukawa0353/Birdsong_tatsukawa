@@ -78,9 +78,9 @@ void BirdsongModel::step() {
     calculate_derivatives(left, pi_tilde, k3_x_l, k3_y_l);
     calculate_derivatives(right, pi_tilde, k3_x_r, k3_y_r);
 
-    double k1_x_l, k1_y_l, k1_x_r, k1_y_r;
-    calculate_derivatives(left, pi_tilde, k1_x_l, k1_y_l);
-    calculate_derivatives(right, pi_tilde, k1_x_r, k1_y_r);
+    double k4_x_l, k4_y_l, k4_x_r, k4_y_r;
+    calculate_derivatives(left, pi_tilde, k4_x_l, k4_y_l);
+    calculate_derivatives(right, pi_tilde, k4_x_r, k4_y_r);
 
     // 4. p_i(t) の計算 
     // 時刻tの加速度(dy_l, dy_r)を使って、時刻tのpiを計算
