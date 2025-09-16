@@ -10,7 +10,7 @@ time_start = 0.0  # 開始時間
 time_end = 0.01    # 終了時間
 
 # CSVファイルを読み込む
-df = pd.read_csv('simulation_output_2(c).csv')
+df = pd.read_csv('simulation_output_2(b).csv')
 
 time = df['time'].values
 x_left = df['x_left'].values
@@ -41,7 +41,7 @@ ax2.set_xlim([time_start, time_end])
 plt.tight_layout()
 
 # グラフを画像ファイルとして保存
-output_filename = 'waveform_2(c).png'
+output_filename = 'waveform_2(b).png'
 plt.savefig(output_filename)
 
 print(f"振動波形グラフを {output_filename} という名前で保存しました。")
