@@ -65,33 +65,54 @@ void BirdsongModel::step() {
                       right.params.alpha * (right.x - right.params.tau * right.y) + right.params.beta * right.y -
                       gamma * pi_delayed;
 
-    // 3. 時刻tにおける微分係数(速度と加速度)を4次のルンゲクッタ法で計算
-    double k1_x_l, k1_y_l, k1_x_r, k1_y_r;
-    calculate_derivatives(left, pi_tilde, k1_x_l, k1_y_l);
-    calculate_derivatives(right, pi_tilde, k1_x_r, k1_y_r);
-
-    double k2_x_l, k2_y_l, k2_x_r, k2_y_r;
-    calculate_derivatives(left, pi_tilde, k2_x_l, k2_y_l);
-    calculate_derivatives(right, pi_tilde, k2_x_r, k2_y_r);
-
-    double k3_x_l, k3_y_l, k3_x_r, k3_y_r;
-    calculate_derivatives(left, pi_tilde, k3_x_l, k3_y_l);
-    calculate_derivatives(right, pi_tilde, k3_x_r, k3_y_r);
-
-    double k4_x_l, k4_y_l, k4_x_r, k4_y_r;
-    calculate_derivatives(left, pi_tilde, k4_x_l, k4_y_l);
-    calculate_derivatives(right, pi_tilde, k4_x_r, k4_y_r);
+    // 3. 時刻tにおける微分係数(速度と加速度)を計算
+    double dx_l, dy_l, dx_r, dy_r;
+    calculate_derivatives(left, pi_tilde, dx_l, dy_l);
+    calculate_derivatives(right, pi_tilde, dx_r, dy_r);
 
     // 4. p_i(t) の計算 
     // 時刻tの加速度(dy_l, dy_r)を使って、時刻tのpiを計算
     double pi = pi_tilde + left.params.beta * (-left.params.tau * dy_l) + 
                          right.params.beta * (-right.params.tau * dy_r);
 
-    left.x += (k1_x_l + 2.0 * (k2_x_l + k3_x_l) + k4_x_l ) / 6.0;
-    left.y += (k1_y_l + 2.0 * (k2_y_l + k3_y_l) + k4_y_l ) / 6.0;
-    right.x += (k1_x_r + 2.0 * (k2_x_r + k3_x_r) + k4_x_r ) / 6.0;
-    right.y += (k1_y_r + 2.0 * (k2_y_r + k3_y_r) + k4_y_r ) / 6.0;
+    // 5．4次ルンゲクッタ法で x と y を t+dt の値に更新
+    double k1_x_l, k1_y_l, k1_x_r, k1_y_r;
+    calculate_derivatives(left, pi_tilde, k1_x_l, k1_y_l);
+    calculate_derivatives(right, pi_tilde, k1_x_r, k1_y_r);
 
+    left.x += k1_x_l * dt / 2;
+    right.x += k1_x_r * dt / 2;
+    left.y += k1_y_l * dt / 2;
+    right.y += k1_y_r * dt / 2;
+    //↑を用いて↓計算
+    double k2_x_l, k2_y_l, k2_x_r, k2_y_r;
+    calculate_derivatives(left, pi_tilde, k2_x_l, k2_y_l);
+    calculate_derivatives(right, pi_tilde, k2_x_r, k2_y_r);
+
+    left.x += k2_x_l * dt / 2;
+    right.x += k2_x_r * dt / 2;
+    left.y += k2_y_l * dt / 2;
+    right.y += k2_y_r * dt / 2;
+    //↑を用いて↓計算
+    double k3_x_l, k3_y_l, k3_x_r, k3_y_r;
+    calculate_derivatives(left, pi_tilde, k3_x_l, k3_y_l);
+    calculate_derivatives(right, pi_tilde, k3_x_r, k3_y_r);
+
+    left.x += k3_x_l * dt;
+    right.x += k3_x_r * dt;
+    left.y += k3_y_l * dt;
+    right.y += k3_y_r * dt;
+    //↑を用いて↓計算
+    double k4_x_l, k4_y_l, k4_x_r, k4_y_r;
+    calculate_derivatives(left, pi_tilde, k4_x_l, k4_y_l);
+    calculate_derivatives(right, pi_tilde, k4_x_r, k4_y_r);
+ 
+    //最終的に
+    left.x += (k1_x_l + 2.0 * (k2_x_l + k3_x_l) + k4_x_l ) * dt / 6.0;
+    left.y += (k1_y_l + 2.0 * (k2_y_l + k3_y_l) + k4_y_l ) * dt / 6.0;
+    right.x += (k1_x_r + 2.0 * (k2_x_r + k3_x_r) + k4_x_r ) * dt / 6.0;
+    right.y += (k1_y_r + 2.0 * (k2_y_r + k3_y_r) + k4_y_r ) * dt / 6.0;
+   
     // 6. p_i(t) を履歴に保存
     pi_history[current_pos] = pi;
     current_pos = (current_pos + 1) % history_size;
