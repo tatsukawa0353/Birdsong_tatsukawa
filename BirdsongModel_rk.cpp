@@ -70,42 +70,64 @@ void BirdsongModel::step() {
     calculate_derivatives(left, pi_tilde, dx_l, dy_l);
     calculate_derivatives(right, pi_tilde, dx_r, dy_r);
 
-    // 4. p_i(t) の計算 
-    // 時刻tの加速度(dy_l, dy_r)を使って、時刻tのpiを計算
+    // 4. p_i(t) の計算,時刻tの加速度(dy_l, dy_r)を使って、時刻tのpiを計算
     double pi = pi_tilde + left.params.beta * (-left.params.tau * dy_l) + 
                          right.params.beta * (-right.params.tau * dy_r);
 
     // 5．4次ルンゲクッタ法で x と y を t+dt の値に更新
+    //k1
     double k1_x_l, k1_y_l, k1_x_r, k1_y_r;
     calculate_derivatives(left, pi_tilde, k1_x_l, k1_y_l);
     calculate_derivatives(right, pi_tilde, k1_x_r, k1_y_r);
 
-    left.x += k1_x_l * dt / 2;
-    right.x += k1_x_r * dt / 2;
-    left.y += k1_y_l * dt / 2;
-    right.y += k1_y_r * dt / 2;
+    //k2
+    Source mid1_l = left, mid1_r = right;
+    mid1_l.x += k1_x_l * dt / 2;
+    mid1_r.x += k1_x_r * dt / 2;
+    mid1_l.y += k1_y_l * dt / 2;
+    mid1_r.y += k1_y_r * dt / 2;
+
+    // 中間点1のpi_tildeを計算
+    double pi_tilde_mid1 = mid1_l.params.alpha * (mid1_l.x - mid1_l.params.tau * mid1_l.y) + mid1_l.params.beta * mid1_l.y +
+                           mid1_r.params.alpha * (mid1_r.x - mid1_r.params.tau * mid1_r.y) + mid1_r.params.beta * mid1_r.y -
+                           gamma * pi_delayed;
     //↑を用いて↓計算
     double k2_x_l, k2_y_l, k2_x_r, k2_y_r;
-    calculate_derivatives(left, pi_tilde, k2_x_l, k2_y_l);
-    calculate_derivatives(right, pi_tilde, k2_x_r, k2_y_r);
+    calculate_derivatives(mid1_l, pi_tilde_mid1, k2_x_l, k2_y_l);
+    calculate_derivatives(mid1_r, pi_tilde_mid1, k2_x_r, k2_y_r);
 
-    left.x += k2_x_l * dt / 2;
-    right.x += k2_x_r * dt / 2;
-    left.y += k2_y_l * dt / 2;
-    right.y += k2_y_r * dt / 2;
+    //k3
+    Source mid2_l = left, mid2_r = right;
+    mid2_l.x += k2_x_l * dt / 2;
+    mid2_r.x += k2_x_r * dt / 2;
+    mid2_l.y += k2_y_l * dt / 2;
+    mid2_r.y += k2_y_r * dt / 2;
+
+    // 中間点2のpi_tildeを計算
+    double pi_tilde_mid2 = mid2_l.params.alpha * (mid2_l.x - mid2_l.params.tau * mid2_l.y) + mid2_l.params.beta * mid2_l.y +
+                           mid2_r.params.alpha * (mid2_r.x - mid2_r.params.tau * mid2_r.y) + mid2_r.params.beta * mid2_r.y -
+                           gamma * pi_delayed;
     //↑を用いて↓計算
     double k3_x_l, k3_y_l, k3_x_r, k3_y_r;
-    calculate_derivatives(left, pi_tilde, k3_x_l, k3_y_l);
-    calculate_derivatives(right, pi_tilde, k3_x_r, k3_y_r);
+    calculate_derivatives(mid2_l, pi_tilde_mid2, k3_x_l, k3_y_l);
+    calculate_derivatives(mid2_r, pi_tilde_mid2, k3_x_r, k3_y_r);
 
-    left.x += k3_x_l * dt;
-    right.x += k3_x_r * dt;
-    left.y += k3_y_l * dt;
-    right.y += k3_y_r * dt;
+    //k4
+    Source mid3_l = left, mid3_r = right;
+    end_l.x += k3_x_l * dt;
+    end_r.x += k3_x_r * dt;
+    end_l.y += k3_y_l * dt;
+    end_r.y += k3_y_r * dt;
+
+    // 終点のpi_tildeを再計算
+    double pi_tilde_end = end_l.params.alpha * (end_l.x - end_l.params.tau * end_l.y) + end_l.params.beta * end_l.y +
+                          end_r.params.alpha * (end_r.x - end_r.params.tau * end_r.y) + end_r.params.beta * end_r.y -
+                          gamma * pi_delayed;
+
     //↑を用いて↓計算
     double k4_x_l, k4_y_l, k4_x_r, k4_y_r;
-    calculate_derivatives(left, pi_tilde, k4_x_l, k4_y_l);
-    calculate_derivatives(right, pi_tilde, k4_x_r, k4_y_r);
+    calculate_derivatives(end_l, pi_tilde, k4_x_l, k4_y_l);
+    calculate_derivatives(end_r, pi_tilde, k4_x_r, k4_y_r);
  
     //最終的に
     left.x += (k1_x_l + 2.0 * (k2_x_l + k3_x_l) + k4_x_l ) * dt / 6.0;
