@@ -48,13 +48,6 @@ void BirdsongModel::calculate_derivatives(const Source& s, double pi_tilde, doub
 }
 
 void BirdsongModel::step() {
- //時間に応じてepsilonを変化させる ---
-    //double progress = time / total_sim_time;
-    //if (progress > 1.0) { progress = 1.0; } // 1.0を超えないようにする
-    
-    // epsilonを開始値から終了値へ線形に変化させる
-    //double current_epsilon = epsilon_start + (epsilon_end - epsilon_start) * progress;
-    //left.params.epsilon = current_epsilon;
 
     // 1. p_i(t - T) を履歴から取得
     int past_pos = (current_pos - history_size + pi_history.size()) % pi_history.size();
