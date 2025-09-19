@@ -31,7 +31,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     current_pos = 0;
 
     // 出力ファイルを開く
-    outfile.open("simulation_output_2(a).csv");
+    outfile.open("simulation-rk4_output_2(a).csv");
     outfile << "time,pi,x_left,y_left,x_right,y_right\n";
 }
 
@@ -106,7 +106,7 @@ void BirdsongModel::step() {
     calculate_derivatives(mid2_r, pi_tilde_mid2, k3_x_r, k3_y_r);
 
     //k4
-    Source mid3_l = left, mid3_r = right;
+    Source end_l = left, end_r = right;
     end_l.x += k3_x_l * dt;
     end_r.x += k3_x_r * dt;
     end_l.y += k3_y_l * dt;
@@ -119,8 +119,8 @@ void BirdsongModel::step() {
 
     //↑を用いて↓計算
     double k4_x_l, k4_y_l, k4_x_r, k4_y_r;
-    calculate_derivatives(end_l, pi_tilde, k4_x_l, k4_y_l);
-    calculate_derivatives(end_r, pi_tilde, k4_x_r, k4_y_r);
+    calculate_derivatives(end_l, pi_tilde_end, k4_x_l, k4_y_l);
+    calculate_derivatives(end_r, pi_tilde_end, k4_x_r, k4_y_r);
  
     //最終的に
     left.x += (k1_x_l + 2.0 * (k2_x_l + k3_x_l) + k4_x_l ) * dt / 6.0;
