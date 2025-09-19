@@ -14,7 +14,9 @@ int main() {
     // モデルのインスタンスを作成
     BirdsongModel model(dt, T_delay, total_time);
 
-     cout << "Simulation starting..." << endl;
+    model.saveData();
+
+    cout << "Simulation starting..." << endl;
     
     // シミュレーションループ
     int num_steps = static_cast<int>(total_time / dt);
@@ -25,7 +27,7 @@ int main() {
         }
     }
 
-    cout << "\nSimulation finished. Data saved to simulation-rk4_output_2(a).csv" << endl;
+    cout << "\nSimulation finished. Data saved to simulation-rk4_output_2(c).csv" << endl;
 
     return 0;
 }
