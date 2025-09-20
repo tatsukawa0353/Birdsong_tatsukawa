@@ -8,22 +8,23 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
 
     // パラメータ設定
     // 左音源 (left)
-    left.params = {2.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 0, 0};
+    left.params = {3.6e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
-    
-    // Fig. 5(a) のためのパラメータ設定
-    //epsilon_start = 3.6e8;
-    //epsilon_end = 2.6e8;
-   // left.params.epsilon = epsilon_start; // 左音源のepsilonを開始値で初期化
 
-    // 右音源 (right) 
-    right.params = {1.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
-    //right.params.f0 = 1.0e12;→Fig5の再現
+    // 右音源 (right)  ~Fig.5の場合はミュートする
+    //right.params = {1.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
+    right.params = left.params;
+    right.params.f0 = 1.0e7; //筋肉に力を入れて絞めるイメージ
     right.x = 0.0;
     right.y = 0.0;
 
-    gamma = 0.0; // 反射係数
+    // Epsilonの時間変化のための開始・終了値を設定
+    epsilon_start = 3.6e8;
+    epsilon_end = 2.6e8;
+    left.params.epsilon = epsilon_start; // 開始時のepsilonを設定
+
+    gamma = 0.9; // 反射係数
 
     // 時間遅延バッファの初期化
     history_size = static_cast<int>(T_delay / dt);
@@ -31,7 +32,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     current_pos = 0;
 
     // 出力ファイルを開く
-    outfile.open("simulation-rk4_output_2(c).csv");
+    outfile.open("simulation-rk4_output_1(a).csv");
     outfile << "time,pi,x_left,y_left,x_right,y_right\n";
 }
 
@@ -49,12 +50,12 @@ void BirdsongModel::calculate_derivatives(const Source& s, double pi_tilde, doub
 
 //t+dtの状態を計算するとする．
 void BirdsongModel::step() {
-
     // 1. p_i(t - T) を履歴から取得
     int past_pos = (current_pos - history_size + pi_history.size()) % pi_history.size();
     double pi_delayed = pi_history[past_pos];
 
     //2．4次ルンゲクッタ法で x と y を t+dt の値に更新 
+    left.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * (time / total_sim_time);
     double pi_tilde_start = left.params.alpha * (left.x - left.params.tau * left.y) + left.params.beta * left.y +
                       right.params.alpha * (right.x - right.params.tau * right.y) + right.params.beta * right.y -
                       gamma * pi_delayed;
@@ -65,6 +66,7 @@ void BirdsongModel::step() {
 
     //k2
     Source mid1_l = left, mid1_r = right;
+    mid1_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt/2.0) / total_sim_time);
     mid1_l.x += k1_x_l * dt / 2.0;
     mid1_r.x += k1_x_r * dt / 2.0;
     mid1_l.y += k1_y_l * dt / 2.0;
@@ -81,6 +83,7 @@ void BirdsongModel::step() {
 
     //k3
     Source mid2_l = left, mid2_r = right;
+    mid2_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt/2.0) / total_sim_time);
     mid2_l.x += k2_x_l * dt / 2.0;
     mid2_r.x += k2_x_r * dt / 2.0;
     mid2_l.y += k2_y_l * dt / 2.0;
@@ -97,6 +100,7 @@ void BirdsongModel::step() {
 
     //k4
     Source end_l = left, end_r = right;
+    end_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt) / total_sim_time);
     end_l.x += k3_x_l * dt;
     end_r.x += k3_x_r * dt;
     end_l.y += k3_y_l * dt;
