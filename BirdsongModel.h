@@ -49,6 +49,8 @@ private:
     double total_sim_time;
     double epsilon_start;
     double epsilon_end;
+    double ps_start;
+    double ps_end;
 
     // 論文の式(62)-(67)に対応する計算
     void calculate_derivatives(const Source& s, double pi_tilde, double& dx_dt, double& dy_dt) const;
