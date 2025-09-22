@@ -19,10 +19,15 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     right.x = 0.0;
     right.y = 0.0;
 
-    // Epsilonの時間変化のための開始・終了値を設定
-    epsilon_start = 3.6e8;
-    epsilon_end = 2.6e8;
-    left.params.epsilon = epsilon_start; // 開始時のepsilonを設定
+    // Fig.5(a) Epsilonの時間変化　開始・終了値
+    //epsilon_start = 3.6e8;
+    //epsilon_end = 2.6e8;
+    //left.params.epsilon = epsilon_start; // 開始時のepsilon
+
+    // Fig.5(b) psの時間変化 開始・終了値
+    ps_start = 6.2e6;
+    ps_end = 4.2e6;
+    left.params.ps = ps_start;
 
     gamma = 0.9; // 反射係数
 
@@ -32,16 +37,16 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     current_pos = 0;
 
     // 出力ファイルを開く
-    outfile.open("simulation-rk4_output_1(a).csv");
+    outfile.open("simulation-rk4_output_1(b).csv");
     outfile << "time,pi,x_left,y_left,x_right,y_right\n";
 }
 
-// 論文の式(62), (63)等に対応する微分係数の計算
+// 論文の式(62)~(65)に対応する計算
 void BirdsongModel::calculate_derivatives(const Source& s, double pi_tilde, double& dx_dt, double& dy_dt) const {
-    // f_j(x_j, y_j) の計算 [式(64)]
+    // f_j(x_j, y_j) 式(64)
     double f = -s.params.epsilon * s.x - s.params.b * s.y - s.params.c * s.x * s.x * s.y - s.params.f0;
     
-    // p_tilde_gj の計算 [式(65)]
+    // p_tilde_gj 式(65)
     double p_tilde_g = s.params.ps + (s.params.D * s.y - s.params.A) * (s.params.ps - pi_tilde);
 
     dx_dt = s.y; // 式(62)
@@ -54,19 +59,22 @@ void BirdsongModel::step() {
     int past_pos = (current_pos - history_size + pi_history.size()) % pi_history.size();
     double pi_delayed = pi_history[past_pos];
 
-    //2．4次ルンゲクッタ法で x と y を t+dt の値に更新 
-    left.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * (time / total_sim_time);
+    // 2．4次ルンゲクッタ法で x と y を t+dt の値に更新 
+    //k1
+    //left.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * (time / total_sim_time);
+    left.params.ps = ps_start + (ps_end - ps_start) * (time / total_sim_time);
     double pi_tilde_start = left.params.alpha * (left.x - left.params.tau * left.y) + left.params.beta * left.y +
                       right.params.alpha * (right.x - right.params.tau * right.y) + right.params.beta * right.y -
                       gamma * pi_delayed;
-    //k1
+
     double k1_x_l, k1_y_l, k1_x_r, k1_y_r;
     calculate_derivatives(left, pi_tilde_start, k1_x_l, k1_y_l);
     calculate_derivatives(right, pi_tilde_start, k1_x_r, k1_y_r);
 
     //k2
     Source mid1_l = left, mid1_r = right;
-    mid1_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt/2.0) / total_sim_time);
+    //mid1_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt/2.0) / total_sim_time);
+    mid1_l.params.ps = ps_start + (ps_end - ps_start) * ((time + dt/2.0) / total_sim_time);
     mid1_l.x += k1_x_l * dt / 2.0;
     mid1_r.x += k1_x_r * dt / 2.0;
     mid1_l.y += k1_y_l * dt / 2.0;
@@ -83,7 +91,8 @@ void BirdsongModel::step() {
 
     //k3
     Source mid2_l = left, mid2_r = right;
-    mid2_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt/2.0) / total_sim_time);
+    //mid2_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt/2.0) / total_sim_time);
+    mid2_l.params.ps = ps_start + (ps_end - ps_start) * ((time + dt/2.0) / total_sim_time);
     mid2_l.x += k2_x_l * dt / 2.0;
     mid2_r.x += k2_x_r * dt / 2.0;
     mid2_l.y += k2_y_l * dt / 2.0;
@@ -100,7 +109,8 @@ void BirdsongModel::step() {
 
     //k4
     Source end_l = left, end_r = right;
-    end_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt) / total_sim_time);
+    //end_l.params.epsilon = epsilon_start + (epsilon_end - epsilon_start) * ((time + dt) / total_sim_time);
+    end_l.params.ps = ps_start + (ps_end - ps_start) * ((time + dt) / total_sim_time);
     end_l.x += k3_x_l * dt;
     end_r.x += k3_x_r * dt;
     end_l.y += k3_y_l * dt;
@@ -125,25 +135,23 @@ void BirdsongModel::step() {
     //時刻更新
     time += dt;
 
-    //piの計算を、状態がt+dtに更新された後に行う
+    // 3. piの計算を、状態がt+dtに更新された後に行う
     double pi_tilde_next = left.params.alpha * (left.x - left.params.tau * left.y) + left.params.beta * left.y +
                            right.params.alpha * (right.x - right.params.tau * right.y) + right.params.beta * right.y -
                            gamma * pi_delayed;
 
-    // 3. 時刻tにおける微分係数(速度と加速度)を計算
     double dx_l, dy_l, dx_r, dy_r;
     calculate_derivatives(left, pi_tilde_next, dx_l, dy_l);
     calculate_derivatives(right, pi_tilde_next, dx_r, dy_r);
 
-    // 4. p_i(t) の計算,時刻tの加速度(dy_l, dy_r)を使って、時刻tのpiを計算
     double pi = pi_tilde_next + left.params.beta * (-left.params.tau * dy_l) + 
                          right.params.beta * (-right.params.tau * dy_r);
 
-    // 6. p_i(t+dt) を履歴に保存
+    // 4. p_i(t+dt) を履歴に保存
     pi_history[current_pos] = pi;
     current_pos = (current_pos + 1) % history_size;
 
-    // 7. 定期的にデータを保存
+    // 5. 定期的にデータを保存
     if (static_cast<int>(time / dt) % 10 == 0) { // 10ステップごとに保存
         saveData();
     }

@@ -27,7 +27,7 @@ int main() {
         }
     }
 
-    cout << "\nSimulation finished. Data saved to simulation-rk4_output_1(a).csv" << endl;
+    cout << "\nSimulation finished. Data saved to simulation-rk4_output_1(b).csv" << endl;
 
     return 0;
 }
