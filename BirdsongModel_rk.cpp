@@ -1,4 +1,4 @@
-//BirdsongModel ここでは論文紹介の論文を再現します
+//BirdsongModel 論文紹介の論文を再現
 
 #include "BirdsongModel.h"
 #include <iostream>
@@ -12,7 +12,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
 
-    // 右音源 (right)  ~Fig.5の場合はミュートする
+    // 右音源 (right)  ~Fig.5の場合はミュートする~
     //right.params = {1.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
     right.params = left.params;
     right.params.f0 = 1.0e7; //筋肉に力を入れて絞めるイメージ
