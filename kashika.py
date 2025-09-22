@@ -15,7 +15,7 @@ pi = df['pi'].values
 sampling_rate = 1.0 / (time[1] - time[0])
 
 # ソノグラムを計算してプロット
-f, t, Sxx = spectrogram(pi, fs=sampling_rate, nperseg=2048, noverlap=1536)
+f, t, Sxx = spectrogram(pi, fs=sampling_rate, nperseg=4096, noverlap=3072) #元々2048，1536
 
 # デシベル(dB)に変換
 db_Sxx = 10 * np.log10(Sxx + 1e-10)
