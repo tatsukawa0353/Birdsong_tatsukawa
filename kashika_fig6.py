@@ -24,7 +24,8 @@ db_Sxx = 10 * np.log10(Sxx + 1e-10)
 cmap = 'gray_r'
 
 # 2. 表示する色の範囲(ダイナミックレンジ)を決定
-vmax = np.max(db_Sxx)  # データ全体の最大値を取得し、これを一番濃い色(黒)とする
+#vmax = np.max(db_Sxx)  # データ全体の最大値を取得し、これを一番濃い色(黒)とする
+vmax = 90
 vmin = vmax - 35       # 最大値から50dB下までを色の範囲とする.9/19時点30 9/22時点18
 
 plt.figure(figsize=(10, 6))
