@@ -26,7 +26,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
 
     // Fig.5(b) psの時間変化 開始・終了値
     ps_start = 6.35e6;
-    ps_end = 4.2e6;
+    ps_end = 4.3e6;
     left.params.ps = ps_start;
 
     gamma = 0.9; // 反射係数
@@ -152,9 +152,9 @@ void BirdsongModel::step() {
     current_pos = (current_pos + 1) % history_size;
 
     // 5. 定期的にデータを保存
-    if (static_cast<int>(time / dt) % 10 == 0) { // 10ステップごとに保存
-        saveData();
-    }
+    //if (static_cast<int>(time / dt) % 10 == 0) { // 10ステップごとに保存
+       // saveData();
+//}
 }
 
 void BirdsongModel::saveData() {
