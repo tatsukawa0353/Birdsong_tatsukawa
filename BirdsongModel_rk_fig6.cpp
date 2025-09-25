@@ -8,7 +8,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
 
     // パラメータ設定
     // 左音源 (left)
-    left.params = {2.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
+    left.params = {2.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 0, 0};
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
 
@@ -37,7 +37,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     current_pos = 0;
 
     // 出力ファイルを開く
-    outfile.open("simulation-rk4_output_2(a).csv");
+    outfile.open("simulation-rk4_output_2(c).csv");
     outfile << "time,pi,x_left,y_left,x_right,y_right\n";
 }
 
@@ -152,9 +152,9 @@ void BirdsongModel::step() {
     current_pos = (current_pos + 1) % history_size;
 
     // 5. 定期的にデータを保存
-    if (static_cast<int>(time / dt) % 10 == 0) { // 10ステップごとに保存
+    //if (static_cast<int>(time / dt) % 10 == 0) { // 10ステップごとに保存
         saveData();
-    }
+    //}
 }
 
 void BirdsongModel::saveData() {
