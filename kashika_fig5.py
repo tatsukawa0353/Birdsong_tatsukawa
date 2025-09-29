@@ -3,7 +3,13 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 from scipy.signal import spectrogram
+
+# 【修正点】黒で表示するためのdB値のしきい値
+# この値より強い信号が黒で表示されます。
+threshold_db = -20
+# --------------------------------
 
 # CSVファイルを読み込む
 df = pd.read_csv('simulation-rk4_output_1(a).csv')
@@ -12,28 +18,39 @@ time = df['time'].values
 pi = df['pi'].values
 
 # サンプリング周波数を計算
-sampling_rate = 1.0 / (time[1] - time[0])
+sampling_rate = 1.0 / (time[1] - time[0]) if len(time) > 1 else 1.0
 
-# ソノグラムを計算してプロット
-f, t, Sxx = spectrogram(pi, fs=sampling_rate, nperseg=245760, noverlap=184320) #もともと2048，1536　→　40960,30720 →　81920,61440→245760,184320
+# ソノグラムを計算
+f, t, Sxx = spectrogram(pi, fs=sampling_rate, nperseg=245760, noverlap=184320)
 
-# デシベル(dB)に変換
-db_Sxx = 10 * np.log10(Sxx + 1e-10)
+# パワーを正規化し、デシベル(dB)に変換
+Sxx_normalized = Sxx / np.max(Sxx) if np.max(Sxx) > 0 else Sxx
+db_Sxx = 10 * np.log10(Sxx_normalized + 1e-10)
 
-# カラースケールの調整 
-cmap = 'gray_r'
+# --- 【修正点】白と黒の2色だけのカスタムカラーマップを作成 ---
+# カラーマップを定義: 最初の色は閾値より下(白)、次の色は閾値より上(黒)
+colors = ["white", "black"]
+cmap = ListedColormap(colors)
 
-# 2. 表示する色の範囲(ダイナミックレンジ)を決定
-#vmax = np.max(db_Sxx)  # データ全体の最大値を取得し、これを一番濃い色(黒)とする
-vmax = 80
-vmin = vmax - 28       # 最大値から50dB下までを色の範囲とする.9/19時点30 9/22時点18
+# カラーバーの境界を設定
+bounds = [-80, threshold_db, 0] # -80dBからthreshold_dbまでが白、そこから0dBまでが黒
+norm = plt.Normalize(vmin=-80, vmax=0)
+# ----------------------------------------------------
 
+# プロット
 plt.figure(figsize=(10, 6))
-plt.pcolormesh(t, f, 10 * np.log10(Sxx), shading='gouraud', cmap=cmap, vmin=vmin, vmax=vmax)
+# pcolormeshではvmin/vmaxの代わりにnormとboundsを使って色分けを制御
+plt.pcolormesh(t, f, db_Sxx, shading='gouraud', cmap=cmap, norm=plt.Normalize(vmin=bounds[0], vmax=bounds[-1]))
+
 plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
-plt.ylim(0, 10000) # 論文の図に合わせて周波数範囲を設定
-plt.title('Spectrogram of Simulated Birdsong (pi)')
-plt.colorbar(label='Intensity [dB]')
-plt.savefig('sonogram-rk4_1(a).png') 
+plt.ylim(0, 10000)
+plt.title('Spectrogram of Simulated Birdsong (pi) Fig.5(a)')
+
+# カラーバーもカスタム設定を反映
+# cbar = plt.colorbar(ticks=[bounds[0], threshold_db, 0])
+# cbar.set_label('Intensity [dB]')
+
+# グラフを画像ファイルとして保存
+plt.savefig('sonogram-rk4_1(a).png')
 print("グラフを sonogram-rk4_1(a).png という名前で保存しました。")

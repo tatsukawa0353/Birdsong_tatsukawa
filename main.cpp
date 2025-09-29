@@ -9,7 +9,7 @@ int main() {
     const double L = 2.0;               // 声道の長さ (cm) [cite: 293]
     const double c_sound = 3.5e4;       // 音速 (cm/s) [cite: 293]
     const double T_delay = 2.0 * L / c_sound; // 音の往復時間 (秒)
-    const double total_time = 0.1;      // シミュレーション総時間 (秒)
+    const double total_time = 0.12;      // シミュレーション総時間 (秒)
 
     // モデルのインスタンスを作成
     BirdsongModel model(dt, T_delay, total_time);
