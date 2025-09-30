@@ -7,13 +7,13 @@ from scipy.io.wavfile import write
 # --- ここで設定を変更できます ---
 # 読み込むCSVファイル名を指定
 # 例: 'simulation_output_timed_chaos.csv'
-csv_filename = 'simulation-rk4_output_1(a).csv'
+csv_filename = 'simulation-rk4_output_2(c).csv'
 
 # 出力するWAVファイル名
-output_wav_filename = 'simulation-rk4_output_1(a).wav'
+output_wav_filename = 'simulation-rk4_output_2(c).wav'
 # --------------------------------
 
-print("'{csv_filename}' から音声データを読み込んでいます...")
+print(f"'{csv_filename}' から音声データを読み込んでいます...")
 
 # CSVファイルを読み込む
 df = pd.read_csv(csv_filename)
@@ -23,7 +23,7 @@ time = df['time'].values
 
 # サンプリング周波数を計算
 sampling_rate = int(1.0 / (time[1] - time[0])) if len(time) > 1 else 44100
-print("サンプリング周波数: {sampling_rate} Hz")
+print(f"サンプリング周波数: {sampling_rate} Hz")
 
 # --- 音声データの前処理 ---
 
@@ -38,10 +38,10 @@ audio_data = (pi_normalized * 32767).astype(np.int16)
 # -------------------------
 
 # WAVファイルとして書き出す
-print("'{output_wav_filename}' に音声データを書き出しています...")
+print(f"'{output_wav_filename}' に音声データを書き出しています...")
 write(output_wav_filename, sampling_rate, audio_data)
 
-print("音声ファイルの生成が完了しました！")
+print(f"音声ファイルの生成が完了しました！")
 
 ### 実行と再生の方法
 
