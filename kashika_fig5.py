@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from scipy.signal import spectrogram
 
-# 【修正点】黒で表示するためのdB値のしきい値
-# この値より強い信号が黒で表示されます。
-threshold_db = -20
+# 黒で表示するためのdB値のしきい値
+# この値より強い信号が黒で表示される
+threshold_db = 0
 # --------------------------------
 
 # CSVファイルを読み込む
@@ -38,7 +38,7 @@ norm = plt.Normalize(vmin=-80, vmax=0)
 # ----------------------------------------------------
 
 # プロット
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(10, 10))
 # pcolormeshではvmin/vmaxの代わりにnormとboundsを使って色分けを制御
 plt.pcolormesh(t, f, db_Sxx, shading='gouraud', cmap=cmap, norm=plt.Normalize(vmin=bounds[0], vmax=bounds[-1]))
 
@@ -48,8 +48,8 @@ plt.ylim(0, 10000)
 plt.title('Spectrogram of Simulated Birdsong (pi) Fig.5(a)')
 
 # カラーバーもカスタム設定を反映
-# cbar = plt.colorbar(ticks=[bounds[0], threshold_db, 0])
-# cbar.set_label('Intensity [dB]')
+ #cbar = plt.colorbar(ticks=[bounds[0], threshold_db, 0])
+ #cbar.set_label('Intensity [dB]')
 
 # グラフを画像ファイルとして保存
 plt.savefig('sonogram-rk4_1(a).png')
