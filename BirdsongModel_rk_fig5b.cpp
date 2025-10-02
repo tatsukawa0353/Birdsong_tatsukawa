@@ -37,7 +37,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     current_pos = 0;
 
     // 出力ファイルを開く
-    outfile.open("simulation-rk4_output_1(b).csv");
+    outfile.open("simulation-rk4_output_1(b)_03s.csv");
     outfile << "time,pi,x_left,y_left,x_right,y_right\n";
 }
 
