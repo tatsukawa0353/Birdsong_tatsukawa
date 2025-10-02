@@ -34,6 +34,6 @@ plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
 plt.ylim(0, 10000) # 論文の図に合わせて周波数範囲を設定
 plt.title('Spectrogram of Simulated Birdsong (pi) Fig.6(a)')
-plt.colorbar(label='Intensity [dB]')
+#plt.colorbar(label='Intensity [dB]')
 plt.savefig('sonogram-rk4_2(a).png') 
 print("グラフを sonogram-rk4_2(a).png という名前で保存しました。")
