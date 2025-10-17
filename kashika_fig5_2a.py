@@ -8,11 +8,11 @@ from scipy.signal import spectrogram
 # --- ここで設定を変更できます ---
 # 読み込むCSVファイル名を指定
 # 例: 'simulation_output_fig5a_final.csv'
-csv_filename = 'simulation-rk4_output_1(a)_03s.csv'
+csv_filename = 'simulation-rk4_output_1(a).csv'
 
 # スペクトログラムの解像度
-nperseg = 737280#245760
-noverlap = 552960#184320
+nperseg = 245760#245760
+noverlap = 184320#184320
 # --------------------------------
 
 # CSVファイルを読み込む
@@ -61,5 +61,5 @@ plt.title(f'Spectrogram of Simulated Birdsong (pi) Fig.5(a)')
 #plt.colorbar(label='Intensity [dB]')
 
 # グラフを画像ファイルとして保存
-plt.savefig('sonogram-rk4_1(a)_03s.png')
-print("グラフを sonogram-rk4_1(a)_03s.png という名前で保存しました。")
+plt.savefig('sonogram-rk4_1(a).png')
+print("グラフを sonogram-rk4_1(a).png という名前で保存しました。")
