@@ -1,14 +1,17 @@
-//BirdsongModel 論文紹介の論文を再現
+//BirdsongModel εとpsの10×10パターンの音出力用
 
-#include "BirdsongModel.h"
+#include "BirdsongModel_2.h"
 #include <iostream>
+#include <cmath>
+#include <iomanip>
 
-BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
+BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time,
+                             double initial_epsilon, double initial_ps, const std::string& output_filename)
  : time(0.0), dt(dt), total_sim_time(total_time) {
 
     // パラメータ設定
     // 左音源 (left)
-    left.params = {5.0e7, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
+    left.params = {initial_epsilon, 2.0e4, 2.0e8, 4.9e4, initial_ps, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
 
@@ -27,8 +30,15 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     current_pos = 0;
 
     // 出力ファイルを開く
-    outfile.open("simulation_output_test1.csv");
+    outfile.open(output_filename);
     outfile << "time,pi,x_left,y_left,x_right,y_right\n";
+}
+
+// 【追加】デストラクタ: ファイルを確実に閉じる
+BirdsongModel::~BirdsongModel() {
+    if (outfile.is_open()) {
+        outfile.close();
+    }
 }
 
 // 論文の式(62)~(65)に対応する計算

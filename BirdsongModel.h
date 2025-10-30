@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ class BirdsongModel {
 public:
     // コンストラクタ: シミュレーションの時間設定とパラメータ初期化
     BirdsongModel(double dt, double T_delay, double total_time);
-
+   
     // 1ステップシミュレーションを進める
     void step();
 
