@@ -32,10 +32,35 @@ int main() {
     }
 
     //パラメータ掃引設定
-    
+    vector<double> epsilon_values;
+    for (int i = 0; i < 10; i++) {
+        epsilon_values.push_back( (3.0 + i * (1/3)) * 1e7 );
+    }
+    std::vector<double> ps_values;
+    for (int i = 0; i < 10; i++) {
+        ps_values.push_back( (4.5 + i * 0.5) * 1e6 );
+    }
+
+    cout << "Starting parameter sweep (" << epsilon_values.size() << " x " << ps_values.size() << " = " << epsilon_values.size() * ps_values.size() << " simulations)" << endl;
+
+// --- 2重ループで全組み合わせを実行 ---
+    for (double current_epsilon : epsilon_values) {
+        for (double current_ps : ps_values) {
+
+            // --- 【修正点】ファイル名生成時にフォルダ名を追加 ---
+            std::stringstream ss;
+            ss << output_folder // フォルダ名を追加
+               << "sim_output_eps_" << std::scientific << std::setprecision(1) << current_epsilon
+               << "_ps_" << std::scientific << std::setprecision(1) << current_ps << ".csv";
+            std::string output_filename = ss.str();
+            // ----------------------------------------------
+
+            std::cout << "Running simulation for epsilon=" << current_epsilon << ", ps=" << current_ps << " -> " << output_filename << std::endl;
+
 
     // モデルのインスタンスを作成
-    BirdsongModel model(dt, T_delay, total_time);
+    {
+    BirdsongModel model(dt, T_delay, total_time, current_epsilon, current_ps, output_filename);
 
     model.saveData();
 
@@ -43,14 +68,16 @@ int main() {
     
     // シミュレーションループ
     int num_steps = static_cast<int>(total_time / dt);
-    for (int i = 0; i < num_steps; ++i) {
+    for (int i = 0; i < num_steps; i++) {
         model.step();
         if (i % 10000 == 0) { // 進捗表示
             cout << "Progress: " << (100.0 * i / num_steps) << "%\r";
         }
     }
-
-    cout << "\nSimulation finished. Data saved to simulation_output_test1.csv" << endl;
-
+    }
+    }
+}
+    cout << "\nParameter sweep finished. Results saved in " << output_folder << endl;
+   
     return 0;
 }
