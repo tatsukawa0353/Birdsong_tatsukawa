@@ -42,9 +42,9 @@ def analyze_simulation(csv_filepath):
 
         sampling_rate = 1.0 / (df['time'].values[1] - df['time'].values[0])
 
-        if df['pi'].isnull().any():
-            return CAT_NO_SOUND # NaNは「音なし」
-
+        if not np.isfinite(df['pi']).all():
+            return CAT_NO_SOUND # NaNやinfは「音なし」
+        
         start_index = len(df) // 3 * 2
         pi = df['pi'].values[start_index:]
 
@@ -55,9 +55,9 @@ def analyze_simulation(csv_filepath):
             return CAT_NO_SOUND # 定常状態が短すぎて分析できない
 
         # --- 1. kashika.py と同じスペクトログラムを計算 ---
-        f, Sxx = spectrogram(pi, fs=sampling_rate, window=window_type, nperseg=nperseg_local, noverlap=noverlap_local)
+        # 【修正点】spectrogramは f, t, Sxx の3つの値を返すため、t も受け取る
+        f, t, Sxx = spectrogram(pi, fs=sampling_rate, window=window_type, nperseg=nperseg_local, noverlap=noverlap_local)
         
-        # Sxxがゼロ（無音）の場合
         if np.max(Sxx) <= 0:
             return CAT_NO_SOUND
 
@@ -65,57 +65,62 @@ def analyze_simulation(csv_filepath):
         Sxx_normalized = Sxx / np.max(Sxx)
         db_Sxx = 10 * np.log10(Sxx_normalized + 1e-10)
 
-        # --- 3. 【最重要】kashika.py の視覚的しきい値で「音なし」を判定 ---
+        # --- 3. 【最重要】視覚的しきい値で「音なし」を判定 ---
         if np.max(db_Sxx) < VISUAL_THRESHOLD_DB:
-            # 最大音量が-38dBより弱い場合、視覚的には「真っ白」と判断される
             return CAT_NO_SOUND
         
         # --- 4. 「音あり」と判定されたものを、さらに分類 ---
         
-        mean_spectrum_db_normalized = np.mean(db_Sxx, axis=1) # 時間平均
+        mean_spectrum_db = np.mean(db_Sxx, axis=1) # 時間平均
+        mean_spectrum_thresholded = np.where(mean_spectrum_db >= VISUAL_THRESHOLD_DB, mean_spectrum_db, -200)
+
+        peaks, properties = find_peaks(mean_spectrum_thresholded, height=VISUAL_THRESHOLD_DB, prominence=5)
         
-        peaks, properties = find_peaks(mean_spectrum_db_normalized, height=-50, prominence=5)
-        
-        if len(peaks) < 2:
-            return CAT_HARMONIC # 音はあるが、ピークが1つだけなら倍音
+        if len(peaks) == 0: 
+            return CAT_NO_SOUND
+        if len(peaks) == 1:
+            return CAT_HARMONIC 
 
         peak_freqs = f[peaks]
-        peak_heights_db = properties['peak_heights']
 
-        # "ノイジー" の判定
-        mean_spectrum_power = np.mean(Sxx, axis=1) # パワー（dBではない）で計算
-        sorted_powers = np.sort(mean_spectrum_power)[::-1]
-        top3_power = np.sum(sorted_powers[:3])
-        total_power = np.sum(sorted_powers)
-        concentration_ratio = top3_power / total_power
-        
-        if concentration_ratio < 0.6: 
-            return CAT_NOISY
-
-        # "サブハーモニクス" vs "倍音構造" の判定
+        # "サブハーモニクス" の判定を先に
         valid_peak_freqs = peak_freqs[peak_freqs > 100]
         if len(valid_peak_freqs) == 0:
-            return CAT_HARMONIC
+             pass 
+        else:
+            f0 = np.min(valid_peak_freqs)
+            subharmonic_freq_min = f0 * 0.40
+            subharmonic_freq_max = f0 * 0.60
             
-        f0 = np.min(valid_peak_freqs)
-        
-        subharmonic_freq_min = f0 * 0.40
-        subharmonic_freq_max = f0 * 0.60
-        
-        has_subharmonic = False
-        for freq, height in zip(peak_freqs, peak_heights_db):
-            if subharmonic_freq_min < freq < subharmonic_freq_max:
-                if height > -60: # 検出感度は-50dBに設定
+            has_subharmonic = False
+            for freq in peak_freqs:
+                if subharmonic_freq_min < freq < subharmonic_freq_max:
                     has_subharmonic = True
                     break
+            
+            if has_subharmonic:
+                return CAT_SUBHARMONIC 
+
+        # "ノイジー" の判定
+        Sxx_thresholded_power = np.where(db_Sxx >= VISUAL_THRESHOLD_DB, Sxx, 0)
+        mean_power_thresholded_avg = np.mean(Sxx_thresholded_power, axis=1)
         
-        if has_subharmonic:
-            return CAT_SUBHARMONIC
-        else:
-            return CAT_HARMONIC
+        sorted_powers = np.sort(mean_power_thresholded_avg)[::-1]
+        top3_power = np.sum(sorted_powers[:3])
+        total_visible_power = np.sum(sorted_powers)
+        
+        if total_visible_power <= 0:
+             return CAT_HARMONIC
+
+        concentration_ratio = top3_power / total_visible_power
+        
+        if concentration_ratio < 0.38: 
+            return CAT_NOISY
+        
+        return CAT_HARMONIC
 
     except Exception as e:
-        print(f"  [エラー] {csv_filepath} の分析中にエラー: {e}")
+        print(f"  [エラー] {csv_filepath} の処理中に予期せぬエラー: {e}")
         return CAT_NO_SOUND # エラー時は音なし扱い
 
 # --- メイン処理 ---
