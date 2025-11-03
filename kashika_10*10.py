@@ -9,10 +9,10 @@ import os
 
 # --- ここで設定を変更できます ---
 # C++がCSVファイルを出力したフォルダ
-INPUT_FOLDER = "simulation_results_1_x0=0.02/"
+INPUT_FOLDER = "simulation_results_1_x0=0.01/"
 
 # 生成されたスペクトログラム画像を保存するフォルダ
-OUTPUT_FOLDER = "spectrogram_images_1_x0=0.02/"
+OUTPUT_FOLDER = "spectrogram_images_1_x0=0.01/"
 
 # スペクトログラムの解像度 (ベースファイルの設定を維持)
 nperseg = 245760
@@ -77,7 +77,7 @@ def generate_spectrogram(csv_filepath, output_image_path):
         
         # タイトルに元のファイル名の一部を表示
         title_filename = os.path.basename(csv_filepath).replace('.csv', '')
-        plt.title(f'Spectrogram of (pi) {title_filename}')
+        plt.title(f'Spectrogram of {title_filename}')
         
         # plt.colorbar(label='Intensity [dB]') # ベースファイルに合わせてコメントアウト
 
