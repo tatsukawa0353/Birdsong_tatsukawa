@@ -11,7 +11,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time,
 
     // パラメータ設定
     // 左音源 (left)
-    left.params = {initial_epsilon, 2.0e4, 2.0e8, 4.9e4, initial_ps, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 0.02, 1.2e6, 1.5e3};
+    left.params = {initial_epsilon, 2.0e4, 2.0e8, 4.9e4, initial_ps, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 0.01, 1.2e6, 1.5e3};
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
 
