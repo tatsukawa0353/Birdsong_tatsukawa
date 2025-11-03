@@ -18,9 +18,9 @@ CAT_NOISY = 3       # ノイジー (カオス)
 
 # --- ここで設定を変更できます ---
 # C++がCSVファイルを出力したフォルダ
-INPUT_FOLDER = "simulation_results_1_x0=0.04/"
+INPUT_FOLDER = "simulation_results_1_x0=0.01/"
 # 最終的に出力するパラメータマップの画像ファイル名
-OUTPUT_IMAGE = "parameter_map_1_x0=0.04.png"
+OUTPUT_IMAGE = "parameter_map_1_x0=0.01.png"
 
 # 【重要】kashika.py (視覚的判断) と同じ分析設定
 nperseg_local = 245760 
@@ -74,7 +74,7 @@ def analyze_simulation(csv_filepath):
         mean_spectrum_db = np.mean(db_Sxx, axis=1) # 時間平均
         mean_spectrum_thresholded = np.where(mean_spectrum_db >= VISUAL_THRESHOLD_DB, mean_spectrum_db, -200)
 
-        peaks, properties = find_peaks(mean_spectrum_thresholded, height=VISUAL_THRESHOLD_DB, prominence=5)
+        peaks, properties = find_peaks(mean_spectrum_thresholded, height=VISUAL_THRESHOLD_DB, prominence=30) #調整ポイント5→
         
         if len(peaks) == 0: 
             return CAT_NO_SOUND
@@ -114,7 +114,7 @@ def analyze_simulation(csv_filepath):
 
         concentration_ratio = top3_power / total_visible_power
         
-        if concentration_ratio < 0.38: 
+        if concentration_ratio < 0.38: #調整ポイント
             return CAT_NOISY
         
         return CAT_HARMONIC
@@ -191,7 +191,7 @@ cbar = plt.colorbar(ticks=[0, 1, 2, 3])
 cbar.set_ticklabels(['No Sound', 'Harmonic', 'Subharmonic', 'Noisy'])
 cbar.set_label('Vibration Type')
 
-plt.title('Parameter Map of Birdsong Simulation_1_x0=0.04')
+plt.title('Parameter Map of Birdsong Simulation_1_x0=0.01')
 plt.tight_layout()
 
 plt.savefig(OUTPUT_IMAGE)
