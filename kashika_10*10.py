@@ -9,10 +9,10 @@ import os
 
 # --- ここで設定を変更できます ---
 # C++がCSVファイルを出力したフォルダ
-INPUT_FOLDER = "simulation_results_1/"
+INPUT_FOLDER = "simulation_results_1_x0=0.01/"
 
 # 生成されたスペクトログラム画像を保存するフォルダ
-OUTPUT_FOLDER = "spectrogram_images_1/"
+OUTPUT_FOLDER = "spectrogram_images_1_x0=0.01/"
 
 # スペクトログラムの解像度 (ベースファイルの設定を維持)
 nperseg = 245760

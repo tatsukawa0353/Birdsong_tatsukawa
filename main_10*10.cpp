@@ -5,8 +5,8 @@
 #include <sstream>
 #include <iomanip>
 #include <sys/stat.h>
-
-using namespace std;
+#include <sys/types.h> 
+#include <unistd.h>
 
 int main() {
     // シミュレーション設定
@@ -17,7 +17,7 @@ int main() {
     const double total_time = 0.12;      // シミュレーション総時間 (秒)
 
     //出力フォルダ名定義
-    const string output_folder = "simulation_results_1/"
+    const string output_folder = "simulation_results_1_x0=0.01/";
 
     // フォルダ自動作成
     struct stat st;
@@ -34,11 +34,11 @@ int main() {
     //パラメータ掃引設定
     vector<double> epsilon_values;
     for (int i = 0; i < 10; i++) {
-        epsilon_values.push_back( (3.0 + i * (1/3)) * 1e7 );
+        epsilon_values.push_back( (2.0 + i * (28/9)) * 1e7 );
     }
     std::vector<double> ps_values;
     for (int i = 0; i < 10; i++) {
-        ps_values.push_back( (4.5 + i * 0.5) * 1e6 );
+        ps_values.push_back( (1.0 + i * (5/9)) * 1e6 );
     }
 
     cout << "Starting parameter sweep (" << epsilon_values.size() << " x " << ps_values.size() << " = " << epsilon_values.size() * ps_values.size() << " simulations)" << endl;
