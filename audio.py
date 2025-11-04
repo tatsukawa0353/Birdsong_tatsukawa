@@ -7,10 +7,10 @@ from scipy.io.wavfile import write
 # --- ここで設定を変更できます ---
 # 読み込むCSVファイル名を指定
 # 例: 'simulation_output_timed_chaos.csv'
-csv_filename = 'simulation-rk4_output_1(b)_03s.csv'
+csv_filename = 'sim_output_eps_2.0e+07_ps_6.0e+06.csv'
 
 # 出力するWAVファイル名
-output_wav_filename = 'simulation-rk4_output_1(b)_03s.wav'
+output_wav_filename = 'sim_output_eps_2.0e+07_ps_6.0e+06.wav'
 # --------------------------------
 
 print(f"'{csv_filename}' から音声データを読み込んでいます...")

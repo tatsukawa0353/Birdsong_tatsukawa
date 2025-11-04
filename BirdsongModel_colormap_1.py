@@ -45,7 +45,7 @@ def analyze_simulation(csv_filepath):
         if not np.isfinite(df['pi']).all():
             return CAT_NO_SOUND # NaNやinfは「音なし」
         
-        start_index = len(df) // 3 * 2
+        start_index = len(df) // 3 * 2 #解析範囲（この場合後半1/3のみ）
         pi = df['pi'].values[start_index:]
 
         if np.std(pi) < 1e-4: # 振幅がほぼゼロなら、計算するまでもなく「音なし」
@@ -74,7 +74,7 @@ def analyze_simulation(csv_filepath):
         mean_spectrum_db = np.mean(db_Sxx, axis=1) # 時間平均
         mean_spectrum_thresholded = np.where(mean_spectrum_db >= VISUAL_THRESHOLD_DB, mean_spectrum_db, -200)
 
-        peaks, properties = find_peaks(mean_spectrum_thresholded, height=VISUAL_THRESHOLD_DB, prominence=30) #調整ポイント5→
+        peaks, properties = find_peaks(mean_spectrum_thresholded, height=VISUAL_THRESHOLD_DB, prominence=35) #調整ポイント5→
         
         if len(peaks) == 0: 
             return CAT_NO_SOUND
