@@ -18,9 +18,9 @@ CAT_NOISY = 3       # ノイジー (カオス)
 
 # --- ここで設定を変更できます ---
 # C++がCSVファイルを出力したフォルダ
-INPUT_FOLDER = "simulation_results_1_x0=0.01/"
+INPUT_FOLDER = "simulation_results_1_x0=0.02/"
 # 最終的に出力するパラメータマップの画像ファイル名
-OUTPUT_IMAGE = "parameter_map_1_x0=0.01.png"
+OUTPUT_IMAGE = "parameter_map_1_x0=0.02.png"
 
 # 【重要】kashika.py (視覚的判断) と同じ分析設定
 nperseg_local = 245760 
@@ -191,7 +191,7 @@ cbar = plt.colorbar(ticks=[0, 1, 2, 3])
 cbar.set_ticklabels(['No Sound', 'Harmonic', 'Subharmonic', 'Noisy'])
 cbar.set_label('Vibration Type')
 
-plt.title('Parameter Map of Birdsong Simulation_1_x0=0.01')
+plt.title('Parameter Map of Birdsong Simulation_1_x0=0.02')
 plt.tight_layout()
 
 plt.savefig(OUTPUT_IMAGE)

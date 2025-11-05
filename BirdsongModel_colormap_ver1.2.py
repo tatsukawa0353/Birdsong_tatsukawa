@@ -41,6 +41,7 @@ def classify_chunk(pi_chunk, sampling_rate):
     【新機能】渡された音声チャンクを分析し、
     「定常状態」の5カテゴリのいずれかに分類するヘルパー関数
     【修正】ノイズ判定を len(peaks) よりも先に行う
+    【修正】時間平均(mean)ではなく時間最大(max)でピーク検出
     """
     
     # --- 【修正点】0. NaNチェック ---
@@ -69,9 +70,10 @@ def classify_chunk(pi_chunk, sampling_rate):
         return CAT_NO_SOUND
     
     # --- 5. 「音あり」と判定されたものを、さらに分類 ---
-    mean_spectrum_db = np.mean(db_Sxx, axis=1) # 時間平均
+    # mean_spectrum_db = np.mean(db_Sxx, axis=1) # 時間平均
     
     # --- 【修正点】"ノイジー" の判定を先に ---
+    # (ノイズ判定は「平均的」な性質を見たいので、ここは mean のまま)
     Sxx_thresholded_power = np.where(db_Sxx >= VISUAL_THRESHOLD_DB, Sxx, 0)
     mean_power_thresholded_avg = np.mean(Sxx_thresholded_power, axis=1)
     
@@ -86,9 +88,13 @@ def classify_chunk(pi_chunk, sampling_rate):
     # ------------------------------------
 
     # --- "ノイジー" ではないものだけ、ピークを探す ---
-    mean_spectrum_thresholded = np.where(mean_spectrum_db >= VISUAL_THRESHOLD_DB, mean_spectrum_db, -200)
+    
+    # --- 【修正点】時間平均(mean)ではなく時間最大(max)を使う ---
+    max_spectrum_db = np.max(db_Sxx, axis=1) # 時間最大スペクトル
+    max_spectrum_thresholded = np.where(max_spectrum_db >= VISUAL_THRESHOLD_DB, max_spectrum_db, -200)
 
-    peaks, properties = find_peaks(mean_spectrum_thresholded, height=VISUAL_THRESHOLD_DB, prominence=0.01) # しきい値 3
+    # --- 【修正点】prominence=0.01 は削除したまま、max_spectrum_thresholded を使う ---
+    peaks, properties = find_peaks(max_spectrum_thresholded, height=VISUAL_THRESHOLD_DB) 
     
     if len(peaks) == 0: 
         # ノイズ判定をクリアし、かつピークもないものは「音なし」
@@ -141,7 +147,7 @@ def analyze_simulation_with_time(csv_filepath):
         # --- 【修正点】信号を「前半」と「後半」に分割 ---
         # 最初の10％をカットで10→33％を「前半」、最後の2/3を「後半」として分析
         total_len = len(df['pi'])
-        start_early = total_len // 100
+        start_early = 0#total_len // 100
         end_early = total_len  // 4
         start_late = total_len * 2 // 3
         
