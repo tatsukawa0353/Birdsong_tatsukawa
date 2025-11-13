@@ -7,11 +7,11 @@ import matplotlib.colors as mcolors
 import os
 
 # --- 【重要】あなたが手動で作成したCSVファイルの名前 ---
-MANUAL_DATA_FILE = "parameter_map_1_x0=0.01.csv"
+MANUAL_DATA_FILE = "parameter_map_2_x0=0.04.csv"
 # --------------------------------------------------
 
 # 最終的に出力するパラメータマップの画像ファイル名
-OUTPUT_IMAGE = "parameter_map_1_x0=0.01.png"
+OUTPUT_IMAGE = "parameter_map_2_x0=0.04.png"
 
 # --- 新しいカテゴリ定義 (8種類) ---
 category_labels = {
@@ -31,10 +31,10 @@ cmap_colors = [
     '#ffffff', # 0: No Sound (白)
     '#87CEFA', # 1: Harmonic (水色)
     '#FF7F50', # 2: Subharmonic (オレンジ)
-    '#DC143C', # 3: Noisy (赤)
-    '#ffdab9', # 4: Sub -> Harmonic (薄いオレンジ)
-    '#ffb6c1', # 5: Noisy -> Sub (薄いピンク)
-    '#ffcccb', # 6: Noisy -> Harmonic (さらに薄い赤)
+    '#DC143C', # 3: Noisy (赤) 
+    '#EE82EE', # 4: Sub -> Harmonic (紫)
+    '#ffdab9', # 5: Noisy -> Sub (薄いオレンジ - Subの派生色)
+    '#B0E0E6', # 6: Noisy -> Harmonic (薄い水色 - Harmonicの派生色)
     '#32CD32'  # 7: Freq. Change (緑)
 ]
 # ------------------------------------
@@ -99,18 +99,28 @@ plt.figure(figsize=(12, 10))
 plt.imshow(result_matrix, aspect='auto', origin='lower', cmap=cmap, norm=norm,
            extent=[epsilon_axis[0], epsilon_axis[-1], ps_axis[0], ps_axis[-1]])
 
-plt.xlabel('Epsilon (ε)')
-plt.ylabel('Pressure (ps)')
+LABEL_FONTSIZE = 18
+TICK_FONTSIZE = 14
 
-plt.xticks(epsilon_axis, [f"{eps:.1e}" for eps in epsilon_axis], rotation=45)
-plt.yticks(ps_axis, [f"{ps:.1e}" for ps in ps_axis])
+plt.xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE)
+plt.ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE)
+
+# ここの [::3] の数字を [::2] や [::5] に変えて調整できます
+x_tick_locations = epsilon_axis[::3]
+x_tick_labels = [f"{eps:.1e}" for eps in x_tick_locations]
+plt.xticks(x_tick_locations, x_tick_labels, rotation=45, fontsize=TICK_FONTSIZE)
+
+y_tick_locations = ps_axis[::3]
+y_tick_labels = [f"{ps:.1e}" for ps in y_tick_locations]
+plt.yticks(y_tick_locations, y_tick_labels, fontsize=TICK_FONTSIZE)
 
 # カラーバーを8カテゴリ用に設定
 cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4, 5, 6, 7])
 cbar.set_ticklabels([category_labels[i] for i in range(8)])
-cbar.set_label('Vibration Type (Manual Classification)')
+cbar.set_label('Vibration Type', fontsize=LABEL_FONTSIZE)
+cbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
-plt.title('Parameter Map (Manual Classification)')
+plt.title('Parameter Map of Birdsong Simulation 2 x0=0.04', fontsize=20)
 plt.tight_layout()
 
 plt.savefig(OUTPUT_IMAGE)
