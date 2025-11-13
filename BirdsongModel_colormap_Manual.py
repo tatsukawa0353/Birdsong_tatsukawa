@@ -7,11 +7,11 @@ import matplotlib.colors as mcolors
 import os
 
 # --- 【重要】あなたが手動で作成したCSVファイルの名前 ---
-MANUAL_DATA_FILE = "parameter_map_2_x0=0.04.csv"
+MANUAL_DATA_FILE = "parameter_map_1_x0=0.04.csv"
 # --------------------------------------------------
 
 # 最終的に出力するパラメータマップの画像ファイル名
-OUTPUT_IMAGE = "parameter_map_2_x0=0.04.png"
+OUTPUT_IMAGE = "parameter_map_1_x0=0.04.png"
 
 # --- 新しいカテゴリ定義 (8種類) ---
 category_labels = {
@@ -95,12 +95,12 @@ cmap = mcolors.ListedColormap(cmap_colors)
 bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5]
 norm = mcolors.BoundaryNorm(bounds, cmap.N)
 
-plt.figure(figsize=(12, 10))
+plt.figure(figsize=(13, 10))
 plt.imshow(result_matrix, aspect='auto', origin='lower', cmap=cmap, norm=norm,
            extent=[epsilon_axis[0], epsilon_axis[-1], ps_axis[0], ps_axis[-1]])
 
-LABEL_FONTSIZE = 18
-TICK_FONTSIZE = 14
+LABEL_FONTSIZE = 20
+TICK_FONTSIZE = 18
 
 plt.xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE)
 plt.ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE)
@@ -120,7 +120,7 @@ cbar.set_ticklabels([category_labels[i] for i in range(8)])
 cbar.set_label('Vibration Type', fontsize=LABEL_FONTSIZE)
 cbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
-plt.title('Parameter Map of Birdsong Simulation 2 x0=0.04', fontsize=20)
+plt.title('Parameter Map of Birdsong Simulation 1 x0=0.04', fontsize=21)
 plt.tight_layout()
 
 plt.savefig(OUTPUT_IMAGE)
