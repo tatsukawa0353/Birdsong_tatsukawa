@@ -18,7 +18,7 @@ int main() {
     const double total_time = 0.12;      // シミュレーション総時間 (秒)
 
     //出力フォルダ名定義
-    const string output_folder = "simulation_results_2_x0=0.04/";
+    const string output_folder = "simulation_results_1_x0=0.02_low parameters epsilon/";
 
     // フォルダ自動作成
     struct stat st;
@@ -35,15 +35,17 @@ int main() {
     //パラメータ掃引設定
     vector<double> epsilon_values;
     for (int i = 0; i < 10; i++) {
-        epsilon_values.push_back( (2.0 + i * (28.0/9.0)) * 1e7 );
-    }
+        //epsilon_values.push_back( (2.0 + i * (28.0/9.0)) * 1e7 );//パターン1，2 
+        epsilon_values.push_back( (0.50 + i * (0.50)) * 1e7 );  //low parameters
+    } 
     vector<double> ps_values;
     for (int i = 0; i < 10; i++) {
-        ps_values.push_back( (1.0 + i * (5.0/9.0)) * 1e6 );
+        ps_values.push_back( (1.0 + i * (5.0/9.0)) * 1e6 );//パターン1，2
+        //ps_values.push_back( (1.60 + i * (2.00/45.00)) * 1e6 ); //low parameters
     }
 
     cout << "Starting parameter sweep (" << epsilon_values.size() << " x " << ps_values.size() << " = " << epsilon_values.size() * ps_values.size() << " simulations)" << endl;
-
+    
 // --- 2重ループで全組み合わせを実行 ---
     for (double current_epsilon : epsilon_values) {
         for (double current_ps : ps_values) {
@@ -51,8 +53,8 @@ int main() {
             // --- ファイル名生成時にフォルダ名を追加 ---
             std::stringstream ss;
             ss << output_folder // フォルダ名を追加
-               << "sim_output_eps_" << std::scientific << std::setprecision(1) << current_epsilon
-               << "_ps_" << std::scientific << std::setprecision(1) << current_ps << ".csv";
+               << "sim_output_eps_" << std::scientific << std::setprecision(2) << current_epsilon
+               << "_ps_" << std::scientific << std::setprecision(2) << current_ps << ".csv";
             std::string output_filename = ss.str();
             // ----------------------------------------------
 
