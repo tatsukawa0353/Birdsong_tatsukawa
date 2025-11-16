@@ -23,6 +23,8 @@ category_labels = {
     5: 'Noisy -> Sub',      # ノイジー→サブ
     6: 'Noisy -> Harmonic', # ノイジー→倍音
     7: 'Freq. Change'       # 周波数時間変化
+    8: 'Harmonic -> No Sound', # 【追加】倍音→無音
+    9: 'Noisy -> No Sound'     # 【追加】ノイジー→無音
 }
 
 # --- 新しいカラーマップ (8色) ---
@@ -36,6 +38,8 @@ cmap_colors = [
     '#ffdab9', # 5: Noisy -> Sub (薄いオレンジ - Subの派生色)
     '#B0E0E6', # 6: Noisy -> Harmonic (薄い水色 - Harmonicの派生色)
     '#32CD32'  # 7: Freq. Change (緑)
+    '#B0E0E6', # 8: Harmonic -> No Sound (非常に薄い水色)
+    '#ffcccb'  # 9: Noisy -> No Sound (非常に薄い赤)
 ]
 # ------------------------------------
 
