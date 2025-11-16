@@ -45,7 +45,7 @@ def analyze_simulation(csv_filepath):
         if not np.isfinite(df['pi']).all():
             return CAT_NO_SOUND # NaNやinfは「音なし」
         
-        start_index = len(df) // 3 * 2 #解析範囲（この場合後半1/3のみ）
+        start_index = len(df) // 100 * 1 #解析範囲（この場合後半1/3のみ）
         pi = df['pi'].values[start_index:]
 
         if np.std(pi) < 1e-4: # 振幅がほぼゼロなら、計算するまでもなく「音なし」
@@ -114,7 +114,7 @@ def analyze_simulation(csv_filepath):
 
         concentration_ratio = top3_power / total_visible_power
         
-        if concentration_ratio < 0.38: #調整ポイント
+        if concentration_ratio < 0.372: #調整ポイント
             return CAT_NOISY
         
         return CAT_HARMONIC
