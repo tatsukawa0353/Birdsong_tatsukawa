@@ -7,11 +7,11 @@ import matplotlib.colors as mcolors
 import os
 
 # --- 【重要】あなたが手動で作成したCSVファイルの名前 ---
-MANUAL_DATA_FILE = "parameter_map_2_x0=0.04.csv"
+MANUAL_DATA_FILE = "parameter_map_1_x0=0.02_low parameters epsilon.csv"
 # --------------------------------------------------
 
 # 最終的に出力するパラメータマップの画像ファイル名
-OUTPUT_IMAGE = "parameter_map_2_x0=0.04.png"
+OUTPUT_IMAGE = "parameter_map_1_x0=0.02_low parameters epsilon.png"
 
 # --- 新しいカテゴリ定義 (8種類) ---
 category_labels = {
@@ -22,24 +22,24 @@ category_labels = {
     4: 'Sub -> Harmonic',   # サブ→倍音
     5: 'Noisy -> Sub',      # ノイジー→サブ
     6: 'Noisy -> Harmonic', # ノイジー→倍音
-    7: 'Freq. Change'       # 周波数時間変化
+    7: 'Noisy -> No Sound',    # 【追加】ノイジー→無音
     8: 'Harmonic -> No Sound', # 【追加】倍音→無音
-    9: 'Noisy -> No Sound'     # 【追加】ノイジー→無音
+    9: 'Freq. Change'       # 周波数時間変化
 }
 
 # --- 新しいカラーマップ (8色) ---
 # (色はお好みで調整してください)
 cmap_colors = [
     '#ffffff', # 0: No Sound (白)
-    '#87CEFA', # 1: Harmonic (水色)
+    "#09C3FC", # 1: Harmonic (水色)
     '#FF7F50', # 2: Subharmonic (オレンジ)
     '#DC143C', # 3: Noisy (赤) 
     '#EE82EE', # 4: Sub -> Harmonic (紫)
-    '#ffdab9', # 5: Noisy -> Sub (薄いオレンジ - Subの派生色)
-    '#B0E0E6', # 6: Noisy -> Harmonic (薄い水色 - Harmonicの派生色)
-    '#32CD32'  # 7: Freq. Change (緑)
-    '#B0E0E6', # 8: Harmonic -> No Sound (非常に薄い水色)
-    '#ffcccb'  # 9: Noisy -> No Sound (非常に薄い赤)
+    "#ce8b6c", # 5: Noisy -> Sub (薄いオレンジ - Subの派生色)
+    "#73CBD6", # 6: Noisy -> Harmonic (薄い水色 - Harmonicの派生色)
+    "#f3b4b4", # 7: Noisy -> No Sound (非常に薄い赤)
+    "#C2ECF1", # 8: Harmonic -> No Sound (非常に薄い水色)
+    "#0EDD0E", # 9: Freq. Change (緑)
 ]
 # ------------------------------------
 
@@ -96,7 +96,7 @@ print("マトリックスの作成が完了しました。")
 
 # 4. カラーマップの描画 (8カテゴリ版)
 cmap = mcolors.ListedColormap(cmap_colors)
-bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5]
+bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5]
 norm = mcolors.BoundaryNorm(bounds, cmap.N)
 
 plt.figure(figsize=(13, 10))
@@ -119,12 +119,12 @@ y_tick_labels = [f"{ps:.1e}" for ps in y_tick_locations]
 plt.yticks(y_tick_locations, y_tick_labels, fontsize=TICK_FONTSIZE)
 
 # カラーバーを8カテゴリ用に設定
-cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4, 5, 6, 7])
-cbar.set_ticklabels([category_labels[i] for i in range(8)])
+cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+cbar.set_ticklabels([category_labels[i] for i in range(10)])
 #cbar.set_label('Vibration Type', fontsize=LABEL_FONTSIZE)
 cbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
-plt.title('Parameter Map of Birdsong Simulation 2 x0=0.04', fontsize=21)
+plt.title('Parameter Map of Birdsong Simulation 1 x0=0.02 low epsilon', fontsize=21)
 plt.tight_layout()
 
 plt.savefig(OUTPUT_IMAGE)
