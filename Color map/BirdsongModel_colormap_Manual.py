@@ -7,11 +7,11 @@ import matplotlib.colors as mcolors
 import os
 
 # --- 【重要】あなたが手動で作成したCSVファイルの名前 ---
-MANUAL_DATA_FILE = "parameter_map_1_x0=0.02 add.csv"
+MANUAL_DATA_FILE = "parameter_map_2_x0=0.02 add.csv"
 # --------------------------------------------------
 
 # 最終的に出力するパラメータマップの画像ファイル名
-OUTPUT_IMAGE = "parameter_map_1_x0=0.02 add.png"
+OUTPUT_IMAGE = "parameter_map_2_x0=0.02 add 2.png"
 
 # --- 新しいカテゴリ定義 (8種類) ---
 category_labels = {
@@ -127,7 +127,7 @@ cbar.set_ticklabels([category_labels[i] for i in range(5)])
 #cbar.set_label('Vibration Type', fontsize=LABEL_FONTSIZE)
 cbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
-plt.title('Parameter Map of Birdsong Simulation : One bronchus x0=0.02 ', fontsize=21)
+plt.title('Parameter Map of Birdsong Simulation : Two bronchi x0=0.02 ', fontsize=21)
 plt.tight_layout()
 
 plt.savefig(OUTPUT_IMAGE)

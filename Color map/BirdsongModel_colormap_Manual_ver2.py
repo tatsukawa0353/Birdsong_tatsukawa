@@ -96,31 +96,22 @@ for i, ps in enumerate(ps_axis):
 
 print("マトリックスの作成が完了しました。")
 
-# 4. カラーマップの描画 (5カテゴリ版)
+# 4. カラーマップの描画 (横軸：実数値スケール、縦軸：均等スケール)
 cmap = mcolors.ListedColormap(cmap_colors)
 bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5] # 5カテゴリ (6境界)
 norm = mcolors.BoundaryNorm(bounds, cmap.N)
 
-# --- 【修正点】pcolormesh を使うため、fig と ax を明示的に作成 ---
-fig, ax = plt.subplots(figsize=(13, 10))
+fig, ax = plt.subplots(figsize=(14, 10))
 
-# --- 【修正点】imshow の代わりに pcolormesh を使用 ---
-# pcolormesh は、X軸、Y軸の座標データ（epsilon_axis, ps_axis）と
-# Z軸の色データ（result_matrix）を渡して描画します。
-# shading='nearest' は、X,Yの座標をピクセルの「中心」として扱います。
-im = ax.pcolormesh(
-    epsilon_axis, 
-    ps_axis, 
-    result_matrix, 
-    cmap=cmap, 
-    norm=norm, 
-    shading='nearest'
-)
+# --- 【重要】ハイブリッド描画の準備 ---
+# 縦軸用のダミー座標 (0, 1, 2...) を作成 -> これで縦は均等幅になる
+y_indices = np.arange(len(ps_axis))
 
-# --- 【修正点】X軸とY軸を「対数スケール」に設定 ---
-ax.set_xscale('log')
-ax.set_yscale('log')
-# ---------------------------------------------
+# --- 【重要】pcolormesh で描画 ---
+# X軸には「実数値(epsilon_axis)」を、Y軸には「インデックス(y_indices)」を渡す
+# shading='nearest' にすることで、各点がブロックの中心になるよう自動調整されます
+im = ax.pcolormesh(epsilon_axis, y_indices, result_matrix, 
+                   cmap=cmap, norm=norm, shading='nearest')
 
 LABEL_FONTSIZE = 20
 TICK_FONTSIZE = 18
@@ -129,23 +120,42 @@ ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE)
 ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE)
 
 
-# --- 【修正点】xticks / yticks は対数スケールが自動生成する ---
-# (フォントサイズと回転のみ指定)
-ax.tick_params(axis='x', labelsize=TICK_FONTSIZE, rotation=45)
-ax.tick_params(axis='y', labelsize=TICK_FONTSIZE)
+# --- X軸の設定 (ユーザー指定の値を表示) ---
+# 【重要】ここに表示したい Epsilon の値をリストで書きます
+# データの範囲内にある値を自由に選んでください
+custom_x_ticks = [ 
+    0.5e7,
+    0.5e8,
+    1.0e8,
+    1.5e8,
+    2.0e8,
+    2.5e8,
+    3.0e8
+]
+# --- X軸の設定 (実数値スケールなので Matplotlib が自動調整するが、ラベルを間引く) ---
+# 指定した値を設定
+ax.set_xticks(custom_x_ticks)
+ax.set_xticklabels([f"{eps:.1e}" for eps in custom_x_ticks], rotation=45, fontsize=TICK_FONTSIZE)
+#x_ticks = epsilon_axis[::3] # 3つおきに表示
+#ax.set_xticks(x_ticks)
+#ax.set_xticklabels([f"{eps:.1e}" for eps in x_ticks], rotation=45, fontsize=TICK_FONTSIZE)
 
-# (もし手動で目盛りを間引きたい場合は、pcolormesh では複雑になるため、
-#  まずは自動生成された目盛りで確認してみてください)
+# --- Y軸の設定 (インデックス座標なので、ラベルを手動で貼り付ける) ---
+# 座標は 0, 1, 2... なので、目盛りもその位置に合わせる
+y_tick_indices = y_indices[::3] # 3つおき
+y_tick_labels = [f"{ps_axis[i]:.1e}" for i in y_tick_indices]
+
+ax.set_yticks(y_tick_indices)
+ax.set_yticklabels(y_tick_labels, fontsize=TICK_FONTSIZE)
 
 
-# カラーバーを5カテゴリ用に設定
-cbar = fig.colorbar(im, ticks=[0, 1, 2, 3, 4]) # plt.colorbar から fig.colorbar に変更
+# カラーバーの設定
+cbar = fig.colorbar(im, ticks=[0, 1, 2, 3, 4])
 cbar.set_ticklabels([category_labels[i] for i in range(5)])
-#cbar.set_label('Vibration Type', fontsize=LABEL_FONTSIZE)
 cbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
 ax.set_title('Parameter Map of Birdsong Simulation : One bronchus x0=0.02 ', fontsize=21)
-fig.tight_layout() # plt.tight_layout() から fig.tight_layout() に変更
+fig.tight_layout()
 
-fig.savefig(OUTPUT_IMAGE) # plt.savefig() から fig.savefig() に変更
+fig.savefig(OUTPUT_IMAGE)
 print(f"\n手動分類によるパラメータマップを {OUTPUT_IMAGE} という名前で保存しました。")
