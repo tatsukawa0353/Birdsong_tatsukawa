@@ -19,12 +19,13 @@ category_labels = {
     1: 'Harmonic',
     2: 'Subharmonic',
     3: 'Noisy',
-    4: 'Sub -> Harmonic',   # サブ→倍音
-    5: 'Noisy -> Sub',      # ノイジー→サブ
-    6: 'Noisy -> Harmonic', # ノイジー→倍音
-    7: 'Noisy -> No Sound',    # 【追加】ノイジー→無音
-    8: 'Harmonic -> No Sound', # 【追加】倍音→無音
-    9: 'Freq. Change'       # 周波数時間変化
+    4: 'Others' #その他
+    #4: 'Sub -> Harmonic',   # サブ→倍音  　　　　　　　　サブハーモニックへ
+    #5: 'Noisy -> Sub',      # ノイジー→サブ　　　　　　　その他
+    #6: 'Noisy -> Harmonic', # ノイジー→倍音　　　　　　　その他
+    #7: 'Noisy -> No Sound',    # 【追加】ノイジー→無音　ノイジー
+    #8: 'Harmonic -> No Sound', # 【追加】倍音→無音　　　倍音
+    #9: 'Freq. Change'       # 周波数時間変化　　　　　　その他
 }
 
 # --- 新しいカラーマップ (8色) ---
@@ -34,12 +35,13 @@ cmap_colors = [
     "#09C3FC", # 1: Harmonic (水色)
     '#FF7F50', # 2: Subharmonic (オレンジ)
     '#DC143C', # 3: Noisy (赤) 
-    '#EE82EE', # 4: Sub -> Harmonic (紫)
-    "#ce8b6c", # 5: Noisy -> Sub (薄いオレンジ - Subの派生色)
-    "#73CBD6", # 6: Noisy -> Harmonic (薄い水色 - Harmonicの派生色)
-    "#f3b4b4", # 7: Noisy -> No Sound (非常に薄い赤)
-    "#C2ECF1", # 8: Harmonic -> No Sound (非常に薄い水色)
-    "#0EDD0E", # 9: Freq. Change (緑)
+    "#0EDD0E" # 9: Freq. Change (緑)
+    #'#EE82EE', # 4: Sub -> Harmonic (紫)
+    #"#ce8b6c", # 5: Noisy -> Sub (薄いオレンジ - Subの派生色)
+    #"#73CBD6", # 6: Noisy -> Harmonic (薄い水色 - Harmonicの派生色)
+    #"#f3b4b4", # 7: Noisy -> No Sound (非常に薄い赤)
+    #"#C2ECF1", # 8: Harmonic -> No Sound (非常に薄い水色)
+    #"#0EDD0E", # 9: Freq. Change (緑)
 ]
 # ------------------------------------
 
