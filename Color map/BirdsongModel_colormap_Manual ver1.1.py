@@ -98,37 +98,54 @@ print("マトリックスの作成が完了しました。")
 
 # 4. カラーマップの描画 (5カテゴリ版)
 cmap = mcolors.ListedColormap(cmap_colors)
-bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5]
+bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5] # 5カテゴリ (6境界)
 norm = mcolors.BoundaryNorm(bounds, cmap.N)
 
-plt.figure(figsize=(15, 10))
-plt.imshow(result_matrix, aspect='auto', origin='lower', cmap=cmap, norm=norm)
-           #extent=[epsilon_axis[0], epsilon_axis[-1], ps_axis[0], ps_axis[-1]])
+# --- 【修正点】pcolormesh を使うため、fig と ax を明示的に作成 ---
+fig, ax = plt.subplots(figsize=(13, 10))
+
+# --- 【修正点】imshow の代わりに pcolormesh を使用 ---
+# pcolormesh は、X軸、Y軸の座標データ（epsilon_axis, ps_axis）と
+# Z軸の色データ（result_matrix）を渡して描画します。
+# shading='nearest' は、X,Yの座標をピクセルの「中心」として扱います。
+im = ax.pcolormesh(
+    epsilon_axis, 
+    ps_axis, 
+    result_matrix, 
+    cmap=cmap, 
+    norm=norm, 
+    shading='nearest'
+)
+
+# --- 【修正点】X軸とY軸を「対数スケール」に設定 ---
+ax.set_xscale('log')
+ax.set_yscale('log')
+# ---------------------------------------------
 
 LABEL_FONTSIZE = 20
 TICK_FONTSIZE = 18
 
-plt.xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE)
-plt.ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE)
+ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE)
+ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE)
 
-# ここの [::3] の数字を [::2] や [::5] に変えて調整できます
-skip_rate = 3 
-x_indices = np.arange(len(epsilon_axis))[::skip_rate]
-x_tick_labels = [f"{epsilon_axis[i]:.1e}" for i in x_indices]
-plt.xticks(x_indices, x_tick_labels, rotation=45, fontsize=TICK_FONTSIZE)
 
-y_indices = np.arange(len(ps_axis))[::skip_rate]
-y_tick_labels = [f"{ps_axis[i]:.1e}" for i in y_indices]
-plt.yticks(y_indices, y_tick_labels, fontsize=TICK_FONTSIZE)
+# --- 【修正点】xticks / yticks は対数スケールが自動生成する ---
+# (フォントサイズと回転のみ指定)
+ax.tick_params(axis='x', labelsize=TICK_FONTSIZE, rotation=45)
+ax.tick_params(axis='y', labelsize=TICK_FONTSIZE)
+
+# (もし手動で目盛りを間引きたい場合は、pcolormesh では複雑になるため、
+#  まずは自動生成された目盛りで確認してみてください)
+
 
 # カラーバーを5カテゴリ用に設定
-cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4])
+cbar = fig.colorbar(im, ticks=[0, 1, 2, 3, 4]) # plt.colorbar から fig.colorbar に変更
 cbar.set_ticklabels([category_labels[i] for i in range(5)])
 #cbar.set_label('Vibration Type', fontsize=LABEL_FONTSIZE)
 cbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
-plt.title('Parameter Map of Birdsong Simulation : One bronchus x0=0.02 ', fontsize=21)
-plt.tight_layout()
+ax.set_title('Parameter Map of Birdsong Simulation : One bronchus x0=0.02 ', fontsize=21)
+fig.tight_layout() # plt.tight_layout() から fig.tight_layout() に変更
 
-plt.savefig(OUTPUT_IMAGE)
+fig.savefig(OUTPUT_IMAGE) # plt.savefig() から fig.savefig() に変更
 print(f"\n手動分類によるパラメータマップを {OUTPUT_IMAGE} という名前で保存しました。")
