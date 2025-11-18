@@ -16,9 +16,9 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time,
     left.y = 0.0; // 初期速度
 
     // 右音源 (right)  ~Fig.5の場合はミュートする~
-    //right.params = {initial_epsilon, 2.0e4, 2.0e8, 4.9e4, initial_ps, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 0.01, 0, 0};//パターン2で使用
+    //right.params = {initial_epsilon, 2.0e4, 2.0e8, 4.9e4, initial_ps, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 0.01, 0, 0};//パターン2 one bronchus で使用
     right.params = left.params;//パターン1で使用
-    right.params.f0 = 1.0e7; //筋肉に力を入れて絞めるイメージ　パターン1で使用
+    right.params.f0 = 1.0e7; //筋肉に力を入れて絞めるイメージ　パターン1 two bronchiで使用
     right.x = 0.0;
     right.y = 0.0;
 
