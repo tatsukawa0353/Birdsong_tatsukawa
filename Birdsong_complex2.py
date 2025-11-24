@@ -1,7 +1,7 @@
 # 仮想環境に入るため，実行するときにまずsource venv/bin/activateをターミナルで実行する．
 
 import matplotlib
-matplotlib.use('Agg') # 画像保存モード
+matplotlib.use('Agg') # ウィンドウを表示せず保存に専念
 
 import pandas as pd
 import numpy as np
@@ -13,12 +13,14 @@ import glob
 import os
 import re
 
-# --- 統合したいフォルダ ---
+# --- 【重要】統合したいフォルダのリスト ---
 INPUT_FOLDERS = [
-    "simulation_results_1_x0=0.02_low parameters epsilon/",
-    "simulation_results_1_x0=0.02/"
+    "simulation_results_1_x0=0.02_low parameters epsilon/", # 低ε範囲
+    "simulation_results_1_x0=0.02/"                         # 高ε範囲
 ]
-OUTPUT_3D_IMAGE = "complexity_3d_fixed_size_1.png"
+# ----------------------------------------
+
+OUTPUT_3D_IMAGE = "complexity_3d_combined_1.png"
 
 # 分析設定
 nperseg_local = 245760 
@@ -26,12 +28,12 @@ noverlap_local = 184320
 window_type = 'blackmanharris'
 
 def calculate_spectral_entropy_full(csv_filepath):
-    """ 全データを使ってエントロピーを計算 """
+    """ CSVファイルを読み込み、全データを使ってエントロピーを計算する """
     try:
         df = pd.read_csv(csv_filepath)
         if df.empty or 'pi' not in df or len(df) < nperseg_local:
             return 0.0
-        
+
         sampling_rate = 1.0 / (df['time'].values[1] - df['time'].values[0])
         pi = df['pi'].values 
         
@@ -49,7 +51,8 @@ def calculate_spectral_entropy_full(csv_filepath):
         max_entropy = np.log2(len(psd_norm))
         return ent / max_entropy
 
-    except Exception:
+    except Exception as e:
+        print(f"Error in {csv_filepath}: {e}")
         return 0.0
 
 # --- メイン処理 ---
@@ -58,119 +61,116 @@ print("複数のフォルダからデータを統合して解析します...")
 results = []
 pattern = re.compile(r"sim_output_eps_([0-9\.e\+\-]+)_ps_([0-9\.e\+\-]+)\.csv")
 
+# 1. フォルダをループして全データを収集
 for folder in INPUT_FOLDERS:
-    print(f"フォルダ読み込み中: {folder}")
-    if not os.path.exists(folder): continue
+    print(f"\nフォルダ読み込み中: {folder}")
+    if not os.path.exists(folder):
+        print(f"  [警告] フォルダが見つかりません: {folder}")
+        continue
+        
     csv_files = glob.glob(os.path.join(folder, "*.csv"))
+    print(f"  -> {len(csv_files)} 個のファイルが見つかりました。計算を開始します...")
+    
     for i, csv_filepath in enumerate(csv_files):
         filename = os.path.basename(csv_filepath)
         match = pattern.match(filename)
         if not match: continue
+
         eps = float(match.group(1))
         ps = float(match.group(2))
+        
         complexity = calculate_spectral_entropy_full(csv_filepath)
         results.append({'epsilon': eps, 'ps': ps, 'complexity': complexity})
-        if (i+1) % 50 == 0: print(f"    Progress: {i+1} files")
+        
+        if (i+1) % 50 == 0:
+            print(f"    Progress: {i+1}/{len(csv_files)}")
 
+# データフレーム化
 df_results = pd.DataFrame(results)
+
+# 重複データの削除 (もし両方のフォルダに同じ条件のファイルがあった場合、後勝ちにする)
 df_results = df_results.drop_duplicates(subset=['epsilon', 'ps'], keep='last')
 
-# 正規化
+print(f"\n総データ数: {len(df_results)} 件")
+
+# 2. 正規化 (最大値を1.0にする)
 max_val = df_results['complexity'].max()
 if max_val > 0:
+    print(f"全体での最大エントロピー: {max_val:.4f} -> これを 1.0 に変換します")
     df_results['complexity'] = df_results['complexity'] / max_val
 
-print("3Dグラフのデータ準備中...")
+print("3Dグラフの描画準備に入ります...")
 
+# --- 3Dグラフデータの準備 ---
+# ここで sorted() を使うことで、異なるフォルダのデータがきれいに結合・整列されます
 epsilon_axis = sorted(df_results['epsilon'].unique())
 ps_axis = sorted(df_results['ps'].unique())
 
-# Zマトリックス
+# グリッド作成 (インデックス座標)
+x_indices = np.arange(len(epsilon_axis))
+y_indices = np.arange(len(ps_axis))
+X_idx, Y_idx = np.meshgrid(x_indices, y_indices)
+
+# Zマトリックスを埋める
 Z_matrix = np.zeros((len(ps_axis), len(epsilon_axis)))
 res_map = {}
 for _, row in df_results.iterrows():
     res_map[(row['epsilon'], row['ps'])] = row['complexity']
+
 for i, ps in enumerate(ps_axis):
     for j, eps in enumerate(epsilon_axis):
         Z_matrix[i, j] = res_map.get((eps, ps), 0.0)
 
-# --- 【重要】ブロックサイズの設定 ---
-
-# 1. 横幅 (dx) の設定
-# 全データの中で「最小の刻み幅」を探す (低ε範囲の刻みになるはず)
-eps_diffs = np.diff(epsilon_axis)
-min_dx = np.min(eps_diffs[eps_diffs > 0]) # 0より大きい最小値
-
-# すべてのブロックの幅を「最小刻み幅の0.8倍」に固定する
-# これにより、高ε範囲ではブロック間に「隙間」ができるが、形は正方形に保たれる
-fixed_dx = min_dx * 0.8 
-
-# 2. 奥行き (dy) の設定
-# 以前のリクエスト通り、薄くして見やすくする
-ps_diffs = np.diff(ps_axis)
-min_dy = np.min(ps_diffs[ps_diffs > 0])
-fixed_dy = min_dy * 0.2 # かなり薄くする
-
-# データの準備
-x_pos = []
-y_pos = []
-z_pos = []
-dx = []
-dy = []
-dz = []
-
-for i, ps in enumerate(ps_axis):
-    for j, eps in enumerate(epsilon_axis):
-        # データがある場所だけ描画リストに追加
-        val = Z_matrix[i, j]
-        
-        # 実数値を座標にする
-        x_pos.append(eps)
-        y_pos.append(ps)
-        z_pos.append(0)
-        
-        # サイズは固定値を使う
-        dx.append(fixed_dx)
-        dy.append(fixed_dy)
-        dz.append(val)
+# フラット化
+x_pos = X_idx.flatten()
+y_pos = Y_idx.flatten()
+z_pos = np.zeros_like(x_pos)
+dx = 0.8 * np.ones_like(z_pos)
+dy = 0.8 * np.ones_like(z_pos)
+dz = Z_matrix.flatten()
 
 # 色の設定
 cmap = matplotlib.colormaps['coolwarm'] 
-colors = [cmap(h) for h in dz]
+colors = [cmap(h) for h in dz] # h is already 0.0-1.0
 
 # --- 描画 ---
 print("描画処理中...")
-fig = plt.figure(figsize=(16, 12))
+fig = plt.figure(figsize=(16, 12)) # 横幅を少し広げました
 ax = fig.add_subplot(111, projection='3d')
 
 ax.bar3d(x_pos, y_pos, z_pos, dx, dy, dz, color=colors, shade=True)
 
-# --- 軸の設定 ---
+# 軸ラベル
 LABEL_FONTSIZE = 14
 TICK_FONTSIZE = 10
 
-ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE, labelpad=20)
-ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE, labelpad=20)
+ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE, labelpad=15)
+ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE, labelpad=15)
 ax.set_zlabel('Relative Complexity', fontsize=LABEL_FONTSIZE, labelpad=10)
 
-# --- 目盛り設定 (3つおき) ---
-# 実数値座標なので、データのリストを使ってラベル付け
-x_ticks = epsilon_axis[::3]
-ax.set_xticks(x_ticks)
-ax.set_xticklabels([f"{val:.1e}" for val in x_ticks], 
+# --- X軸の目盛り設定 (ここがポイント) ---
+# データ数が多くなるので、ラベルが重ならないよう適切に間引く
+total_x_points = len(epsilon_axis)
+x_step = max(1, total_x_points // 15) # ラベル数を15個くらいに抑える
+
+ax.set_xticks(x_indices[::x_step])
+ax.set_xticklabels([f"{epsilon_axis[i]:.1e}" for i in range(0, total_x_points, x_step)], 
                    rotation=45, fontsize=TICK_FONTSIZE)
 
-y_ticks = ps_axis[::3]
-ax.set_yticks(y_ticks)
-ax.set_yticklabels([f"{val:.1e}" for val in y_ticks], 
+# Y軸の目盛り設定
+total_y_points = len(ps_axis)
+y_step = max(1, total_y_points // 10)
+
+ax.set_yticks(y_indices[::y_step])
+ax.set_yticklabels([f"{ps_axis[i]:.1e}" for i in range(0, total_y_points, y_step)], 
                    fontsize=TICK_FONTSIZE, rotation=-15)
 
 ax.set_zlim(0, 1.0)
-ax.view_init(elev=40, azim=-60)
+ax.view_init(elev=30, azim=-60)
 
-plt.title('3D Complexity Map (Fixed Block Size)', fontsize=20)
+plt.title('Combined 3D Complexity Map', fontsize=20)
 plt.tight_layout()
 
 print("ファイルを保存しています...")
 plt.savefig(OUTPUT_3D_IMAGE, dpi=150)
-print(f"完了: {OUTPUT_3D_IMAGE} に保存しました。")
+print(f"完了: 統合された3Dヒストグラムを {OUTPUT_3D_IMAGE} に保存しました。")
