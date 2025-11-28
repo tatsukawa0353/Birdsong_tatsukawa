@@ -11,8 +11,8 @@ from scipy.signal import spectrogram
 csv_filename = 'simulation_output_test1.csv'
 
 # スペクトログラムの解像度
-nperseg = 2457600#245760
-noverlap = 1843200#184320
+nperseg = 245760#245760
+noverlap = 184320#184320
 # --------------------------------
 
 # CSVファイルを読み込む
