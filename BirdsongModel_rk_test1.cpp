@@ -8,7 +8,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
 
     // パラメータ設定
     // 左音源 (left)
-    left.params = {3.0e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 0.01, 1.2e6, 1.5e3};
+    left.params = {3.0e8, 2.0e4, 2.0e8, 4.9e4, 2.1e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 0.01, 1.2e6, 1.5e3};
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
 
@@ -134,7 +134,8 @@ void BirdsongModel::step() {
     current_pos = (current_pos + 1) % history_size;
 
     // 5. データを保存
-        saveData();
+         //if (static_cast<int>(time / dt) % 10 == 0) {
+            saveData();
     //}
 }
 
