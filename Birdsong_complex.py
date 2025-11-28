@@ -1,7 +1,7 @@
 # 仮想環境に入るため，実行するときにまずsource venv/bin/activateをターミナルで実行する．
 
 import matplotlib
-matplotlib.use('Agg') # 画像保存モード
+matplotlib.use('Agg') 
 
 import pandas as pd
 import numpy as np
@@ -18,7 +18,7 @@ INPUT_FOLDERS = [
     "simulation_results_1_x0=0.02_low parameters epsilon/",
     "simulation_results_1_x0=0.02/"
 ]
-OUTPUT_3D_IMAGE = "complexity_3d_fixed_size_1.png"
+OUTPUT_3D_IMAGE = "complexity_3d_optimized_1.png"
 
 # 分析設定
 nperseg_local = 245760 
@@ -26,7 +26,6 @@ noverlap_local = 184320
 window_type = 'blackmanharris'
 
 def calculate_spectral_entropy_full(csv_filepath):
-    """ 全データを使ってエントロピーを計算 """
     try:
         df = pd.read_csv(csv_filepath)
         if df.empty or 'pi' not in df or len(df) < nperseg_local:
@@ -59,7 +58,6 @@ results = []
 pattern = re.compile(r"sim_output_eps_([0-9\.e\+\-]+)_ps_([0-9\.e\+\-]+)\.csv")
 
 for folder in INPUT_FOLDERS:
-    print(f"フォルダ読み込み中: {folder}")
     if not os.path.exists(folder): continue
     csv_files = glob.glob(os.path.join(folder, "*.csv"))
     for i, csv_filepath in enumerate(csv_files):
@@ -94,24 +92,8 @@ for i, ps in enumerate(ps_axis):
     for j, eps in enumerate(epsilon_axis):
         Z_matrix[i, j] = res_map.get((eps, ps), 0.0)
 
-# --- 【重要】ブロックサイズの設定 ---
 
-# 1. 横幅 (dx) の設定
-# 全データの中で「最小の刻み幅」を探す (低ε範囲の刻みになるはず)
-eps_diffs = np.diff(epsilon_axis)
-min_dx = np.min(eps_diffs[eps_diffs > 0]) # 0より大きい最小値
-
-# すべてのブロックの幅を「最小刻み幅の0.8倍」に固定する
-# これにより、高ε範囲ではブロック間に「隙間」ができるが、形は正方形に保たれる
-fixed_dx = min_dx * 0.8 
-
-# 2. 奥行き (dy) の設定
-# 以前のリクエスト通り、薄くして見やすくする
-ps_diffs = np.diff(ps_axis)
-min_dy = np.min(ps_diffs[ps_diffs > 0])
-fixed_dy = min_dy * 0.2 # かなり薄くする
-
-# データの準備
+# --- 【重要】ブロックサイズと位置の計算 ---
 x_pos = []
 y_pos = []
 z_pos = []
@@ -119,19 +101,36 @@ dx = []
 dy = []
 dz = []
 
+# Y軸 (Pressure) の幅計算:
+# 「最小間隔の80%」で固定してしまうと薄すぎるので、
+# ここも「次の点までの距離の 80%」にして、間隔が広いところは太くします。
+ps_diffs = np.diff(ps_axis)
+# 最後の一つは前の間隔と同じにする
+ps_diffs = np.append(ps_diffs, ps_diffs[-1])
+
+
+# X軸 (Epsilon) の幅計算:
+# ここも「次の点までの距離」をベースにします
+eps_diffs = np.diff(epsilon_axis)
+eps_diffs = np.append(eps_diffs, eps_diffs[-1])
+
+
 for i, ps in enumerate(ps_axis):
+    # Y方向の太さ: 次の点までの距離の 60% (少し隙間を空ける)
+    current_dy = ps_diffs[i] * 0.6
+    
     for j, eps in enumerate(epsilon_axis):
-        # データがある場所だけ描画リストに追加
         val = Z_matrix[i, j]
         
-        # 実数値を座標にする
+        # X方向の太さ: 次の点までの距離の 90% (ギリギリまで詰める)
+        current_dx = eps_diffs[j] * 0.9
+        
         x_pos.append(eps)
         y_pos.append(ps)
         z_pos.append(0)
         
-        # サイズは固定値を使う
-        dx.append(fixed_dx)
-        dy.append(fixed_dy)
+        dx.append(current_dx)
+        dy.append(current_dy)
         dz.append(val)
 
 # 色の設定
@@ -153,8 +152,7 @@ ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE, labelpad=20)
 ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE, labelpad=20)
 ax.set_zlabel('Relative Complexity', fontsize=LABEL_FONTSIZE, labelpad=10)
 
-# --- 目盛り設定 (3つおき) ---
-# 実数値座標なので、データのリストを使ってラベル付け
+# 目盛り設定 (3つおき)
 x_ticks = epsilon_axis[::3]
 ax.set_xticks(x_ticks)
 ax.set_xticklabels([f"{val:.1e}" for val in x_ticks], 
@@ -168,7 +166,7 @@ ax.set_yticklabels([f"{val:.1e}" for val in y_ticks],
 ax.set_zlim(0, 1.0)
 ax.view_init(elev=40, azim=-60)
 
-plt.title('3D Complexity Map (Fixed Block Size)', fontsize=20)
+plt.title('3D Complexity Map (Dynamic Size)', fontsize=20)
 plt.tight_layout()
 
 print("ファイルを保存しています...")
