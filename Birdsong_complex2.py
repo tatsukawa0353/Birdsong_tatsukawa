@@ -1,12 +1,13 @@
 # 仮想環境に入るため，実行するときにまずsource venv/bin/activateをターミナルで実行する．
 
 import matplotlib
-matplotlib.use('Agg') # ウィンドウを表示せず保存に専念
+matplotlib.use('Agg') 
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.colors as mcolors
 from scipy.signal import spectrogram
 from scipy.stats import entropy
 import glob
@@ -15,12 +16,10 @@ import re
 
 # --- 【重要】統合したいフォルダのリスト ---
 INPUT_FOLDERS = [
-    "simulation_results_1_x0=0.02_low parameters epsilon/", # 低ε範囲
-    "simulation_results_1_x0=0.02/"                         # 高ε範囲
+    "simulation_results_2_x0=0.02_low parameters epsilon/", # 低ε範囲
+    "simulation_results_2_x0=0.02/"                         # 高ε範囲
 ]
-# ----------------------------------------
-
-OUTPUT_3D_IMAGE = "complexity_3d_combined_1.png"
+OUTPUT_3D_IMAGE = "complexity_3d_combined_2.png"
 
 # 分析設定
 nperseg_local = 245760 
@@ -28,12 +27,11 @@ noverlap_local = 184320
 window_type = 'blackmanharris'
 
 def calculate_spectral_entropy_full(csv_filepath):
-    """ CSVファイルを読み込み、全データを使ってエントロピーを計算する """
     try:
         df = pd.read_csv(csv_filepath)
         if df.empty or 'pi' not in df or len(df) < nperseg_local:
             return 0.0
-
+        
         sampling_rate = 1.0 / (df['time'].values[1] - df['time'].values[0])
         pi = df['pi'].values 
         
@@ -61,7 +59,6 @@ print("複数のフォルダからデータを統合して解析します...")
 results = []
 pattern = re.compile(r"sim_output_eps_([0-9\.e\+\-]+)_ps_([0-9\.e\+\-]+)\.csv")
 
-# 1. フォルダをループして全データを収集
 for folder in INPUT_FOLDERS:
     print(f"\nフォルダ読み込み中: {folder}")
     if not os.path.exists(folder):
@@ -76,8 +73,15 @@ for folder in INPUT_FOLDERS:
         match = pattern.match(filename)
         if not match: continue
 
-        eps = float(match.group(1))
-        ps = float(match.group(2))
+        # --- 【修正】読み込んだ値を小数点第2位で丸める ---
+        raw_eps = float(match.group(1))
+        raw_ps = float(match.group(2))
+        
+        # f"{val:.2e}" で「1.23e+08」のような形式の文字列にし、
+        # 再び float に戻すことで、微小な誤差を完全に切り捨てます
+        eps = float(f"{raw_eps:.1e}")
+        ps = float(f"{raw_ps:.1e}")
+        # ---------------------------------------------
         
         complexity = calculate_spectral_entropy_full(csv_filepath)
         results.append({'epsilon': eps, 'ps': ps, 'complexity': complexity})
@@ -88,12 +92,12 @@ for folder in INPUT_FOLDERS:
 # データフレーム化
 df_results = pd.DataFrame(results)
 
-# 重複データの削除 (もし両方のフォルダに同じ条件のファイルがあった場合、後勝ちにする)
+# その上で重複削除
 df_results = df_results.drop_duplicates(subset=['epsilon', 'ps'], keep='last')
 
 print(f"\n総データ数: {len(df_results)} 件")
 
-# 2. 正規化 (最大値を1.0にする)
+# 正規化
 max_val = df_results['complexity'].max()
 if max_val > 0:
     print(f"全体での最大エントロピー: {max_val:.4f} -> これを 1.0 に変換します")
@@ -101,17 +105,15 @@ if max_val > 0:
 
 print("3Dグラフの描画準備に入ります...")
 
-# --- 3Dグラフデータの準備 ---
-# ここで sorted() を使うことで、異なるフォルダのデータがきれいに結合・整列されます
 epsilon_axis = sorted(df_results['epsilon'].unique())
 ps_axis = sorted(df_results['ps'].unique())
 
-# グリッド作成 (インデックス座標)
+# グリッド作成
 x_indices = np.arange(len(epsilon_axis))
 y_indices = np.arange(len(ps_axis))
 X_idx, Y_idx = np.meshgrid(x_indices, y_indices)
 
-# Zマトリックスを埋める
+# Zマトリックス
 Z_matrix = np.zeros((len(ps_axis), len(epsilon_axis)))
 res_map = {}
 for _, row in df_results.iterrows():
@@ -130,12 +132,25 @@ dy = 0.8 * np.ones_like(z_pos)
 dz = Z_matrix.flatten()
 
 # 色の設定
-cmap = matplotlib.colormaps['coolwarm'] 
-colors = [cmap(h) for h in dz] # h is already 0.0-1.0
+colors_list = ['#ffffff', "#9FD3F3", "#F00937"] 
+cmap_custom = mcolors.LinearSegmentedColormap.from_list('white_to_red', colors_list)
+colors = np.array([cmap_custom(h) for h in dz]) # numpy配列に変換
+
+# --- 【修正2】高さが0のデータ（浮き出しの原因）を削除 ---
+# dz が 0.001 より大きいデータだけを残すフィルタリングを行います
+mask = dz > 0.001
+
+x_pos = x_pos[mask]
+y_pos = y_pos[mask]
+z_pos = z_pos[mask]
+dx = dx[mask]
+dy = dy[mask]
+dz = dz[mask]
+colors = colors[mask]
 
 # --- 描画 ---
-print("描画処理中...")
-fig = plt.figure(figsize=(16, 12)) # 横幅を少し広げました
+print(f"描画処理中... (描画対象ブロック数: {len(dz)})")
+fig = plt.figure(figsize=(16, 12))
 ax = fig.add_subplot(111, projection='3d')
 
 ax.bar3d(x_pos, y_pos, z_pos, dx, dy, dz, color=colors, shade=True)
@@ -148,21 +163,20 @@ ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE, labelpad=15)
 ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE, labelpad=15)
 ax.set_zlabel('Relative Complexity', fontsize=LABEL_FONTSIZE, labelpad=10)
 
-# --- X軸の目盛り設定 (ここがポイント) ---
-# データ数が多くなるので、ラベルが重ならないよう適切に間引く
+# X軸の目盛り設定
 total_x_points = len(epsilon_axis)
-x_step = max(1, total_x_points // 15) # ラベル数を15個くらいに抑える
-
+x_step = max(1, total_x_points // 15)
 ax.set_xticks(x_indices[::x_step])
-ax.set_xticklabels([f"{epsilon_axis[i]:.1e}" for i in range(0, total_x_points, x_step)], 
+# 表示フォーマットを .2e (小数点以下2桁) にして細かく表示
+ax.set_xticklabels([f"{epsilon_axis[i]:.2e}" for i in range(0, total_x_points, x_step)], 
                    rotation=45, fontsize=TICK_FONTSIZE)
 
 # Y軸の目盛り設定
 total_y_points = len(ps_axis)
 y_step = max(1, total_y_points // 10)
-
 ax.set_yticks(y_indices[::y_step])
-ax.set_yticklabels([f"{ps_axis[i]:.1e}" for i in range(0, total_y_points, y_step)], 
+# ここも .2e に変更して重複表示を回避
+ax.set_yticklabels([f"{ps_axis[i]:.2e}" for i in range(0, total_y_points, y_step)], 
                    fontsize=TICK_FONTSIZE, rotation=-15)
 
 ax.set_zlim(0, 1.0)
