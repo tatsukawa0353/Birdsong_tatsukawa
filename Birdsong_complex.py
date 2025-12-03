@@ -138,10 +138,10 @@ eps_diffs = np.diff(epsilon_axis)
 eps_diffs = np.append(eps_diffs, eps_diffs[-1])
 
 for i, ps in enumerate(ps_axis):
-    current_dy = ps_diffs[i] * 0.8
+    current_dy = ps_diffs[i] * 0.8#0.35
     for j, eps in enumerate(epsilon_axis):
         val = Z_matrix[i, j]
-        current_dx = eps_diffs[j] * 0.8
+        current_dx = eps_diffs[j] * 0.8#0.35
         
         x_pos.append(eps)
         y_pos.append(ps)
