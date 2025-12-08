@@ -16,11 +16,11 @@ import re
 
 # --- 統合したいフォルダ ---
 INPUT_FOLDERS = [
-    "simulation_results_2_x0=0.02_low parameters epsilon/",
-    "simulation_results_2_x0=0.02/"
+    "simulation_results_1_x0=0.02_low parameters epsilon/",
+    "simulation_results_1_x0=0.02/"
 ]
-OUTPUT_CSV_FILE = "complexity_data_weighted_2.csv" # ソート済みCSV
-OUTPUT_3D_IMAGE = "complexity_3d_weighted_2.png"
+OUTPUT_CSV_FILE = "complexity_data_weighted_1.csv" # ソート済みCSV
+OUTPUT_3D_IMAGE = "complexity_3d_weighted_1.png"
 
 # 分析設定
 nperseg_local = 245760 
@@ -28,43 +28,76 @@ noverlap_local = 184320
 window_type = 'blackmanharris'
 
 # ★解析開始時刻（秒）
-START_TIME = 0.03
+START_TIME = 0.03 #0.01 one bronchus
+
+# --- 【追加】フィルタリング設定 ---
+# この周波数以下のデータ（DC成分やドリフト）を無視します
+MIN_FREQ_THRESHOLD = 100  #150 one bronchus
+# 指定周波数以上のパワーの合計がこれ以下なら「発振なし(無音)」とみなします
+MIN_POWER_THRESHOLD = 1e-5
 
 def calculate_weighted_spectral_entropy(csv_filepath):
-    """ 重み付けスペクトル・エントロピー """
+    """ 重み付けスペクトル・エントロピー (低周波カット機能付き) """
     try:
         df = pd.read_csv(csv_filepath)
         if df.empty or 'pi' not in df or len(df) < nperseg_local:
             return 0.0
         
         sampling_rate = 1.0 / (df['time'].values[1] - df['time'].values[0])
-        pi = df['pi'].values 
         
-        # --- 【追加】指定時間以降のデータを抽出 ---
+        # --- 指定時間以降のデータを抽出 ---
         df_segment = df[df['time'] >= START_TIME]
         pi = df_segment['pi'].values
 
         if len(pi) < nperseg_local:
             return 0.0
 
+        # スペクトログラム計算
         f, t, Sxx = spectrogram(pi, fs=sampling_rate, window=window_type, nperseg=nperseg_local, noverlap=noverlap_local)
-        mean_spectrum = np.mean(Sxx, axis=1)
         
-        if np.sum(mean_spectrum) == 0:
+        # --- 【追加】周波数フィルタリング処理 ---
+        # 指定した周波数(MIN_FREQ_THRESHOLD)以上のインデックスを取得
+        valid_freq_indices = f >= MIN_FREQ_THRESHOLD
+        
+        # フィルタリング後の周波数成分だけを取り出す
+        f_filtered = f[valid_freq_indices]
+        Sxx_filtered = Sxx[valid_freq_indices, :] # スペクトログラムも対応する行だけ残す
+        
+        # もし有効な周波数帯域がなくなってしまったら0を返す
+        if len(f_filtered) == 0:
+            return 0.0
+
+        # 時間平均をとる (フィルタ済みのデータで)
+        mean_spectrum = np.mean(Sxx_filtered, axis=1)
+        
+        # --- 【追加】パワー閾値判定 ---
+        # ノイズのみの「無音状態」が高エントロピーになるのを防ぐため、
+        # フィルタ後の総パワーが小さすぎる場合は複雑性を0とする
+        if np.sum(mean_spectrum) < MIN_POWER_THRESHOLD:
             return 0.0
             
         # 重み付け (高周波ほど値を小さく評価)
+        # ※フィルタリング後の配列に対して重み付けを行います
         weights = 1.0 / (np.log1p(np.arange(len(mean_spectrum))) + 1.0)
         weighted_spectrum = mean_spectrum * weights
         
         # 正規化
-        psd_norm = weighted_spectrum / np.sum(weighted_spectrum)
+        spectrum_sum = np.sum(weighted_spectrum)
+        if spectrum_sum == 0:
+            return 0.0
+            
+        psd_norm = weighted_spectrum / spectrum_sum
         
         ent = entropy(psd_norm, base=2)
         max_entropy = np.log2(len(psd_norm))
+        
+        if max_entropy == 0:
+            return 0.0
+            
         return ent / max_entropy
 
-    except Exception:
+    except Exception as e:
+        print(f"Error in {csv_filepath}: {e}") # デバッグ用にエラー表示
         return 0.0
 
 # --- メイン処理 ---
