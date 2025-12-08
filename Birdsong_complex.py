@@ -16,41 +16,77 @@ import re
 
 # --- 統合したいフォルダ ---
 INPUT_FOLDERS = [
-    "simulation_results_2_x0=0.02_low parameters epsilon/",
-    "simulation_results_2_x0=0.02/"
+    "simulation_results_1_x0=0.02_low parameters epsilon/",
+    "simulation_results_1_x0=0.02/"
 ]
-OUTPUT_CSV_FILE = "complexity_data_2.csv"       # 数値データの保存名
-OUTPUT_3D_IMAGE = "complexity_3d_optimized_2.png"   # 画像の保存名
+OUTPUT_CSV_FILE = "complexity_data_1.csv"       # 数値データの保存名
+OUTPUT_3D_IMAGE = "complexity_3d_optimized_1.png"   # 画像の保存名
 
 # 分析設定
 nperseg_local = 245760 
 noverlap_local = 184320
 window_type = 'blackmanharris'
 
+# ★解析開始時刻（秒）：これより前の時間は無視します
+START_TIME = 0.025
+
+# --- 【追加】フィルタリング設定 ---
+# この周波数以下のデータ（DC成分やドリフト）を無視します
+MIN_FREQ_THRESHOLD = 100.0  
+# 指定周波数以上のパワーの合計がこれ以下なら「発振なし(無音)」とみなします
+MIN_POWER_THRESHOLD = 1e-5 
+
 def calculate_spectral_entropy_full(csv_filepath):
+    """ 指定時間以降のデータかつ指定周波数以上を使ってエントロピーを計算 """
     try:
         df = pd.read_csv(csv_filepath)
-        if df.empty or 'pi' not in df or len(df) < nperseg_local:
+        if df.empty or 'pi' not in df or 'time' not in df:
             return 0.0
         
-        sampling_rate = 1.0 / (df['time'].values[1] - df['time'].values[0])
-        pi = df['pi'].values 
+        # --- 【時間フィルタリング】指定時間（0.03秒）以降のデータを抽出 ---
+        df_segment = df[df['time'] >= START_TIME]
         
-        if len(pi) < nperseg_local:
+        # データが足りない場合はスキップ
+        if len(df_segment) < nperseg_local:
+            # print(f"Skipping {csv_filepath}: Not enough data after {START_TIME}s")
+            return 0.0
+            
+        sampling_rate = 1.0 / (df['time'].values[1] - df['time'].values[0])
+        pi = df_segment['pi'].values 
+
+        # スペクトログラム計算
+        f, t, Sxx = spectrogram(pi, fs=sampling_rate, window=window_type, nperseg=nperseg_local, noverlap=noverlap_local)
+        
+        # --- 【周波数フィルタリング】指定周波数（300Hz）以上を抽出 ---
+        valid_freq_indices = f >= MIN_FREQ_THRESHOLD
+        
+        # フィルタリング実行
+        Sxx_filtered = Sxx[valid_freq_indices, :]
+        
+        # 有効な周波数帯域がない場合は0
+        if Sxx_filtered.size == 0:
             return 0.0
 
-        f, t, Sxx = spectrogram(pi, fs=sampling_rate, window=window_type, nperseg=nperseg_local, noverlap=noverlap_local)
-        mean_spectrum = np.mean(Sxx, axis=1)
+        # 時間平均をとる
+        mean_spectrum = np.mean(Sxx_filtered, axis=1)
         
-        if np.sum(mean_spectrum) == 0:
+        # --- 【無音判定】パワーが小さすぎる場合は0 ---
+        if np.sum(mean_spectrum) < MIN_POWER_THRESHOLD:
             return 0.0
+            
+        # 正規化してエントロピー計算
         psd_norm = mean_spectrum / np.sum(mean_spectrum)
         
         ent = entropy(psd_norm, base=2)
         max_entropy = np.log2(len(psd_norm))
+        
+        if max_entropy == 0:
+            return 0.0
+
         return ent / max_entropy
 
-    except Exception:
+    except Exception as e:
+        print(f"Error processing {csv_filepath}: {e}")
         return 0.0
 
 # --- メイン処理 ---
