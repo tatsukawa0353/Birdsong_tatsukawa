@@ -12,10 +12,10 @@ import os
 
 # --- 設定項目 ---
 # 読み込むデータがあるフォルダ
-INPUT_FOLDER = "simulation_results_1_x0=0.02/"
+INPUT_FOLDER = "simulation_results_2_x0=0.02_low parameters epsilon/"
 
 # グラフ画像を保存するフォルダ
-OUTPUT_FOLDER = "psd_graphs_1_x0=0.02_SPL_v2/"
+OUTPUT_FOLDER = "psd_graphs_2_x0=0.02_low parameters epsilon_linear/" # フォルダ名を変更
 
 # スペクトログラム生成パラメータ
 nperseg = 245760
@@ -26,29 +26,23 @@ window_type = 'blackmanharris'
 FREQ_MAX = 10000  # Hz
 # ----------------
 
-# ★物理定数の設定（基準値をシミュレーション単位へ変換）★
-P0_PA = 20e-6          # 現実の基準音圧: 20 μPa
-UNIT_CONV = 0.0005     # シミュレーション値をPaに直す係数 (M*0.1)
-
-# シミュレーション単位での基準値 (約 0.04 になります)
-# 「現実で20μPaになるのは、シミュレーションでいうといくらか？」を計算
-P0_SIM = P0_PA / UNIT_CONV 
-
 # 出力フォルダ作成
 if not os.path.exists(OUTPUT_FOLDER):
     os.makedirs(OUTPUT_FOLDER)
     print(f"保存先フォルダを作成しました: {OUTPUT_FOLDER}")
-    print(f"基準値設定: p0(sim) = {P0_SIM} (これを二乗して割ります)")
 
-def plot_spl_spectrum_v2(csv_filepath, output_image_path):
+def plot_time_averaged_spectrum(csv_filepath, output_image_path):
     try:
         # 1. データ読み込み
         df = pd.read_csv(csv_filepath)
-        if df.empty or 'pi' not in df: return
+        if df.empty or 'pi' not in df:
+            print(f"スキップ: {csv_filepath} (データなし)")
+            return
 
         time = df['time'].values
         pi = df['pi'].values
         
+        # サンプリングレート計算
         if len(time) > 1:
             dt = time[1] - time[0]
             fs = 1.0 / dt
@@ -59,32 +53,36 @@ def plot_spl_spectrum_v2(csv_filepath, output_image_path):
         padding_length = nperseg
         pi_padded = np.pad(pi, (0, padding_length), 'constant')
 
-        # 3. スペクトログラム計算 (出力は pi^2 相当のパワー)
+        # 3. スペクトログラム計算
         f, t, Sxx = spectrogram(pi_padded, fs=fs, window=window_type, nperseg=nperseg, noverlap=noverlap)
 
-        # 4. 時間平均をとる
+        # 4. 時間平均パワースペクトル算出
+        # (Sxx は既に振幅の二乗の次元を持っています)
         mean_spectrum = np.mean(Sxx, axis=1)
 
-        # 5. dB SPL への変換 (ご指定の方法)
-        # mean_spectrum はそのまま（シミュレーション単位の二乗）
-        # それを「シミュレーション単位に換算した基準値の二乗」で割る
-        spl_values = 10 * np.log10(mean_spectrum / (P0_SIM ** 2) + 1e-10)
+        # --- 【変更点】dB変換をスキップ ---
+        # mean_spectrum_db = 10 * np.log10(...) を削除し、そのまま使う
 
         # 6. グラフプロット
         plt.figure(figsize=(10, 6))
-        plt.plot(f, spl_values, linewidth=1.5, color='blue')
         
-        plt.title(f"Time-Averaged Power Spectrum (SPL)\n{os.path.basename(csv_filepath)}")
+        # 生の値をプロット
+        plt.plot(f, mean_spectrum, linewidth=1.5, color='green') # 色を変えて区別
+        
+        plt.title(f"Time-Averaged Power Spectrum (Linear)\n{os.path.basename(csv_filepath)}")
         plt.xlabel("Frequency [Hz]")
-        plt.ylabel("Sound Pressure Level [dB SPL]")
-        
+        plt.ylabel("Power Spectral Density (Linear Scale)") # ラベル変更
         plt.xlim(0, FREQ_MAX)
-        # 必要に応じてy軸範囲を固定
-        # plt.ylim(-20, 120) 
+        
+        # 【追加】Y軸を科学的表記（指数表記）にする
+        # リニアスケールだと値が 0.000001 などの場合に見にくいため
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        
         plt.grid(True, which="both", ls="-", alpha=0.5)
 
+        # 画像保存
         plt.savefig(output_image_path)
-        plt.close()
+        plt.close() # メモリ解放
         
         print(f"保存完了: {output_image_path}")
 
@@ -99,9 +97,10 @@ if not csv_files:
 else:
     print(f"{len(csv_files)} 個のファイルを処理します...")
     for i, csv_file in enumerate(csv_files):
+        # 出力ファイル名を作成
         file_name = os.path.basename(csv_file).replace('.csv', '.png')
         output_path = os.path.join(OUTPUT_FOLDER, file_name)
         
-        plot_spl_spectrum_v2(csv_file, output_path)
+        plot_time_averaged_spectrum(csv_file, output_path)
 
     print("すべての処理が完了しました。")
