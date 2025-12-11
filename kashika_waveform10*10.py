@@ -12,10 +12,10 @@ time_start = 0.0  # 開始時間
 time_end = 0.05   # 終了時間
 
 # C++がCSVファイルを出力したフォルダ
-INPUT_FOLDER = "simulation_results_1_x0=0.02/"
+INPUT_FOLDER = "simulation_results_2_x0=0.02_low parameters epsilon/"
 
 # 生成されたスペクトログラム画像を保存するフォルダ
-OUTPUT_FOLDER = "waveform_1_x0=0.02/"
+OUTPUT_FOLDER = "waveform_2_x0=0.02_low parameters epsilon/"
 
 # --- 出力フォルダが存在しない場合に作成 ---
 if not os.path.exists(OUTPUT_FOLDER):
