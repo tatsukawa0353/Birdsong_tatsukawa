@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # データの読み込み
-df1 = pd.read_csv('complexity_data_1.csv')
-df2 = pd.read_csv('complexity_data_2.csv')
+df1 = pd.read_csv('complexity_data_1.1.csv')
+df2 = pd.read_csv('complexity_data_2.1.csv')
 
 # データの結合
 merged_df = pd.merge(df1, df2, on=['epsilon', 'ps'], suffixes=('_1', '_2'))
