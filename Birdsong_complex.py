@@ -16,11 +16,11 @@ import re
 
 # --- 統合したいフォルダ ---
 INPUT_FOLDERS = [
-    "simulation_results_1_x0=0.02_low parameters epsilon/",
-    "simulation_results_1_x0=0.02/"
+    "simulation_results_2_x0=0.02_low parameters epsilon/",
+    "simulation_results_2_x0=0.02/"
 ]
-OUTPUT_CSV_FILE = "complexity_data_1.csv"       # 数値データの保存名
-OUTPUT_3D_IMAGE = "complexity_3d_optimized_1.png"   # 画像の保存名
+OUTPUT_CSV_FILE = "complexity_data_2.1.csv"       # 数値データの保存名
+OUTPUT_3D_IMAGE = "complexity_3d_optimized_2.1.png"   # 画像の保存名
 
 # 分析設定
 nperseg_local = 245760 
@@ -126,13 +126,13 @@ df_results = pd.DataFrame(results)
 df_results = df_results.drop_duplicates(subset=['epsilon', 'ps'], keep='last')
 
 # --- 【追加】正規化後の値を計算して列に追加 ---
-max_val = df_results['raw_complexity'].max()
-if max_val > 0:
-    print(f"全体での最大エントロピー: {max_val:.4f}")
+#max_val = df_results['raw_complexity'].max()
+#if max_val > 0:
+#    print(f"全体での最大エントロピー: {max_val:.4f}")
     # 最大値を1.0とする相対値を計算
-    df_results['normalized_complexity'] = df_results['raw_complexity'] / max_val
-else:
-    df_results['normalized_complexity'] = 0.0
+#    df_results['normalized_complexity'] = df_results['raw_complexity'] / max_val
+#else:
+#    df_results['normalized_complexity'] = 0.0
 
 # --- 【追加】CSVファイルへの書き出し ---
 # 見やすいようにパラメータでソート
@@ -155,7 +155,7 @@ ps_axis = sorted(df_results['ps'].unique())
 Z_matrix = np.zeros((len(ps_axis), len(epsilon_axis)))
 res_map = {}
 for _, row in df_results.iterrows():
-    res_map[(row['epsilon'], row['ps'])] = row['normalized_complexity']
+    res_map[(row['epsilon'], row['ps'])] = row['raw_complexity']
 for i, ps in enumerate(ps_axis):
     for j, eps in enumerate(epsilon_axis):
         Z_matrix[i, j] = res_map.get((eps, ps), 0.0)
@@ -227,7 +227,7 @@ LABEL_FONTSIZE = 14
 TICK_FONTSIZE = 10
 ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE, labelpad=20)
 ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE, labelpad=20)
-ax.set_zlabel('Relative Complexity', fontsize=LABEL_FONTSIZE, labelpad=10)
+ax.set_zlabel('Complexity', fontsize=LABEL_FONTSIZE, labelpad=10)
 
 x_ticks = epsilon_axis[::3]
 ax.set_xticks(x_ticks)
