@@ -7,7 +7,7 @@ from scipy.signal import spectrogram
 
 #グラフで表示する時間の範囲指定
 time_start = 0.0  # 開始時間
-time_end = 0.06   # 終了時間
+time_end = 0.006   # 終了時間
 
 # CSVファイルを読み込む
 df = pd.read_csv('simulation_output_test1.csv')

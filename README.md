@@ -7,3 +7,6 @@
 
 追記：カラーマップ作製は手動の場合，BirdsongModel_colormap_Manual.py
 「_1」はfoを大きくしたver,「_2」はα＝β＝0　ver.
+
+g++ main.cpp BirdsongModel_rk_test1.cpp -o birdsong_sim -std=c++11
+./birdsong_sim
