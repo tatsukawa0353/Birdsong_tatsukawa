@@ -16,11 +16,11 @@ import re
 
 # --- 統合したいフォルダ ---
 INPUT_FOLDERS = [
-    "simulation_results_2_x0=0.02_low parameters epsilon/",
-    "simulation_results_2_x0=0.02/"
+    "simulation_results_1_f0=4.9e4_x0=0.02_low epsilon/",
+    "simulation_results_1_f0=4.9e4_x0=0.02/"
 ]
-OUTPUT_CSV_FILE = "complexity_data_2.1.csv"       # 数値データの保存名
-OUTPUT_3D_IMAGE = "complexity_3d_optimized_2.1.png"   # 画像の保存名
+OUTPUT_CSV_FILE = "complexity_data_1_f0=4.9e4.csv"       # 数値データの保存名
+OUTPUT_3D_IMAGE = "complexity_3d_optimized_1_f0=4.9e4.png"   # 画像の保存名
 
 # 分析設定
 nperseg_local = 245760 
