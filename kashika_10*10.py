@@ -11,12 +11,12 @@ import os
 # --- ここで複数のフォルダペアを設定します ---
 # リストの中に ("入力フォルダパス", "出力フォルダパス"), の形で記述してください
 FOLDER_PAIRS = [
-    ("simulation_results_1_f0=0.1e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.1e7_x0=0.02_low epsilon/"),
-    ("simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.4e7_x0=0.02_low epsilon/"),
-    ("simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.7e7_x0=0.02_low epsilon/"),
-    ("simulation_results_1_f0=0.1e7_x0=0.02/", "spectrogram_images_1_f0=0.1e7_x0=0.02"),
-    ("simulation_results_1_f0=0.4e7_x0=0.02/", "spectrogram_images_1_f0=0.4e7_x0=0.02"),
-    ("simulation_results_1_f0=0.7e7_x0=0.02/", "spectrogram_images_1_f0=0.7e7_x0=0.02"),
+    ("simulation_results_1_f0=4.9e4_x0=0.02_low epsilon/", "spectrogram_images_1_f0=4.9e4_x0=0.02_low epsilon/"),
+    #("simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.4e7_x0=0.02_low epsilon/"),
+    #("simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.7e7_x0=0.02_low epsilon/"),
+    ("simulation_results_1_f0=4.9e4_x0=0.02/", "spectrogram_images_1_f0=4.9e4_x0=0.02"),
+    #("simulation_results_1_f0=0.4e7_x0=0.02/", "spectrogram_images_1_f0=0.4e7_x0=0.02"),
+    #("simulation_results_1_f0=0.7e7_x0=0.02/", "spectrogram_images_1_f0=0.7e7_x0=0.02"),
     # 必要に応じてここに行を追加してください
 ]
 
