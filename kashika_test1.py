@@ -48,7 +48,7 @@ db_Sxx = 10 * np.log10(Sxx_normalized + 1e-10)
 # 【最終調整】連続的なグレースケールに戻す
 cmap = 'gray_r'
 vmax = -38
-vmin = -50#-38.002
+vmin = -38.002
 
 # プロット
 plt.figure(figsize=(10, 10))

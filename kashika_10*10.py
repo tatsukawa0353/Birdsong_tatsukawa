@@ -7,29 +7,29 @@ from scipy.signal import spectrogram
 import glob
 import os
 
-# --- ここで設定を変更できます ---
-# C++がCSVファイルを出力したフォルダ
-INPUT_FOLDER = "simulation_results_1_x0=0.02_low parameters epsilon/"
+# =========================================================
+# --- ここで複数のフォルダペアを設定します ---
+# リストの中に ("入力フォルダパス", "出力フォルダパス"), の形で記述してください
+FOLDER_PAIRS = [
+    ("simulation_results_1_f0=0.1e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.1e7_x0=0.02_low epsilon/"),
+    ("simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.4e7_x0=0.02_low epsilon/"),
+    ("simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.7e7_x0=0.02_low epsilon/"),
+    ("simulation_results_1_f0=0.1e7_x0=0.02/", "spectrogram_images_1_f0=0.1e7_x0=0.02"),
+    ("simulation_results_1_f0=0.4e7_x0=0.02/", "spectrogram_images_1_f0=0.4e7_x0=0.02"),
+    ("simulation_results_1_f0=0.7e7_x0=0.02/", "spectrogram_images_1_f0=0.7e7_x0=0.02"),
+    # 必要に応じてここに行を追加してください
+]
 
-# 生成されたスペクトログラム画像を保存するフォルダ
-OUTPUT_FOLDER = "spectrogram_images_1_x0=0.02_low parameters epsilon/"
-
-# スペクトログラムの解像度 (ベースファイルの設定を維持)
+# スペクトログラムの設定 (全フォルダ共通)
 nperseg = 245760
 noverlap = 184320
 window_type = 'blackmanharris'
 
-# カラースケール設定 (ベースファイルの設定を維持)
+# カラースケール設定 (全フォルダ共通)
 cmap = 'gray_r'
 vmax = -38.0
 vmin = -38.002
-# --------------------------------
-
-# --- 出力フォルダが存在しない場合に作成 ---
-if not os.path.exists(OUTPUT_FOLDER):
-    os.makedirs(OUTPUT_FOLDER)
-    print(f"作成しました: {OUTPUT_FOLDER}")
-# ------------------------------------
+# =========================================================
 
 def generate_spectrogram(csv_filepath, output_image_path):
     """ 1つのCSVファイルからスペクトログラム画像を生成する関数 """
@@ -79,8 +79,6 @@ def generate_spectrogram(csv_filepath, output_image_path):
         title_filename = os.path.basename(csv_filepath).replace('.csv', '')
         plt.title(f'Spectrogram of {title_filename}')
         
-        # plt.colorbar(label='Intensity [dB]') # ベースファイルに合わせてコメントアウト
-
         # 8. グラフを画像ファイルとして保存
         plt.savefig(output_image_path)
         plt.close() # メモリを解放するために図を閉じる
@@ -90,28 +88,48 @@ def generate_spectrogram(csv_filepath, output_image_path):
         plt.close() # エラー時も図を閉じる
 
 # --- メイン処理 ---
-print(f"'{INPUT_FOLDER}' 内のCSVファイルの処理を開始します...")
+print("一括処理を開始します...\n")
 
-# 入力フォルダ内のすべてのCSVファイルのリストを取得
-csv_files = glob.glob(os.path.join(INPUT_FOLDER, "*.csv"))
+# 設定されたフォルダペアの数だけループする
+for batch_idx, (input_folder, output_folder) in enumerate(FOLDER_PAIRS):
+    print(f"==========================================")
+    print(f"フォルダセット {batch_idx + 1}/{len(FOLDER_PAIRS)} を処理中")
+    print(f"  入力: {input_folder}")
+    print(f"  出力: {output_folder}")
+    print(f"==========================================")
 
-if not csv_files:
-    print(f"エラー: '{INPUT_FOLDER}' にCSVファイルが見つかりません。")
-    print("C++のシミュレーションを先に実行してください。")
-    exit()
+    # 入力フォルダの存在確認
+    if not os.path.exists(input_folder):
+        print(f"  [スキップ] 入力フォルダが見つかりません: {input_folder}")
+        continue  # 次のフォルダペアへ進む
 
-print(f"{len(csv_files)} 個のファイルが見つかりました。")
+    # 出力フォルダが存在しない場合に作成
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+        print(f"  作成しました: {output_folder}")
 
-# 各CSVファイルに対してループ処理
-for i, csv_filepath in enumerate(csv_files):
-    # 出力する画像ファイル名を決定
-    # 例: sim_output_eps_..._ps_....csv -> sim_output_eps_..._ps_....png
-    output_filename = os.path.basename(csv_filepath).replace('.csv', '.png')
-    output_image_path = os.path.join(OUTPUT_FOLDER, output_filename)
+    # 入力フォルダ内のすべてのCSVファイルのリストを取得
+    csv_files = glob.glob(os.path.join(input_folder, "*.csv"))
+
+    if not csv_files:
+        print(f"  [警告] '{input_folder}' にCSVファイルが見つかりません。")
+        continue
+
+    print(f"  -> {len(csv_files)} 個のファイルが見つかりました。変換を開始します。")
+
+    # 各CSVファイルに対してループ処理
+    for i, csv_filepath in enumerate(csv_files):
+        # 出力パスの生成
+        output_filename = os.path.basename(csv_filepath).replace('.csv', '.png')
+        output_image_path = os.path.join(output_folder, output_filename)
+        
+        # 進捗表示 (例: 1/100)
+        if (i+1) % 10 == 0 or (i+1) == len(csv_files): # ログが多すぎないように10件ごとまたは最後に表示
+             print(f"    処理中 ({i+1}/{len(csv_files)}): ...{output_filename}")
+        
+        # スペクトログラムを生成
+        generate_spectrogram(csv_filepath, output_image_path)
     
-    print(f"({i+1}/{len(csv_files)}) 処理中: {csv_filepath} -> {output_image_path}")
-    
-    # スペクトログラムを生成
-    generate_spectrogram(csv_filepath, output_image_path)
+    print(f"  -> 完了: {output_folder}\n")
 
-print(f"\nすべての処理が完了しました。画像は '{OUTPUT_FOLDER}' に保存されました。")
+print("すべてのフォルダセットの処理が完了しました。")

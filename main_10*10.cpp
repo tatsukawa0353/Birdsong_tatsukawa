@@ -18,7 +18,7 @@ int main() {
     const double total_time = 0.12;      // シミュレーション総時間 (秒)
 
     //出力フォルダ名定義
-    const string output_folder = "simulation_results_1_x0=0.02_low parameters epsilon/";
+    const string output_folder = "simulation_results_1_f0=0.1e7_x0=0.02/";
 
     // フォルダ自動作成
     struct stat st;
@@ -35,13 +35,13 @@ int main() {
     //パラメータ掃引設定
     vector<double> epsilon_values;
     for (int i = 0; i < 10; i++) {
-        //epsilon_values.push_back( (2.0 + i * (28.0/9.0)) * 1e7 );//パターン1，2 
-        epsilon_values.push_back( (0.50 + i * (0.50)) * 1e7 );  //low parameters
+        epsilon_values.push_back( (2.0 + i * (28.0/9.0)) * 1e7 );//パターン1，2 
+        //epsilon_values.push_back( (0.50 + i * (0.50)) * 1e7 );  //low parameters
     } 
     vector<double> ps_values;
     for (int i = 0; i < 10; i++) {
         ps_values.push_back( (1.0 + i * (5.0/9.0)) * 1e6 );//パターン1，2
-        //ps_values.push_back( (1.60 + i * (2.00/45.00)) * 1e6 ); //low parameters
+        //ps_values.push_back( (1.60 + i * (2.00/45.00)) * 1e6 ); //low parameters 使わない
     }
 
     cout << "Starting parameter sweep (" << epsilon_values.size() << " x " << ps_values.size() << " = " << epsilon_values.size() * ps_values.size() << " simulations)" << endl;
