@@ -7,11 +7,11 @@ import matplotlib.colors as mcolors
 import os
 
 # --- 【重要】あなたが手動で作成したCSVファイルの名前 ---
-MANUAL_DATA_FILE = "parameter_map_1_x0=0.02 add.csv"
+MANUAL_DATA_FILE = "parameter_map_1_x0=0.02_f0=4.9e4.csv"
 # --------------------------------------------------
 
 # 最終的に出力するパラメータマップの画像ファイル名
-OUTPUT_IMAGE = "parameter_map_1_x0=0.02 add 3.png"
+OUTPUT_IMAGE = "parameter_map_1_x0=0.02_f0=4.9e4.png"
 
 # --- 新しいカテゴリ定義 (8種類) ---
 category_labels = {
