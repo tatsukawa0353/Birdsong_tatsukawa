@@ -12,10 +12,10 @@ import os
 
 # --- 設定項目 ---
 # 読み込むデータがあるフォルダ
-INPUT_FOLDER = "simulation_results_2_x0=0.02_low parameters epsilon/"
+INPUT_FOLDER = "simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/"
 
 # グラフ画像を保存するフォルダ
-OUTPUT_FOLDER = "psd_graphs_2_x0=0.02_low parameters epsilon_linear/" # フォルダ名を変更
+OUTPUT_FOLDER = "psd_graphs_1_f0=0.4e7_x0=0.02_low wpsilon_linear/" # フォルダ名を変更
 
 # スペクトログラム生成パラメータ
 nperseg = 245760
