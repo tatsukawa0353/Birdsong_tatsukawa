@@ -9,10 +9,10 @@ import os
 # =========================================================
 # --- ここで複数のフォルダペアを設定します ---
 FOLDER_PAIRS = [
-    ("simulation_results_x0=0.02_linked_low eps/", "waveform_x0=0.02_linked_low eps/"),
+    ("simulation_results_x0=0.02_linked_low eps*0.6/", "waveform_x0=0.02_linked_low eps*0.6/"),
     #("simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/", "waveform_1_f0=0.4e7_x0=0.02_low epsilon/"),
     #("simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/", "waveform_1_f0=0.7e7_x0=0.02_low epsilon/"),
-    ("simulation_results_x0=0.02_linked_eps/", "waveform_x0=0.02_linked_eps/"),
+    ("simulation_results_x0=0.02_linked_eps*0.6/", "waveform_x0=0.02_linked_eps*0.6/"),
     #("simulation_results_1_f0=0.4e7_x0=0.02/", "waveform_1_f0=0.4e7_x0=0.02/"),
     #("simulation_results_1_f0=0.7e7_x0=0.02/", "waveform_1_f0=0.7e7_x0=0.02/"),
     # 必要に応じてここに行を追加してください

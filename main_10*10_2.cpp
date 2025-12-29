@@ -18,7 +18,7 @@ int main() {
     const double total_time = 0.12;      // シミュレーション総時間 (秒)
 
     //出力フォルダ名定義
-    const string output_folder = "simulation_results_x0=0.02_linked_low eps/";
+    const string output_folder = "simulation_results_x0=0.02_linked_eps*0.6/";
 
     // フォルダ自動作成
     struct stat st;
@@ -35,13 +35,13 @@ int main() {
     //パラメータ掃引設定
     vector<double> epsilon_left_values;
     for (int i = 0; i < 10; i++) {
-        //epsilon_left_values.push_back( (2.0 + i * (28.0/9.0)) * 1e7 );//パターン1，2 
-        epsilon_left_values.push_back( (0.50 + i * (0.50)) * 1e7 );  //low parameters
+        epsilon_left_values.push_back( (2.0 + i * (28.0/9.0)) * 1e7 );//パターン1，2 
+        //epsilon_left_values.push_back( (0.50 + i * (0.50)) * 1e7 );  //low parameters
     } 
 
     vector<double> epsilon_right_values;
     for (int i = 0; i < 10; i++) {
-        epsilon_right_values.push_back( epsilon_left_values[i] * (1.0/2.0) );
+        epsilon_right_values.push_back( epsilon_left_values[i] * 0.6 );
     }
 
     vector<double> ps_values;
