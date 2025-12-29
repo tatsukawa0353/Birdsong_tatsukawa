@@ -74,7 +74,7 @@ def generate_spectrogram(csv_filepath, output_image_path):
         # --- フォントサイズの設定 ---
         label_size = 20   # 軸ラベル(Frequency, Time)の大きさ
         tick_size = 16    # 目盛りの数字の大きさ
-        title_size = 18   # タイトルの大きさ
+        title_size = 24   # タイトルの大きさ
         # ------------------------
 
         plt.ylabel('Frequency [Hz]', fontsize=label_size)
@@ -83,8 +83,26 @@ def generate_spectrogram(csv_filepath, output_image_path):
         plt.ylim(0, 10000)
         
         # タイトルに元のファイル名の一部を表示
-        title_filename = os.path.basename(csv_filepath).replace('.csv', '')
-        plt.title(f'Spectrogram of {title_filename}', fontsize=title_size)
+        base_name = os.path.basename(csv_filepath).replace('.csv', '')
+        
+        # --- ここで文字列置換を行って改行(\n)を入れます ---
+        # 例: sim_output_epsL_XXX_epsR_YYY_ps_ZZZ 
+        #  -> epsL=XXX 
+        #     epsR=YYY, ps=ZZZ
+        
+        # 1. "sim_output_" は共通で長いので削除（または短縮）
+        display_name = base_name.replace("sim_output_", "")
+        
+        # 2. "_epsR_" の部分を "\nepsR=" に置換して改行させる
+        display_name = display_name.replace("_epsR_", "\nepsR=")
+        
+        # 3. 他の部分も見やすく整形 ("_ps_" -> ", ps=", "epsL_" -> "epsL=")
+        display_name = display_name.replace("_ps_", ", ps=")
+        display_name = display_name.replace("epsL_", "epsL=")
+        
+        # タイトルを設定（フォントサイズも適用）
+        # 行間が詰まりすぎる場合は y=1.02 などで位置調整も可能ですが、通常はそのままで大丈夫です
+        plt.title(f'Spectrogram: {display_name}', fontsize=title_size)
         
         # 8. グラフを画像ファイルとして保存
         plt.savefig(output_image_path)

@@ -116,7 +116,7 @@ im = ax.pcolormesh(epsilon_axis, y_indices, result_matrix,
 LABEL_FONTSIZE = 20
 TICK_FONTSIZE = 18
 
-ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE)
+ax.set_xlabel('Left Epsilon (ε)', fontsize=LABEL_FONTSIZE)
 ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE)
 
 # --- X軸の設定 (実数値スケールなので Matplotlib が自動調整するが、ラベルを間引く) ---
