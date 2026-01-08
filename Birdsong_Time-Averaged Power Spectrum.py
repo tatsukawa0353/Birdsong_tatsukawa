@@ -12,10 +12,10 @@ import os
 
 # --- 設定項目 ---
 # 読み込むデータがあるフォルダ
-INPUT_FOLDER = "simulation_results_1_f0=0.7e7_x0=0.02/"
+INPUT_FOLDER = "simulation_results_x0=0.02_linked_eps*0.6/"
 
 # グラフ画像を保存するフォルダ
-OUTPUT_FOLDER = "psd_graphs_1_f0=0.7e7_x0=0.02_linear/" # フォルダ名を変更
+OUTPUT_FOLDER = "psd_graphs_x0=0.02_linked_eps*0.6_linear/" # フォルダ名を変更
 
 # スペクトログラム生成パラメータ
 nperseg = 245760
