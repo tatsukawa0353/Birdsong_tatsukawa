@@ -15,7 +15,8 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     // 右音源 (right)  ~Fig.5の場合はミュートする~
     //right.params = {1.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
     right.params = left.params;
-    right.params.f0 = 0.1e7; //筋肉に力を入れて絞めるイメージ
+    right.params.epsilon = 1.61e8;
+    //right.params.f0 = 0.1e7; //筋肉に力を入れて絞めるイメージ
     right.x = 0.0;
     right.y = 0.0;
 
