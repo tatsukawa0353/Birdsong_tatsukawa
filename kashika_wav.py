@@ -10,7 +10,7 @@ from scipy.io import wavfile
 # ==========================================
 
 # 1. ファイル設定
-wav_filename = 'input_sound_edited.csv' # 拡張子は実際のファイルに合わせてください(.wav等)
+wav_filename = 'Wsst_1.wav' # 拡張子は実際のファイルに合わせてください(.wav等)
 
 # 2. シミュレーション条件への合わせ込み
 target_fs = 1e7  # 10^7 Hz (10 MHz)
@@ -22,16 +22,16 @@ fig_size = (10, 10)       # 画像の縦横サイズ (インチ)
 label_fontsize = 18      # 軸ラベル（Time, Frequency）の大きさ
 title_fontsize = 20      # タイトルの文字の大きさ
 tick_fontsize = 14       # 目盛りの数字の大きさ
-font_family = 'Arial'    # フォントの種類（'Times New Roman', 'Arial', 'Meiryo'など）
+#font_family = 'Arial'    # フォントの種類（'Times New Roman', 'Arial', 'Meiryo'など）
 
 # 4. カラーマップ設定
 cmap = 'gray_r'
-vmax = 0
-vmin = -80
+vmax = -35
+vmin = -38.002
 # ==========================================
 
 # フォント設定を適用
-plt.rcParams['font.family'] = font_family
+#plt.rcParams['font.family'] = font_family
 plt.rcParams['font.size'] = tick_fontsize # 全体の基準サイズ
 
 # --- データ処理（前回と同じ） ---
@@ -105,6 +105,6 @@ plt.tick_params(direction='in')
 plt.ylim(0, 10000)
 
 # 保存
-output_filename = 'sonogram-wav-styled.png'
+output_filename = 'sonogram-wav-Wsst_1.png'
 plt.savefig(output_filename, bbox_inches='tight', dpi=300) # dpi=300で高画質保存
 print(f"グラフを {output_filename} として保存しました。")
