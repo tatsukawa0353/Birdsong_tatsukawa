@@ -56,7 +56,7 @@ plt.pcolormesh(t, f, db_Sxx, shading='gouraud', cmap=cmap, vmin=vmin, vmax=vmax)
 
 plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
-plt.ylim(0, 10000)
+plt.ylim(0, 30000)
 plt.title(f'Spectrogram of Simulated Birdsong (pi) ')
 #plt.colorbar(label='Intensity [dB]')
 
