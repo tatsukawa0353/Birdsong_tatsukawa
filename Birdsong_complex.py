@@ -32,7 +32,7 @@ START_TIME = 0.025
 
 # --- 【追加】フィルタリング設定 ---
 # この周波数以下のデータ（DC成分やドリフト）を無視します
-MIN_FREQ_THRESHOLD = 100.0  
+MIN_FREQ_THRESHOLD = 400.0  
 # 指定周波数以上のパワーの合計がこれ以下なら「発振なし(無音)」とみなします
 MIN_POWER_THRESHOLD = 1e-5 
 

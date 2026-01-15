@@ -22,66 +22,13 @@ ANALYSIS_SETS = [
     # --- セット1 ---
     {
         "input_folders": [
-            "simulation_results_1_f0=0.1e7_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=0.1e7_x0=0.02/"
+            "simulation_results_x0=0.02_linked_low eps*0.6/",
+            "simulation_results_x0=0.02_linked_eps*0.6/"
         ],
-        "output_csv": "complexity_data_1_f0=0.1e7.csv",
-        "output_img": "complexity_3d_1_f0=0.1e7.png"
+        "output_csv": "complexity_data_linked_eps_0.6.csv",
+        "output_img": "complexity_3d_linked_eps_0.6.png"
     },
-    # --- セット2 ---
-    {
-        "input_folders": [
-            "simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=0.4e7_x0=0.02/"
-        ],
-        "output_csv": "complexity_data_1_f0=0.4e7.csv",
-        "output_img": "complexity_3d_1_f0=0.4e7.png"
-    },
-    # --- セット3 ---
-   {
-        "input_folders": [
-            "simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=0.7e7_x0=0.02/"
-        ],
-        "output_csv": "complexity_data_1_f0=0.7e7.csv",
-        "output_img": "complexity_3d_1_f0=0.7e7.png"
-    },
-    # --- セット4 ---
-   {
-        "input_folders": [
-            "simulation_results_1_f0=0.05e7_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=0.05e7_x0=0.02/"
-        ],
-        "output_csv": "complexity_data_1_f0=0.05e7.csv",
-        "output_img": "complexity_3d_1_f0=0.05e7.png"
-    },
-    # --- セット5 ---
-   {
-        "input_folders": [
-            "simulation_results_1_f0=4.9e4_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=4.9e4_x0=0.02/"
-        ],
-        "output_csv": "complexity_data_1_f0=4.9e4.csv",
-        "output_img": "complexity_3d_1_f0=4.9e4.png"
-    },
-    # --- セット6 ---
-   {
-        "input_folders": [
-            "simulation_results_1_x0=0.02_low parameters epsilon/",
-            "simulation_results_1_x0=0.02/"
-        ],
-        "output_csv": "complexity_data_1.csv",
-        "output_img": "complexity_3d_1.png"
-    },
-    # --- セット7 ---
-   {
-        "input_folders": [
-            "simulation_results_2_x0=0.02_low parameters epsilon/",
-            "simulation_results_2_x0=0.02/"
-        ],
-        "output_csv": "complexity_data_2.csv",
-        "output_img": "complexity_3d_2.png"
-    },
+    # 必要に応じてセットを追加してください
 ]
 
 # 分析パラメータ
@@ -93,15 +40,10 @@ window_type = 'blackmanharris'
 START_TIME = 0.025
 
 # ==========================================
-# 関数定義（ここを修正済み）
+# 関数定義（検問400Hz -> 計算100Hz）
 # ==========================================
 
 def calculate_spectral_entropy_limited(csv_filepath):
-    """ 
-    改良版: 
-    1. 400Hz以上でパワーチェックを行い、DCドリフトノイズを弾く
-    2. パスした場合のみ、100Hz以上を使ってエントロピー計算を行う
-    """
     try:
         df = pd.read_csv(csv_filepath)
         if df.empty or 'pi' not in df or 'time' not in df:
@@ -115,16 +57,16 @@ def calculate_spectral_entropy_limited(csv_filepath):
         sampling_rate = 1.0 / (df['time'].values[1] - df['time'].values[0])
         pi = df_segment['pi'].values 
 
-        # 1. スペクトログラム計算
+        # スペクトログラム計算
         f, t, Sxx = spectrogram(pi, fs=sampling_rate, window=window_type, nperseg=nperseg_local, noverlap=noverlap_local)
         
-        # 全周波数の平均スペクトルを取得
+        # 平均スペクトル
         mean_spectrum_full = np.mean(Sxx, axis=1)
 
         # ---------------------------------------------------------
-        # ★ステップ1: 「検問」 (100Hz以上のピークパワーで判定)
+        # ★ステップ1: 「検問」 (ドリフト対策)
         # ---------------------------------------------------------
-        # 0Hz付近の巨大ノイズを無視するため、100Hz～22kHzの範囲だけをチェックします。
+        # 0Hz付近の巨大な波を無視するため、判定だけは「100Hz以上」で行う
         CHECK_MIN_FREQ = 100.0
         CHECK_MAX_FREQ = 22050.0
 
@@ -134,21 +76,17 @@ def calculate_spectral_entropy_limited(csv_filepath):
         if spectrum_for_check.size == 0:
             return 0.0
 
-        # この範囲内の最大値（ピーク）を取得
+        # ピークパワーで判定（閾値20万）
         peak_power_in_band = np.max(spectrum_for_check)
-
-        # 閾値設定: 
-        # ノイズ床(約5e4) < 閾値(2e5) < 弱い信号(約5e6)
-        # これにより、ただのドリフトは0になり、弱い信号は通過します。
         SILENCE_THRESHOLD = 2e5 
 
         if peak_power_in_band < SILENCE_THRESHOLD:
-            return 0.0  # 音が無いとみなして終了
+            return 0.0  # 音が無いとみなす
 
         # ---------------------------------------------------------
-        # ★ステップ2: 「計算」 (検問を通過したデータのみ)
+        # ★ステップ2: 「計算」 (本番)
         # ---------------------------------------------------------
-        # 計算には100Hz以上のデータを使います（低音成分を含めるため）
+        # ★ここを「100Hz」に設定（低音成分もしっかり拾う！）
         CALC_MIN_FREQ = 100.0
         CALC_MAX_FREQ = 22050.0
         
@@ -182,8 +120,9 @@ def calculate_spectral_entropy_limited(csv_filepath):
 # メイン処理
 # ==========================================
 
-print(f"解析モード: 2段階チェック方式 (検問:400Hz+ / 計算:100Hz+)")
-pattern = re.compile(r"sim_output_eps_([0-9\.e\+\-]+)_ps_([0-9\.e\+\-]+)\.csv")
+print(f"解析モード: Linkedモデル (epsL使用, 計算100Hz～)")
+# 正規表現：epsL と epsR に対応
+pattern = re.compile(r"sim_output_epsL_([0-9\.e\+\-]+)_epsR_([0-9\.e\+\-]+)_ps_([0-9\.e\+\-]+)\.csv")
 
 for set_idx, config in enumerate(ANALYSIS_SETS):
     target_folders = config["input_folders"]
@@ -192,9 +131,7 @@ for set_idx, config in enumerate(ANALYSIS_SETS):
 
     print("\n" + "="*60)
     print(f"解析セット {set_idx + 1} を処理中...")
-    print(f"  入力フォルダ数: {len(target_folders)}")
-    print(f"  出力CSV: {output_csv}")
-    print(f"  出力画像: {output_img}")
+    print(f"  入力フォルダ: {target_folders}")
     print("="*60)
 
     results = [] 
@@ -213,18 +150,24 @@ for set_idx, config in enumerate(ANALYSIS_SETS):
             match = pattern.match(filename)
             if not match: continue
 
-            raw_eps = float(match.group(1))
-            raw_ps = float(match.group(2))
-            eps = float(f"{raw_eps:.1e}")
+            # epsL, epsR, ps を取得
+            raw_epsL = float(match.group(1))
+            # raw_epsR = float(match.group(2)) # 今回は使わない
+            raw_ps = float(match.group(3))
+
+            epsL = float(f"{raw_epsL:.1e}")
             ps = float(f"{raw_ps:.1e}")
             
+            # 複雑度計算
             complexity = calculate_spectral_entropy_limited(csv_filepath)
             
             results.append({
-                'epsilon': eps, 
+                'epsilon': epsL, # X軸には epsL を使う
                 'ps': ps, 
                 'raw_complexity': complexity
             })
+            
+            if (i+1) % 100 == 0: print(f"    Processing... {i+1} files done")
 
     # --- データ保存 ---
     if not results:
@@ -256,7 +199,7 @@ for set_idx, config in enumerate(ANALYSIS_SETS):
     x_pos, y_pos, z_pos = [], [], []
     dx, dy, dz = [], [], []
 
-    # バーの太さ計算
+    # バーの太さ・間隔計算
     ps_diffs = np.diff(ps_axis) if len(ps_axis) > 1 else np.array([1.0])
     ps_diffs = np.append(ps_diffs, ps_diffs[-1]) if len(ps_diffs) > 0 else np.array([1.0])
     
@@ -264,10 +207,10 @@ for set_idx, config in enumerate(ANALYSIS_SETS):
     eps_diffs = np.append(eps_diffs, eps_diffs[-1]) if len(eps_diffs) > 0 else np.array([1.0])
 
     for i, ps in enumerate(ps_axis):
-        current_dy = ps_diffs[i] * 0.8
+        current_dy = ps_diffs[i] * 0.8 # 細くする
         for j, eps in enumerate(epsilon_axis):
             val = Z_matrix[i, j]
-            current_dx = eps_diffs[j] * 0.8
+            current_dx = eps_diffs[j] * 0.8 # 細くする
             
             x_pos.append(eps)
             y_pos.append(ps)
@@ -314,11 +257,11 @@ for set_idx, config in enumerate(ANALYSIS_SETS):
 
     LABEL_FONTSIZE = 14
     TICK_FONTSIZE = 10
-    ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE, labelpad=20)
+    ax.set_xlabel('Left Epsilon (ε)', fontsize=LABEL_FONTSIZE, labelpad=20)
     ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE, labelpad=20)
     ax.set_zlabel('Complexity (0-22kHz)', fontsize=LABEL_FONTSIZE, labelpad=10)
 
-    # 軸目盛：3つおきに設定
+    # 軸目盛：3つおき
     x_ticks = epsilon_axis[::3]
     ax.set_xticks(x_ticks)
     ax.set_xticklabels([f"{val:.1e}" for val in x_ticks], rotation=45, fontsize=TICK_FONTSIZE)
@@ -329,7 +272,7 @@ for set_idx, config in enumerate(ANALYSIS_SETS):
 
     ax.set_zlim(0, 1.0)
     ax.view_init(elev=30, azim=-60)
-    plt.title(f'3D Complexity Map\n{output_img}', fontsize=16)
+    plt.title(f'3D Complexity Map (Linked)\n{output_img}', fontsize=16)
     plt.tight_layout()
 
     plt.savefig(output_img, dpi=150)
