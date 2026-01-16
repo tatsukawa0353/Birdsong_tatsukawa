@@ -140,7 +140,7 @@ def calculate_spectral_entropy_limited(csv_filepath):
         # 閾値設定: 
         # ノイズ床(約5e4) < 閾値(2e5) < 弱い信号(約5e6)
         # これにより、ただのドリフトは0になり、弱い信号は通過します。
-        SILENCE_THRESHOLD = 2e5 
+        SILENCE_THRESHOLD = 1e5 
 
         if peak_power_in_band < SILENCE_THRESHOLD:
             return 0.0  # 音が無いとみなして終了
