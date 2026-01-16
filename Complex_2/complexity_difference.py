@@ -4,8 +4,8 @@ import numpy as np
 
 # データの読み込み
 # (ファイル名はアップロードされたものに合わせています)
-df1 = pd.read_csv('complexity_data_1_f0=4.9e4.csv')
-df2 = pd.read_csv('complexity_data_2.csv')
+df1 = pd.read_csv('complexity_data_linked_eps_0.6.csv')
+df2 = pd.read_csv('complexity_data_1_f0=4.9e4.csv')
 
 # データの結合
 merged_df = pd.merge(df1, df2, on=['epsilon', 'ps'], suffixes=('_1', '_2'))
@@ -40,7 +40,7 @@ y_labels = heatmap_data.index
 x_labels = heatmap_data.columns
 
 # プロット
-fig, ax = plt.subplots(figsize=(12, 10))
+fig, ax = plt.subplots(figsize=(16, 8))
 
 # カラーマップの設定 (0中心)
 max_abs = np.nanmax(np.abs(data_values))
@@ -71,5 +71,5 @@ ax.set_xlabel("Epsilon")
 ax.set_ylabel("PS")
 
 plt.tight_layout()
-plt.savefig('complexity_difference_heatmap_fo=4.9e4.png')
+plt.savefig('complexity_difference_heatmap_eps*0.6.png')
 print("保存完了: complexity_difference_heatmap.png")
