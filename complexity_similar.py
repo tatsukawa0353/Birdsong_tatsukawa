@@ -4,9 +4,9 @@ import numpy as np
 # ==========================================
 # 設定: ファイル名をここで指定してください
 # ==========================================
-wav_file_path = 'wav_complexity_results_22k_limited.csv' 
-sim_file_path = 'complexity_data_linked_eps_0.6.csv'
-output_file_path = 'wav_sim_matches_top5_linked_eps_0.6.csv'
+wav_file_path = 'wav_complexity_results_12k_limited.csv' 
+sim_file_path = 'complexity_data_2.csv'
+output_file_path = 'wav_sim_matches_top5_2.csv'
 TOP_K = 5
 # ==========================================
 

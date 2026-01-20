@@ -6,7 +6,7 @@ import os
 # 設定: ここを変更してください
 # ==========================================
 # さえずりの複雑度データのファイル名
-wav_file_path = 'wav_complexity_results_22k_limited.csv' 
+wav_file_path = 'wav_complexity_results_12k_limited.csv' 
 
 # シミュレーションの複雑度データのファイルリスト
 # 比較したいファイルを [] の中にカンマ区切りで列挙してください

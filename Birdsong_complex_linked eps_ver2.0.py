@@ -37,7 +37,7 @@ noverlap_local = 184320
 window_type = 'blackmanharris'
 
 # ★解析開始時刻（秒）
-START_TIME = 0.025
+START_TIME = 0.0
 
 # ==========================================
 # 関数定義（検問400Hz -> 計算100Hz）
@@ -67,8 +67,8 @@ def calculate_spectral_entropy_limited(csv_filepath):
         # ★ステップ1: 「検問」 (ドリフト対策)
         # ---------------------------------------------------------
         # 0Hz付近の巨大な波を無視するため、判定だけは「100Hz以上」で行う
-        CHECK_MIN_FREQ = 100.0
-        CHECK_MAX_FREQ = 22050.0
+        CHECK_MIN_FREQ = 250.0
+        CHECK_MAX_FREQ = 12000.0
 
         check_indices = (f >= CHECK_MIN_FREQ) & (f <= CHECK_MAX_FREQ)
         spectrum_for_check = mean_spectrum_full[check_indices]
@@ -78,7 +78,7 @@ def calculate_spectral_entropy_limited(csv_filepath):
 
         # ピークパワーで判定（閾値20万）
         peak_power_in_band = np.max(spectrum_for_check)
-        SILENCE_THRESHOLD = 2e5 
+        SILENCE_THRESHOLD = 1e5 
 
         if peak_power_in_band < SILENCE_THRESHOLD:
             return 0.0  # 音が無いとみなす
@@ -87,8 +87,8 @@ def calculate_spectral_entropy_limited(csv_filepath):
         # ★ステップ2: 「計算」 (本番)
         # ---------------------------------------------------------
         # ★ここを「100Hz」に設定（低音成分もしっかり拾う！）
-        CALC_MIN_FREQ = 100.0
-        CALC_MAX_FREQ = 22050.0
+        CALC_MIN_FREQ = 250.0
+        CALC_MAX_FREQ = 12000.0
         
         valid_indices = (f >= CALC_MIN_FREQ) & (f <= CALC_MAX_FREQ)
         Sxx_filtered = Sxx[valid_indices, :]
@@ -120,7 +120,7 @@ def calculate_spectral_entropy_limited(csv_filepath):
 # メイン処理
 # ==========================================
 
-print(f"解析モード: Linkedモデル (epsL使用, 計算100Hz～)")
+print(f"解析モード: Linkedモデル (epsL使用, 計算250Hz～)")
 # 正規表現：epsL と epsR に対応
 pattern = re.compile(r"sim_output_epsL_([0-9\.e\+\-]+)_epsR_([0-9\.e\+\-]+)_ps_([0-9\.e\+\-]+)\.csv")
 

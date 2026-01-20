@@ -90,7 +90,7 @@ noverlap_local = 184320
 window_type = 'blackmanharris'
 
 # ★解析開始時刻（秒）
-START_TIME = 0.025
+START_TIME = 0.0
 
 # ==========================================
 # 関数定義（ここを修正済み）
@@ -99,8 +99,8 @@ START_TIME = 0.025
 def calculate_spectral_entropy_limited(csv_filepath):
     """ 
     改良版: 
-    1. 400Hz以上でパワーチェックを行い、DCドリフトノイズを弾く
-    2. パスした場合のみ、100Hz以上を使ってエントロピー計算を行う
+    1. 250Hz以上でパワーチェックを行い、DCドリフトノイズを弾く
+    2. パスした場合のみ、250Hz以上を使ってエントロピー計算を行う
     """
     try:
         df = pd.read_csv(csv_filepath)
@@ -124,9 +124,9 @@ def calculate_spectral_entropy_limited(csv_filepath):
         # ---------------------------------------------------------
         # ★ステップ1: 「検問」 (100Hz以上のピークパワーで判定)
         # ---------------------------------------------------------
-        # 0Hz付近の巨大ノイズを無視するため、100Hz～22kHzの範囲だけをチェックします。
-        CHECK_MIN_FREQ = 100.0
-        CHECK_MAX_FREQ = 22050.0
+        # 0Hz付近の巨大ノイズを無視するため、250Hz～12kHzの範囲だけをチェックします。
+        CHECK_MIN_FREQ = 250.0
+        CHECK_MAX_FREQ = 12000.0
 
         check_indices = (f >= CHECK_MIN_FREQ) & (f <= CHECK_MAX_FREQ)
         spectrum_for_check = mean_spectrum_full[check_indices]
@@ -146,11 +146,11 @@ def calculate_spectral_entropy_limited(csv_filepath):
             return 0.0  # 音が無いとみなして終了
 
         # ---------------------------------------------------------
-        # ★ステップ2: 「計算」 (検問を通過したデータのみ)
+        # ★ステップ2: 「複雑度計算」 (検問を通過したデータのみ)
         # ---------------------------------------------------------
         # 計算には100Hz以上のデータを使います（低音成分を含めるため）
-        CALC_MIN_FREQ = 100.0
-        CALC_MAX_FREQ = 22050.0
+        CALC_MIN_FREQ = 250.0
+        CALC_MAX_FREQ = 12000.0
         
         valid_indices = (f >= CALC_MIN_FREQ) & (f <= CALC_MAX_FREQ)
         Sxx_filtered = Sxx[valid_indices, :]
