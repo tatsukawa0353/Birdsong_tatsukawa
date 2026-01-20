@@ -7,9 +7,9 @@ import numpy as np
 # さえずりの複雑度データのファイル名
 wav_file_path = 'wav_complexity_results_12k_limited.csv' 
 # シミュレーションの複雑度データのファイル名
-sim_file_path = 'complexity_data_linked_eps_0.6.csv'
+sim_file_path = 'complexity_data_1_f0=0.7e7.csv'
 # 出力するファイル名
-output_file_path = 'wav_sim_matches_linked_eps_0.6_95%.csv'
+output_file_path = 'wav_sim_matches_1_fo=0.7e7_95%.csv'
 
 # 類似度が何パーセント以上のものを抽出するか
 SIMILARITY_THRESHOLD = 95.0 
