@@ -7,11 +7,11 @@ import matplotlib.colors as mcolors
 import os
 
 # --- 【重要】あなたが手動で作成したCSVファイルの名前 ---
-MANUAL_DATA_FILE = "parameter_map_1_x0=0.02_f0=4.9e4.csv"
+MANUAL_DATA_FILE = "parameter_map_1_x0=0.02 add.csv"
 # --------------------------------------------------
 
 # 最終的に出力するパラメータマップの画像ファイル名
-OUTPUT_IMAGE = "parameter_map_1_x0=0.02_f0=4.9e4.png"
+OUTPUT_IMAGE = "parameter_map_1_x0=0.02 add.png"
 
 # --- 新しいカテゴリ定義 (8種類) ---
 category_labels = {
@@ -116,7 +116,7 @@ im = ax.pcolormesh(epsilon_axis, y_indices, result_matrix,
 LABEL_FONTSIZE = 20
 TICK_FONTSIZE = 18
 
-ax.set_xlabel('Left Epsilon (ε)', fontsize=LABEL_FONTSIZE)
+ax.set_xlabel('Epsilon (ε)', fontsize=LABEL_FONTSIZE)
 ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE)
 
 # --- X軸の設定 (実数値スケールなので Matplotlib が自動調整するが、ラベルを間引く) ---
@@ -141,7 +141,7 @@ cbar = fig.colorbar(im, ticks=[0, 1, 2, 3, 4])
 cbar.set_ticklabels([category_labels[i] for i in range(5)])
 cbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
-ax.set_title('Parameter Map of Birdsong Simulation : Two bronchi x0=0.02 ', fontsize=21)
+#ax.set_title('Parameter Map of Birdsong Simulation : Two bronchi x0=0.02 ', fontsize=21)
 fig.tight_layout()
 
 fig.savefig(OUTPUT_IMAGE)
