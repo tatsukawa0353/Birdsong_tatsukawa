@@ -259,7 +259,7 @@ for set_idx, config in enumerate(ANALYSIS_SETS):
     TICK_FONTSIZE = 10
     ax.set_xlabel('Left Epsilon (ε)', fontsize=LABEL_FONTSIZE, labelpad=20)
     ax.set_ylabel('Pressure (ps)', fontsize=LABEL_FONTSIZE, labelpad=20)
-    ax.set_zlabel('Complexity (0-22kHz)', fontsize=LABEL_FONTSIZE, labelpad=10)
+    ax.set_zlabel('SE Value', fontsize=LABEL_FONTSIZE, labelpad=10)
 
     # 軸目盛：3つおき
     x_ticks = epsilon_axis[::3]
