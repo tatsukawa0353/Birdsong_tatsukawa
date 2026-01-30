@@ -18,7 +18,7 @@ int main() {
     const double total_time = 0.12;      // シミュレーション総時間 (秒)
 
     //出力フォルダ名定義
-    const string output_folder = "simulation_results_1_f0=4.9e4_x0=0.02/";
+    const string output_folder = "simulation_results_1_f0=1.0e7_x0=0.02_sr(t)/";
 
     // フォルダ自動作成
     struct stat st;
@@ -65,7 +65,8 @@ int main() {
     {
     BirdsongModel model(dt, T_delay, total_time, current_epsilon, current_ps, output_filename);
 
-    model.saveData();
+    //model.saveData();
+    model.saveData(0.0, 0.0);
 
     cout << "Simulation starting..." << endl;
     
