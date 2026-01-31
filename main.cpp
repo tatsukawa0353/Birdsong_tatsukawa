@@ -14,7 +14,8 @@ int main() {
     // モデルのインスタンスを作成
     BirdsongModel model(dt, T_delay, total_time);
 
-    model.saveData();
+    //model.saveData();
+    model.saveData(0.0, 0.0);
 
     cout << "Simulation starting..." << endl;
     

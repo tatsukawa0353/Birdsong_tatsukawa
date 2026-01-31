@@ -8,7 +8,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
 
     // パラメータ設定
     // 左音源 (left)
-    left.params = {4.5e7, 2.0e4, 2.0e8, 4.9e4, 3.22e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 0.01, 1.2e6, 1.5e3};
+    left.params = {1.5e7, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 0.01, 1.2e6, 1.5e3};
     left.x = 0.0; // 初期位置
     left.y = 0.0; // 初期速度
 
@@ -16,7 +16,7 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
     //right.params = {1.4e8, 2.0e4, 2.0e8, 4.9e4, 6.0e6, 0.04, 0.1, 1.0e-4, 5.0e-3, 1.0, 5.0e-3, 1.2e6, 1.5e3};
     right.params = left.params;
     //right.params.epsilon = 1.61e8;
-    right.params.f0 = 1.0e7; //筋肉に力を入れて絞めるイメージ
+    right.params.f0 = 4.9e4; //筋肉に力を入れて絞めるイメージ
     right.x = 0.0;
     right.y = 0.0;
 
@@ -29,7 +29,8 @@ BirdsongModel::BirdsongModel(double dt, double T_delay, double total_time)
 
     // 出力ファイルを開く
     outfile.open("simulation_output_test1.csv");
-    outfile << "time,pi,x_left,y_left,x_right,y_right\n";
+    //outfile << "time,pi,x_left,y_left,x_right,y_right\n";
+    outfile << "time,pi,s_l,s_r,x_left,y_left,x_right,y_right\n";
 }
 
 // 論文の式(62)~(65)に対応する計算
@@ -130,18 +131,26 @@ void BirdsongModel::step() {
     double pi = pi_tilde_next + left.params.beta * (-left.params.tau * dy_l) + 
                          right.params.beta * (-right.params.tau * dy_r);
 
+    // 右側（閉じている側）の圧力擾乱 s_r(t) の算出
+    // 右側の膜の変位 x_r や速度 y_r は $f_0$ により微小ですが、
+    // 気管からの反射項 gamma * pi_delayed との干渉がここに現れます。
+    double s_l = left.params.alpha * (left.x - left.params.tau * left.y) + 
+             left.params.beta * (left.y - left.params.tau * dy_l); 
+
+    double s_r = right.params.alpha * (right.x - right.params.tau * right.y) + 
+             right.params.beta * (right.y - right.params.tau * dy_r); 
+
     // 4. p_i(t+dt) を履歴に保存
     pi_history[current_pos] = pi;
     current_pos = (current_pos + 1) % history_size;
 
     // 5. データを保存
-         //if (static_cast<int>(time / dt) % 10 == 0) {
-            saveData();
+        saveData(s_l, s_r);
     //}
 }
 
-void BirdsongModel::saveData() {
+void BirdsongModel::saveData(double s_l, double s_r) {
     // 現在の時刻(t+dt)と、それに対応する最新のpiを保存
     int latest_pi_pos = (current_pos - 1 + history_size) % history_size;
-    outfile << time << "," << pi_history[latest_pi_pos] << "," << left.x << "," << left.y << "," << right.x << "," << right.y << "\n";
+    outfile << time << "," << pi_history[latest_pi_pos] << "," << s_l << "," << s_r << "," << left.x << "," << left.y << "," << right.x << "," << right.y << "\n";
 }
