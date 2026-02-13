@@ -29,7 +29,8 @@ public:
     void step();
 
     // 結果をファイルに出力
-    void saveData(double s_l, double s_r);
+    void saveData();
+    //void saveData(double s_l, double s_r);
 
 private:
     Source left, right; // 左右の音源

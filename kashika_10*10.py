@@ -3,20 +3,32 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import scienceplots
 from scipy.signal import spectrogram
 import glob
 import os
+
+# 2. スタイル適用（既存の設定より前に書くのがポイント）
+plt.style.use(['science', 'ieee'])
 
 # =========================================================
 # --- ここで複数のフォルダペアを設定します ---
 # リストの中に ("入力フォルダパス", "出力フォルダパス"), の形で記述してください
 FOLDER_PAIRS = [
-    ("simulation_results_1_x0=0.02_low parameters epsilon/", "spectrogram_images__1_x0=0.02_low parameters epsilon 0/"),
-    #("simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.4e7_x0=0.02_low epsilon/"),
-    #("simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.7e7_x0=0.02_low epsilon/"),
-    #("simulation_results_x0=0.02_linked_eps/", "spectrogram_images_x0=0.02_linked_eps"),
-    #("simulation_results_1_f0=0.4e7_x0=0.02/", "spectrogram_images_1_f0=0.4e7_x0=0.02"),
-    #("simulation_results_1_f0=0.7e7_x0=0.02/", "spectrogram_images_1_f0=0.7e7_x0=0.02"),
+    ("simulation_results_1_x0=0.02_low parameters epsilon/", "spectrogram_images_1_x0=0.02_low parameters epsilon/"),
+    ("simulation_results_2_x0=0.02_low parameters epsilon/", "spectrogram_images_2_x0=0.02_low parameters epsilon/"),
+    ("simulation_results_1_f0=4.9e4_x0=0.02_low epsilon/", "spectrogram_images_1_f0=4.9e4_x0=0.02_low epsilon/"),
+    ("simulation_results_1_f0=0.05e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.05e7_x0=0.02_low epsilon/"),
+    ("simulation_results_1_f0=0.1e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.1e7_x0=0.02_low epsilon/"),
+    ("simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.4e7_x0=0.02_low epsilon/"),
+    ("simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/", "spectrogram_images_1_f0=0.7e7_x0=0.02_low epsilon/"),
+    ("simulation_results_1_x0=0.02/", "spectrogram_images_1_x0=0.02/"),
+    ("simulation_results_2_x0=0.02/", "spectrogram_images_2_x0=0.02/"),
+    ("simulation_results_1_f0=4.9e4_x0=0.02/", "spectrogram_images_1_f0=4.9e4_x0=0.02"),
+    ("simulation_results_1_f0=0.05e7_x0=0.02/", "spectrogram_images_1_f0=0.05e7_x0=0.02"),
+    ("simulation_results_1_f0=0.1e7_x0=0.02/", "spectrogram_images_1_f0=0.1e7_x0=0.02"),
+    ("simulation_results_1_f0=0.4e7_x0=0.02/", "spectrogram_images_1_f0=0.4e7_x0=0.02"),
+    ("simulation_results_1_f0=0.7e7_x0=0.02/", "spectrogram_images_1_f0=0.7e7_x0=0.02"),
     # 必要に応じてここに行を追加してください
 ]
 
@@ -27,7 +39,7 @@ window_type = 'blackmanharris'
 
 # カラースケール設定 (全フォルダ共通)
 cmap = 'gray_r'
-vmax = 0
+vmax = -38.0
 vmin = -38.002
 # =========================================================
 
@@ -68,26 +80,45 @@ def generate_spectrogram(csv_filepath, output_image_path):
         db_Sxx = 10 * np.log10(Sxx_normalized + 1e-10)
 
         # 7. プロット
-        plt.figure(figsize=(10, 10))
+        plt.figure(figsize=(12, 12))
         plt.pcolormesh(t, f, db_Sxx, shading='gouraud', cmap=cmap, vmin=vmin, vmax=vmax)
         
         # --- フォントサイズの設定 ---
-        label_size = 20   # 軸ラベル(Frequency, Time)の大きさ
-        tick_size = 16    # 目盛りの数字の大きさ
-        title_size = 18   # タイトルの大きさ
+        label_size = 46   # 軸ラベル(Frequency, Time)の大きさ
+        tick_size = 46   # 目盛りの数字の大きさ
+        #title_size = 18   # タイトルの大きさ
         # ------------------------
 
+        for spine in plt.gca().spines.values():
+            spine.set_edgecolor('black')  # 枠の色を黒にする
+            spine.set_linewidth(2.0)      # 枠の太さを設定（お好みで調整してください）
+
+        # 目盛りの設定を追加
+        plt.tick_params(
+        axis='both', 
+        which='major', 
+        labelsize=tick_size, 
+        colors='black',      # 目盛りの数字と線を黒にする
+        width=2.0,
+        length=10,           # 目盛り線の長さ（お好みで）
+        direction='in',      # SciencePlots風に内向きにする
+        top=False,            # 上側にも目盛りを表示
+        right=False           # 右側にも目盛りを表示
+        )
+
         plt.ylabel('Frequency [Hz]', fontsize=label_size)
-        plt.xlabel('Time [sec]', fontsize=label_size)
+        plt.xlabel('Time [s]', fontsize=label_size)
         plt.tick_params(axis='both', which='major', labelsize=tick_size)
+        plt.xticks([0.02, 0.04, 0.06, 0.08, 0.10])
         plt.ylim(0, 10000)
+        plt.tight_layout()
         
         # タイトルに元のファイル名の一部を表示
-        title_filename = os.path.basename(csv_filepath).replace('.csv', '')
-        plt.title(f'Spectrogram of {title_filename}', fontsize=title_size)
+        #title_filename = os.path.basename(csv_filepath).replace('.csv', '')
+        #plt.title(f'Spectrogram of {title_filename}', fontsize=title_size)
         
         # 8. グラフを画像ファイルとして保存
-        plt.savefig(output_image_path)
+        plt.savefig(output_image_path, bbox_inches='tight', pad_inches=0.1)
         plt.close() # メモリを解放するために図を閉じる
 
     except Exception as e:

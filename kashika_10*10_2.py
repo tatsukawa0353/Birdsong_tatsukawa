@@ -3,9 +3,13 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import scienceplots  # 1. 追加
 from scipy.signal import spectrogram
 import glob
 import os
+
+# 2. スタイル適用（既存の設定より前に書くのがポイント）
+plt.style.use(['science', 'ieee'])
 
 # =========================================================
 # --- ここで複数のフォルダペアを設定します ---
@@ -68,19 +72,38 @@ def generate_spectrogram(csv_filepath, output_image_path):
         db_Sxx = 10 * np.log10(Sxx_normalized + 1e-10)
 
         # 7. プロット
-        plt.figure(figsize=(10, 10))
+        plt.figure(figsize=(12, 12))
         plt.pcolormesh(t, f, db_Sxx, shading='gouraud', cmap=cmap, vmin=vmin, vmax=vmax)
         
         # --- フォントサイズの設定 ---
-        label_size = 20   # 軸ラベル(Frequency, Time)の大きさ
-        tick_size = 16    # 目盛りの数字の大きさ
-        title_size = 24   # タイトルの大きさ
+        label_size = 46  # 軸ラベル(Frequency, Time)の大きさ
+        tick_size = 46   # 目盛りの数字の大きさ
+        #title_size = 24   # タイトルの大きさ
         # ------------------------
 
+        for spine in plt.gca().spines.values():
+            spine.set_edgecolor('black')  # 枠の色を黒にする
+            spine.set_linewidth(2.0)      # 枠の太さを設定（お好みで調整してください）
+
+        # 目盛りの設定を追加
+        plt.tick_params(
+        axis='both', 
+        which='major', 
+        labelsize=tick_size, 
+        colors='black',      # 目盛りの数字と線を黒にする
+        width=2.0,
+        length=10,           # 目盛り線の長さ（お好みで）
+        direction='in',      # SciencePlots風に内向きにする
+        top=False,            # 上側にも目盛りを表示
+        right=False           # 右側にも目盛りを表示
+        )
+
         plt.ylabel('Frequency [Hz]', fontsize=label_size)
-        plt.xlabel('Time [sec]', fontsize=label_size)
+        plt.xlabel('Time [s]', fontsize=label_size)
         plt.tick_params(axis='both', which='major', labelsize=tick_size)
+        plt.xticks([0.02, 0.04, 0.06, 0.08, 0.10])
         plt.ylim(0, 10000)
+        plt.tight_layout()
         
         # タイトルに元のファイル名の一部を表示
         base_name = os.path.basename(csv_filepath).replace('.csv', '')
@@ -102,10 +125,10 @@ def generate_spectrogram(csv_filepath, output_image_path):
         
         # タイトルを設定（フォントサイズも適用）
         # 行間が詰まりすぎる場合は y=1.02 などで位置調整も可能ですが、通常はそのままで大丈夫です
-        plt.title(f'Spectrogram: {display_name}', fontsize=title_size)
+        #$plt.title(f'Spectrogram: {display_name}', fontsize=title_size)
         
         # 8. グラフを画像ファイルとして保存
-        plt.savefig(output_image_path)
+        plt.savefig(output_image_path, bbox_inches='tight', pad_inches=0.1)
         plt.close() # メモリを解放するために図を閉じる
 
     except Exception as e:

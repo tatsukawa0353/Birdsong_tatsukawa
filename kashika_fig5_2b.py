@@ -3,16 +3,20 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import scienceplots  # 1. 追加
 from scipy.signal import spectrogram
+
+# 2. スタイル適用（既存の設定より前に書くのがポイント）
+plt.style.use(['science', 'ieee'])
 
 # --- ここで設定を変更できます ---
 # 読み込むCSVファイル名を指定
 # 例: 'simulation_output_fig5a_final.csv'
-csv_filename = 'simulation-rk4_output_1(b)_03s.csv'
+csv_filename = 'simulation-rk4_output_1(b).csv'
 
 # スペクトログラムの解像度
-nperseg = 737280#245760
-noverlap = 552960#184320
+nperseg = 245760
+noverlap = 184320
 # --------------------------------
 
 # CSVファイルを読み込む
@@ -51,15 +55,37 @@ vmax = -40
 vmin = -41
 
 # プロット
-plt.figure(figsize=(10, 10))
+plt.figure(figsize=(12, 12))
 plt.pcolormesh(t, f, db_Sxx, shading='gouraud', cmap=cmap, vmin=vmin, vmax=vmax)
 
-plt.ylabel('Frequency [Hz]')
-plt.xlabel('Time [sec]')
+# --- フォントサイズの設定 ---
+label_size = 46   # 軸ラベル(Frequency, Time)の大きさ
+tick_size = 46 # 目盛りの数字の大きさ
+
+for spine in plt.gca().spines.values():
+        spine.set_edgecolor('black')  # 枠の色を黒にする
+        spine.set_linewidth(2.0)      # 枠の太さを設定（お好みで調整してください）
+
+# 目盛りの設定を追加
+plt.tick_params(
+    axis='both', 
+    which='major', 
+    labelsize=tick_size, 
+    colors='black',      # 目盛りの数字と線を黒にする
+    width=2.0,
+    length=10,           # 目盛り線の長さ（お好みで）
+    direction='in',      # SciencePlots風に内向きにする
+    top=False,            # 上側にも目盛りを表示
+    right=False           # 右側にも目盛りを表示
+)
+
+plt.ylabel('Frequency [Hz]', fontsize=label_size)
+plt.xlabel('Time [s]', fontsize=label_size)
+plt.tick_params(axis='both', which='major', labelsize=tick_size)
+plt.xticks([0.02, 0.04, 0.06, 0.08, 0.10])
 plt.ylim(0, 10000)
-plt.title(f'Spectrogram of Simulated Birdsong (pi) Fig.5(b)')
-#plt.colorbar(label='Intensity [dB]')
+plt.tight_layout()
 
 # グラフを画像ファイルとして保存
-plt.savefig('sonogram-rk4_1(b)_03s.png')
+plt.savefig('sonogram-rk4_1(b).png', bbox_inches='tight', pad_inches=0.1)
 print("グラフを sonogram-rk4_1(b)_03s.png という名前で保存しました。")

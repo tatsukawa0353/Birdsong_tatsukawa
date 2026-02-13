@@ -3,18 +3,22 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import scienceplots
 import glob
 import os
 
+# 2. スタイル適用（既存の設定より前に書くのがポイント）
+plt.style.use(['science', 'ieee'])
 # =========================================================
 # --- ここで複数のフォルダペアを設定します ---
 FOLDER_PAIRS = [
-    ("simulation_results_x0=0.02_linked_low eps*0.6/", "waveform_x0=0.02_linked_low eps*0.6/"),
-    #("simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/", "waveform_1_f0=0.4e7_x0=0.02_low epsilon/"),
+    #("simulation_results_x0=0.02_linked_low eps*0.6/", "waveform_x0=0.02_linked_low eps*0.6/"),
+    #("simulation_results_1_x0=0.02_low parameters epsilon/", "waveform_1_x0=0.02_low parameters epsilon/"),
     #("simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/", "waveform_1_f0=0.7e7_x0=0.02_low epsilon/"),
-    ("simulation_results_x0=0.02_linked_eps*0.6/", "waveform_x0=0.02_linked_eps*0.6/"),
-    #("simulation_results_1_f0=0.4e7_x0=0.02/", "waveform_1_f0=0.4e7_x0=0.02/"),
+    #("simulation_results_x0=0.02_linked_eps*0.6/", "waveform_x0=0.02_linked_eps*0.6/"),
+    #("simulation_results_1_x0=0.02/", "waveform_1_x0=0.02/"),
     #("simulation_results_1_f0=0.7e7_x0=0.02/", "waveform_1_f0=0.7e7_x0=0.02/"),
+    ("simulation_results_1_f0=0.1e7_x0=0.02_sr(t)_low/", "waveform_1_f0=0.1e7_low epsilon/")
     # 必要に応じてここに行を追加してください
 ]
 
@@ -44,31 +48,60 @@ def generate_waveform(csv_filepath, output_image_path):
             return
 
         # グラフプロット(並べて）
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12), sharex=True)
+
+        # --- フォントサイズの設定 ---
+        label_size = 46  # 軸ラベル(Frequency, Time)の大きさ
+        tick_size = 38  # 目盛りの数字の大きさ
 
         # 上グラフ(左音源)
         ax1.plot(time, x_left, color='royalblue')
-        ax1.set_title('Left Source Waveform')
-        ax1.set_ylabel('Displacement [cm]')
+        #ax1.set_title('Left Source Waveform')
+        ax1.set_ylabel('$x_l$ [cm]', fontsize=label_size)
         ax1.grid(True, linestyle='--', alpha=0.6)
         ax1.axhline(0, color='black', linewidth=0.8)
+        ax1.tick_params(axis='y', labelsize=tick_size)
 
         # 下グラフ(右音源)
         ax2.plot(time, x_right, color='seagreen')
-        ax2.set_title('Right Source Waveform')
-        ax2.set_ylabel('Displacement [cm]')
-        ax2.set_xlabel('Time [sec]')
+        #ax2.set_title('Right Source Waveform')
+        ax2.set_ylabel('$x_r$ [cm]', fontsize=label_size)
+        ax2.set_xlabel('Time [s]', fontsize=label_size)
         ax2.grid(True, linestyle='--', alpha=0.6)
         ax2.axhline(0, color='black', linewidth=0.8)
+       
 
         # --- X軸の表示範囲を指定 ---
         ax2.set_xlim([time_start, time_end])
+        ax2.tick_params(axis='both', which='major', labelsize=tick_size)
+
+        # --- 全ての軸（ax1, ax2）の枠と目盛りを統一設定 ---
+        for ax in [ax1, ax2]:
+            # 1. 枠線の太さと色を黒に固定
+            for spine in ax.spines.values():
+                spine.set_edgecolor('black')
+                spine.set_linewidth(2.0)
+            
+            # 2. 目盛りの設定（黒、太さ、内向き、上・右なし）
+            ax.tick_params(
+                axis='both', 
+                which='major', 
+                labelsize=tick_size, 
+                colors='black', 
+                width=2.0, 
+                length=10, 
+                direction='in', 
+                top=False, 
+                right=False
+            )
 
         # レイアウトを整える
         plt.tight_layout()
 
+        fig.align_ylabels([ax1, ax2])
+
         # グラフを画像ファイルとして保存
-        plt.savefig(output_image_path)
+        plt.savefig(output_image_path, bbox_inches='tight', pad_inches=0.1)
         plt.close()
 
     except Exception as e:
