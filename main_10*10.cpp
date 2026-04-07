@@ -65,8 +65,8 @@ int main() {
     {
     BirdsongModel model(dt, T_delay, total_time, current_epsilon, current_ps, output_filename);
 
-    //model.saveData();
-    model.saveData(0.0, 0.0);
+    model.saveData();//通常はこっち
+    //model.saveData(0.0, 0.0);
 
     cout << "Simulation starting..." << endl;
     

@@ -30,7 +30,8 @@ public:
     ~BirdsongModel();
 
     void step();
-    void saveData(double s_l, double s_r);
+    void saveData();
+    //void saveData(double s_l, double s_r);
 
 private:
     Source left, right;
