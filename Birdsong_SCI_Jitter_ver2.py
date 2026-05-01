@@ -12,13 +12,13 @@ import re
 # 解析セットの定義（前回のものを引き継ぎ）
 ANALYSIS_SETS = [
     # --- セット1 ---
-    #{
-     #   "input_folders": [
-      #      "simulation_results_1_f0=0.1e7_x0=0.02_low epsilon/",
-       #     "simulation_results_1_f0=0.1e7_x0=0.02/"
-        #],
-        #"output_csv": "sci_data_1_f0=0.1e7.csv",
-    #},
+    {
+        "input_folders": [
+            "simulation_results_1_f0=0.1e7_x0=0.02_low epsilon/",
+            "simulation_results_1_f0=0.1e7_x0=0.02/"
+        ],
+        "output_csv": "sci_data_1_f0=0.1e7.csv",
+    },
     {
         "input_folders": [
             "simulation_results_1_x0=0.02_low parameters epsilon/",
@@ -26,32 +26,28 @@ ANALYSIS_SETS = [
         ],
         "output_csv": "sci_data_1_f0=1.0e7.csv",
     },
-    #{
-        #"input_folders": [
-         #  "simulation_results_2_x0=0.02_low parameters epsilon/",
-         #  "simulation_results_2_x0=0.02/"
-        #],
-       # "output_csv": "sci_data_2.csv",
-    #},
+    {
+        "input_folders": [
+           "simulation_results_2_x0=0.02_low parameters epsilon/",
+           "simulation_results_2_x0=0.02/"
+        ],
+        "output_csv": "sci_data_2.csv",
+    },
     # 他のセットも同様に追加してください...
     # (ここでは例として1つだけにしていますが、元のリストをそのままコピペしてOKです)
 ]
 
 # 分析パラメータ
-START_TIME = 0.05          # 解析開始時刻（秒）
+START_TIME = 0.05         # 解析開始時刻（秒）
 CALC_MIN_FREQ = 250.0     # 計算下限周波数（Hz）
 CALC_MAX_FREQ = 12000.0   # 計算上限周波数（Hz）
-JITTER_THRESHOLD = 3.0    # 許容する最大ジッタ（%）。これより揺らぎが大きい音はノイズとして除外
+JITTER_THRESHOLD = 2.9    # 許容する最大ジッタ（%）。これより揺らぎが大きい音はノイズとして除外
 F0_MAX_FREQ = 3500.0      # F0を探索する上限周波数
 
 # ==========================================
-# 関数定義（ジッタ計算 + SCI計算）
+# 関数定義
 # ==========================================
-
 def calculate_sci_and_jitter_robust(csv_filepath):
-    """ 
-    自己相関法とローパスフィルタを用いた堅牢なF0・Jitter・SCI計算
-    """
     try:
         df = pd.read_csv(csv_filepath)
         if df.empty or 'pi' not in df or 'time' not in df:
@@ -65,53 +61,56 @@ def calculate_sci_and_jitter_robust(csv_filepath):
         pi = df_segment['pi'].values 
         fs = 1.0 / (time_arr[1] - time_arr[0])
 
-        # =========================================================
-        # ★ ここに安全装置（NaN / inf チェック）を追加！
-        # =========================================================
         if np.isnan(pi).any() or np.isinf(pi).any():
-            return {
-                'jitter': np.nan, 
-                'f_AFF': np.nan, 
-                'f_MSF': np.nan, 
-                'SCI': np.nan, 
-                'status': 'Simulation_Diverged' # 発散して壊れたデータという印をつける
-            }
+            return {'jitter': np.nan, 'f_AFF': np.nan, 'f_MSF': np.nan, 'SCI': np.nan, 'status': 'Simulation_Diverged'}
 
-        # 直流成分（オフセット）を除去
         pi_norm = pi - np.mean(pi)
 
         # ---------------------------------------------------------
-        # ★ステップ1: 自己相関（Autocorrelation）による真のF0探索
+        # ★ステップ1: フレーム分割による「真のF0」の堅牢な探索
         # ---------------------------------------------------------
-        corr = correlate(pi_norm, pi_norm, mode='full')
-        corr = corr[len(corr)//2:] 
-
-        # 探索上限を F0_MAX_FREQ に制限する！
-        min_lag = int(fs / F0_MAX_FREQ)
-        max_lag = int(fs / CALC_MIN_FREQ)
+        # 0.02秒の短い窓（フレーム）を作り、0.01秒ずつ進めながらF0を測る
+        frame_len = int(0.02 * fs)
+        hop_len = int(0.01 * fs)
         
-        if len(corr) < max_lag:
-            return None
+        f0_candidates = []
+        
+        for i in range(0, len(pi_norm) - frame_len, hop_len):
+            frame = pi_norm[i : i + frame_len]
+            # フレームごとの自己相関
+            corr = correlate(frame, frame, mode='full')
+            corr = corr[len(corr)//2:] 
 
-        valid_corr = corr[min_lag:max_lag]
-        best_lag_idx = np.argmax(valid_corr)
-        true_lag = min_lag + best_lag_idx
-        true_f0 = fs / true_lag
+            min_lag = int(fs / F0_MAX_FREQ)
+            max_lag = int(fs / CALC_MIN_FREQ)
+            
+            if len(corr) < max_lag:
+                continue
+
+            valid_corr = corr[min_lag:max_lag]
+            best_lag_idx = np.argmax(valid_corr)
+            frame_f0 = fs / (min_lag + best_lag_idx)
+            
+            f0_candidates.append(frame_f0)
+
+        # フレームごとのF0の中央値を、この音声全体の「真のF0」とする
+        if not f0_candidates:
+            return {'jitter': np.nan, 'f_AFF': np.nan, 'f_MSF': np.nan, 'SCI': np.nan, 'status': 'F0_Detection_Failed'}
+            
+        true_f0 = np.median(f0_candidates)
 
         # ---------------------------------------------------------
         # ★ステップ2: ローパスフィルタによる波形の平滑化
         # ---------------------------------------------------------
-        # F0の1.5倍以上の周波数（倍音成分）をカットするフィルタを作成
         nyq = 0.5 * fs
-        cutoff = min(true_f0 * 1.5, nyq * 0.99) # ナイキスト周波数を超えないよう保護
+        cutoff = min(true_f0 * 1.5, nyq * 0.99) 
         b, a = butter(4, cutoff / nyq, btype='low')
-        
-        # filtfiltを使うことで、位相（ピークのタイミング）をずらさずにフィルタリング
         pi_clean = filtfilt(b, a, pi_norm)
 
         # ---------------------------------------------------------
-        # ★ステップ3: ジッタ (Jitter) の計算
+        # ★ステップ3: Jitter (RAP) の計算
         # ---------------------------------------------------------
+        true_lag = fs / true_f0
         peaks, _ = find_peaks(pi_clean, distance=true_lag * 0.7)
         
         if len(peaks) < 5:
@@ -120,7 +119,7 @@ def calculate_sci_and_jitter_robust(csv_filepath):
         periods = np.diff(peaks) / fs
         mean_period = np.mean(periods)
         
-        # 移動平均を用いたRAPジッタの計算（スイープを相殺）
+        # 移動平均を用いたRAPジッタ（スイープによるズレを相殺）
         smoothed_periods = np.convolve(periods, np.ones(3)/3.0, mode='valid')
         mean_diff_rap = np.mean(np.abs(periods[1:-1] - smoothed_periods))
         jitter_percent = (mean_diff_rap / mean_period) * 100.0
