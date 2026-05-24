@@ -33,6 +33,34 @@ ANALYSIS_SETS = [
         ],
         "output_csv": "sci_data_2.csv",
     },
+    {
+        "input_folders": [
+            "simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/",
+            "simulation_results_1_f0=0.4e7_x0=0.02/"
+        ],
+        "output_csv": "sci_data_1_f0=0.4e7.csv",
+    },
+    {
+        "input_folders": [
+            "simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/",
+            "simulation_results_1_f0=0.7e7_x0=0.02/"
+        ],
+        "output_csv": "sci_data_1_f0=0.7e7.csv",
+    },
+    {
+        "input_folders": [
+            "simulation_results_1_f0=0.05e7_x0=0.02_low epsilon/",
+            "simulation_results_1_f0=0.05e7_x0=0.02/"
+        ],
+        "output_csv": "sci_data_1_f0=0.05e7.csv",
+    },
+    {
+        "input_folders": [
+            "simulation_results_1_f0=4.9e4_x0=0.02_low epsilon/",
+            "simulation_results_1_f0=4.9e4_x0=0.02/"
+        ],
+        "output_csv": "sci_data_1_f0=4.9e4.csv",
+    },
     # 他のセットも同様に追加してください...
     # (ここでは例として1つだけにしていますが、元のリストをそのままコピペしてOKです)
 ]
@@ -130,7 +158,7 @@ def calculate_sci_and_jitter_robust(csv_filepath):
         # ---------------------------------------------------------
         # ★ステップ4: SCI の計算
         # ---------------------------------------------------------
-        f, Pxx = welch(pi_norm, fs=fs, nperseg=245760, window='blackmanharris')
+        f, Pxx = welch(pi_norm, fs=fs, nperseg=245760, noverlap=184320, window='blackmanharris')
         
         valid_indices = (f >= CALC_MIN_FREQ) & (f <= CALC_MAX_FREQ)
         f_valid = f[valid_indices]

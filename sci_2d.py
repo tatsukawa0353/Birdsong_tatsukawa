@@ -12,10 +12,13 @@ plt.style.use(['science', 'ieee'])
 # ==========================================
 # (入力CSVファイル, 出力画像ファイル名, タイトル) のリスト
 TARGETS = [
-    ('sci_data_1_f0=1.0e7.csv', 'sci_2d_1.png', 'SCI Map (f0=1.0e7)'),
+    #('sci_data_1_f0=1.0e7.csv', 'sci_2d_1.png', 'SCI Map (f0=1.0e7)'),
     # 他のCSVがあれば追加してください
-    ('sci_data_2.csv', 'sci_2d_2.png', 'SCI Map 2'),
-    ('sci_data_1_f0=0.1e7.csv', 'sci_2d_1_f0=0.1e7.png', 'SCI MAP(f0=0.1e7)'),
+    #('sci_data_2.csv', 'sci_2d_2.png', 'SCI Map 2'),
+    ('sci_data_1_f0=0.4e7.csv', 'sci_2d_1_f0=0.4e7.png', 'SCI MAP(f0=0.4e7)'),
+    ('sci_data_1_f0=0.7e7.csv', 'sci_2d_1_f0=0.7e7.png', 'SCI MAP(f0=0.7e7)'),
+    ('sci_data_1_f0=0.05e7.csv', 'sci_2d_1_f0=0.05e7.png', 'SCI MAP(f0=0.05e7)'),
+    ('sci_data_1_f0=4.9e4.csv', 'sci_2d_1_f0=4.9e4.png', 'SCI MAP(f0=4.9e4)'),
 ]
 
 DPI = 300
