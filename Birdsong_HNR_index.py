@@ -13,55 +13,20 @@ from scipy.stats import entropy
 # ==========================================
 
 ANALYSIS_SETS = [
+    #{
+        #"input_folders": [
+        #    "simulation_results_1_x0=0.02_low parameters epsilon/",
+       #     "simulation_results_1_x0=0.02/",
+      #  ],
+     #   "output_csv": "hnr_sci_aci_se_1_f0=1.0e7_3.4.csv",
+    #},
     {
         "input_folders": [
-            "simulation_results_1_f0=0.1e7_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=0.1e7_x0=0.02/",
+            "simulation_results_1_f0=1.0e7_x0=0.02_update/",
         ],
-        "output_csv": "hnr_sci_aci_se_1_f0=0.1e7.csv",
+        "output_csv": "hnr_sci_aci_se_1_f0=1.0e7_update_2.csv",
     },
-    {
-        "input_folders": [
-            "simulation_results_1_x0=0.02_low parameters epsilon/",
-            "simulation_results_1_x0=0.02/",
-        ],
-        "output_csv": "hnr_sci_aci_se_1_f0=1.0e7.csv",
-    },
-    {
-        "input_folders": [
-            "simulation_results_2_x0=0.02_low parameters epsilon/",
-            "simulation_results_2_x0=0.02/",
-        ],
-        "output_csv": "hnr_sci_aci_se_2.csv",
-    },
-    {
-        "input_folders": [
-            "simulation_results_1_f0=0.4e7_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=0.4e7_x0=0.02/",
-        ],
-        "output_csv": "hnr_sci_aci_se_1_f0=0.4e7.csv",
-    },
-    {
-        "input_folders": [
-            "simulation_results_1_f0=0.7e7_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=0.7e7_x0=0.02/",
-        ],
-        "output_csv": "hnr_sci_aci_se_1_f0=0.7e7.csv",
-    },
-    {
-        "input_folders": [
-            "simulation_results_1_f0=0.05e7_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=0.05e7_x0=0.02/",
-        ],
-        "output_csv": "hnr_sci_aci_se_1_f0=0.05e7.csv",
-    },
-    {
-        "input_folders": [
-            "simulation_results_1_f0=4.9e4_x0=0.02_low epsilon/",
-            "simulation_results_1_f0=4.9e4_x0=0.02/",
-        ],
-        "output_csv": "hnr_sci_aci_se_1_f0=4.9e4.csv",
-    },
+    
 ]
 
 # SCI / HNR
@@ -69,7 +34,7 @@ SCI_HNR_START_TIME = 0.0
 CALC_MIN_FREQ = 250.0
 CALC_MAX_FREQ = 12000.0
 F0_MAX_FREQ = 3500.0
-HNR_THRESHOLD_DB = 3.8
+HNR_THRESHOLD_DB = 3.0
 HNR_SILENCE_THRESHOLD = 1e5
 HNR_FRAME_SEC = 0.01
 HNR_HOP_SEC = 0.005
