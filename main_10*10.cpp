@@ -18,7 +18,7 @@ int main() {
     const double total_time = 0.12;      // シミュレーション総時間 (秒)
 
     //出力フォルダ名定義
-    const string output_folder = "simulation_results_1_f0=1.0e7_x0=0.02_update/";
+    const string output_folder = "simulation_results_2_x0=0.02_update/";
 
     // フォルダ自動作成
     struct stat st;

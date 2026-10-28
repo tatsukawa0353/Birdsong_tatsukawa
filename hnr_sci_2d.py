@@ -59,6 +59,7 @@ TARGETS = [
 
 DPI = 300
 VMAX_FIXED = 10.0
+HNR_FILTERED_COLOR = "#E6E6E6"
 
 LABEL_SIZE = 32
 FIG_SIZE = (14, 10)
@@ -105,9 +106,12 @@ def save_2d_heatmap(csv_file, output_file, title_text):
         "custom_red_blue_white",
         colors_list,
     )
-    cmap_custom.set_bad(color="white")
+    # HNRフィルタで除外されたNaN領域は、有効値0の白と区別する。
+    cmap_custom.set_bad(color=HNR_FILTERED_COLOR, alpha=1.0)
 
     fig, ax = plt.subplots(figsize=FIG_SIZE)
+    # contourfのマスク領域が透過描画される場合にも同じ色を表示する。
+    ax.set_facecolor(HNR_FILTERED_COLOR)
     x_grid, y_grid = np.meshgrid(x_coords, y_coords)
     levels = np.linspace(0, VMAX_FIXED, 29)
 

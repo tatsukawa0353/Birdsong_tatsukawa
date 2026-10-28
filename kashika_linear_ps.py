@@ -26,9 +26,9 @@ VMIN = -38.002
 VMAX = -38
 MAX_FREQUENCY = 10000
 
-# 既存の文字サイズ（変更しない）
-LABEL_SIZE = 46
-TICK_SIZE = 46
+# 発表・確認用に軸ラベルと目盛りを大きくする
+LABEL_SIZE = 70
+TICK_SIZE = 70
 
 # シミュレーション時間が従来より長いため横長にする
 FIGURE_SIZE = (24, 12)

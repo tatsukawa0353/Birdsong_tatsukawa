@@ -29,7 +29,7 @@ FOLDER_PAIRS = [
     #("simulation_results_1_f0=0.1e7_x0=0.02/", "spectrogram_images_1_f0=0.1e7_x0=0.02"),
     #("simulation_results_1_f0=0.4e7_x0=0.02/", "spectrogram_images_1_f0=0.4e7_x0=0.02"),
     #("simulation_results_1_f0=0.7e7_x0=0.02/", "spectrogram_images_1_f0=0.7e7_x0=0.02"),
-    ("simulation_results_1_f0=1.0e7_x0=0.02_update/", "spectrogram_images_1_f0=1.0e7_x0=0.02_update/"),
+    ("simulation_results_2_x0=0.02_update/", "spectrogram_images_2_x0=0.02_update/"),
     # 必要に応じてここに行を追加してください
 ]
 
