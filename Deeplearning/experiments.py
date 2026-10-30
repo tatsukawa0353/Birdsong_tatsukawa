@@ -21,7 +21,8 @@ def write_json(path, data):
 def make_agent(name, env, seed, settings):
     torch.set_num_threads(1)
     common = dict(policy="MlpPolicy", env=env, seed=seed, device="cpu", verbose=0,
-                  policy_kwargs=dict(net_arch=[32, 32]), learning_rate=settings["learning_rate"])
+                  policy_kwargs=dict(net_arch=[32, 32]), learning_rate=settings["learning_rate"],
+                  gamma=settings.get("gamma", .99))
     if name == "PPO":
         return PPO(**common, n_steps=settings["ppo_rollout"], batch_size=64, n_epochs=5)
     common.update(buffer_size=50000, batch_size=64, learning_starts=256,
@@ -49,9 +50,17 @@ def rollout(env, policy, *, seed=10000):
         # Failed episodes must not benefit from evaluating only a good prefix.
         metrics["total"] = 1e6
         failed = True
+    extra = {}
+    objective = getattr(env, "objective", None)
+    if objective is not None:
+        extra["objective_metrics"] = objective.score(audio) if not failed else {"total": 1e6}
+        extra["objective_error"] = extra["objective_metrics"]["total"]
+        gamma = env.config.reward_discount
+        extra["discounted_reward_cost"] = -float(np.dot(np.power(gamma, np.arange(len(env.rewards))), env.rewards))/env.horizon
+        extra["mean_reward_cost"] = -float(np.mean(env.rewards))
     return dict(error=metrics["total"], metrics=metrics, failed=failed,
                 env_steps=env.index, seconds=time.perf_counter()-start,
-                features=evaluation_features(audio, env.config.sample_rate)), audio, np.array(env.actions)
+                features=evaluation_features(audio, env.config.sample_rate), **extra), audio, np.array(env.actions)
 
 
 class EvaluationCallback(BaseCallback):
@@ -88,6 +97,10 @@ class EvaluationCallback(BaseCallback):
 def train_run(name, seed, train_factory, eval_factory, settings, output):
     output.mkdir(parents=True, exist_ok=True)
     train_env = train_factory()
+    if (getattr(train_env.config, "reward_timing", None) == "aligned" and
+            train_env.config.reward_discount != settings.get("gamma", .99)):
+        train_env.close()
+        raise ValueError("Aligned reward compensation must use the agent's gamma")
     agent = make_agent(name, train_env, seed, settings)
     callback = EvaluationCallback(eval_factory, settings["eval_interval"], settings["threshold"])
     start = time.perf_counter()
@@ -123,6 +136,8 @@ def train_run(name, seed, train_factory, eval_factory, settings, output):
                    training_episodes=callback.training_episodes)
     write_json(output/"summary.json", summary)
     write_json(output/"curve.json", callback.entries)
+    if hasattr(evaluation, "loss_history"):
+        write_json(output/"step_metrics.json", evaluation.loss_history)
     train_env.close()
     evaluation.close()
     return summary, callback.entries

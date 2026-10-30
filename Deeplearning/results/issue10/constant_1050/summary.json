@@ -1,0 +1,2342 @@
+[
+  {
+    "algorithm": "SAC",
+    "profile": "baseline",
+    "seed": 0,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 0,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.430502264003735,
+      "evaluation_seconds": 2.0091231259866618,
+      "first_threshold_step": null,
+      "initial_error": 0.26943342072299953,
+      "error": 0.2232661577611943,
+      "metrics": {
+        "log_spectral": 0.14985075456265493,
+        "envelope": 0.07341540319853936,
+        "total": 0.2232661577611943,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.3758463280100841,
+      "features": {
+        "spectral_entropy": 0.519124018960266,
+        "centroid_hz": 4215.955188437329,
+        "rms": 396048.8089247933
+      },
+      "objective_metrics": {
+        "transport": 0.018556414712293308,
+        "target_weighted_log": 0.07670746899665092,
+        "band_envelope": 0.15862344804375647,
+        "missing": 0.025902467670613057,
+        "dc": 0.0036251620688262636,
+        "total": 0.24852418155332126
+      },
+      "objective_error": 0.24852418155332126,
+      "discounted_reward_cost": 0.14481092925462705,
+      "mean_reward_cost": 0.17167352305803216,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 396048.8089247933,
+      "peak": 994930.1682204643,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 393041.0197399748,
+          "ac_rms": 393029.74316435325,
+          "mean": -2977.278354767999,
+          "peak": 969550.6201014996,
+          "band_rms": 375064.79751562944
+        },
+        "transition_05_10": {
+          "rms": 399318.76514701644,
+          "ac_rms": 399311.8886168376,
+          "mean": -2343.460644508231,
+          "peak": 994930.1682204643,
+          "band_rms": 380926.32069079735
+        },
+        "middle_10_20": {
+          "rms": 395382.5102803087,
+          "ac_rms": 395372.92515236605,
+          "mean": -2753.087724721485,
+          "peak": 961010.3974568042,
+          "band_rms": 377538.6639468405
+        },
+        "late_20_35": {
+          "rms": 396396.78567791043,
+          "ac_rms": 396386.93272432237,
+          "mean": -2794.863356718036,
+          "peak": 960345.2505214213,
+          "band_rms": 378167.0218425442
+        },
+        "steady_10_35": {
+          "rms": 395991.38726958557,
+          "ac_rms": 395981.64181818085,
+          "mean": -2778.1531039194156,
+          "peak": 961010.3974568042,
+          "band_rms": 377915.80405622325
+        }
+      },
+      "late_band_relative_db": -1.533566417625668,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.515293115449337,
+        "repository_sci": 5.6075190465903155,
+        "f0_hz": 769.2307692307693,
+        "centroid_hz": 4313.476189684859,
+        "aci": 9.462349185321642,
+        "autocorrelation_hnr_db": 10.956015427021761,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.2232661577611943,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004328946187548694,
+          -0.0011726777555255419,
+          -0.004118697453931407,
+          -0.0009232869288685119
+        ],
+        "std": [
+          0.011798645651448073,
+          81.02895398290153,
+          0.011681161356611167,
+          79.27290598526822
+        ],
+        "rms": [
+          0.012567729082977834,
+          81.02895399138721,
+          0.012386008209112696,
+          79.27290599064496
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "SAC",
+    "profile": "baseline",
+    "seed": 1,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 1,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 14.768101254012436,
+      "evaluation_seconds": 1.9122334570274688,
+      "first_threshold_step": null,
+      "initial_error": 0.14721136948897307,
+      "error": 0.19230618143213407,
+      "metrics": {
+        "log_spectral": 0.1267737091196675,
+        "envelope": 0.06553247231246655,
+        "total": 0.19230618143213407,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.3733461159863509,
+      "features": {
+        "spectral_entropy": 0.51182477273783,
+        "centroid_hz": 4211.487947457022,
+        "rms": 406092.8386084758
+      },
+      "objective_metrics": {
+        "transport": 0.015445392589599616,
+        "target_weighted_log": 0.050881485888840006,
+        "band_envelope": 0.14086117493182612,
+        "missing": 0.020396197216977007,
+        "dc": 0.003645504631514011,
+        "total": 0.21018388389074127
+      },
+      "objective_error": 0.21018388389074127,
+      "discounted_reward_cost": 0.127799366088594,
+      "mean_reward_cost": 0.1510385548856429,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 406092.8386084758,
+      "peak": 993847.572166912,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 404124.141493555,
+          "ac_rms": 404114.45726186404,
+          "mean": -2797.7079640142715,
+          "peak": 993847.572166912,
+          "band_rms": 384031.2955279401
+        },
+        "transition_05_10": {
+          "rms": 406252.73180173454,
+          "ac_rms": 406244.09483703517,
+          "mean": -2649.0576456505937,
+          "peak": 987283.5540541173,
+          "band_rms": 386296.13424582494
+        },
+        "middle_10_20": {
+          "rms": 405487.84053890273,
+          "ac_rms": 405477.089237852,
+          "mean": -2952.783111164798,
+          "peak": 988388.4650902458,
+          "band_rms": 385426.90056149213
+        },
+        "late_20_35": {
+          "rms": 407095.96473049076,
+          "ac_rms": 407087.25949763623,
+          "mean": -2662.2649291842718,
+          "peak": 992840.5686926254,
+          "band_rms": 387042.9360508035
+        },
+        "steady_10_35": {
+          "rms": 406453.4785555051,
+          "ac_rms": 406443.9817762016,
+          "mean": -2778.4722019764827,
+          "peak": 992840.5686926254,
+          "band_rms": 386397.33290833054
+        }
+      },
+      "late_band_relative_db": -1.340785097589302,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.5085101192540824,
+        "repository_sci": 5.53646722394974,
+        "f0_hz": 781.25,
+        "centroid_hz": 4325.365018710734,
+        "aci": 4.719431557484399,
+        "autocorrelation_hnr_db": 8.907751579229325,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.19230618143213407,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004419203634902119,
+          -0.011555084619967322,
+          -0.004075717047837066,
+          0.0029796922953617077
+        ],
+        "std": [
+          0.011848077774644581,
+          82.14498060699913,
+          0.011722613872104786,
+          79.86150548211906
+        ],
+        "rms": [
+          0.01264540658582234,
+          82.14498141970843,
+          0.012410928468430282,
+          79.86150553770632
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "SAC",
+    "profile": "baseline",
+    "seed": 2,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 2,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 14.94653536201804,
+      "evaluation_seconds": 1.937317684001755,
+      "first_threshold_step": null,
+      "initial_error": 0.32274397465254295,
+      "error": 0.22777482041484098,
+      "metrics": {
+        "log_spectral": 0.15374841879249443,
+        "envelope": 0.07402640162234657,
+        "total": 0.22777482041484098,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.3694397319923155,
+      "features": {
+        "spectral_entropy": 0.5103910519284677,
+        "centroid_hz": 4215.647370385655,
+        "rms": 395244.16880622774
+      },
+      "objective_metrics": {
+        "transport": 0.01897995108123463,
+        "target_weighted_log": 0.08817280670253733,
+        "band_envelope": 0.159950407498682,
+        "missing": 0.026306528441465898,
+        "dc": 0.003568669925561166,
+        "total": 0.25394348413103884
+      },
+      "objective_error": 0.25394348413103884,
+      "discounted_reward_cost": 0.1466354086231268,
+      "mean_reward_cost": 0.17408800407407854,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 395244.16880622774,
+      "peak": 976417.8205349569,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 394388.7933674156,
+          "ac_rms": 394378.039249172,
+          "mean": -2912.471765466901,
+          "peak": 976417.8205349569,
+          "band_rms": 376245.70948382013
+        },
+        "transition_05_10": {
+          "rms": 397269.0023409003,
+          "ac_rms": 397258.30306138814,
+          "mean": -2915.625099459024,
+          "peak": 965630.2835043604,
+          "band_rms": 378740.5541013831
+        },
+        "middle_10_20": {
+          "rms": 397080.84855216433,
+          "ac_rms": 397072.0010676432,
+          "mean": -2650.708404242967,
+          "peak": 960479.1855989823,
+          "band_rms": 378963.59573549987
+        },
+        "late_20_35": {
+          "rms": 393621.6837263613,
+          "ac_rms": 393612.7639185838,
+          "mean": -2649.901875323847,
+          "peak": 957755.3855601577,
+          "band_rms": 375931.41311080795
+        },
+        "steady_10_35": {
+          "rms": 395008.9847769391,
+          "ac_rms": 395000.09413249156,
+          "mean": -2650.224486891495,
+          "peak": 960479.1855989823,
+          "band_rms": 377147.2115437222
+        }
+      },
+      "late_band_relative_db": -1.5512494769414251,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.5096020427886102,
+        "repository_sci": 5.6023325195328795,
+        "f0_hz": 769.2307692307693,
+        "centroid_hz": 4309.48655348683,
+        "aci": 5.806614516703141,
+        "autocorrelation_hnr_db": 11.106020201758117,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.22777482041484098,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.0043340791634069184,
+          0.10951898145825865,
+          -0.004134788595089662,
+          0.11440412843193387
+        ],
+        "std": [
+          0.011796721551408623,
+          80.82916568437534,
+          0.011683792299162882,
+          79.15008972283375
+        ],
+        "rms": [
+          0.012567691974111502,
+          80.82923988037683,
+          0.012393848442516207,
+          79.15017240307968
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "SAC",
+    "profile": "balanced_context",
+    "seed": 0,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 0,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 14.94806848600274,
+      "evaluation_seconds": 1.9331739730550908,
+      "first_threshold_step": null,
+      "initial_error": 0.26943342072299953,
+      "error": 0.22773125994305465,
+      "metrics": {
+        "log_spectral": 0.1828953266104096,
+        "envelope": 0.04483593333264506,
+        "total": 0.22773125994305465,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.3777584420167841,
+      "features": {
+        "spectral_entropy": 0.5271862229130595,
+        "centroid_hz": 4240.3431854687005,
+        "rms": 432642.9815884463
+      },
+      "objective_metrics": {
+        "transport": 0.017585220943363525,
+        "target_weighted_log": 0.1474054854099824,
+        "band_envelope": 0.09539615037367681,
+        "missing": 0.009424999493327096,
+        "dc": 0.004592976266656641,
+        "total": 0.16914203928285576
+      },
+      "objective_error": 0.16914203928285576,
+      "discounted_reward_cost": 0.14060667335876062,
+      "mean_reward_cost": 0.16647282595375826,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 432642.9815884463,
+      "peak": 1162278.17848521,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 430673.34698893194,
+          "ac_rms": 430664.123247251,
+          "mean": -2818.6440579958567,
+          "peak": 1109951.7278335714,
+          "band_rms": 405023.6097364939
+        },
+        "transition_05_10": {
+          "rms": 431381.0432519104,
+          "ac_rms": 431370.52261244337,
+          "mean": -3012.755910151403,
+          "peak": 1090759.6437742033,
+          "band_rms": 406547.858867786
+        },
+        "middle_10_20": {
+          "rms": 434513.0618226843,
+          "ac_rms": 434503.3414374872,
+          "mean": -2906.402274674289,
+          "peak": 1162278.17848521,
+          "band_rms": 408366.8542253847
+        },
+        "late_20_35": {
+          "rms": 432468.6148733345,
+          "ac_rms": 432456.55783611775,
+          "mean": -3229.3087490984203,
+          "peak": 1157810.942866646,
+          "band_rms": 406395.0158878079
+        },
+        "steady_10_35": {
+          "rms": 433287.5512498436,
+          "ac_rms": 433276.46042899287,
+          "mean": -3100.146159328768,
+          "peak": 1162278.17848521,
+          "band_rms": 407184.89708613406
+        }
+      },
+      "late_band_relative_db": -0.8856342748559322,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.5191465615908277,
+        "repository_sci": 5.624681213361661,
+        "f0_hz": 769.2307692307693,
+        "centroid_hz": 4326.677856432047,
+        "aci": 9.135230478735512,
+        "autocorrelation_hnr_db": 10.420163645796627,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.22773125994305465,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004686210589562843,
+          -0.017350726945099964,
+          -0.004064704048170251,
+          -0.015064200639330894
+        ],
+        "std": [
+          0.012198813432777442,
+          85.1706597543647,
+          0.012155768306735211,
+          82.02302657150591
+        ],
+        "rms": [
+          0.013067961541780044,
+          85.1706615216853,
+          0.012817352383633674,
+          82.02302795483781
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "SAC",
+    "profile": "balanced_context",
+    "seed": 1,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 1,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.42845723699429,
+      "evaluation_seconds": 1.9860106479900423,
+      "first_threshold_step": null,
+      "initial_error": 0.14721136948897307,
+      "error": 0.2309377529529354,
+      "metrics": {
+        "log_spectral": 0.18708325529710837,
+        "envelope": 0.043854497655827024,
+        "total": 0.2309377529529354,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.38074552998295985,
+      "features": {
+        "spectral_entropy": 0.5303168589716777,
+        "centroid_hz": 4239.444103460279,
+        "rms": 433874.175818599
+      },
+      "objective_metrics": {
+        "transport": 0.017696699879439552,
+        "target_weighted_log": 0.164989792472293,
+        "band_envelope": 0.09344717773030474,
+        "missing": 0.00901093484577129,
+        "dc": 0.004501989032606397,
+        "total": 0.17086339432262074
+      },
+      "objective_error": 0.17086339432262074,
+      "discounted_reward_cost": 0.14088634941897726,
+      "mean_reward_cost": 0.16704825403275167,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 433874.175818599,
+      "peak": 1134871.714712574,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 436146.0956093932,
+          "ac_rms": 436137.5914978228,
+          "mean": -2723.6001535160212,
+          "peak": 1107332.5163334545,
+          "band_rms": 410271.43359584216
+        },
+        "transition_05_10": {
+          "rms": 438726.46573407255,
+          "ac_rms": 438714.6944398206,
+          "mean": -3213.816747290176,
+          "peak": 1134871.714712574,
+          "band_rms": 411218.25729763816
+        },
+        "middle_10_20": {
+          "rms": 434044.2374309589,
+          "ac_rms": 434035.35163617023,
+          "mean": -2777.3327291960068,
+          "peak": 1117797.2324546687,
+          "band_rms": 407610.40861952066
+        },
+        "late_20_35": {
+          "rms": 431367.7760144687,
+          "ac_rms": 431357.6312176296,
+          "mean": -2958.4073391449274,
+          "peak": 1095268.768233359,
+          "band_rms": 405544.79292216216
+        },
+        "steady_10_35": {
+          "rms": 432440.34840543073,
+          "ac_rms": 432430.71822305565,
+          "mean": -2885.97749516536,
+          "peak": 1117797.2324546687,
+          "band_rms": 406372.2991614422
+        }
+      },
+      "late_band_relative_db": -0.9029855767034665,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.511775916606176,
+        "repository_sci": 5.617605888194122,
+        "f0_hz": 769.2307692307693,
+        "centroid_hz": 4321.2352986108635,
+        "aci": 6.418400215307179,
+        "autocorrelation_hnr_db": 11.031534340896208,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.2309377529529354,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.0047077115309638665,
+          0.08549093496468263,
+          -0.004069782440489174,
+          0.10309285372027954
+        ],
+        "std": [
+          0.0121818780813373,
+          84.9226710058633,
+          0.012145849928140938,
+          81.79936905571815
+        ],
+        "rms": [
+          0.013059889028905885,
+          84.92271403735313,
+          0.012809558914725957,
+          81.7994340203529
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "SAC",
+    "profile": "balanced_context",
+    "seed": 2,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 2,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.667682572006015,
+      "evaluation_seconds": 2.017345400963677,
+      "first_threshold_step": null,
+      "initial_error": 0.32274397465254295,
+      "error": 0.2547066152453043,
+      "metrics": {
+        "log_spectral": 0.20496734310964154,
+        "envelope": 0.049739272135662746,
+        "total": 0.2547066152453043,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.37645116198109463,
+      "features": {
+        "spectral_entropy": 0.5236229667713006,
+        "centroid_hz": 4246.1563804481375,
+        "rms": 426335.4527636276
+      },
+      "objective_metrics": {
+        "transport": 0.020147339284066798,
+        "target_weighted_log": 0.21408285911528496,
+        "band_envelope": 0.10411928060136667,
+        "missing": 0.011181241779285355,
+        "dc": 0.003211489022390254,
+        "total": 0.20047096712506446
+      },
+      "objective_error": 0.20047096712506446,
+      "discounted_reward_cost": 0.1638599921482506,
+      "mean_reward_cost": 0.19523649182208827,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 426335.4527636276,
+      "peak": 1094645.5947143638,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 430931.8352267093,
+          "ac_rms": 430922.88720621174,
+          "mean": -2777.0296581528837,
+          "peak": 1094645.5947143638,
+          "band_rms": 406697.15984622965
+        },
+        "transition_05_10": {
+          "rms": 430453.54195284407,
+          "ac_rms": 430438.95924467745,
+          "mean": -3543.1827652240945,
+          "peak": 1072949.2738600716,
+          "band_rms": 405742.01917041186
+        },
+        "middle_10_20": {
+          "rms": 427392.3753021087,
+          "ac_rms": 427382.4284305074,
+          "mean": -2915.8764069714775,
+          "peak": 1073770.8855774412,
+          "band_rms": 403465.4558786991
+        },
+        "late_20_35": {
+          "rms": 422694.70647967083,
+          "ac_rms": 422686.4884284097,
+          "mean": -2635.7894443550667,
+          "peak": 1060824.9568506863,
+          "band_rms": 399951.8440684389
+        },
+        "steady_10_35": {
+          "rms": 424580.01120885625,
+          "ac_rms": 424571.11934293975,
+          "mean": -2747.824229401631,
+          "peak": 1073770.8855774412,
+          "band_rms": 401360.9798911817
+        }
+      },
+      "late_band_relative_db": -1.0107645323356105,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.5110207019808688,
+        "repository_sci": 5.608055471029509,
+        "f0_hz": 769.2307692307693,
+        "centroid_hz": 4313.888823868853,
+        "aci": 7.2727205934596,
+        "autocorrelation_hnr_db": 8.69663099320543,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.2547066152453043,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.0046414066747002495,
+          0.05902552368982504,
+          -0.00414092945017689,
+          0.08808022763546505
+        ],
+        "std": [
+          0.01216707158378574,
+          84.22392870962871,
+          0.012128424745471258,
+          81.58857534894535
+        ],
+        "rms": [
+          0.013022299598954037,
+          84.2239493926583,
+          0.012815848919127513,
+          81.5886228931279
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "SAC",
+    "profile": "balanced_aligned",
+    "seed": 0,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 0,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.218490231025498,
+      "evaluation_seconds": 1.9844352419895586,
+      "first_threshold_step": null,
+      "initial_error": 0.26943342072299953,
+      "error": 0.24766689957558066,
+      "metrics": {
+        "log_spectral": 0.22228675743546616,
+        "envelope": 0.025380142140114498,
+        "total": 0.24766689957558066,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.40296353099984117,
+      "features": {
+        "spectral_entropy": 0.579094586872666,
+        "centroid_hz": 4268.477076997464,
+        "rms": 457664.8964166941
+      },
+      "objective_metrics": {
+        "transport": 0.023315613536901036,
+        "target_weighted_log": 0.2762318361513234,
+        "band_envelope": 0.04898599118721785,
+        "missing": 0.002615051943338592,
+        "dc": 0.004449415487048829,
+        "total": 0.14703460919733183
+      },
+      "objective_error": 0.14703460919733183,
+      "discounted_reward_cost": 0.14703460919733177,
+      "mean_reward_cost": 0.17615594831806078,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 457664.8964166941,
+      "peak": 1282009.6882864644,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 451400.02921506576,
+          "ac_rms": 451386.72079591715,
+          "mean": -3466.2176029389166,
+          "peak": 1190813.7027660878,
+          "band_rms": 423593.85256607155
+        },
+        "transition_05_10": {
+          "rms": 454311.9881153817,
+          "ac_rms": 454304.08591940504,
+          "mean": -2679.5638235661872,
+          "peak": 1242532.4839171877,
+          "band_rms": 424970.47922848136
+        },
+        "middle_10_20": {
+          "rms": 459899.4675547969,
+          "ac_rms": 459888.0311069488,
+          "mean": -3243.316475429862,
+          "peak": 1235722.172570315,
+          "band_rms": 430296.4534266609
+        },
+        "late_20_35": {
+          "rms": 459355.95945107,
+          "ac_rms": 459346.2229088597,
+          "mean": -2990.8163730395045,
+          "peak": 1282009.6882864644,
+          "band_rms": 429200.61027988046
+        },
+        "steady_10_35": {
+          "rms": 459573.4398252385,
+          "ac_rms": 459563.0394886694,
+          "mean": -3091.8164139956475,
+          "peak": 1282009.6882864644,
+          "band_rms": 429639.28294721624
+        }
+      },
+      "late_band_relative_db": -0.419387836867475,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.5810155611712947,
+        "repository_sci": 5.760285089712367,
+        "f0_hz": 757.5757575757576,
+        "centroid_hz": 4363.852340691187,
+        "aci": 30.998223108965515,
+        "autocorrelation_hnr_db": 5.959473372938833,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.24766689957558066,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004878297119269514,
+          0.05833163186475694,
+          0.0008918940514818112,
+          0.11647559797843604
+        ],
+        "std": [
+          0.012651705816495043,
+          88.11745126161519,
+          0.013179920241169464,
+          83.66132278132565
+        ],
+        "rms": [
+          0.013559625468684883,
+          88.11747056868124,
+          0.013210063306534802,
+          83.66140386155423
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "SAC",
+    "profile": "balanced_aligned",
+    "seed": 1,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 1,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.373332458984805,
+      "evaluation_seconds": 1.987954891024856,
+      "first_threshold_step": null,
+      "initial_error": 0.14721136948897307,
+      "error": 0.24603181516244244,
+      "metrics": {
+        "log_spectral": 0.22622522960707006,
+        "envelope": 0.019806585555372378,
+        "total": 0.24603181516244244,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.37111948800156824,
+      "features": {
+        "spectral_entropy": 0.576015090332525,
+        "centroid_hz": 4269.198967828357,
+        "rms": 464834.6949561577
+      },
+      "objective_metrics": {
+        "transport": 0.02186170125857704,
+        "target_weighted_log": 0.2733510726091413,
+        "band_envelope": 0.040008118084291555,
+        "missing": 0.0017335746647901325,
+        "dc": 0.004137098226568766,
+        "total": 0.13408844664739109
+      },
+      "objective_error": 0.13408844664739109,
+      "discounted_reward_cost": 0.13408844664739109,
+      "mean_reward_cost": 0.16000648615538068,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 464834.6949561577,
+      "peak": 1272669.5017937208,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 459089.84128844005,
+          "ac_rms": 459080.6824777367,
+          "mean": -2899.8879324169056,
+          "peak": 1226835.005339639,
+          "band_rms": 427944.8665143793
+        },
+        "transition_05_10": {
+          "rms": 460481.6143963709,
+          "ac_rms": 460474.9189260687,
+          "mean": -2483.190914623926,
+          "peak": 1231362.716588864,
+          "band_rms": 428759.7934348199
+        },
+        "middle_10_20": {
+          "rms": 465819.2149401847,
+          "ac_rms": 465805.6558688666,
+          "mean": -3554.1480083226597,
+          "peak": 1272669.5017937208,
+          "band_rms": 433039.0605555499
+        },
+        "late_20_35": {
+          "rms": 467517.26308896014,
+          "ac_rms": 467506.2521334182,
+          "mean": -3208.6605237654303,
+          "peak": 1271640.0602969509,
+          "band_rms": 434404.6283940591
+        },
+        "steady_10_35": {
+          "rms": 466838.7849940397,
+          "ac_rms": 466826.78771987325,
+          "mean": -3346.855517588322,
+          "peak": 1272669.5017937208,
+          "band_rms": 433858.91703276266
+        }
+      },
+      "late_band_relative_db": -0.3344969413817709,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.5829949072043038,
+        "repository_sci": 5.758338079755596,
+        "f0_hz": 757.5757575757576,
+        "centroid_hz": 4362.377333148179,
+        "aci": 28.0813697231362,
+        "autocorrelation_hnr_db": 8.028012993354938,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.24603181516244244,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004982750454957089,
+          -0.04069088415310178,
+          0.0008021727979039626,
+          -0.0792524471226534
+        ],
+        "std": [
+          0.012667013063859669,
+          88.82182210480167,
+          0.01318817665552051,
+          83.8529677521751
+        ],
+        "rms": [
+          0.013611797164826054,
+          88.82183142541639,
+          0.013212550272181114,
+          83.85300520433178
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "SAC",
+    "profile": "balanced_aligned",
+    "seed": 2,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "SAC",
+      "seed": 2,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 16.631869436008856,
+      "evaluation_seconds": 2.129853409016505,
+      "first_threshold_step": null,
+      "initial_error": 0.32274397465254295,
+      "error": 0.25726266066440473,
+      "metrics": {
+        "log_spectral": 0.22958929695614055,
+        "envelope": 0.02767336370826416,
+        "total": 0.25726266066440473,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.4243714809999801,
+      "features": {
+        "spectral_entropy": 0.5363681122548101,
+        "centroid_hz": 4268.193431325577,
+        "rms": 454791.24521658395
+      },
+      "objective_metrics": {
+        "transport": 0.023041583202479246,
+        "target_weighted_log": 0.33714525406294327,
+        "band_envelope": 0.054157139847587354,
+        "missing": 0.0030191263125184248,
+        "dc": 0.0038336530257400453,
+        "total": 0.16790665449341327
+      },
+      "objective_error": 0.16790665449341327,
+      "discounted_reward_cost": 0.16790665449341327,
+      "mean_reward_cost": 0.2027090755231407,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 454791.24521658395,
+      "peak": 1206875.498948493,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 459516.06013736926,
+          "ac_rms": 459506.39648116525,
+          "mean": -2980.120310411225,
+          "peak": 1206875.498948493,
+          "band_rms": 429035.2595784103
+        },
+        "transition_05_10": {
+          "rms": 454672.9031630564,
+          "ac_rms": 454661.9727651693,
+          "mean": -3152.6801307064275,
+          "peak": 1164734.0407387328,
+          "band_rms": 425522.9119588638
+        },
+        "middle_10_20": {
+          "rms": 453916.37166764995,
+          "ac_rms": 453903.7741370274,
+          "mean": -3381.7587268342236,
+          "peak": 1161138.091437624,
+          "band_rms": 424632.2613882464
+        },
+        "late_20_35": {
+          "rms": 453829.2387190055,
+          "ac_rms": 453820.13406399905,
+          "mean": -2874.6885754768928,
+          "peak": 1155702.7144678328,
+          "band_rms": 425986.7467105659
+        },
+        "steady_10_35": {
+          "rms": 453864.0939058001,
+          "ac_rms": 453853.659926069,
+          "mean": -3077.5166360198245,
+          "peak": 1161138.091437624,
+          "band_rms": 425445.4700528724
+        }
+      },
+      "late_band_relative_db": -0.5045894216680791,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.5270998955055943,
+        "repository_sci": 5.726398355312583,
+        "f0_hz": 757.5757575757576,
+        "centroid_hz": 4338.180572206502,
+        "aci": 8.801921652624939,
+        "autocorrelation_hnr_db": 10.162726096875927,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.25726266066440473,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004876562162880089,
+          -0.05262065420409897,
+          0.0012152676072219356,
+          -0.019614087425772465
+        ],
+        "std": [
+          0.012586361890034104,
+          87.77245004764272,
+          0.013103734823504125,
+          83.02987158012428
+        ],
+        "rms": [
+          0.013498050383493781,
+          87.77246582100327,
+          0.013159967389088683,
+          83.0298738968352
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "baseline",
+    "seed": 0,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 0,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.827853895025328,
+      "evaluation_seconds": 2.1521436919865664,
+      "first_threshold_step": null,
+      "initial_error": 0.26943342072299953,
+      "error": 0.2628318240221925,
+      "metrics": {
+        "log_spectral": 0.2441320732659189,
+        "envelope": 0.018699750756273614,
+        "total": 0.2628318240221925,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.4214113019988872,
+      "features": {
+        "spectral_entropy": 0.7194457886084984,
+        "centroid_hz": 4300.2455476404375,
+        "rms": 471226.4427136084
+      },
+      "objective_metrics": {
+        "transport": 0.034631591098214065,
+        "target_weighted_log": 0.19430949268119463,
+        "band_envelope": 0.02793349466446677,
+        "missing": 0.0004980977233298556,
+        "dc": 0.0042012748804928415,
+        "total": 0.11255878186768849
+      },
+      "objective_error": 0.11255878186768849,
+      "discounted_reward_cost": 0.144771524872262,
+      "mean_reward_cost": 0.1711579532820016,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 471226.4427136084,
+      "peak": 1418206.9603685462,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 459678.18339327554,
+          "ac_rms": 459672.9336254807,
+          "mean": -2196.902338808693,
+          "peak": 1338342.6049024689,
+          "band_rms": 451289.7436992486
+        },
+        "transition_05_10": {
+          "rms": 477053.67643136455,
+          "ac_rms": 477041.2936883998,
+          "mean": -3437.1954816302664,
+          "peak": 1401696.4376905342,
+          "band_rms": 465313.5873083313
+        },
+        "middle_10_20": {
+          "rms": 468069.45227821503,
+          "ac_rms": 468061.45593062707,
+          "mean": -2735.9875968019655,
+          "peak": 1418206.9603685462,
+          "band_rms": 451121.58819971484
+        },
+        "late_20_35": {
+          "rms": 475155.5027536326,
+          "ac_rms": 475147.4934443775,
+          "mean": -2758.853128128627,
+          "peak": 1389580.2000714438,
+          "band_rms": 446731.7015212889
+        },
+        "steady_10_35": {
+          "rms": 472333.8395040585,
+          "ac_rms": 472325.835681814,
+          "mean": -2749.706915597962,
+          "peak": 1418206.9603685462,
+          "band_rms": 448492.81245344033
+        }
+      },
+      "late_band_relative_db": -0.046357750034189994,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.7382381296123235,
+        "repository_sci": 6.676354283845343,
+        "f0_hz": 657.8947368421053,
+        "centroid_hz": 4392.3383446350945,
+        "aci": 101.74959990688508,
+        "autocorrelation_hnr_db": 0.22883394731077522,
+        "periodic_frames": 8,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.2628318240221925,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004551772716162461,
+          -0.06873848740297725,
+          -0.00268694560476848,
+          -0.022760373298189016
+        ],
+        "std": [
+          0.012989207013626838,
+          85.11675919030367,
+          0.0133107743007674,
+          82.36425261509491
+        ],
+        "rms": [
+          0.013763652629387798,
+          85.11678694617058,
+          0.013579263204200533,
+          82.36425575987293
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "baseline",
+    "seed": 1,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 1,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.626537222997285,
+      "evaluation_seconds": 2.0980673270241823,
+      "first_threshold_step": null,
+      "initial_error": 0.14721136948897307,
+      "error": 0.22809228552306426,
+      "metrics": {
+        "log_spectral": 0.1929009700066679,
+        "envelope": 0.035191315516396385,
+        "total": 0.22809228552306426,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.4219555239833426,
+      "features": {
+        "spectral_entropy": 0.6204929838714744,
+        "centroid_hz": 4194.862443762282,
+        "rms": 492234.7765990547
+      },
+      "objective_metrics": {
+        "transport": 0.015246594834104031,
+        "target_weighted_log": 0.12787740258704375,
+        "band_envelope": 0.08524817801609066,
+        "missing": 0.003362538117730444,
+        "dc": 0.0037160533979380492,
+        "total": 0.1395608050722103
+      },
+      "objective_error": 0.1395608050722103,
+      "discounted_reward_cost": 0.1265194086378664,
+      "mean_reward_cost": 0.14944631946894457,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 492234.7765990547,
+      "peak": 1586828.84965585,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 504158.32041266543,
+          "ac_rms": 504144.1831425381,
+          "mean": -3775.5323946116,
+          "peak": 1486783.4895729786,
+          "band_rms": 466841.24294762145
+        },
+        "transition_05_10": {
+          "rms": 532675.2712160097,
+          "ac_rms": 532661.3906116413,
+          "mean": -3845.4540332723736,
+          "peak": 1415213.185432672,
+          "band_rms": 496689.3774929658
+        },
+        "middle_10_20": {
+          "rms": 530985.4600701268,
+          "ac_rms": 530975.0337793948,
+          "mean": -3327.5079045500156,
+          "peak": 1586828.84965585,
+          "band_rms": 491903.72373376257
+        },
+        "late_20_35": {
+          "rms": 445067.7299904331,
+          "ac_rms": 445058.21488042513,
+          "mean": -2910.2656728232873,
+          "peak": 1368946.4131823846,
+          "band_rms": 416445.60046396224
+        },
+        "steady_10_35": {
+          "rms": 481278.91506864905,
+          "ac_rms": 481269.07771038165,
+          "mean": -3077.162565513978,
+          "peak": 1586828.84965585,
+          "band_rms": 448156.0802407246
+        }
+      },
+      "late_band_relative_db": -0.05288163914744577,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.6279848538535324,
+        "repository_sci": 5.55100005681653,
+        "f0_hz": 781.25,
+        "centroid_hz": 4336.718794387914,
+        "aci": 25.267173856279992,
+        "autocorrelation_hnr_db": 7.997819104332388,
+        "periodic_frames": 24,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.22809228552306426,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.005032344031844035,
+          0.09661395057597048,
+          0.0005169837211656096,
+          0.10895593214529098
+        ],
+        "std": [
+          0.012186371448928921,
+          86.94921265174325,
+          0.012505902192870282,
+          79.82837564483096
+        ],
+        "rms": [
+          0.013184541537198259,
+          86.94926632820724,
+          0.012516583472561032,
+          79.8284500005317
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "baseline",
+    "seed": 2,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 2,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.66766796898446,
+      "evaluation_seconds": 2.136329238041071,
+      "first_threshold_step": null,
+      "initial_error": 0.32274397465254295,
+      "error": 0.2530315191724339,
+      "metrics": {
+        "log_spectral": 0.20853320895920233,
+        "envelope": 0.044498310213231564,
+        "total": 0.2530315191724339,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.41153803101042286,
+      "features": {
+        "spectral_entropy": 0.7296207763406763,
+        "centroid_hz": 4260.2438704708275,
+        "rms": 437423.5949541432
+      },
+      "objective_metrics": {
+        "transport": 0.021335480323399155,
+        "target_weighted_log": 0.12090971197198326,
+        "band_envelope": 0.08977519513800114,
+        "missing": 0.0111555109717631,
+        "dc": 0.003359517691587748,
+        "total": 0.16398507716708116
+      },
+      "objective_error": 0.16398507716708116,
+      "discounted_reward_cost": 0.1433585692936709,
+      "mean_reward_cost": 0.1701064758902675,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 437423.5949541432,
+      "peak": 1496781.198859033,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 408178.67929600127,
+          "ac_rms": 408168.49303511984,
+          "mean": -2883.6652488077348,
+          "peak": 1160878.9103086207,
+          "band_rms": 387416.949586155
+        },
+        "transition_05_10": {
+          "rms": 426243.3147081685,
+          "ac_rms": 426235.26293786895,
+          "mean": -2619.9163521963596,
+          "peak": 1374837.240941956,
+          "band_rms": 400991.08304019907
+        },
+        "middle_10_20": {
+          "rms": 451895.13161605573,
+          "ac_rms": 451886.171462562,
+          "mean": -2845.701881852954,
+          "peak": 1496781.198859033,
+          "band_rms": 425223.462239729
+        },
+        "late_20_35": {
+          "rms": 440705.56778739294,
+          "ac_rms": 440694.1916603247,
+          "mean": -3166.5305400897832,
+          "peak": 1371158.9584750936,
+          "band_rms": 417219.82361026574
+        },
+        "steady_10_35": {
+          "rms": 445215.1417894521,
+          "ac_rms": 445204.77515966934,
+          "mean": -3038.199076795051,
+          "peak": 1496781.198859033,
+          "band_rms": 420439.56267659407
+        }
+      },
+      "late_band_relative_db": -0.6073959850512938,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.7225054653463316,
+        "repository_sci": 5.72418976822511,
+        "f0_hz": 763.4032634032635,
+        "centroid_hz": 4369.86514940262,
+        "aci": 102.46756114546307,
+        "autocorrelation_hnr_db": 3.4286956782656155,
+        "periodic_frames": 16,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.2530315191724339,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004585360948671848,
+          -0.008846600002804666,
+          -0.0024012759578143873,
+          0.09353988295143323
+        ],
+        "std": [
+          0.012474473087468893,
+          85.1938412314347,
+          0.012815697072159626,
+          81.88666131606881
+        ],
+        "rms": [
+          0.013290523459954106,
+          85.19384169075389,
+          0.013038719939892038,
+          81.88671474178373
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "balanced_context",
+    "seed": 0,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 0,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.34629694398609,
+      "evaluation_seconds": 2.097541742026806,
+      "first_threshold_step": null,
+      "initial_error": 0.26943342072299953,
+      "error": 0.25399820936187306,
+      "metrics": {
+        "log_spectral": 0.23733893875829973,
+        "envelope": 0.01665927060357334,
+        "total": 0.25399820936187306,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.4255556910065934,
+      "features": {
+        "spectral_entropy": 0.7333801093141408,
+        "centroid_hz": 4298.592908202505,
+        "rms": 488332.4253826011
+      },
+      "objective_metrics": {
+        "transport": 0.03039214438080347,
+        "target_weighted_log": 0.1822991286773648,
+        "band_envelope": 0.039221097735382494,
+        "missing": 0.00021539036152709673,
+        "dc": 0.0038360223200521373,
+        "total": 0.11600240724058657
+      },
+      "objective_error": 0.11600240724058657,
+      "discounted_reward_cost": 0.10260420345252415,
+      "mean_reward_cost": 0.11859470415415596,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 488332.4253826011,
+      "peak": 1541213.7471266605,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 504562.2252124307,
+          "ac_rms": 504557.8384866471,
+          "mean": -2103.980276069656,
+          "peak": 1541213.7471266605,
+          "band_rms": 491949.05244625325
+        },
+        "transition_05_10": {
+          "rms": 482088.03030285164,
+          "ac_rms": 482072.89436517627,
+          "mean": -3820.1413147700564,
+          "peak": 1422599.4037818587,
+          "band_rms": 464502.5735013886
+        },
+        "middle_10_20": {
+          "rms": 476833.29663692875,
+          "ac_rms": 476824.7884289701,
+          "mean": -2848.4945689354076,
+          "peak": 1525607.03336041,
+          "band_rms": 455123.30233438377
+        },
+        "late_20_35": {
+          "rms": 492459.1387869963,
+          "ac_rms": 492449.19214305765,
+          "mean": -3129.9412901789283,
+          "peak": 1447757.9163558695,
+          "band_rms": 454835.0568486146
+        },
+        "steady_10_35": {
+          "rms": 486269.0604362513,
+          "ac_rms": 486259.6987829493,
+          "mean": -3017.3626016815197,
+          "peak": 1525607.03336041,
+          "band_rms": 454950.3769579617
+        }
+      },
+      "late_band_relative_db": 0.07781308552226433,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.7505987142933748,
+        "repository_sci": 6.5617422029501595,
+        "f0_hz": 671.4131218457102,
+        "centroid_hz": 4405.639817229514,
+        "aci": 120.47806757671654,
+        "autocorrelation_hnr_db": 1.8202900259292352,
+        "periodic_frames": 12,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.25399820936187306,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.0048220983879472875,
+          0.024442958935980207,
+          -0.0026691572204572216,
+          0.003024769717690994
+        ],
+        "std": [
+          0.012964200571785921,
+          87.90524312137465,
+          0.013257892103272932,
+          83.45043191906531
+        ],
+        "rms": [
+          0.013831960429691021,
+          87.90524651968293,
+          0.013523908580345613,
+          83.45043197388367
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "balanced_context",
+    "seed": 1,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 1,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.4984439079999,
+      "evaluation_seconds": 2.0907875949924346,
+      "first_threshold_step": null,
+      "initial_error": 0.14721136948897307,
+      "error": 0.2564045671009998,
+      "metrics": {
+        "log_spectral": 0.21952879019400737,
+        "envelope": 0.036875776906992425,
+        "total": 0.2564045671009998,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.4213209449953865,
+      "features": {
+        "spectral_entropy": 0.7040962846657477,
+        "centroid_hz": 4276.911135360519,
+        "rms": 528190.3994684088
+      },
+      "objective_metrics": {
+        "transport": 0.012959860387482203,
+        "target_weighted_log": 0.08369591055974826,
+        "band_envelope": 0.07249616453048202,
+        "missing": 0.00039705216537747333,
+        "dc": 0.003758118900893884,
+        "total": 0.10754991877874563
+      },
+      "objective_error": 0.10754991877874563,
+      "discounted_reward_cost": 0.09538552644596554,
+      "mean_reward_cost": 0.10929332302526235,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 528190.3994684088,
+      "peak": 1921804.841879694,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 582905.7299680432,
+          "ac_rms": 582894.0977017268,
+          "mean": -3682.511923542875,
+          "peak": 1921804.841879694,
+          "band_rms": 516784.65582069266
+        },
+        "transition_05_10": {
+          "rms": 565502.7780453701,
+          "ac_rms": 565490.0266152781,
+          "mean": -3797.6013065189672,
+          "peak": 1828383.0442547838,
+          "band_rms": 505290.56777648296
+        },
+        "middle_10_20": {
+          "rms": 525103.5592112811,
+          "ac_rms": 525094.7098772817,
+          "mean": -3048.533294688691,
+          "peak": 1653194.9412214346,
+          "band_rms": 475608.9007744725
+        },
+        "late_20_35": {
+          "rms": 497277.826047258,
+          "ac_rms": 497267.3071968452,
+          "mean": -3234.4198066197837,
+          "peak": 1784313.5543176362,
+          "band_rms": 454249.5406107521
+        },
+        "steady_10_35": {
+          "rms": 508590.83842074306,
+          "ac_rms": 508581.0209921664,
+          "mean": -3160.0652018473456,
+          "peak": 1784313.5543176362,
+          "band_rms": 462911.56572871277
+        }
+      },
+      "late_band_relative_db": 0.2284931344591207,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.6824354369179508,
+        "repository_sci": 11.515103073618812,
+        "f0_hz": 384.61538461538464,
+        "centroid_hz": 4428.885797545698,
+        "aci": 65.24546721390111,
+        "autocorrelation_hnr_db": 4.870980173285796,
+        "periodic_frames": 17,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.2564045671009998,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.005186307073257215,
+          0.02553294990782111,
+          -0.002094338922680179,
+          -0.07147149334176611
+        ],
+        "std": [
+          0.01277496079151093,
+          91.55610077160594,
+          0.013026933177179602,
+          83.54937129914089
+        ],
+        "rms": [
+          0.013787581524065756,
+          91.55610433189037,
+          0.013194212501159583,
+          83.54940186893062
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "balanced_context",
+    "seed": 2,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 2,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.924914506002096,
+      "evaluation_seconds": 2.186537831032183,
+      "first_threshold_step": null,
+      "initial_error": 0.32274397465254295,
+      "error": 0.27210468950966277,
+      "metrics": {
+        "log_spectral": 0.24836683390535144,
+        "envelope": 0.02373785560431131,
+        "total": 0.27210468950966277,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.43433019300573505,
+      "features": {
+        "spectral_entropy": 0.7079522832635444,
+        "centroid_hz": 4316.216423604136,
+        "rms": 498989.4757955364
+      },
+      "objective_metrics": {
+        "transport": 0.03234172525686648,
+        "target_weighted_log": 0.1969848514447994,
+        "band_envelope": 0.0674162847503003,
+        "missing": 0.0004199671926990743,
+        "dc": 0.003949379822965796,
+        "total": 0.15023909523606133
+      },
+      "objective_error": 0.15023909523606133,
+      "discounted_reward_cost": 0.12650413374479055,
+      "mean_reward_cost": 0.15063060383326685,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 498989.4757955364,
+      "peak": 1751179.6229989734,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 526207.256455575,
+          "ac_rms": 526199.5222053753,
+          "mean": -2852.994451118389,
+          "peak": 1751179.6229989734,
+          "band_rms": 487480.3114234218
+        },
+        "transition_05_10": {
+          "rms": 487489.3847432514,
+          "ac_rms": 487472.2738223512,
+          "mean": -4084.4206223773913,
+          "peak": 1329178.3105234718,
+          "band_rms": 449195.5729556251
+        },
+        "middle_10_20": {
+          "rms": 474226.1949138848,
+          "ac_rms": 474219.5342701633,
+          "mean": -2513.4158214072672,
+          "peak": 1534491.98182601,
+          "band_rms": 448411.9269878929
+        },
+        "late_20_35": {
+          "rms": 509448.2419945684,
+          "ac_rms": 509441.1460768176,
+          "mean": -2688.8576189393016,
+          "peak": 1645002.503603626,
+          "band_rms": 492510.58172775403
+        },
+        "steady_10_35": {
+          "rms": 495659.86355545727,
+          "ac_rms": 495652.94597143156,
+          "mean": -2618.680899926488,
+          "peak": 1645002.503603626,
+          "band_rms": 475362.28960055776
+        }
+      },
+      "late_band_relative_db": 0.4590270265405178,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.678044533298051,
+        "repository_sci": 6.775718876859156,
+        "f0_hz": 649.3506493506494,
+        "centroid_hz": 4399.817452505946,
+        "aci": 69.8132900715672,
+        "autocorrelation_hnr_db": 2.2463270167708123,
+        "periodic_frames": 13,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.27210468950966277,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004525167293191638,
+          0.008611961773111555,
+          -0.0026485691961176936,
+          -0.08923825939965824
+        ],
+        "std": [
+          0.013218431132903215,
+          84.71137679890865,
+          0.01357336316470935,
+          83.95658485840343
+        ],
+        "rms": [
+          0.013971544676472832,
+          84.71137723666499,
+          0.013829356687413632,
+          83.95663228449101
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "balanced_aligned",
+    "seed": 0,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 0,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 15.37560903801932,
+      "evaluation_seconds": 2.056543940998381,
+      "first_threshold_step": null,
+      "initial_error": 0.26943342072299953,
+      "error": 0.247899558422413,
+      "metrics": {
+        "log_spectral": 0.22862734088575656,
+        "envelope": 0.019272217536656457,
+        "total": 0.247899558422413,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.379779328010045,
+      "features": {
+        "spectral_entropy": 0.7034953403353201,
+        "centroid_hz": 4274.636661962215,
+        "rms": 489676.585035029
+      },
+      "objective_metrics": {
+        "transport": 0.019756543819296115,
+        "target_weighted_log": 0.1875816978769264,
+        "band_envelope": 0.03604584927480638,
+        "missing": 0.0009223322005693432,
+        "dc": 0.004719491464298486,
+        "total": 0.10501443111090261
+      },
+      "objective_error": 0.10501443111090261,
+      "discounted_reward_cost": 0.10501443111090264,
+      "mean_reward_cost": 0.12322639696349066,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 489676.585035029,
+      "peak": 1486516.1626507514,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 472874.5397153436,
+          "ac_rms": 472862.4395045949,
+          "mean": -3382.8415217787383,
+          "peak": 1422469.5363882976,
+          "band_rms": 440892.41111506586
+        },
+        "transition_05_10": {
+          "rms": 457556.9634589142,
+          "ac_rms": 457551.00838574994,
+          "mean": -2334.4238958618103,
+          "peak": 1258964.7752235236,
+          "band_rms": 428579.1594856533
+        },
+        "middle_10_20": {
+          "rms": 484397.8973267463,
+          "ac_rms": 484387.17001661786,
+          "mean": -3223.7335288679533,
+          "peak": 1486516.1626507514,
+          "band_rms": 448068.7429970702
+        },
+        "late_20_35": {
+          "rms": 508668.4429406807,
+          "ac_rms": 508656.6883485816,
+          "mean": -3458.0691072405025,
+          "peak": 1466111.9651099998,
+          "band_rms": 463058.3881093021
+        },
+        "steady_10_35": {
+          "rms": 499101.87344874506,
+          "ac_rms": 499090.53420285386,
+          "mean": -3364.334875891482,
+          "peak": 1486516.1626507514,
+          "band_rms": 457121.51760710287
+        }
+      },
+      "late_band_relative_db": 0.1191657986144063,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.6949824346580493,
+        "repository_sci": 11.607442884506165,
+        "f0_hz": 381.6793893129771,
+        "centroid_hz": 4430.321711643574,
+        "aci": 60.21893385593568,
+        "autocorrelation_hnr_db": 4.024422818655221,
+        "periodic_frames": 17,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.247899558422413,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.005129657825803544,
+          0.14389705346631668,
+          -0.001322290021588585,
+          -0.08725853918750844
+        ],
+        "std": [
+          0.012837718818946091,
+          91.13871041566784,
+          0.01317971586097594,
+          83.19400021113849
+        ],
+        "rms": [
+          0.013824630696121692,
+          91.13882401366038,
+          0.013245880909824514,
+          83.19404597195386
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "balanced_aligned",
+    "seed": 1,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 1,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 14.84104291300173,
+      "evaluation_seconds": 1.9713735599943902,
+      "first_threshold_step": null,
+      "initial_error": 0.14721136948897307,
+      "error": 0.29529223251080483,
+      "metrics": {
+        "log_spectral": 0.2415365897967925,
+        "envelope": 0.05375564271401237,
+        "total": 0.29529223251080483,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.3722166259831283,
+      "features": {
+        "spectral_entropy": 0.7834810613658438,
+        "centroid_hz": 4293.206446115749,
+        "rms": 502143.1144091894
+      },
+      "objective_metrics": {
+        "transport": 0.020253321807866077,
+        "target_weighted_log": 0.12157980113341516,
+        "band_envelope": 0.09716752547822079,
+        "missing": 0.007463970076777671,
+        "dc": 0.0038803096398892507,
+        "total": 0.16313176868698492
+      },
+      "objective_error": 0.16313176868698492,
+      "discounted_reward_cost": 0.16313176868698495,
+      "mean_reward_cost": 0.19233987706326322,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 502143.1144091894,
+      "peak": 1941356.6365109333,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 556338.026796364,
+          "ac_rms": 556326.3194151866,
+          "mean": -3609.208448359278,
+          "peak": 1836588.1673220876,
+          "band_rms": 501753.8113208086
+        },
+        "transition_05_10": {
+          "rms": 488064.1993626608,
+          "ac_rms": 488057.03286859184,
+          "mean": -2644.875615483292,
+          "peak": 1758820.4429053636,
+          "band_rms": 442206.3027139295
+        },
+        "middle_10_20": {
+          "rms": 496008.9607110517,
+          "ac_rms": 496003.5202074826,
+          "mean": -2323.1546317620546,
+          "peak": 1941356.6365109333,
+          "band_rms": 447506.02665576927
+        },
+        "late_20_35": {
+          "rms": 491686.04836467875,
+          "ac_rms": 491674.4576979253,
+          "mean": -3376.063376815238,
+          "peak": 1829595.9131112087,
+          "band_rms": 452922.8521482894
+        },
+        "steady_10_35": {
+          "rms": 493419.75815338705,
+          "ac_rms": 493410.91019844025,
+          "mean": -2954.8998787939654,
+          "peak": 1941356.6365109333,
+          "band_rms": 450763.9332912277
+        }
+      },
+      "late_band_relative_db": -0.0024843023520409644,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.7817810276382852,
+        "repository_sci": 5.798134358309257,
+        "f0_hz": 769.2307692307693,
+        "centroid_hz": 4460.103352545582,
+        "aci": 170.6327020077831,
+        "autocorrelation_hnr_db": -0.6608352363149241,
+        "periodic_frames": 7,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.29529223251080483,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004639860429581758,
+          0.07789947742159452,
+          -0.001841522641593456,
+          -0.010721925860784458
+        ],
+        "std": [
+          0.01271063382835588,
+          89.87829731179976,
+          0.01288861638508635,
+          79.90384288065945
+        ],
+        "rms": [
+          0.013531020550000782,
+          89.8783310703801,
+          0.013019509897128143,
+          79.90384360002219
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  },
+  {
+    "algorithm": "TD3",
+    "profile": "balanced_aligned",
+    "seed": 2,
+    "target": "constant",
+    "budget": 1050,
+    "result": {
+      "algorithm": "TD3",
+      "seed": 2,
+      "requested_steps": 1050,
+      "training_steps": 1050,
+      "evaluation_steps": 175,
+      "training_and_eval_seconds": 14.62812703999225,
+      "evaluation_seconds": 1.9788351280149072,
+      "first_threshold_step": null,
+      "initial_error": 0.32274397465254295,
+      "error": 0.2411633550783517,
+      "metrics": {
+        "log_spectral": 0.2185441013757635,
+        "envelope": 0.02261925370258821,
+        "total": 0.2411633550783517,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "failed": false,
+      "env_steps": 35,
+      "seconds": 0.38371111699962057,
+      "features": {
+        "spectral_entropy": 0.7237804458217091,
+        "centroid_hz": 4262.201329857206,
+        "rms": 486503.87888744083
+      },
+      "objective_metrics": {
+        "transport": 0.0161751966176594,
+        "target_weighted_log": 0.11083171072212765,
+        "band_envelope": 0.0428780387346866,
+        "missing": 0.0011490002979796293,
+        "dc": 0.0037010810965699935,
+        "total": 0.08942927173849419
+      },
+      "objective_error": 0.08942927173849419,
+      "discounted_reward_cost": 0.08942927173849417,
+      "mean_reward_cost": 0.11028622828496348,
+      "training_numerical_failures": 0,
+      "training_episodes": 30
+    },
+    "voice": {
+      "rms": 486503.87888744083,
+      "peak": 1660026.974119262,
+      "exactly_zero": false,
+      "near_zero_absolute": false,
+      "intervals": {
+        "initial_0_05": {
+          "rms": 489605.20322163583,
+          "ac_rms": 489595.46048251324,
+          "mean": -3088.7046824085464,
+          "peak": 1486620.888845278,
+          "band_rms": 449284.20093020983
+        },
+        "transition_05_10": {
+          "rms": 494867.8762123771,
+          "ac_rms": 494854.02197849046,
+          "mean": -3702.9499943038763,
+          "peak": 1382132.9433816858,
+          "band_rms": 454823.8325085734
+        },
+        "middle_10_20": {
+          "rms": 476534.7145878377,
+          "ac_rms": 476526.0701089528,
+          "mean": -2870.3159807466727,
+          "peak": 1441006.6111482042,
+          "band_rms": 440490.4669917374
+        },
+        "late_20_35": {
+          "rms": 489225.24834831385,
+          "ac_rms": 489215.5357128998,
+          "mean": -3082.7323286129354,
+          "peak": 1660026.974119262,
+          "band_rms": 454545.5436568914
+        },
+        "steady_10_35": {
+          "rms": 484188.9505717849,
+          "ac_rms": 484179.6704283214,
+          "mean": -2997.7657894664294,
+          "peak": 1660026.974119262,
+          "band_rms": 448976.31492011127
+        }
+      },
+      "late_band_relative_db": -0.036998877748901,
+      "active_20ms_fraction": 1.0,
+      "sustained_acoustic": true,
+      "acoustic_state": "sustained_periodic_like",
+      "descriptors": {
+        "se": 0.7217141595055898,
+        "repository_sci": 5.731943109718265,
+        "f0_hz": 769.2307692307693,
+        "centroid_hz": 4409.187007475589,
+        "aci": 97.46908696901862,
+        "autocorrelation_hnr_db": 3.5368312059032583,
+        "periodic_frames": 13,
+        "status": "periodic_estimate"
+      },
+      "numerical_failure": false,
+      "acoustic_error": 0.2411633550783517,
+      "above_operational_error_threshold": true,
+      "motion": {
+        "mean": [
+          -0.004926388052346189,
+          -0.0018032922839663534,
+          -0.0005372059856820585,
+          0.094492079722218
+        ],
+        "std": [
+          0.012718642691815945,
+          89.11937900517572,
+          0.013089913320672391,
+          81.51267286583133
+        ],
+        "rms": [
+          0.013639397756660022,
+          89.11937902342014,
+          0.013100932066603855,
+          81.51272763492317
+        ],
+        "left_velocity_active": true,
+        "right_velocity_active": true
+      },
+      "contributing_source_motion": true
+    }
+  }
+]

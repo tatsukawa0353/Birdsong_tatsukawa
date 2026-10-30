@@ -66,6 +66,18 @@ Deeplearning/.venv/bin/python -m Deeplearning.redraw --include-private
 
 `--include-private` を省略すると合成実験の図のみ更新する。実録音由来の図は従来どおり `private_runs/` 配下にのみ保存する。
 
+## Issue #10：合成音の報酬診断とPhase 1比較
+
+結果は [ISSUE10_REPORT.md](reports/ISSUE10_REPORT.md)。実録音を読まず、0.35秒のモデル内合成目標だけを使う。旧報酬を既定値として保持し、目標の活動マスク・帯域包絡・相対スペクトル形状・欠落ペナルティによる候補を比較する。新指標と旧誤差の改善を区別する。
+
+```bash
+Deeplearning/.venv/bin/python -m Deeplearning.issue10 all
+```
+
+段階別は `audit`（固定合成波形・感度・時間集計）、`train`（1050step×3 seed）、`baselines`（oracle/定数/ランダム/DE）、`extend`（事前条件を満たした手法を全条件4200stepで比較）、`glide`（定数目標での再現性に応じてRLまたはoracleのみ）、`report`。設定は `configs/issue10.json`、全成果物は `results/issue10/`。`train`/`extend` は同設定の学習済み結果を再利用する。`report` は既存結果の整合性も再計算する。
+
+環境の選択は `ModelConfig(loss_kind="balanced", reward_timing="context")` または `reward_timing="aligned"`。alignedは新規frame寄与を一度だけ評価し、環境の `reward_discount` を学習器のgammaと一致させる。既定は `loss_kind="baseline", reward_timing="context"`。全条件の最終 `error` は従来の `acoustics.distance`、`objective_error` は新しい全体損失、`mean_reward_cost` と `discounted_reward_cost` は実際のstep報酬の集計。表示の色範囲は報酬設定へ渡さない。
+
 ## Issue #9：発声状態と外力制御の診断
 
 対応結果は [ISSUE9_REPORT.md](reports/ISSUE9_REPORT.md)、録音由来の比較表はローカル限定の `private_runs/issue9/REPORT.md`。合成の発声マップは `results/issue9/` に保存した。

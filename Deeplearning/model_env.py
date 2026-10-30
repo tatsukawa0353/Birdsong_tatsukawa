@@ -8,6 +8,7 @@ from scipy import signal
 
 from .acoustics import distance
 from .model import BirdModel, DT, DEFAULT_CONTROLS, LOW, HIGH, effective_controls
+from .objectives import BalancedObjective
 
 
 class AudioDecimator:
@@ -43,6 +44,10 @@ class ModelConfig:
     fe_mapping: str = "linear"
     fe_power: float = 8.0
     diagnostics: bool = False
+    loss_kind: str = "baseline"
+    reward_timing: str = "context"
+    reward_discount: float = .99
+    audit_objective: bool = False
 
     def __post_init__(self):
         if self.condition not in "ABC" or len(self.condition) != 1:
@@ -60,6 +65,12 @@ class ModelConfig:
             raise ValueError("Condition B fixes f0_r=1e7")
         if self.fe_mapping not in ("linear", "power") or not np.isfinite(self.fe_power) or self.fe_power <= 0:
             raise ValueError("Invalid external-force mapping")
+        if self.loss_kind not in ("baseline", "balanced") or self.reward_timing not in ("context", "aligned"):
+            raise ValueError("Unknown reward loss or timing")
+        if self.loss_kind == "baseline" and self.reward_timing != "context":
+            raise ValueError("The baseline retains its original rolling-context reward")
+        if not np.isfinite(self.reward_discount) or not 0 < self.reward_discount <= 1:
+            raise ValueError("Reward discount must be in (0, 1]")
         for n in (self.duration/self.control_s, self.control_s/DT,
                   self.control_s*self.sample_rate):
             if n < 1 or abs(n-round(n)) > 1e-7:
@@ -89,6 +100,8 @@ class ModelEnv(gym.Env):
             self.target_controls = None
             self.target_audio = x.copy()
         self.loss_scale = max(float(np.max(np.abs(self.target_audio))), 1e-8)
+        self.objective = (BalancedObjective(self.target_audio, config.sample_rate, scale=self.loss_scale)
+                          if config.loss_kind == "balanced" or config.audit_objective else None)
         self.index = self.horizon
         self.done = True
 
@@ -146,6 +159,9 @@ class ModelEnv(gym.Env):
         self.previous = np.zeros(len(self.indices), dtype=np.float32)
         self.audio, self.actions, self.rewards, self.states = [], [], [], []
         self.requested_control_history, self.applied_control_history, self.motion_history = [], [], []
+        self.loss_history = []
+        if self.objective is not None:
+            self.objective.reset()
         return self._obs(), {}
 
     def step(self, action):
@@ -183,7 +199,21 @@ class ModelEnv(gym.Env):
         target = self.target_audio[(self.index-context)*self.block:self.index*self.block]
         metrics = distance(target, generated, self.config.sample_rate, scale=self.loss_scale)
         penalty = self.config.smooth_weight*float(np.mean((action-self.previous)**2))
-        reward = -metrics["total"]-penalty
+        reward_cost = metrics["total"]
+        audit = None
+        if self.objective is not None:
+            audit = self.objective.update(np.concatenate(self.audio))
+        if self.config.loss_kind == "balanced":
+            if self.config.reward_timing == "aligned":
+                # Discounted return / horizon == -whole objective exactly.
+                # Undo the agent's fixed gamma weighting without changing gamma.
+                reward_cost = (self.horizon*audit["contribution"]["total"] /
+                               self.config.reward_discount**(self.index-1))
+            else:
+                reward_cost = audit["rolling"]["total"]
+        reward = -reward_cost-penalty
+        self.loss_history.append(dict(step=self.index, baseline_context=metrics,
+                                      reward_cost=float(reward_cost), smooth_penalty=penalty, objective=audit))
         self.rewards.append(reward)
         self.previous = action.copy()
         done = self.index == self.horizon

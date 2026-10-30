@@ -1,0 +1,52 @@
+{
+  "settings": {
+    "algorithms": [
+      "SAC",
+      "TD3"
+    ],
+    "profiles": [
+      "baseline",
+      "balanced_context",
+      "balanced_aligned"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "steps": 4200,
+    "eval_interval": 350,
+    "learning_rate": 0.0003,
+    "ppo_rollout": 350,
+    "gamma": 0.99,
+    "threshold": 0.08,
+    "direct_episodes": 30,
+    "extension_steps": 4200,
+    "extension_eval_interval": 350,
+    "extension_rule": "Run a matched 4200-step constant-target comparison for all profiles of an algorithm only if balanced_aligned reduces final balanced objective from its own initial value in >=2/3 seeds and beats baseline mean final balanced objective at 1050 steps.",
+    "glide_rule": "Train glide only after >=2/3 seeds of one aligned constant-target cohort achieve final legacy error <=0.08; otherwise generate glide oracle and baselines without claiming RL validation."
+  },
+  "model": {
+    "duration": 0.35,
+    "control_s": 0.01,
+    "sample_rate": 50000,
+    "condition": "A",
+    "target": "constant",
+    "smooth_weight": 0.0,
+    "control_indices": [
+      0,
+      2
+    ],
+    "output_gain": 1.0,
+    "fe_mapping": "linear",
+    "fe_power": 8.0,
+    "diagnostics": true,
+    "loss_kind": "baseline",
+    "reward_timing": "context",
+    "reward_discount": 0.99,
+    "audit_objective": true
+  },
+  "algorithm": "SAC",
+  "seed": 1,
+  "target_sha256": "b7dfd698512d56b05d4f40aafda7e83d55c529120908c1339162fa469ba706e6"
+}
