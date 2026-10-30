@@ -9,7 +9,7 @@ from .evaluation import descriptors
 from .experiments import rollout, write_json
 from .model import ROOT
 from .model_env import ModelConfig, ModelEnv
-from .plotting import plt
+from .plotting import plt, control_trajectories
 
 
 def main():
@@ -32,8 +32,8 @@ def main():
                     controls[:, 1] = (controls[:, 1]+1)/2
                     labels = ("Frequency [Hz]", "Amplitude")
                 else:
-                    controls = data["physical_controls"][:, [0, 2]].copy()
-                    labels = ("epsilon_l", "ps")
+                    control_trajectories(data["physical_controls"], path.parent/"controls.png")
+                    continue
                 with plt.style.context(["science", "ieee", "no-latex"]):
                     fig, axes = plt.subplots(2, 1, sharex=True, figsize=(8, 5))
                     for i, ax in enumerate(axes):

@@ -33,6 +33,18 @@ def vector(x, size):
     return x
 
 
+def effective_controls(controls, condition):
+    """Resolve constraints once for application, saving, plots and replay."""
+    if condition not in ("A", "B", "C"):
+        raise ValueError("Condition must be A, B or C")
+    c = vector(controls, 5).copy()
+    if np.any(c < LOW) or np.any(c > HIGH):
+        raise ValueError("Controls outside documented physical ranges")
+    if condition == "B":
+        c[4] = 1e7
+    return c
+
+
 class BirdModel:
     def __init__(self, condition="A"):
         if condition not in ("A", "B", "C"):
@@ -49,6 +61,7 @@ class BirdModel:
         self.lib.bird_controls.argtypes = [ct.c_void_p, ptr]
         self.lib.bird_advance.argtypes = [ct.c_void_p, ct.c_int, ptr]
         self.lib.bird_advance_rms.argtypes = [ct.c_void_p, ct.c_int, ptr, ptr]
+        self.lib.bird_advance_moments.argtypes = [ct.c_void_p, ct.c_int, ptr, ptr]
         self.lib.bird_state.argtypes = [ct.c_void_p, ptr]
         self.ptr = self.lib.bird_create()
         if not self.ptr:
@@ -66,13 +79,7 @@ class BirdModel:
             raise RuntimeError("Model is closed")
 
     def _controls(self, controls):
-        c = vector(controls, 5).copy()
-        if np.any(c < LOW) or np.any(c > HIGH):
-            raise ValueError("Controls outside documented physical ranges")
-        # B is a hypothesis of suppressed right vibration, not a guarantee.
-        if self.condition == "B":
-            c[4] = 1e7
-        return c
+        return effective_controls(controls, self.condition)
 
     def reset(self, controls=DEFAULT_CONTROLS, *, state=(0, 0, 0, 0), history=None):
         self._check_open()
@@ -91,10 +98,12 @@ class BirdModel:
         self.lib.bird_controls(self.ptr, self._pointer(c))
         self.controls = c
 
-    def advance(self, seconds, *, return_rms=False):
+    def advance(self, seconds, *, return_rms=False, return_moments=False):
         self._check_open()
         if self.failed:
             raise RuntimeError("Reset required after numerical failure")
+        if return_rms and return_moments:
+            raise ValueError("Choose RMS or moments, not both")
         if not np.isfinite(seconds) or not 0 < seconds <= 1:
             raise ValueError("Advance duration must be in (0, 1] seconds")
         n = round(seconds/DT)
@@ -102,11 +111,19 @@ class BirdModel:
             raise ValueError("Duration must be a positive integral multiple of dt")
         out = np.empty(n, dtype=np.float64)
         rms = np.empty(4, dtype=np.float64)
-        code = (self.lib.bird_advance_rms(self.ptr, n, self._pointer(out), self._pointer(rms))
-                if return_rms else self.lib.bird_advance(self.ptr, n, self._pointer(out)))
+        moments = np.empty(8, dtype=np.float64)
+        if return_moments:
+            code = self.lib.bird_advance_moments(self.ptr, n, self._pointer(out), self._pointer(moments))
+        elif return_rms:
+            code = self.lib.bird_advance_rms(self.ptr, n, self._pointer(out), self._pointer(rms))
+        else:
+            code = self.lib.bird_advance(self.ptr, n, self._pointer(out))
         if code:
             self.failed = True
             raise FloatingPointError("Native integration diverged; reset required")
+        if return_moments:
+            means, stds = moments[:4], moments[4:]
+            return out, dict(mean=means, std=stds, rms=np.hypot(means, stds))
         return (out, rms) if return_rms else out
 
     @property

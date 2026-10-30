@@ -1,0 +1,72 @@
+{
+  "date_jst": "2026-10-30",
+  "base_commit": "28947a67f8a3c90e1efa255cc606a049decf784b",
+  "source_sha256": {
+    "__init__.py": "fd3e722cabccc4920d141b741bf6a9d540c4f4e0b16834c8bd36de67aab28c14",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "configs/issue9.json": "b5627e634e8dad3d60c50308dc23d19fe96914fea87011bb8b963c84e6ccf2cd",
+    "diagnostics.py": "881e6ee7577d651b2f52ccf3e4bdf3c3212e1ca6a194a8c1d1df8b09e5fd92c4",
+    "evaluation.py": "e9e4145f4a524ed737ca7ea68c75c2d3805249ca386f2ff19ca801be55266182",
+    "experiments.py": "d79a3934745e789238be3f3308ecd18d83581705b96d69772679bbb9cc1dda80",
+    "issue9.py": "a4827062500eeb963507bcf0468d09a70c2913fce77858ae5b43e285e8f76a3d",
+    "issue9_report.py": "6c947738afb082c7df554b45f9758181a993dff1876bf4f37c7829985d147de5",
+    "make_report.py": "b21354f501abe803c2c8ce162235aee09cf4521870a9a744bde025cd333cbf5c",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "model_env.py": "4dfcda3e51bee800009a742c09d09d655860d0fc1164d38b67c97963a7a21f70",
+    "native/model.cpp": "999f8e9b35c90ac46b8bc671a48fc7386f1de40ba02ce72186e54206203f8755",
+    "native/reference.cpp": "ca67e466a41fad0eff65fda969c64ed6a3c85620b7d3969a6cb7b0214a5bf3db",
+    "phase2.py": "6791cbeead085141b291d84d95d87935275e3e16b0f75f85666631738cc8cd96",
+    "plotting.py": "f27fca7bca19a57778061db46587df852ad0c102dddce8a47b180a7338828ad1",
+    "private_analysis.py": "b0c9f0efd0c30a381947246260b26372576673370c52a1defb22deb0f96065df",
+    "redraw.py": "105dce350c707192bd98e67f81f928eac579b86d173b8f7b5d70478746b15884",
+    "reproduce.py": "6d4f469c733e6d26ec5f4a1ba279a9037ea15f6719c96df4c9f6505c2bf62c5f",
+    "run.py": "01cbe7a2b5475af55f9de016789838490c12baaa29fd372d297b462f7e7e22f9",
+    "sine_env.py": "1c0b3abe035cd698df7cb0226ff8ea396ade53b9ba50b8d970ce837b1059e4a4",
+    "tests/test_issue9.py": "791d93cd1955150270c7d1ba0883c88c7c43313f63f364fa3f90d9d411c3369c",
+    "voice_diagnostics.py": "e73ca987b8c12eda6b9bf7a5341e1f538bcbf0fed316d3a76d9f763b9d00fba2"
+  },
+  "configuration": {
+    "algorithm": "SAC",
+    "conditions": [
+      "A",
+      "B",
+      "C"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "variants": [
+      "fixed",
+      "linear",
+      "power8"
+    ],
+    "steps": 1050,
+    "eval_interval": 350,
+    "learning_rate": 0.0003,
+    "ppo_rollout": 350,
+    "threshold": 0.08,
+    "map_epsilon": [
+      25000000.0,
+      37500000.0,
+      50000000.0
+    ],
+    "map_ps": [
+      2500000.0,
+      3250000.0,
+      4000000.0
+    ],
+    "map_fe": [
+      49000.0,
+      88000.0,
+      125000.0,
+      250000.0,
+      500000.0,
+      1000000.0,
+      5024500.0,
+      10000000.0
+    ]
+  },
+  "privacy": "Only synthetic diagnostics are stored in this directory"
+}

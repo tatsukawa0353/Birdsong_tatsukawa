@@ -7,7 +7,7 @@ import numpy as np
 from scipy import signal
 
 from .acoustics import distance
-from .model import BirdModel, DT, DEFAULT_CONTROLS, LOW, HIGH
+from .model import BirdModel, DT, DEFAULT_CONTROLS, LOW, HIGH, effective_controls
 
 
 class AudioDecimator:
@@ -40,6 +40,9 @@ class ModelConfig:
     smooth_weight: float = 0.0
     control_indices: tuple = (0, 2)
     output_gain: float = 1.0
+    fe_mapping: str = "linear"
+    fe_power: float = 8.0
+    diagnostics: bool = False
 
     def __post_init__(self):
         if self.condition not in "ABC" or len(self.condition) != 1:
@@ -55,6 +58,8 @@ class ModelConfig:
             raise ValueError("Select unique control indices between 0 and 4")
         if self.condition == "B" and 4 in self.control_indices:
             raise ValueError("Condition B fixes f0_r=1e7")
+        if self.fe_mapping not in ("linear", "power") or not np.isfinite(self.fe_power) or self.fe_power <= 0:
+            raise ValueError("Invalid external-force mapping")
         for n in (self.duration/self.control_s, self.control_s/DT,
                   self.control_s*self.sample_rate):
             if n < 1 or abs(n-round(n)) > 1e-7:
@@ -101,14 +106,31 @@ class ModelEnv(gym.Env):
             blocks.append(decimator.process(self.model.advance(self.config.control_s))/self.config.output_gain)
         return np.concatenate(blocks)
 
-    def decode(self, action):
+    def decode_requested(self, action):
+        action = np.asarray(action)
+        if action.shape != (len(self.indices),) or not np.isfinite(action).all():
+            raise ValueError("Action must have the configured number of finite values")
+        action = np.clip(action, -1, 1)
         controls = DEFAULT_CONTROLS.copy()
         controls[self.indices] = LOW[self.indices]+(action+1)/2*(HIGH[self.indices]-LOW[self.indices])
+        if self.config.fe_mapping == "power":
+            for j, index in enumerate(self.indices):
+                if index in (3, 4):
+                    fraction = ((float(action[j])+1)/2)**self.config.fe_power
+                    controls[index] = LOW[index]+fraction*(HIGH[index]-LOW[index])
         return controls
 
+    def decode(self, action):
+        return effective_controls(self.decode_requested(action), self.config.condition)
+
     def encode(self, controls):
-        return (2*(np.asarray(controls)[self.indices]-LOW[self.indices]) /
-                (HIGH[self.indices]-LOW[self.indices])-1).astype(np.float32)
+        fractions = ((np.asarray(controls)[self.indices]-LOW[self.indices]) /
+                     (HIGH[self.indices]-LOW[self.indices]))
+        if self.config.fe_mapping == "power":
+            for j, index in enumerate(self.indices):
+                if index in (3, 4):
+                    fractions[j] = max(0, fractions[j])**(1/self.config.fe_power)
+        return (2*fractions-1).astype(np.float32)
 
     def _obs(self):
         state = self.model.state[2:]/np.array([.1, 200, .5, 200])
@@ -123,6 +145,7 @@ class ModelEnv(gym.Env):
         self.done = False
         self.previous = np.zeros(len(self.indices), dtype=np.float32)
         self.audio, self.actions, self.rewards, self.states = [], [], [], []
+        self.requested_control_history, self.applied_control_history, self.motion_history = [], [], []
         return self._obs(), {}
 
     def step(self, action):
@@ -132,14 +155,23 @@ class ModelEnv(gym.Env):
         if action.shape != (len(self.indices),) or not np.isfinite(action).all():
             raise ValueError("Action must have the configured number of finite values")
         action = np.clip(action, -1, 1)
-        self.model.set_controls(self.decode(action))
+        requested = self.decode_requested(action)
+        self.model.set_controls(requested)
+        self.requested_control_history.append(requested.copy())
+        self.applied_control_history.append(self.model.controls.copy())
         try:
-            wave = self.decimator.process(self.model.advance(self.config.control_s))/self.config.output_gain
+            if self.config.diagnostics:
+                raw, motion = self.model.advance(self.config.control_s, return_moments=True)
+                self.motion_history.append(motion)
+            else:
+                raw = self.model.advance(self.config.control_s)
+            wave = self.decimator.process(raw)/self.config.output_gain
         except FloatingPointError:
             self.index += 1
             self.done = True
             self.audio.append(np.zeros(self.block))
             self.actions.append(action.copy())
+            self.rewards.append(-1e6)
             # Never expose nonfinite native observations to a learner.
             return np.zeros(self.observation_space.shape, dtype=np.float32), -1e6, True, False, {"numerical_failure": True}
         self.audio.append(wave)
@@ -157,6 +189,8 @@ class ModelEnv(gym.Env):
         done = self.index == self.horizon
         self.done = done
         info = dict(**metrics, smooth_penalty=penalty)
+        if self.config.diagnostics:
+            info["motion_std"] = motion["std"].tolist()
         if done:
             info["episode_metrics"] = distance(self.target_audio, np.concatenate(self.audio),
                                                self.config.sample_rate, scale=self.loss_scale)

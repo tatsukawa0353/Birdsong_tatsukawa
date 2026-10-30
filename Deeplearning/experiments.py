@@ -61,6 +61,8 @@ class EvaluationCallback(BaseCallback):
         self.entries = []
         self.evaluation_steps = 0
         self.evaluation_seconds = 0.0
+        self.training_numerical_failures = 0
+        self.training_episodes = 0
 
     def evaluate(self):
         start = time.perf_counter()
@@ -75,6 +77,9 @@ class EvaluationCallback(BaseCallback):
         self.evaluate()
 
     def _on_step(self):
+        self.training_numerical_failures += sum(bool(i.get("numerical_failure", False))
+                                               for i in self.locals.get("infos", []))
+        self.training_episodes += int(np.count_nonzero(self.locals.get("dones", [])))
         if self.num_timesteps % self.interval == 0:
             self.evaluate()
         return True
@@ -92,10 +97,18 @@ def train_run(name, seed, train_factory, eval_factory, settings, output):
     elapsed = time.perf_counter()-start
     evaluation = eval_factory()
     result, audio, actions = rollout(evaluation, lambda obs, _: agent.predict(obs, deterministic=True)[0])
+    applied = np.array(getattr(evaluation, "applied_control_history", []))
+    requested = np.array(getattr(evaluation, "requested_control_history", []))
+    if not len(applied):
+        applied = np.array([evaluation.decode(a) for a in actions])
+        requested = applied.copy()
+    motion = getattr(evaluation, "motion_history", [])
     np.savez_compressed(output/"rollout.npz", target=evaluation.target_audio, audio=audio,
                         actions=actions, sample_rate=evaluation.config.sample_rate,
                         states=np.array(getattr(evaluation, "states", [])),
-                        physical_controls=np.array([evaluation.decode(a) for a in actions]))
+                        physical_controls=applied, requested_controls=requested,
+                        motion_mean=np.array([m["mean"] for m in motion]),
+                        motion_std=np.array([m["std"] for m in motion]))
     agent.save(output/"agent")
     comparison(evaluation.target_audio, audio, evaluation.config.sample_rate, output/"spectrogram.png")
     reached = [e["steps"] for e in callback.entries if e["error"] <= settings["threshold"]]
@@ -106,6 +119,8 @@ def train_run(name, seed, train_factory, eval_factory, settings, output):
                    evaluation_seconds=callback.evaluation_seconds+result["seconds"],
                    first_threshold_step=min(reached) if reached else None,
                    initial_error=callback.entries[0]["error"], **result)
+    summary.update(training_numerical_failures=callback.training_numerical_failures,
+                   training_episodes=callback.training_episodes)
     write_json(output/"summary.json", summary)
     write_json(output/"curve.json", callback.entries)
     train_env.close()

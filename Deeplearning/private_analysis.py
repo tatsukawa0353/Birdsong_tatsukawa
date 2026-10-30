@@ -7,8 +7,8 @@ from scipy.io import wavfile
 
 from .evaluation import descriptors
 from .experiments import write_json
-from .model import ROOT, BirdModel, CONTROL_NAMES
-from .plotting import learning_curves, plt
+from .model import ROOT, BirdModel, effective_controls
+from .plotting import learning_curves, control_trajectories
 
 
 def main():
@@ -23,7 +23,8 @@ def main():
         curves[condition].append(([e["steps"] for e in entries], [e["error"] for e in entries]))
         with np.load(directory/"rollout.npz") as data:
             rate = int(data["sample_rate"])
-            audio, target, controls = data["audio"], data["target"], data["physical_controls"]
+            audio, target = data["audio"], data["target"]
+            controls = np.array([effective_controls(c, condition) for c in data["physical_controls"]])
             moments = []
             with BirdModel(condition) as model:
                 for c in controls:
@@ -42,15 +43,7 @@ def main():
             wavfile.write(directory/"generated.wav", rate,
                           (audio/max(1, float(np.max(abs(audio))))).astype(np.float32))
             write_json(directory/"supplementary.json", info)
-            with plt.style.context(["science", "ieee", "no-latex"]):
-                fig, axes = plt.subplots(5, 1, figsize=(9, 10), sharex=True)
-                for i, ax in enumerate(axes):
-                    ax.step(np.arange(len(controls))*.01, controls[:, i], where="post")
-                    ax.set_ylabel(CONTROL_NAMES[i])
-                axes[-1].set_xlabel("Time [s]")
-                fig.tight_layout()
-                fig.savefig(directory/"controls.png", dpi=150)
-                plt.close(fig)
+            control_trajectories(controls, directory/"controls.png")
     write_json(output/"supplementary.json", supplementary)
     learning_curves(curves, output/"learning_curves.png")
     lines = ["# 実録音0.35秒のローカル実験レポート", "", "2026-10-30 JST。研究グループ外に共有しない成果物。", "",

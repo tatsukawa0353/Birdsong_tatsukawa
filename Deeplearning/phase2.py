@@ -15,6 +15,7 @@ from .model_env import ModelConfig, ModelEnv, AudioDecimator
 from .plotting import learning_curves
 
 CONTROL_INDICES = {"A": (0, 2, 3), "B": (0, 1, 2, 3), "C": (0, 1, 2, 3, 4)}
+FIXED_INDICES = {"A": (0, 2), "B": (0, 1, 2), "C": (0, 1, 2)}
 
 
 def run(config, target, output, *, local_permission_confirmed):
@@ -40,8 +41,13 @@ def run(config, target, output, *, local_permission_confirmed):
                                          preprocessing=preprocessing,
                                          target_descriptors=descriptors(audio, 50000)))
     summaries, curves = [], {}
+    variant = config.get("force_variant", "linear")
+    if variant not in ("fixed", "linear", "power8"):
+        raise ValueError("force_variant must be fixed, linear or power8")
     for condition in config["conditions"]:
-        settings = ModelConfig(condition=condition, control_indices=CONTROL_INDICES[condition], output_gain=gain)
+        indices = FIXED_INDICES[condition] if variant == "fixed" else CONTROL_INDICES[condition]
+        settings = ModelConfig(condition=condition, control_indices=indices, output_gain=gain,
+                               fe_mapping="power" if variant == "power8" else "linear", diagnostics=True)
         write_json(output/f"condition_{condition}.json", asdict(settings))
         factory = lambda settings=settings: ModelEnv(settings, external_target=audio)
         curves[condition] = []
@@ -55,7 +61,7 @@ def run(config, target, output, *, local_permission_confirmed):
     learning_curves(curves, output/"learning_curves.png")
     write_json(output/"interpretation.json", {
         "scope": "model reachability and training efficiency only; no neural-learning inference",
-        "limitations": ["unequal control dimensionality: A=3, B=4, C=5",
+        "limitations": [f"control dimensions depend on the selected force variant: {variant}",
                         "B uses a fixed right external force; verify vibration suppression from saved states",
                         "waveform phase, vocal-tract filter and recording gain are not separately identified",
                         "single common gain calibration does not establish physical pressure units",

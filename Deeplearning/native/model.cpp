@@ -177,4 +177,26 @@ int bird_advance_rms(void* p, int n, double* out, double* rms) {
     for(int j=0;j<4;++j) rms[j]=std::sqrt(sums[j]/n);
     return 0;
 }
+// Welford moments separate equilibrium displacement from actual oscillation.
+// stats = means(x_l,y_l,x_r,y_r), population standard deviations in that order.
+int bird_advance_moments(void* p, int n, double* out, double* stats) {
+    auto& m=*static_cast<Model*>(p);
+    double means[4]={0,0,0,0}, m2[4]={0,0,0,0};
+    for(int i=0;i<n;++i) {
+        m.step();
+        const double state[4]={m.left.x,m.left.y,m.right.x,m.right.y};
+        if (!std::isfinite(m.last_pi)) return -1;
+        for(int j=0;j<4;++j) {
+            if(!std::isfinite(state[j])) return -1;
+            const double delta=state[j]-means[j];
+            means[j]+=delta/(i+1);
+            m2[j]+=delta*(state[j]-means[j]);
+        }
+        out[i]=m.last_pi;
+    }
+    for(int j=0;j<4;++j) {
+        stats[j]=means[j]; stats[j+4]=std::sqrt(std::max(0.0,m2[j]/n));
+    }
+    return 0;
+}
 }

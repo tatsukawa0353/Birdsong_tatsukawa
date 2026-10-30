@@ -44,7 +44,7 @@ def main():
               "## 1. 基準モデルと数値再現", "", "仕様は [model_audit.md](reports/model_audit.md)。鳴管1器官内の左右音源を扱う。高頻度のRK4積分と低頻度の行動更新を分離し、既存のグリッド掃引と毎ステップCSV出力を持ち込んでいない。", "",
               f"`dt=1e-7 s`、遅延1142点を維持。既存の未変更C++を使った0.12秒の波形相対L2誤差は `{regression['waveform_relative_l2']:.3g}`、FFT相対L2誤差は `{regression['fft_relative_l2']:.3g}`。誤差の主因は旧CSVの6桁保存精度。",
               "", "![新旧の基準スペクトログラム](results/reference/spectrogram.png)", "",
-              "旧表示設定の図は [legacy_spectrogram.png](results/reference/legacy_spectrogram.png)。極端に狭いdB表示域も保存したが、比較には[-80,0] dBの図を併用する。", "",
+              "10 MHzの基準波形の図は [legacy_spectrogram.png](results/reference/legacy_spectrogram.png)。2026-10-30のユーザー指定により、比較図を含めてカラースケールをgray_r・vmin=-50.0・vmax=-20.0に統一した。描画時に音声を10 MHzへリサンプリングしてnperseg=245760・noverlap=184320・Blackman–Harris窓を適用する。窓全体が音声区間内に収まるフレームのみ描画し、横軸はそのフレーム中心の範囲とする。0.35秒音声では0.012288–0.331776秒。0秒・音声終端を除外した。表示だけの修正で、音声・報酬・学習結果は変更していない。", "",
               "0.35秒は3,500,000積分ステップ。各条件3回の測定は以下。CSV保存・描画・学習更新の時間は含めない。", "",
               "| 条件 | 0.35秒積分の秒数（平均±標準偏差） | 有限値 |", "|---|---:|---:|"]
     for condition in "ABC":
@@ -106,11 +106,13 @@ def main():
               "詳細な評価表・学習曲線・スペクトログラム・生成音・制御値・全積分ステップで再測定した左右速度RMSは [非公開レポート](private_runs/phase2/REPORT.md) にまとめた。Git管理対象外なので、公開コミットやIssueへ添付しない。", "",
               "Phase 1の未収束、自由度の違い、未知の録音振幅・位相・声道フィルタの影響があり、実録音の成績だけから音源条件の普遍的優位性やモデル表現力の限界を結論しない。主張の対象はモデルでの到達可能性と学習効率であり、鳥の神経学的学習機構ではない。", "",
               "## 6. 検証・再実行", "",
-              "検証ログは [validation.txt](reports/validation.txt)。15テストを実施した。Gymnasium契約、新旧C++回帰、分割積分、reset履歴、制御値と閉鎖済みモデルの検証、連続音声フィルタ、A/B/C行動数、発散停止、最終区間の発散を正常得点にしない処理を含む。", "",
+              "検証ログは [validation.txt](reports/validation.txt)。19テストを実施した。Gymnasium契約、新旧C++回帰、分割積分、reset履歴、制御値と閉鎖済みモデルの検証、連続音声フィルタ、A/B/C行動数、発散停止、最終区間の発散を正常得点にしない処理を含む。描画についても、10 MHzへのリサンプリング、端のフレーム除外、指定カラースケール、音声が短い異常終了でもゼロ埋めの図を作らないことを検証した。最新の表示レンジ[-50,-20] dBでの描画4テストは [plot_validation.txt](reports/plot_validation.txt) に記録した。", "",
               "実行コマンド・依存関係は [README.md](README.md)。固定設定は `configs/`、ライブラリ版は [requirements-lock.txt](requirements-lock.txt)、基準コミット・コンパイラ・旧コードのハッシュは [environment.json](results/environment.json)。", "",
               f"保存したRL実験はPhase 0が9本、Phase 1が6本＋追加3本。実録音9本を含めた訓練予算は計{sum(x['training_steps'] for x in p0+p1+extended)+9*1050:,}環境ステップ。直接探索と途中評価の環境呼出はこの値とは別。", "",
               "## 7. 残作業の優先順", "",
               "1. 公開済み原音と履歴の扱いを管理者・許諾元と調整する。追跡解除は済ませたが過去履歴は消えない。詳細は [DATA_POLICY.md](reports/DATA_POLICY.md)。", "2. Phase 1でモデル内目標への安定した模倣を確立する。定数の直接探索との比較を続け、発声可能なf0範囲、観測の遅延履歴、即時/終端報酬の関係を調べる。", "3. 訓練途中の数値発散回数を専用ログに追加する。今回のfailed欄は最終・途中の評価失敗であり、訓練途中の失敗率ではない。", "4. 実録音に対する直接最適化と学習予算の拡大、複数指標による再評価を行う。", "5. 複数音節・個体への拡張は、今回の0.35秒限定指定を超えるため次回の対象とする。", ""]
+    lines += ["## Issue #9 の追加診断", "",
+              "発声が持続しない問題、外力の写像、実適用制御値の保存と表記について [ISSUE9_REPORT.md](reports/ISSUE9_REPORT.md) に追加調査をまとめた。実録音に由来する同予算比較の詳細は `private_runs/issue9/REPORT.md` に保存した。持続発声の回復と模倣精度の改善を区別している。", ""]
     (ROOT/"REPORT.md").write_text("\n".join(lines))
 
 

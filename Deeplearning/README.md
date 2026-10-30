@@ -50,4 +50,41 @@ Deeplearning/.venv/bin/python -m Deeplearning.private_analysis
 
 新 API や設定を変更して再実行すると既定の結果ファイルは上書きされる。比較用の実験には別の `--output` を指定する。`private_runs` の学習成果物・音声は公開コミットに加えない。
 
+## スペクトログラムの表示設定
+
+`plotting.py` に共通設定を集約した。以前の実録音の描画手順に合わせ、描画時に音声を `target_fs=1e7`（10 MHz）へリサンプリングしてから、`nperseg=245760`、`noverlap=184320`、`window_type='blackmanharris'` をそのまま適用する。窓は24.576 ms、ホップは6.144 ms、重複75%。10 MHzの元波形には再リサンプリングを行わない。アップサンプリングは表示条件の統一であり、元の周波数情報を増やすものではない。
+
+表示は `cmap='gray_r'`、`vmin=-50.0`、`vmax=-20.0`。各図の最大PSDを基準とする相対dBで、周波数の表示帯域は0–10000 Hz。カラースケールと周波数帯域は別の設定である。
+
+描画用STFTにはゼロ埋めを使わず、窓全体が音声内に収まるフレームだけを使う。横軸も最初・最後の有効なフレーム中心で切り、0秒・0.35秒の端を表示しない。0.35秒音声の表示域は0.012288–0.331776秒となる。報酬用の `acoustics.py`、学習済みモデル、保存音声、誤差の数値は変更しない。
+
+学習し直さずに既存の図だけを更新する場合:
+
+```bash
+Deeplearning/.venv/bin/python -m Deeplearning.redraw --include-private
+```
+
+`--include-private` を省略すると合成実験の図のみ更新する。実録音由来の図は従来どおり `private_runs/` 配下にのみ保存する。
+
+## Issue #9：発声状態と外力制御の診断
+
+対応結果は [ISSUE9_REPORT.md](reports/ISSUE9_REPORT.md)、録音由来の比較表はローカル限定の `private_runs/issue9/REPORT.md`。合成の発声マップは `results/issue9/` に保存した。
+
+```bash
+Deeplearning/.venv/bin/python -m Deeplearning.issue9 all --local-permission-confirmed
+```
+
+段階別には `map`（216条件の合成状態マップ）、`neutral`（行動0の検証）、`history`（旧9実験の診断・制御メタデータ修復・既知制御の経路検証）、`train`（固定/線形/power8 × A/B/C × 3 seed）、`report` を指定できる。`history` と `train` はローカル利用許諾の確認フラグを付ける。旧Phase 2の録音区間・共通ゲイン・保存結果を用いるので、この作業環境での再実行を想定する。実験設定は `configs/issue9.json`。
+
+`f0` は内部名を保ち、図では外力 `$f_{e,l}$`, `$f_{e,r}$` と表記する。`requested_controls` は要求値、`physical_controls` はCase Bの強制固定後の実適用値。位置の平均と運動量は `motion_mean`, `motion_std` で区別する。訓練中の数値発散数は `training_numerical_failures` に記録する。
+
+発声側外力を固定する対照と、停止側も残す新写像をPhase 2単独で使う場合は、旧結果を上書きしない出力先を明示する。
+
+```bash
+Deeplearning/.venv/bin/python -m Deeplearning.phase2 --target Deeplearning/sample_song/14412_0.35s.wav --config Deeplearning/configs/phase2_fixed.json --output Deeplearning/private_runs/phase2_fixed --local-permission-confirmed
+Deeplearning/.venv/bin/python -m Deeplearning.phase2 --target Deeplearning/sample_song/14412_0.35s.wav --config Deeplearning/configs/phase2_power8.json --output Deeplearning/private_runs/phase2_power8 --local-permission-confirmed
+```
+
+元の `configs/phase2.json` は旧線形写像の再現用として残している。固定は診断の対照であり、外力を恒久的に固定する仕様変更ではない。新写像も模倣の成功を保証しない。これらの結果には `private_analysis.py` の旧Phase 2専用レポートをそのまま適用せず、Issue #9の保存スキーマ・実験設定を用いて比較する。
+
 API の参照: [Gymnasium Env](https://gymnasium.farama.org/api/env/)、[SB3 custom environments](https://stable-baselines3.readthedocs.io/en/master/guide/custom_env.html)、[SB3 examples](https://stable-baselines3.readthedocs.io/en/master/guide/examples.html)。
