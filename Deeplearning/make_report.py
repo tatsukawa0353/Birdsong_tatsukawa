@@ -117,6 +117,8 @@ def main():
               "無音・誤った有声音・既知制御の報酬順序、即時報酬と全体損失の不一致、差し替え可能な候補、SAC/TD3の同条件比較は [ISSUE10_REPORT.md](reports/ISSUE10_REPORT.md)。合成音だけを用い、旧指標と新損失のトレードオフ、発声持続と模倣収束を分けて記録した。", ""]
     lines += ["## Issue #11 のローカル報酬比較", "",
               "実録音を用いるbaseline対balanced_alignedの方法・再現手順は [ISSUE11_REPORT.md](reports/ISSUE11_REPORT.md)。録音由来の数値・図・モデル比較の結論は `private_runs/issue11/REPORT.md` にのみ保存し、この公開レポートへ転載しない。", ""]
+    lines += ["## Issue #12 のオフライン診断", "",
+              "Issue #11の保存波形・制御を変更せずに調べる方法は [ISSUE12_REPORT.md](reports/ISSUE12_REPORT.md)。録音由来の診断値・図・判断は `private_runs/issue12/REPORT.md` と `SEMINAR_MEMO.md` にのみ保存する。新たなRL学習や報酬採用を行わず、元ファイルの前後一致を検証する。", ""]
     (ROOT/"REPORT.md").write_text("\n".join(lines))
 
 

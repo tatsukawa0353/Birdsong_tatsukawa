@@ -136,3 +136,7 @@ Phase 1の未収束、自由度の違い、未知の録音振幅・位相・声�
 ## Issue #11 のローカル報酬比較
 
 実録音を用いるbaseline対balanced_alignedの方法・再現手順は [ISSUE11_REPORT.md](reports/ISSUE11_REPORT.md)。録音由来の数値・図・モデル比較の結論は `private_runs/issue11/REPORT.md` にのみ保存し、この公開レポートへ転載しない。
+
+## Issue #12 のオフライン診断
+
+Issue #11の保存波形・制御を変更せずに調べる方法は [ISSUE12_REPORT.md](reports/ISSUE12_REPORT.md)。録音由来の診断値・図・判断は `private_runs/issue12/REPORT.md` と `SEMINAR_MEMO.md` にのみ保存する。新たなRL学習や報酬採用を行わず、元ファイルの前後一致を検証する。

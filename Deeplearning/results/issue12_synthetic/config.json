@@ -1,0 +1,69 @@
+{
+  "ratios": [
+    0.01,
+    0.03,
+    0.05,
+    0.1
+  ],
+  "region_ratio": 0.1,
+  "boundary_radius_s": 0.012288,
+  "variants": {
+    "default": {
+      "ratio": 0.01,
+      "energy_terms": []
+    },
+    "mask_03": {
+      "ratio": 0.03,
+      "energy_terms": []
+    },
+    "mask_05": {
+      "ratio": 0.05,
+      "energy_terms": []
+    },
+    "mask_10": {
+      "ratio": 0.1,
+      "energy_terms": []
+    },
+    "transport_energy": {
+      "ratio": 0.01,
+      "energy_terms": [
+        "transport"
+      ]
+    },
+    "spectral_energy": {
+      "ratio": 0.01,
+      "energy_terms": [
+        "transport",
+        "target_weighted_log"
+      ]
+    },
+    "mask_10_spectral_energy": {
+      "ratio": 0.1,
+      "energy_terms": [
+        "transport",
+        "target_weighted_log"
+      ]
+    }
+  },
+  "energy_rule": "g_k=(target band envelope_k / max target band envelope)^2 in [0,1]; no renormalization of frame weights; applied only to named spectral terms",
+  "control_lags_steps": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "near_constant_action_span": 0.05,
+  "near_constant_physical_span_fraction": 0.01,
+  "boundary_tolerance_fraction": 0.01,
+  "representatives": {
+    "algorithm": "TD3",
+    "budget": 4200,
+    "seed": 0,
+    "conditions": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "priority": "A and B plus short internal seminar memo first; C uses saved trajectories only; no learning, model changes, or reward adoption"
+}

@@ -66,6 +66,18 @@ Deeplearning/.venv/bin/python -m Deeplearning.redraw --include-private
 
 `--include-private` を省略すると合成実験の図のみ更新する。実録音由来の図は従来どおり `private_runs/` 配下にのみ保存する。
 
+## Issue #12：既存結果のオフライン診断（再学習なし）
+
+方法は [ISSUE12_REPORT.md](reports/ISSUE12_REPORT.md)、録音由来の結果・解釈は `private_runs/issue12/REPORT.md`、ゼミ用の短縮メモは同フォルダの `SEMINAR_MEMO.md`。Issue #11の保存波形と制御を読み、活動マスク、正規化と損失成分、制御×音響応答を分ける。
+
+```bash
+Deeplearning/.venv/bin/python -m Deeplearning.issue12 ab
+Deeplearning/.venv/bin/python -m Deeplearning.issue12 controls
+Deeplearning/.venv/bin/python -m Deeplearning.issue12 report
+```
+
+`ab` でA/B内部メモを先に生成し、`all` で全段階を実行する。`synthetic` は数学的に作る合成音だけを公開可能な `results/issue12_synthetic/` へ保存する。入力と出力の重複を拒否し、元Issue #11の全ファイル集合とSHA256を前後照合する。報酬・物理・音声・表示を変更せず、新たな学習や報酬採用は行わない。
+
 ## Issue #11：実録音での報酬比較（ローカル限定）
 
 方法と再現手順は [ISSUE11_REPORT.md](reports/ISSUE11_REPORT.md)、数値・図・結論は `private_runs/issue11/REPORT.md` のみ。許諾済み0.35秒を使い、TD3を先にSACも、power8・A/B/C・3 seedでbaseline対balanced_alignedを比較する。
