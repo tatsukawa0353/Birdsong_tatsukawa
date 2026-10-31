@@ -66,6 +66,18 @@ Deeplearning/.venv/bin/python -m Deeplearning.redraw --include-private
 
 `--include-private` を省略すると合成実験の図のみ更新する。実録音由来の図は従来どおり `private_runs/` 配下にのみ保存する。
 
+## Issue #11：実録音での報酬比較（ローカル限定）
+
+方法と再現手順は [ISSUE11_REPORT.md](reports/ISSUE11_REPORT.md)、数値・図・結論は `private_runs/issue11/REPORT.md` のみ。許諾済み0.35秒を使い、TD3を先にSACも、power8・A/B/C・3 seedでbaseline対balanced_alignedを比較する。
+
+```bash
+Deeplearning/.venv/bin/python -m Deeplearning.issue11 all --local-permission-confirmed
+```
+
+`prepare`, `train`, `report` を個別指定できる。1050stepで診断し、Case内の両報酬・全seedに発散・評価失敗がなければ全6本を4200stepで新規学習する。目標・ゲイン・コードハッシュと設定を照合して再利用し、異なる条件には新しいprivate出力先を使う。録音由来の全成果物は `private_runs/` 内に保存する。
+
+`phase2.py` 単独でも `configs/phase2_td3_baseline.json` と `configs/phase2_td3_balanced_aligned.json` で報酬を切り替えられる。従来設定の既定はbaselineのまま。SAP等の新報酬は追加していない。
+
 ## Issue #10：合成音の報酬診断とPhase 1比較
 
 結果は [ISSUE10_REPORT.md](reports/ISSUE10_REPORT.md)。実録音を読まず、0.35秒のモデル内合成目標だけを使う。旧報酬を既定値として保持し、目標の活動マスク・帯域包絡・相対スペクトル形状・欠落ペナルティによる候補を比較する。新指標と旧誤差の改善を区別する。

@@ -115,6 +115,8 @@ def main():
               "発声が持続しない問題、外力の写像、実適用制御値の保存と表記について [ISSUE9_REPORT.md](reports/ISSUE9_REPORT.md) に追加調査をまとめた。実録音に由来する同予算比較の詳細は `private_runs/issue9/REPORT.md` に保存した。持続発声の回復と模倣精度の改善を区別している。", ""]
     lines += ["## Issue #10 の合成報酬診断", "",
               "無音・誤った有声音・既知制御の報酬順序、即時報酬と全体損失の不一致、差し替え可能な候補、SAC/TD3の同条件比較は [ISSUE10_REPORT.md](reports/ISSUE10_REPORT.md)。合成音だけを用い、旧指標と新損失のトレードオフ、発声持続と模倣収束を分けて記録した。", ""]
+    lines += ["## Issue #11 のローカル報酬比較", "",
+              "実録音を用いるbaseline対balanced_alignedの方法・再現手順は [ISSUE11_REPORT.md](reports/ISSUE11_REPORT.md)。録音由来の数値・図・モデル比較の結論は `private_runs/issue11/REPORT.md` にのみ保存し、この公開レポートへ転載しない。", ""]
     (ROOT/"REPORT.md").write_text("\n".join(lines))
 
 

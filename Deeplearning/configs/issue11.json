@@ -1,0 +1,22 @@
+{
+  "algorithms": ["TD3", "SAC"],
+  "conditions": ["A", "B", "C"],
+  "profiles": ["baseline", "balanced_aligned"],
+  "seeds": [0, 1, 2],
+  "steps": 1050,
+  "extension_steps": 4200,
+  "eval_interval": 350,
+  "learning_rate": 0.0003,
+  "ppo_rollout": 350,
+  "threshold": 0.08,
+  "gamma": 0.99,
+  "force_variant": "power8",
+  "workers": 3,
+  "order": "TD3 1050, TD3 eligible 4200, SAC 1050, SAC eligible 4200; A/B/C, baseline then balanced_aligned, seeds 0/1/2; fresh training per budget",
+  "extension_rule": "For each algorithm and Case, extend both profiles and all three seeds only if all six 1050-step runs have zero training numerical failures and no failed evaluation at any checkpoint; no score-based selection.",
+  "analysis_only": {
+    "target_activity_rule": "Issue 10 target-only band envelope >=1% target maximum, maximum >1e-8; unchanged",
+    "persistence_rule": "Issue 9 reference -60 dB and >=80% 20ms blocks, exclude first 0.1s; unchanged",
+    "scope": "Fixed single permitted 0.35s recording; SAP/SE/ACI are not new reward terms; no Phase 3"
+  }
+}

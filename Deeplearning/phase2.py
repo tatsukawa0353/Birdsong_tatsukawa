@@ -18,13 +18,31 @@ CONTROL_INDICES = {"A": (0, 2, 3), "B": (0, 1, 2, 3), "C": (0, 1, 2, 3, 4)}
 FIXED_INDICES = {"A": (0, 2), "B": (0, 1, 2), "C": (0, 1, 2)}
 
 
+def private_output(path):
+    """Resolve symlinks before any recording read or result write."""
+    output = Path(path).resolve()
+    if not output.is_relative_to((ROOT/"private_runs").resolve()):
+        raise ValueError("Recording-derived results must remain inside Deeplearning/private_runs")
+    return output
+
+
+def model_configuration(config, condition, *, gain):
+    """Select the existing loss and force mapping using JSON settings only."""
+    variant = config.get("force_variant", "linear")
+    if variant not in ("fixed", "linear", "power8"):
+        raise ValueError("force_variant must be fixed, linear or power8")
+    indices = FIXED_INDICES[condition] if variant == "fixed" else CONTROL_INDICES[condition]
+    return ModelConfig(condition=condition, control_indices=indices, output_gain=gain,
+                       fe_mapping="power" if variant == "power8" else "linear", diagnostics=True,
+                       loss_kind=config.get("loss_kind", "baseline"),
+                       reward_timing=config.get("reward_timing", "context"),
+                       reward_discount=config.get("gamma", .99), audit_objective=True)
+
+
 def run(config, target, output, *, local_permission_confirmed):
     if not local_permission_confirmed:
         raise ValueError("Local research permission must be confirmed before reading the recording")
-    private_root = (ROOT/"private_runs").resolve()
-    output = Path(output).resolve()
-    if not output.is_relative_to(private_root):
-        raise ValueError("Recording-derived results must remain inside Deeplearning/private_runs")
+    output = private_output(output)
     output.mkdir(parents=True, exist_ok=True, mode=0o700)
     audio, preprocessing = load_local_wav(target, target_rate=50000, return_metadata=True)
     if np.max(np.abs(audio)) < 1e-8:
@@ -42,12 +60,8 @@ def run(config, target, output, *, local_permission_confirmed):
                                          target_descriptors=descriptors(audio, 50000)))
     summaries, curves = [], {}
     variant = config.get("force_variant", "linear")
-    if variant not in ("fixed", "linear", "power8"):
-        raise ValueError("force_variant must be fixed, linear or power8")
     for condition in config["conditions"]:
-        indices = FIXED_INDICES[condition] if variant == "fixed" else CONTROL_INDICES[condition]
-        settings = ModelConfig(condition=condition, control_indices=indices, output_gain=gain,
-                               fe_mapping="power" if variant == "power8" else "linear", diagnostics=True)
+        settings = model_configuration(config, condition, gain=gain)
         write_json(output/f"condition_{condition}.json", asdict(settings))
         factory = lambda settings=settings: ModelEnv(settings, external_target=audio)
         curves[condition] = []
