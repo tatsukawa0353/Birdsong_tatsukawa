@@ -1,0 +1,25 @@
+{
+  "seeds": [0, 1, 2],
+  "methods": ["TD3", "SAC", "random_search", "DE"],
+  "tasks": {
+    "A": {"episodes": 256, "eval_every_episodes": 32},
+    "B": {"episodes": 128, "eval_every_episodes": 16},
+    "C": {"episodes": 128, "eval_every_episodes": 16}
+  },
+  "landscape_epsilon_points_1d": 21,
+  "landscape_epsilon_points_2d": 13,
+  "landscape_pressure_points_2d": 9,
+  "warmup_episodes": 16,
+  "learning_rate": 0.0003,
+  "batch_size": 32,
+  "net_arch": [32, 32],
+  "gamma": 1.0,
+  "sac_ent_coef": "auto_0.01",
+  "td3_noise_std": 0.1,
+  "de_population": 8,
+  "de_mutation": [0.5, 1.0],
+  "de_recombination": 0.7,
+  "exploratory_acoustic_threshold": 0.08,
+  "oracle_tolerance_float64": 1e-10,
+  "oracle_tolerance_float32": 1e-5
+}

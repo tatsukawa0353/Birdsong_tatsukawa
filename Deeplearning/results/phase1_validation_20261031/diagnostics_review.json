@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "checks": {
+    "A_oracle_float64": true,
+    "A_oracle_float32": true,
+    "B_oracle_float64": true,
+    "B_oracle_float32": true,
+    "C_oracle_float64": true,
+    "C_oracle_float32": true,
+    "1d_finite": true,
+    "2d_finite": true
+  },
+  "maps": {
+    "1d": {
+      "candidates": 22,
+      "integration_s": 7.699999999999999,
+      "native_steps": 77000000,
+      "wall_s": 6.328522702038754,
+      "minimum_acoustic_error": 0.0,
+      "maximum_acoustic_error": 0.43519039367033957,
+      "below_008": 2,
+      "finite": true
+    },
+    "2d": {
+      "candidates": 140,
+      "integration_s": 49.0,
+      "native_steps": 490000000,
+      "wall_s": 41.354079137032386,
+      "minimum_acoustic_error": 0.0,
+      "maximum_acoustic_error": 0.5700458779370782,
+      "below_008": 3,
+      "finite": true
+    }
+  },
+  "reviewed_utc": "2026-10-31T06:24:47.450240+00:00",
+  "diagnosis": "Historical fixed p_s mismatch corrected only in new environment. Known optimum reachable. Coarse map suffices for reachability; no adaptive refinement or map-based optimizer initialization.",
+  "prepare_wall_s": 57.42561586300144,
+  "oracle_integration_s": 2.4499999999999997,
+  "decision": "Proceed to A, then B, then C with predeclared budgets; failures remain reportable."
+}

@@ -66,6 +66,24 @@ Deeplearning/.venv/bin/python -m Deeplearning.redraw --include-private
 
 `--include-private` を省略すると合成実験の図のみ更新する。実録音由来の図は従来どおり `private_runs/` 配下にのみ保存する。
 
+## Phase 1：基礎検証と手法比較（2026-10-31）
+
+新しい検証結果は [Phase 1検証レポート](results/phase1_validation_20261031/REPORT.md)、結果の判断は [考察と補足計算量](results/phase1_validation_20261031/DISCUSSION.md)。実録音を使わず、Case Aの既知の一定目標について、Oracle・誤差マップを確認してから、一定1変数／10 ms時変1変数／10 ms時変2変数を順に比較する。TD3・SAC・ランダム探索・差分進化を各3 seedで実行し、各課題内の0.35秒生成本数を揃える。主評価・直接法の選択は既存の全区間音響誤差、balancedは独立した補助評価とする。RL環境のprefix差分報酬は主評価に一致し、SACにはentropy正則化もある。旧rolling報酬・balanced_alignedとは別条件である。
+
+```bash
+export MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation prepare
+# Oracleと誤差マップ・diagnostics_review.jsonを確認してから進める。
+Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation baselines
+Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation compare --task A
+Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation compare --task B
+Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation compare --task C
+Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation report
+Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation_audit Deeplearning/results/phase1_validation_20261031
+```
+
+`prepare` は出力先の既存ディレクトリを拒否する。再実行には各実験コマンドで同じ新しい `--output Deeplearning/results/任意の新規名` を指定し、監査CLIにはそのディレクトリを渡す。完了済みrunはコード・設定ハッシュが同じ場合のみ再利用する。旧モデル・旧実験コード・旧結果は変更しない。元振幅のfloat64 NPZとfloat32 WAV、初期・最終のスペクトログラム・包絡・制御図を保存し、SAPは未実施の独立評価として残す。最後に独立した監査CLIで音響指標を保存波形から再計算し、計算量・制御範囲・WAV振幅・全36runの存在を検査する。
+
 ## Issue #12：既存結果のオフライン診断（再学習なし）
 
 方法は [ISSUE12_REPORT.md](reports/ISSUE12_REPORT.md)、録音由来の結果・解釈は `private_runs/issue12/REPORT.md`、ゼミ用の短縮メモは同フォルダの `SEMINAR_MEMO.md`。Issue #11の保存波形と制御を読み、活動マスク、正規化と損失成分、制御×音響応答を分ける。

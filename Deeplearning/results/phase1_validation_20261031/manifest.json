@@ -1,0 +1,138 @@
+{
+  "created_utc": "2026-10-31T06:23:44.790821+00:00",
+  "settings": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "methods": [
+      "TD3",
+      "SAC",
+      "random_search",
+      "DE"
+    ],
+    "tasks": {
+      "A": {
+        "episodes": 256,
+        "eval_every_episodes": 32
+      },
+      "B": {
+        "episodes": 128,
+        "eval_every_episodes": 16
+      },
+      "C": {
+        "episodes": 128,
+        "eval_every_episodes": 16
+      }
+    },
+    "landscape_epsilon_points_1d": 21,
+    "landscape_epsilon_points_2d": 13,
+    "landscape_pressure_points_2d": 9,
+    "warmup_episodes": 16,
+    "learning_rate": 0.0003,
+    "batch_size": 32,
+    "net_arch": [
+      32,
+      32
+    ],
+    "gamma": 1.0,
+    "sac_ent_coef": "auto_0.01",
+    "td3_noise_std": 0.1,
+    "de_population": 8,
+    "de_mutation": [
+      0.5,
+      1.0
+    ],
+    "de_recombination": 0.7,
+    "exploratory_acoustic_threshold": 0.08,
+    "oracle_tolerance_float64": 1e-10,
+    "oracle_tolerance_float32": 1e-05
+  },
+  "source_hashes": {
+    "phase1_validation.py": "6bed9436fe31ac309fa4d31d1175201eee2cc5c4c9f3a3c4dec9a513a1d4144c",
+    "phase1_validation_env.py": "324da3797ffc3028c9b6823ded00d472fe7eabb107a6d0f3e44b1976bfaca2ce",
+    "phase1_validation_report.py": "cf73dca7dc83551345e3c905f3be6de4829d38d0592330cbc983d7dcccd82ff1",
+    "configs/phase1_validation.json": "6bac34252370f8501ca88ace1d86747ef7e12e52dc328c8b1a67dc12be725393"
+  },
+  "condition": "A",
+  "target": "constant model-generated, never real recordings",
+  "duration_s": 0.35,
+  "control_interval_s": 0.01,
+  "sample_rate": 50000,
+  "native_dt": 1e-07,
+  "target_controls": [
+    41000000.0,
+    35000000.0,
+    3400000.0,
+    49000.0,
+    49000.0
+  ],
+  "fixed_controls": [
+    41000000.0,
+    35000000.0,
+    3400000.0,
+    49000.0,
+    49000.0
+  ],
+  "physical_low": [
+    25000000.0,
+    25000000.0,
+    2500000.0,
+    49000.0,
+    49000.0
+  ],
+  "physical_high": [
+    50000000.0,
+    50000000.0,
+    4000000.0,
+    10000000.0,
+    10000000.0
+  ],
+  "initial_state": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "delay_history": "all zeros",
+  "decimator_state": "all zeros",
+  "target_generation": {
+    "integration_s": 0.35,
+    "native_steps": 3500000,
+    "wall_s": 0.30142670299392194
+  },
+  "reward": "whole_acoustic_prefix_potential_gamma1; NOT baseline_context or balanced_aligned",
+  "reward_identity": "-sum(r_t) = full acoustic error; potential=(n/N)*distance(prefix)",
+  "primary": "acoustics.distance over the complete 0.35 s",
+  "balanced": "audit only, not training/selection",
+  "optimizer_space": {
+    "A": "one constant epsilon_l",
+    "B": "35 independent epsilon_l blocks",
+    "C": "35 independent (epsilon_l,ps) blocks"
+  },
+  "budget_unit": "training episodes of 0.35 s, equal within each task",
+  "evaluation_schedule": "initial plus 8 checkpoints; evaluation integration excluded from training budget",
+  "runtime": {
+    "python": "3.12.3",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "package_versions": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "torch": "2.14.1+cpu",
+      "stable-baselines3": "2.9.2",
+      "gymnasium": "1.4.0"
+    },
+    "torch_threads": 1,
+    "comparison_workers": 3,
+    "requirements_lock_sha256": "fe5b981f2880c7e60d488b06a1dfb5172ea016e5c76b167e21c17fea17ea01b1"
+  },
+  "reproduction_commands": [
+    "MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation prepare",
+    "MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation baselines",
+    "MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation compare --task A",
+    "MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation compare --task B",
+    "MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation compare --task C",
+    "MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 Deeplearning/.venv/bin/python -m Deeplearning.phase1_validation report"
+  ]
+}

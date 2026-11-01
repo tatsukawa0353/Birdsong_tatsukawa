@@ -1,0 +1,85 @@
+{
+  "task": "C",
+  "method": "random_search",
+  "seed": 2,
+  "optimizer_dimension": 70,
+  "initial_metrics": {
+    "acoustic_error": 0.3697821645302696,
+    "balanced_error": 0.5363707681357048,
+    "parameter_nrmse": 0.2979402146429237,
+    "acoustic_components": {
+      "log_spectral": 0.2488256338788189,
+      "envelope": 0.1209565306514507,
+      "total": 0.3697821645302696,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "balanced_components": {
+      "transport": 0.033891299096196786,
+      "target_weighted_log": 0.20170797328521006,
+      "band_envelope": 0.284027562592686,
+      "missing": 0.08381059095804329,
+      "dc": 0.004037312094327747,
+      "total": 0.5363707681357048
+    },
+    "failed": false,
+    "negative_return": 0.3697821645302696
+  },
+  "final_metrics": {
+    "acoustic_error": 0.3411074302987548,
+    "balanced_error": 0.38798670403603397,
+    "parameter_nrmse": 0.30435864124499734,
+    "acoustic_components": {
+      "log_spectral": 0.2524632742675887,
+      "envelope": 0.08864415603116609,
+      "total": 0.3411074302987548,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "balanced_components": {
+      "transport": 0.03191465120419761,
+      "target_weighted_log": 0.1832296993304333,
+      "band_envelope": 0.1958090403056254,
+      "missing": 0.0570886185339703,
+      "dc": 0.002783506256619466,
+      "total": 0.38798670403603397
+    },
+    "failed": false,
+    "negative_return": 0.3411074302987548
+  },
+  "training": {
+    "decision_steps": 4480,
+    "episodes": 128,
+    "integration_s": 44.800000000000004,
+    "integration_completed_s": 44.800000000000004,
+    "native_steps": 448000000,
+    "native_blocks": 4480,
+    "wall_s": 53.36387524200836,
+    "failures": 0
+  },
+  "evaluation": {
+    "decision_steps": 315,
+    "episodes": 9,
+    "integration_s": 3.15,
+    "integration_completed_s": 3.15,
+    "native_steps": 31500000,
+    "native_blocks": 315,
+    "wall_s": 3.825052204017993,
+    "failures": 0
+  },
+  "elapsed_s": 57.188927446026355,
+  "artifact_wall_s": 4.667787585000042,
+  "requested_training_episodes": 128,
+  "optimizer_nfev": 128,
+  "gradient_updates": 0,
+  "reward_profile": "whole_acoustic_prefix_potential_gamma1; NOT baseline_context or balanced_aligned",
+  "optimizer_objective": "acoustic_error",
+  "balanced_role": "independent audit",
+  "returned_solution": "best training candidate; initial candidate counted in training",
+  "source_hashes": {
+    "phase1_validation.py": "6bed9436fe31ac309fa4d31d1175201eee2cc5c4c9f3a3c4dec9a513a1d4144c",
+    "phase1_validation_env.py": "324da3797ffc3028c9b6823ded00d472fe7eabb107a6d0f3e44b1976bfaca2ce",
+    "phase1_validation_report.py": "cf73dca7dc83551345e3c905f3be6de4829d38d0592330cbc983d7dcccd82ff1",
+    "configs/phase1_validation.json": "6bac34252370f8501ca88ace1d86747ef7e12e52dc328c8b1a67dc12be725393"
+  }
+}
