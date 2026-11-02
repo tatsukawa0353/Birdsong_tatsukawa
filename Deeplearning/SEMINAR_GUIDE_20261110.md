@@ -1,6 +1,6 @@
 # 2026年11月10日ゼミ：研究進捗の発表用ガイド
 
-作成日：2026-11-01（JST）。対象は既存の公開可能な合成音実験。スライド、切り出し画像、学習結果は今回新規作成していない。
+作成日：2026-11-01、更新日：2026-11-02（JST）。対象は既存の公開可能な合成音実験。今回はガイドのMarkdownのみを更新した。以下の「新規図表」は発表準備時の作成対象で、まだ画像・スライドとして作成していない。
 
 **読み方：全ファイルパスは、このガイドのある `Deeplearning/` からの相対パス。** リンク先は既存ファイル／ディレクトリを指す。本文の数値は既存レポート・保存結果からの転記で、新しい実験や結果の推定ではない。
 
@@ -30,95 +30,132 @@
 
 ## B. スライド構成案（10枚）
 
-下記は発表の組み立て案。既存画像を再生成する必要はない。部分パネルを説明する場合も、元ファイルはそのまま保持する。
+各スライドで、掲載素材とその出典を次の3区分に分ける。
+
+| 区分 | 意味・現在の状態 |
+| --- | --- |
+| **使用する既存PNG** | 本編に挿入する画像。リンク先は実在するPNG。使用するパネルも指定する。 |
+| **新規作成する図表** | 既存の文章・数値をスライド向けに組み直す制作物。**N01〜N08はいずれも未作成**で、ファイル名・保存先は未指定。新しい実験・集計・結果グラフを作る意味ではない。不要なスライドは「なし」とする。スライド上の図形・表として作成でき、別PNGへの書き出しは必須ではない。 |
+| **参照元データ・資料** | PNGの元データ、表の転記元、説明の根拠。CSV・JSON・NPZ・Markdownは掲載用PNGと区別する。 |
+
+「補足PNG」は本編の使用画像とは別に記載する。部分パネルは元PNGを挿入してスライド上で表示範囲を調整する想定で、切り出しPNGの新規生成は不要。既存ファイルは変更しない。
+
+### 本編の制作一覧
+
+図番号P0/P1の実ファイルはC、各スライドの具体的なパス・元データは下記詳細を参照。
+
+| スライド | 使用する既存PNG | 新規作成する図表（全て未作成） |
+| --- | --- | --- |
+| 1 | なし | N01：研究目的と検証段階の流れ図 |
+| 2 | P0-1：Phase 0学習曲線 | N02：Phase 0最終誤差の3手法比較表 |
+| 3 | なし | N03：Task定義・予算表＋目標制御値の注記 |
+| 4 | P1-1：1D誤差マップ | なし |
+| 5 | P1-5：Oracleスペクトログラム | N04：固定値不一致とOracleの短い比較表 |
+| 6 | P1-6：DE最終スペクトログラム | N05：Task Aの4手法最終比較表 |
+| 7 | P1-4：学習曲線のTask A左上、P1-7：TD3最終スペクトログラム | N06：TD3の途中最良／最終の3 seed表 |
+| 8 | P1-9：TD3振幅包絡、P1-8：TD3制御図のε_l段 | なし。目標値のテキスト注記のみ |
+| 9 | P1-4を再利用：Task B/Cの左列中段・下段 | N07：Task B/Cの4手法最終比較表 |
+| 10 | なし | N08：確認済み／未確認／次の検証をまとめる表 |
 
 ### 1. 研究目的と今回の位置づけ
 
 - **伝える結論：** 左右2音源と多様性の研究に向け、まず音響模倣の制御手法を検証している。
-- **載せる図・表：** 研究目的→制御手法の検証→将来の音源比較、という短い文章と、今回の検証範囲。既存画像を無理に追加しない。
-- **実際の相対パス：** [reports/model_audit.md](reports/model_audit.md)、[results/phase1_validation_20261031/DISCUSSION.md](results/phase1_validation_20261031/DISCUSSION.md)。文章の根拠として参照する。
+- **使用する既存PNG：** なし。
+- **新規作成する図表：** **N01（未作成）「研究目的と検証段階の流れ図」**。研究目的→Phase 0（正弦波）→今回のPhase 1（モデルCase A）→将来の複数目標・実録音・左右音源比較、という位置づけを整理する。「実施済みの基礎検証」と「将来の検証」を図中で区別し、新しい結果として示さない。
+- **参照元データ・資料：** 本ガイドAの研究目的、[reports/model_audit.md](reports/model_audit.md)「数値モデル・実装差と音源条件」、[results/phase1_validation_20261031/DISCUSSION.md](results/phase1_validation_20261031/DISCUSSION.md)「次に判断すべきこと」。数値データは使用しない。
 - **読む際の注意：** 鳴管は1器官で左右に2音源がある。「鳴管が2個ある」と表現しない。研究目的を達成済みの結果と混同しない。
 - **口頭説明：** 「今回は左右2音源の優劣を示す発表ではなく、その比較を可能にする制御法の基礎検証を報告します」。
 
 ### 2. Phase 0：正弦波で候補手法を確認
 
 - **伝える結論：** この簡単な追従課題・予算ではTD3、SACがPPOより小さい最終誤差となり、次段階の候補にした。
-- **載せる図・表：** Phase 0学習曲線（CのP0-1）とDのPhase 0最終誤差表。
-- **実際の相対パス：** [results/phase0/learning_curves.png](results/phase0/learning_curves.png)、[REPORT.md](REPORT.md)「2. Phase 0」、[results/phase0/ranking.json](results/phase0/ranking.json)。
-- **読む際の注意：** 横軸は訓練環境step、各手法3本のseed別曲線。平均・標準偏差の図ではない。学習曲線末尾と別の最終評価値は区別する。
+- **使用する既存PNG：** **P0-1** [results/phase0/learning_curves.png](results/phase0/learning_curves.png)。全体を使用する。
+- **新規作成する図表：** **N02（未作成）「Phase 0最終比較表」**。本ガイドD-1の既存集計を転記し、行はTD3・SAC・PPO、列は「最終音響誤差の平均±標本SD」「0.08以下に到達したseed数」とする。脚注に4096訓練step・3 seedを記す。表の組版だけで、再集計は不要。
+- **参照元データ・資料：** 表の転記元は [REPORT.md](REPORT.md)「2. Phase 0」、seed別最終値は [results/phase0/summary.json](results/phase0/summary.json)。条件は [results/phase0/config.json](results/phase0/config.json)、選定理由は [results/phase0/ranking.json](results/phase0/ranking.json)。PNGの曲線元データは [results/phase0/](results/phase0/) 内のPPO・TD3・SAC×seed 0/1/2の計9 runにある各 `curve.json`。具体例は [results/phase0/TD3_0/curve.json](results/phase0/TD3_0/curve.json)。
+- **読む際の注意：** PNGは横軸が訓練環境step、各手法3本のseed別曲線で、平均・標準偏差の図ではない。N02には曲線の末尾値ではなく、別の最終評価の値を使う。
 - **口頭説明：** 「各4096step・3 seed。目標周波数・振幅を観測できる正弦波課題での暫定選定です。鳴管モデルで同じ順位・収束を保証するものではありません」。
 
 ### 3. Phase 1：目標と課題を定義
 
 - **伝える結論：** 正解制御が分かるモデル内目標を用い、一定1変数→時変1変数→時変2変数と段階的に調べた。
-- **載せる図・表：** Aの用語表、Dの予算表、目標制御値の短い表。画像より課題の違いを優先。
-- **実際の相対パス：** [results/phase1_validation_20261031/manifest.json](results/phase1_validation_20261031/manifest.json)、[results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)。
+- **使用する既存PNG：** なし。
+- **新規作成する図表：** **N03（未作成）「Task定義・予算表」**。本ガイドAとD-2から、行をTask A/B/C、列を「可動変数」「制御周期・行動数」「訓練episode／候補数」「訓練環境step」として組み直す。全TaskでモデルCase A・同じ0.35秒目標・3 seedであることと、目標制御値を注記する。新しい実験条件の提案ではない。
+- **参照元データ・資料：** [results/phase1_validation_20261031/manifest.json](results/phase1_validation_20261031/manifest.json) の目標・固定値・範囲・Task別予算、[results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)「手法比較」。表の掲載値は本ガイドD-2を転記する。
 - **読む際の注意：** 全Taskで目標は同じ**一定制御による音**。B/Cは制御を時変にできる課題であり、目標そのものが時変制御で生成された実験ではない。全TaskともモデルCase A。
 - **口頭説明：** 「ε_lは左側の制御係数、p_sは圧力の制御値です。1変数課題では非学習のp_sを目標生成値に合わせています。全0.35秒の音響誤差を共通評価とし、環境の報酬和もその負値に一致させ、balancedは補助診断にしています」。
 
 ### 4. 学習前に誤差分布を調べる
 
 - **伝える結論：** 既知正解とその近傍に低誤差点があることを、粗い探索で確認した。
-- **載せる図・表：** 1D誤差マップ（P1-1）を主図とする。2D誤差マップ（P1-2）は補足へ。
-- **実際の相対パス：** [results/phase1_validation_20261031/figures/landscape_1d.png](results/phase1_validation_20261031/figures/landscape_1d.png)、[results/phase1_validation_20261031/figures/landscape_2d.png](results/phase1_validation_20261031/figures/landscape_2d.png)。
+- **使用する既存PNG：** **P1-1** [results/phase1_validation_20261031/figures/landscape_1d.png](results/phase1_validation_20261031/figures/landscape_1d.png)。上段の主音響誤差を中心に説明する。
+- **新規作成する図表：** **なし。** 正解位置と測定最小点は既存PNGに含まれている。マップの再計算・再描画は不要。
+- **参照元データ・資料：** PNGの測定値は [results/phase1_validation_20261031/diagnostics/landscape_1d.csv](results/phase1_validation_20261031/diagnostics/landscape_1d.csv)。正解制御は [results/phase1_validation_20261031/manifest.json](results/phase1_validation_20261031/manifest.json)、候補数と解釈は [results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)「学習前の誤差マップ」。
+- **補足PNG（本編では使用しない）：** **P1-2** [results/phase1_validation_20261031/figures/landscape_2d.png](results/phase1_validation_20261031/figures/landscape_2d.png)。その元データは [results/phase1_validation_20261031/diagnostics/landscape_2d.csv](results/phase1_validation_20261031/diagnostics/landscape_2d.csv)。
 - **読む際の注意：** 1Dの上段は主音響誤差、下段はbalanced診断値で尺度が異なる。正解点を追加した22候補／140候補のグリッドであり、低誤差点の割合はランダム成功確率ではない。候補間の極小や谷幅は未確定。
 - **口頭説明：** 「マップは到達可能性の診断用です。正解点やマップの良い候補を、学習器・最適化器の初期値として渡してはいません」。
 
 ### 5. Oracle：実装の整合性を確認
 
 - **伝える結論：** 同じモデル・固定制御・初期状態なら目標を再現できる。学習結果と到達可能性を分けて評価できる。
-- **載せる図・表：** Oracleのスペクトログラム（P1-5）とDのOracle表。固定p_sの不一致と解消を一言添える。
-- **実際の相対パス：** [results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png](results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png)、[results/phase1_validation_20261031/diagnostics/oracles.json](results/phase1_validation_20261031/diagnostics/oracles.json)。
+- **使用する既存PNG：** **P1-5** [results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png](results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png)。目標／生成の両段を使用する。
+- **新規作成する図表：** **N04（未作成）「固定値不一致とOracleの比較表」**。本ガイドD-3から「旧1変数decode・固定p_s不一致：0.392859」と「新float64 Oracle・Task A/B/C：全て0」の2行を転記。列は「確認条件」「全区間音響誤差」。float32の値は質疑用とし、この短表には詰め込まない。
+- **参照元データ・資料：** 数値は [results/phase1_validation_20261031/diagnostics/oracles.json](results/phase1_validation_20261031/diagnostics/oracles.json)。PNGの波形データは [results/phase1_validation_20261031/diagnostics/oracle_A/rollout.npz](results/phase1_validation_20261031/diagnostics/oracle_A/rollout.npz)。固定値の説明は [results/phase1_validation_20261031/DISCUSSION.md](results/phase1_validation_20261031/DISCUSSION.md)「整合性と学習を分けて確認できたこと」。
 - **読む際の注意：** float64で全17500サンプル一致、全区間誤差0。Oracleは既知制御の再生であり学習手法ではない。図の見た目だけで完全一致を判断しない。
 - **口頭説明：** 「旧decodeでは1変数制御の固定圧力が目標と違い、正解ε_lでも誤差が残りました。新しい検証環境で固定値を揃えた後、Oracleで整合を確認しました」。
 
 ### 6. Task A：最終性能の手法比較
 
 - **伝える結論：** 一定1変数では直接最適化が強く、TD3・SACの最終方策には誤差が残った。
-- **載せる図・表：** DのTask A行の4手法比較表を中心に、DEのスペクトログラム（P1-6）を添える。
-- **実際の相対パス：** [results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)「手法比較」の数表、[results/phase1_validation_20261031/per_seed.csv](results/phase1_validation_20261031/per_seed.csv)、[results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png](results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png)。
+- **使用する既存PNG：** **P1-6** [results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png](results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png)。目標／生成の両段を使用する。
+- **新規作成する図表：** **N05（未作成）「Task A・4手法最終比較表」**。本ガイドD-3のTask Aを、行＝TD3/SAC/ランダム探索/DE、列＝「最終誤差の平均±標本SD」「最終誤差0.08以下のseed数」に整形する。脚注に256 episode／手法／seed、3 seedと記す。新しい棒グラフや再集計は不要。
+- **参照元データ・資料：** 表の既存集計は [results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)「手法比較」、seed別の値は [results/phase1_validation_20261031/per_seed.csv](results/phase1_validation_20261031/per_seed.csv) のTask A。PNGの波形は [results/phase1_validation_20261031/runs/A/DE/seed_0/rollout.npz](results/phase1_validation_20261031/runs/A/DE/seed_0/rollout.npz)。
 - **読む際の注意：** 数表は3 seed平均±標本標準偏差。DE図はseed 0の1例。直接法はbest-so-far、RLは最終actorを返し、選択則は異なる。
 - **口頭説明：** 「各手法256 episode分の音を生成しています。DE平均誤差は約3.5×10⁻¹¹、ランダム探索は約0.0076。RL固有の優位性は示せていません」。
 
 ### 7. TD3：途中の改善と最終悪化を分ける
 
 - **伝える結論：** 途中で低誤差を観測しても、最終方策で維持できていない。
-- **載せる図・表：** Phase 1学習曲線（P1-4）の**左上＝Task A・主指標**、Dの途中最良／最終表。余白があれば最終TD3スペクトログラム（P1-7）。
-- **実際の相対パス：** [results/phase1_validation_20261031/figures/learning_curves.png](results/phase1_validation_20261031/figures/learning_curves.png)、[results/phase1_validation_20261031/A_diagnosis.json](results/phase1_validation_20261031/A_diagnosis.json)、[results/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png](results/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png)。
+- **使用する既存PNG：** **P1-4** [results/phase1_validation_20261031/figures/learning_curves.png](results/phase1_validation_20261031/figures/learning_curves.png) の**左上＝Task A・主指標**を主図とする。**P1-7** [results/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png](results/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png) を最終方策の具体例として小さく添える。P1-4全6パネルを小さく並べる必要はない。
+- **新規作成する図表：** **N06（未作成）「TD3の途中最良／最終の比較表」**。本ガイドD-4の3行表を転記する。列はseed、最良を観測したepisode、最良観測誤差、256 episode後の最終誤差。曲線を画像から読み取って数値を作らない。
+- **参照元データ・資料：** N06は [results/phase1_validation_20261031/A_diagnosis.json](results/phase1_validation_20261031/A_diagnosis.json)。曲線PNGのTask A部分は [results/phase1_validation_20261031/runs/A/](results/phase1_validation_20261031/runs/A/) 内の4手法×3 seedの各 `curve.json`。TD3 seed 0の具体的な記録は [results/phase1_validation_20261031/runs/A/TD3/seed_0/curve.json](results/phase1_validation_20261031/runs/A/TD3/seed_0/curve.json)、スペクトログラムの波形は [results/phase1_validation_20261031/runs/A/TD3/seed_0/rollout.npz](results/phase1_validation_20261031/runs/A/TD3/seed_0/rollout.npz)。
 - **読む際の注意：** 太線はseed平均、帯は標本標準偏差、細線は各seed。全seedで途中に0.08以下を観測したが、同じ評価回で全seedが0.08以下だったという意味ではない。TD3画像は**最終方策**のもので、途中最良時点の画像ではない。
 - **口頭説明：** 「初期・最終を含む9評価点の最良値は記録できていますが、途中の重み・音声は保存していません。最良方策の保存と、その性能の保持が次の課題です」。
 
 ### 8. 生成音・制御値・振幅を照合
 
 - **伝える結論：** 周波数構造、実際の制御値、振幅を別々に確認する必要がある。
-- **載せる図・表：** TD3最終の振幅包絡（P1-9）を主図とし、制御図（P1-8）はε_l段を指して説明する。縦長の5段図を小さく詰め込まない。DE／TD3スペクトログラムは前スライドの図を参照する。
-- **実際の相対パス：** [results/phase1_validation_20261031/runs/A/TD3/seed_0/controls.png](results/phase1_validation_20261031/runs/A/TD3/seed_0/controls.png)、[results/phase1_validation_20261031/runs/A/TD3/seed_0/amplitude_envelope.png](results/phase1_validation_20261031/runs/A/TD3/seed_0/amplitude_envelope.png)。
+- **使用する既存PNG：** 主図は**P1-9** [results/phase1_validation_20261031/runs/A/TD3/seed_0/amplitude_envelope.png](results/phase1_validation_20261031/runs/A/TD3/seed_0/amplitude_envelope.png)。**P1-8** [results/phase1_validation_20261031/runs/A/TD3/seed_0/controls.png](results/phase1_validation_20261031/runs/A/TD3/seed_0/controls.png) は最上段のε_lだけを見せる。スペクトログラムはスライド7を参照する。
+- **新規作成する図表：** **なし。** 「目標ε_l=4.1×10⁷」とテキスト注記する。最上段だけでは元図最下段の時間軸が見えなくなるため、「時間範囲0〜0.35秒」もスライド上に注記する。元PNGの変更や新しい制御図・包絡図の生成は不要。
+- **参照元データ・資料：** 両PNGの波形・適用制御は [results/phase1_validation_20261031/runs/A/TD3/seed_0/rollout.npz](results/phase1_validation_20261031/runs/A/TD3/seed_0/rollout.npz)。最終評価は [results/phase1_validation_20261031/runs/A/TD3/seed_0/summary.json](results/phase1_validation_20261031/runs/A/TD3/seed_0/summary.json)、元振幅の形式は [results/phase1_validation_20261031/runs/A/TD3/seed_0/audio_format.json](results/phase1_validation_20261031/runs/A/TD3/seed_0/audio_format.json)。
 - **読む際の注意：** Task Aなので制御は時間一定。5段中ε_l以外は固定。正解ε_lの比較線は図に重ねていないため、目標4.1×10⁷と照合して説明する。スペクトログラムは表示専用の個別ピーク正規化を含み、濃淡だけで絶対振幅を比較しない。
 - **口頭説明：** 「振幅包絡は目標と生成を元のモデル出力単位で比較しています。出力はSI音圧に校正されたものではありません」。
 
 ### 9. Task B/C：制御自由度を増やした結果
 
 - **伝える結論：** 時変1変数・2変数でも今回の予算では十分な模倣精度に至らず、直接法にも誤差が残り、十分な収束を確認できなかった。
-- **載せる図・表：** DのTask B/C最終誤差表と、既存学習曲線の**左列中段・下段**。時変制御の具体例はP1-11を補足へ。
-- **実際の相対パス：** [results/phase1_validation_20261031/figures/learning_curves.png](results/phase1_validation_20261031/figures/learning_curves.png)、[results/phase1_validation_20261031/DISCUSSION.md](results/phase1_validation_20261031/DISCUSSION.md)。
+- **使用する既存PNG：** **P1-4** [results/phase1_validation_20261031/figures/learning_curves.png](results/phase1_validation_20261031/figures/learning_curves.png) を再利用し、**左列中段＝Task B、左列下段＝Task C**を使用。スライド7と同じ元ファイルで、新しいPNGではない。
+- **新規作成する図表：** **N07（未作成）「Task B/Cの最終比較表」**。本ガイドD-3のB/Cの2行を転記し、列をTask、TD3、SAC、ランダム探索、DEとする。全セルが3 seedの平均±標本SDで、各128 episode／手法／seedであることを脚注に明記する。
+- **参照元データ・資料：** N07の集計は [results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)「手法比較」、seed別の値は [results/phase1_validation_20261031/per_seed.csv](results/phase1_validation_20261031/per_seed.csv) のTask B/C、予算は [results/phase1_validation_20261031/manifest.json](results/phase1_validation_20261031/manifest.json)。曲線は [results/phase1_validation_20261031/runs/B/](results/phase1_validation_20261031/runs/B/) と [results/phase1_validation_20261031/runs/C/](results/phase1_validation_20261031/runs/C/) 内の各12 runの `curve.json`。許容解の説明だけに使う資料は [results/phase1_validation_20261031/cross_task_replay/summary.json](results/phase1_validation_20261031/cross_task_replay/summary.json) で、N07には混ぜない。
+- **補足PNG（本編では使用しない）：** **P1-11** [results/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png](results/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png)。時変制御の具体例を質問された場合のみ。
 - **読む際の注意：** B/Cは各128 episodeで、Aの256 episodeと予算が違う。DEは35/70次元に対して個体数8。成績差を制御自由度だけの因果効果と断定しない。全条件の最終値を示し、良いseedだけを選ばない。
 - **口頭説明：** 「BにはAのDE解を保持すれば再現できる解があります。それでも、Bの35次元探索やRLが128 episodeでその解を獲得できたわけではありません」。
 
 ### 10. まとめと次の検証
 
 - **伝える結論：** 到達可能性は確認できた。次はRLの収束・最良方策の保存と保持、独立評価を詰める。
-- **載せる図・表：** Aの中心結論とFの優先順位1〜3を短い表にする。新しい結果図は不要。
-- **実際の相対パス：** [results/phase1_validation_20261031/DISCUSSION.md](results/phase1_validation_20261031/DISCUSSION.md)「次に判断すべきこと」、[results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)「保存物・SAP評価への準備」。
+- **使用する既存PNG：** なし。
+- **新規作成する図表：** **N08（未作成）「確認済み／未確認／次の検証のまとめ表」**。行を「確認済み：Oracle・定常1変数DEの再現」「未確認：RLの安定した最終性能・一般化・左右2音源の優位性」「次の検証：途中方策保存、自由度と探索難易度、SAP独立評価」の3項目にする。既存考察の要約であり、新しい結果グラフは作らない。
+- **参照元データ・資料：** [results/phase1_validation_20261031/DISCUSSION.md](results/phase1_validation_20261031/DISCUSSION.md)「次に判断すべきこと」、[results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)「保存物・SAP評価への準備」、本ガイドFの検証候補。数値の新規計算は不要。
 - **読む際の注意：** 今回から実録音への一般化・左右2音源の優位性へ結論を飛ばさない。SAPは予定であり導入済みではない。
 - **口頭説明：** 「Phase 1の基礎検証を確実にしてから、複数目標・実際のさえずりへ進み、最終的に左右2音源の寄与を比較したいと考えています」。
 
-**8枚に短縮する場合：** スライド4と5を統合し、スライド8は補足へ移す。Task Aの最終比較と学習途中／最終の区別は残す。2Dマップ・Issue #10の報酬診断・細かな計算資源表は質疑用にする。
+**8枚に短縮する場合：** スライド4と5を統合し、スライド8は補足へ移す。必要な新規図表はN01〜N08のまま、N04を統合したスライドへ配置する。Task Aの最終比較と学習途中／最終の区別は残す。2Dマップ・Issue #10の報酬診断・細かな計算資源表は質疑用にする。
 
 ## C. 図とデータの索引
 
-### 図・最終数値表の厳選索引
+### 既存PNGの索引
 
-「必須」は本筋を説明する資料、「推奨」は時間があれば加える資料、「補足」は質疑用。個別図は原則seed 0で揃え、統計的な比較は3 seedの数表で行う。
+この表は実在するPNGのみを扱う。「必須／推奨／補足」は画像の優先度で、**本編に挿入する画像の確定案はBの制作一覧**を参照。個別図は原則seed 0で揃え、統計的な比較は3 seedの数表で行う。新規図表N01〜N08はこのPNG一覧に含めない。
 
 | ID | 優先度 | 用途・読む箇所 | 実際の相対パス |
 | --- | --- | --- | --- |
@@ -127,7 +164,6 @@
 | P0-3 | 補足 | 正弦波の周波数・振幅制御。目標線の重ね描きはない。 | [results/phase0/TD3_0/controls.png](results/phase0/TD3_0/controls.png) |
 | P1-1 | 必須 | 1変数誤差マップ。主指標は上段、正解位置と測定最小点を見る。 | [results/phase1_validation_20261031/figures/landscape_1d.png](results/phase1_validation_20261031/figures/landscape_1d.png) |
 | P1-2 | 補足 | 2変数誤差マップ。左は主指標、右はbalanced。橙枠は測定値の下位10%。 | [results/phase1_validation_20261031/figures/landscape_2d.png](results/phase1_validation_20261031/figures/landscape_2d.png) |
-| P1-3 | 必須 | **最終音響誤差は既存の表を使用。**「手法比較」からTask別4手法表を引用。 | [results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md) |
 | P1-4 | 必須 | 学習曲線。左列が主指標、上／中／下がTask A/B/C。右列balancedは補足。 | [results/phase1_validation_20261031/figures/learning_curves.png](results/phase1_validation_20261031/figures/learning_curves.png) |
 | P1-5 | 必須 | Oracleの目標／生成スペクトログラム。再現可能性の確認。 | [results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png](results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png) |
 | P1-6 | 推奨 | Task A・DE seed 0の最終スペクトログラム。直接最適化の再現例。 | [results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png](results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png) |
@@ -138,7 +174,9 @@
 | P1-11 | 補足 | Task C・SAC seed 0の時変2変数制御例。最良seedの図として選んだものではない。 | [results/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png](results/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png) |
 | P1-12 | 補足 | Task A・SAC seed 0の最終スペクトログラム。全手法を視覚比較する場合のみ追加。 | [results/phase1_validation_20261031/runs/A/SAC/seed_0/spectrogram.png](results/phase1_validation_20261031/runs/A/SAC/seed_0/spectrogram.png) |
 
-最終誤差用の新しい棒グラフは作らず、既存レポート表・CSVを使う。Oracle／DE／TD3の各スペクトログラムは上段がTarget、下段がGenerated。ピーク正規化は**表示専用**で、学習・主評価に生成音ごとのゲイン調整を加えたものではない。
+**P1-3は既存数表の参照元を表す番号で、PNGではない。** [results/phase1_validation_20261031/REPORT.md](results/phase1_validation_20261031/REPORT.md)「手法比較」と [results/phase1_validation_20261031/per_seed.csv](results/phase1_validation_20261031/per_seed.csv) を使い、スライド用の表N05/N07に整形する。これらの表は未作成で、新しい棒グラフ・再集計は不要。
+
+Oracle／DE／TD3の各スペクトログラムは上段がTarget、下段がGenerated。ピーク正規化は**表示専用**で、学習・主評価に生成音ごとのゲイン調整を加えたものではない。
 
 Phase 1の表示条件は10 MHzへ表示用再サンプリング、Blackman–Harris、nperseg=245760、noverlap=184320、gray_r、−50〜−20 dB、0〜10 kHz。完全に含まれる窓の中心だけを表示するため、0.35秒音声の表示範囲は0.012288〜0.331776秒。**主評価はこの表示範囲だけではなく全0.35秒**で計算している。
 
@@ -294,6 +332,7 @@ Oracleは既知制御の再生で、seed学習の成績ではない。
 
 ## 確認記録
 
-- 掲載したローカル相対パス51件（リンク113参照）はすべて実在確認済み。全リンクはこのガイドの配置場所を基準とする。
-- 既存の公開成果1513ファイルについて作業前後のSHA256とファイル集合の一致を確認済み。非公開録音・実行環境・ビルド・キャッシュはこの照合対象から除外し、今回の読み取り・変更対象にしない。
-- 新規作成はこのMarkdownガイド1ファイルのみ。既存ファイルの削除・移動・リネーム・上書き、モデル／報酬／条件の変更、RL学習、数値積分、新規図の生成は行わない。
+- 2026-11-01：新規ガイドを作成し、既存の公開成果1513ファイルの不変と掲載パスの実在を確認した。
+- 2026-11-02：本ガイドだけを更新。各スライドで既存PNG・新規図表・参照元を分離した。新規図表N01〜N08は制作計画であり、実際の画像・スライドは未作成。未作成ファイルへのリンクは置いていない。
+- 更新後のローカル相対パス57件（リンク137参照）はすべて実在確認済み。本ガイド以外の公開成果1513ファイルについてSHA256とファイル集合が不変であることも確認済み。非公開録音・実行環境・ビルド・キャッシュは読み取り・変更対象外。
+- モデル／報酬／実験条件の変更、既存結果の削除・移動・リネーム・上書き、RL学習、数値積分、新規PNGの生成は行っていない。
