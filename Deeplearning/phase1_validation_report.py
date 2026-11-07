@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 
-from .plotting import comparison, control_trajectories
+from .plotting import comparison, control_trajectories, phase1_task_a_learning_curves
 
 
 METHOD_ORDER = {"TD3": 0, "SAC": 1, "random_search": 2, "DE": 3}
@@ -240,6 +240,20 @@ def _plot_curves(output, runs):
         fig.savefig(Path(output) / "figures" / "learning_curves.png", dpi=160)
     finally:
         plt.close(fig)
+
+
+def redraw_task_a_curve(output):
+    """Redraw saved Task A run-0 data only, leaving reports and original figures intact."""
+    output = Path(output)
+    curves = {}
+    for method in METHOD_ORDER:
+        entries = json.loads((output / "runs" / "A" / method / "seed_0" / "curve.json").read_text())
+        curves[METHOD_LABELS[method]] = ([point["episodes"] for point in entries],
+                                         [point["acoustic_error"] for point in entries])
+    destination = output / "figures" / "task_a_acoustic_error_revised.png"
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    phase1_task_a_learning_curves(curves, destination)
+    return destination
 
 
 def _oracle_rows(data, prefix=""):
@@ -477,5 +491,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--task-a-curve-only", action="store_true",
+                        help="Only draw the revised Task A curve from saved run-0 JSON; preserve all other artifacts")
     options = parser.parse_args()
-    print(report(options.output))
+    print(redraw_task_a_curve(options.output) if options.task_a_curve_only else report(options.output))

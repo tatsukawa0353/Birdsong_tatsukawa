@@ -10,12 +10,28 @@ from stable_baselines3.common.noise import NormalActionNoise
 import torch
 
 from .acoustics import distance, evaluation_features
-from .plotting import comparison, learning_curves
+from .plotting import comparison, learning_curves, phase0_learning_curves
 from .sine_env import SineConfig, SineEnv
 
 
 def write_json(path, data):
     Path(path).write_text(json.dumps(data, indent=2, ensure_ascii=False, allow_nan=False)+"\n")
+
+
+def redraw_phase0_learning_curves(directory):
+    """Read saved run-0 curves only; do not train or recompute any errors.
+
+    Write a separate PNG so the original multi-run learning_curves.png remains.
+    """
+    directory = Path(directory)
+    curves = {}
+    for name in ("PPO", "TD3", "SAC"):
+        entries = json.loads((directory/f"{name}_0"/"curve.json").read_text())
+        curves[name] = ([entry["steps"] for entry in entries],
+                        [entry["error"] for entry in entries])
+    output = directory/"learning_curves_revised.png"
+    phase0_learning_curves(curves, output)
+    return output
 
 
 def make_agent(name, env, seed, settings):
@@ -258,3 +274,14 @@ def run_model_baselines(config, output):
             env.close()
         write_json(output/"baselines.json", baselines)
     return baselines
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Redraw saved Phase 0 curves without training or evaluation")
+    parser.add_argument("--redraw-phase0", type=Path, nargs="?", required=True,
+                        const=Path(__file__).resolve().parent/"results"/"phase0",
+                        metavar="DIRECTORY", help="Phase 0 results directory (default: results/phase0)")
+    args = parser.parse_args()
+    print(redraw_phase0_learning_curves(args.redraw_phase0))

@@ -1,0 +1,135 @@
+{
+  "workflow": "issue13_constant_control_reproduction",
+  "issue_url": "https://github.com/tatsukawa0353/Birdsong_tatsukawa/issues/13",
+  "experiment_id": "reproduction_v1",
+  "created_utc": "2026-11-07T08:08:08.072820+00:00",
+  "client_date_jst": "2026-11-07",
+  "settings": {
+    "experiment_id": "reproduction_v1",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "methods": [
+      "TD3",
+      "SAC",
+      "random_search",
+      "DE"
+    ],
+    "conditions": [
+      "constant_1d",
+      "constant_2d"
+    ],
+    "episodes": 256,
+    "eval_every_episodes": 1,
+    "warmup_episodes": 16,
+    "learning_rate": 0.0003,
+    "batch_size": 32,
+    "net_arch": [
+      32,
+      32
+    ],
+    "gamma": 1.0,
+    "sac_ent_coef": "auto_0.01",
+    "td3_noise_std": 0.1,
+    "de_population": 8,
+    "de_mutation": [
+      0.5,
+      1.0
+    ],
+    "de_recombination": 0.7,
+    "historical_reference_directory": "Deeplearning/results/phase1_validation_20261031"
+  },
+  "source_hashes": {
+    "issue13.py": "298d634860c490b76c2cec86d85762cf2ba95bf243a93725d0f5ab76d1ad7417",
+    "issue13_env.py": "8b642acf71974e79bd444d383d3b235e9c4596edc8b4bbf0ae317c37b397f918",
+    "configs/issue13_reproduction.json": "0da29a411d110120fbbd998b27c0c854071fb6e22c88baa437036b000e804596",
+    "phase1_validation.py": "6bed9436fe31ac309fa4d31d1175201eee2cc5c4c9f3a3c4dec9a513a1d4144c",
+    "phase1_validation_env.py": "324da3797ffc3028c9b6823ded00d472fe7eabb107a6d0f3e44b1976bfaca2ce",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "objectives.py": "3c93b55fb0641736d32e52d0e5e6bd962f1c90965368f2c1da903a19fa23fdf0",
+    "native/model.cpp": "999f8e9b35c90ac46b8bc671a48fc7386f1de40ba02ce72186e54206203f8755",
+    "requirements-lock.txt": "fe5b981f2880c7e60d488b06a1dfb5172ea016e5c76b167e21c17fea17ea01b1"
+  },
+  "historical_reference_directory": "/home/tatsukawa0353/Birdsong_tatsukawa/Birdsong_tatsukawa/Deeplearning/results/phase1_validation_20261031",
+  "condition": "A",
+  "target": "same constant model-generated waveform as historical Task A; no recordings",
+  "target_controls": [
+    41000000.0,
+    35000000.0,
+    3400000.0,
+    49000.0,
+    49000.0
+  ],
+  "fixed_controls": [
+    41000000.0,
+    35000000.0,
+    3400000.0,
+    49000.0,
+    49000.0
+  ],
+  "physical_low": [
+    25000000.0,
+    25000000.0,
+    2500000.0,
+    49000.0,
+    49000.0
+  ],
+  "physical_high": [
+    50000000.0,
+    50000000.0,
+    4000000.0,
+    10000000.0,
+    10000000.0
+  ],
+  "duration_s": 0.35,
+  "sample_rate": 50000,
+  "native_dt": 1e-07,
+  "control_interval_s": 0.01,
+  "initial_state": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "delay_history": "all zeros",
+  "decimator_state": "all zeros",
+  "source_target_sha256": "ed21b9a41fdf01850901fcedca597d73f19ef84adb93544f5d58f14d14e7ab6d",
+  "copied_target_sha256": "ed21b9a41fdf01850901fcedca597d73f19ef84adb93544f5d58f14d14e7ab6d",
+  "target_generation": {
+    "episodes": 0,
+    "integration_s": 0,
+    "note": "copied saved target, no new generation"
+  },
+  "reward": "whole_acoustic_prefix_potential_gamma1; NOT baseline_context or balanced_aligned",
+  "reward_identity": "-sum(r_t) = full acoustic error; gamma=1",
+  "primary": "full 0.35 s acoustics.distance; balanced is audit only",
+  "optimizer_space": {
+    "constant_1d": [
+      0
+    ],
+    "constant_2d": [
+      0,
+      2
+    ]
+  },
+  "budget_unit": "256 training sound generations per method/condition/seed",
+  "evaluation_schedule": "RL: 0 plus each episode 1..256; direct: objective/best-so-far for every candidate",
+  "evaluation_timing": "same historical pre-gradient rollout-end at 1..255; final 256 post-final-update",
+  "differences_from_historical": [
+    "evaluation interval 32 to 1",
+    "retain evaluation actions and best checkpoint/audio",
+    "new constant two-variable condition; no hyperparameter improvement"
+  ],
+  "native_library_sha256": "f7ac977eefb4effb2b5cf7b5853a1cdb4ab0b44449737389414722fb07d9f759",
+  "package_versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "torch": "2.14.1+cpu",
+    "stable-baselines3": "2.9.2",
+    "gymnasium": "1.4.0"
+  }
+}

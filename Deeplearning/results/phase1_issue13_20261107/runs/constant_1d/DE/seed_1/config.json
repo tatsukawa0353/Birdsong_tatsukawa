@@ -1,0 +1,58 @@
+{
+  "condition": "constant_1d",
+  "method": "DE",
+  "seed": 1,
+  "settings": {
+    "experiment_id": "reproduction_v1",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "methods": [
+      "TD3",
+      "SAC",
+      "random_search",
+      "DE"
+    ],
+    "conditions": [
+      "constant_1d",
+      "constant_2d"
+    ],
+    "episodes": 256,
+    "eval_every_episodes": 1,
+    "warmup_episodes": 16,
+    "learning_rate": 0.0003,
+    "batch_size": 32,
+    "net_arch": [
+      32,
+      32
+    ],
+    "gamma": 1.0,
+    "sac_ent_coef": "auto_0.01",
+    "td3_noise_std": 0.1,
+    "de_population": 8,
+    "de_mutation": [
+      0.5,
+      1.0
+    ],
+    "de_recombination": 0.7,
+    "historical_reference_directory": "Deeplearning/results/phase1_validation_20261031"
+  },
+  "control_indices": [
+    0
+  ],
+  "source_hashes": {
+    "issue13.py": "298d634860c490b76c2cec86d85762cf2ba95bf243a93725d0f5ab76d1ad7417",
+    "issue13_env.py": "8b642acf71974e79bd444d383d3b235e9c4596edc8b4bbf0ae317c37b397f918",
+    "configs/issue13_reproduction.json": "0da29a411d110120fbbd998b27c0c854071fb6e22c88baa437036b000e804596",
+    "phase1_validation.py": "6bed9436fe31ac309fa4d31d1175201eee2cc5c4c9f3a3c4dec9a513a1d4144c",
+    "phase1_validation_env.py": "324da3797ffc3028c9b6823ded00d472fe7eabb107a6d0f3e44b1976bfaca2ce",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "objectives.py": "3c93b55fb0641736d32e52d0e5e6bd962f1c90965368f2c1da903a19fa23fdf0",
+    "native/model.cpp": "999f8e9b35c90ac46b8bc671a48fc7386f1de40ba02ce72186e54206203f8755",
+    "requirements-lock.txt": "fe5b981f2880c7e60d488b06a1dfb5172ea016e5c76b167e21c17fea17ea01b1"
+  }
+}

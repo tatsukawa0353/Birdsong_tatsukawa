@@ -1,0 +1,139 @@
+{
+  "seed": 0,
+  "episodes": 256,
+  "source_stage": "final",
+  "axes_titles": [
+    "",
+    ""
+  ],
+  "top_panel": "Target",
+  "bottom_panel": "Generated",
+  "xlabel": "Time [s]",
+  "axis_label_fontsize": 46,
+  "tick_fontsize": 30,
+  "style": [
+    "science",
+    "ieee",
+    "no-latex"
+  ],
+  "primary_acoustic_error_recomputed": false,
+  "added_integration_s": 0,
+  "display_settings": {
+    "target_fs": 10000000,
+    "nperseg": 245760,
+    "noverlap": 184320,
+    "window": "blackmanharris",
+    "cmap": "gray_r",
+    "vmin": -50.0,
+    "vmax": -20.0,
+    "max_hz": 10000,
+    "complete_windows_only": true,
+    "independent_peak_normalization": "display only"
+  },
+  "figures": [
+    {
+      "condition": "constant_1d",
+      "method": "TD3",
+      "seed": 0,
+      "episodes": 256,
+      "path": "figures/constant_1d_TD3_final_spectrogram.png",
+      "png_sha256": "0b62caecddbcf8838d26e977d9a826abcbc63b83f241d8a705d85fda9affacdd",
+      "source_rollout": "runs/constant_1d/TD3/seed_0/rollout.npz",
+      "source_rollout_sha256": "732e1b8a403e7e2e977de6231978236e0a038470322490ab8cf9e944517ce60a",
+      "source_summary": "runs/constant_1d/TD3/seed_0/summary.json",
+      "source_summary_sha256": "ab12eb8fabfe92e7dd3d73a93e8b4ff6d6e7ddfb90c4804d1f7d369961b493dd",
+      "final_acoustic_error": 0.24198122459385868
+    },
+    {
+      "condition": "constant_1d",
+      "method": "SAC",
+      "seed": 0,
+      "episodes": 256,
+      "path": "figures/constant_1d_SAC_final_spectrogram.png",
+      "png_sha256": "676589bc28254576c9b42e42d2fb402c76c091f4f28c934cf057b95f73a173ee",
+      "source_rollout": "runs/constant_1d/SAC/seed_0/rollout.npz",
+      "source_rollout_sha256": "f92371409f9625e93d9e4713b0f8fdca0146377a260670e25ad5fdcab01745ea",
+      "source_summary": "runs/constant_1d/SAC/seed_0/summary.json",
+      "source_summary_sha256": "545d25e80c0e0c2cfa15042a74491ff70c9cdbb606979be400202292ac80e8d1",
+      "final_acoustic_error": 0.2718123712358848
+    },
+    {
+      "condition": "constant_1d",
+      "method": "random_search",
+      "seed": 0,
+      "episodes": 256,
+      "path": "figures/constant_1d_random_search_final_spectrogram.png",
+      "png_sha256": "92bf28176bbad21f7fc664b4adfe0b42009a2247a1bba8613161f7b3388beeb6",
+      "source_rollout": "runs/constant_1d/random_search/seed_0/rollout.npz",
+      "source_rollout_sha256": "b70bd10589bcef76f2d7697888af5a5eaddae5a34b70036c3312203ce924c3f5",
+      "source_summary": "runs/constant_1d/random_search/seed_0/summary.json",
+      "source_summary_sha256": "0ff0f75d977f580ea17da4f411c9c4fb20df5b93cdf9914a10ab3f5475055c9b",
+      "final_acoustic_error": 0.015074980973027348
+    },
+    {
+      "condition": "constant_1d",
+      "method": "DE",
+      "seed": 0,
+      "episodes": 256,
+      "path": "figures/constant_1d_DE_final_spectrogram.png",
+      "png_sha256": "a85ab082d1610263de9ae54615091ba8d4cd97d3441fd5fd58901f25f1c10f22",
+      "source_rollout": "runs/constant_1d/DE/seed_0/rollout.npz",
+      "source_rollout_sha256": "a9ee0bf67a4e2ecc0965fa3078578ab021ec91e1e5f1c2a619776b989b4d5746",
+      "source_summary": "runs/constant_1d/DE/seed_0/summary.json",
+      "source_summary_sha256": "3ffa5789485d62d2f311450aa7f830ec5f37b0e75acaf72e2302be13f1fb8f3a",
+      "final_acoustic_error": 2.8987946618324292e-11
+    },
+    {
+      "condition": "constant_2d",
+      "method": "TD3",
+      "seed": 0,
+      "episodes": 256,
+      "path": "figures/constant_2d_TD3_final_spectrogram.png",
+      "png_sha256": "df2c3b7ecd4f71bc85d65f257f46dea8cd3d92df609c806a00bfa380f5810239",
+      "source_rollout": "runs/constant_2d/TD3/seed_0/rollout.npz",
+      "source_rollout_sha256": "bb3c8327efb0b087723785ae171dba63ce5697cb7523710c87b7f08ca3bf22b1",
+      "source_summary": "runs/constant_2d/TD3/seed_0/summary.json",
+      "source_summary_sha256": "c2baabe73d705836ffe711f8a5ea6cb9de8eb66055848d22a50cb6a9d0302128",
+      "final_acoustic_error": 0.23690533679561918
+    },
+    {
+      "condition": "constant_2d",
+      "method": "SAC",
+      "seed": 0,
+      "episodes": 256,
+      "path": "figures/constant_2d_SAC_final_spectrogram.png",
+      "png_sha256": "17b41b1338eddbf451229337aeaffe618bd5df7f99033031cbbfa8915c7182cd",
+      "source_rollout": "runs/constant_2d/SAC/seed_0/rollout.npz",
+      "source_rollout_sha256": "50000bdbb36cc3a7ed60eb06979d3e6c197047523b51d300f93573afe66513a1",
+      "source_summary": "runs/constant_2d/SAC/seed_0/summary.json",
+      "source_summary_sha256": "ee42cd8d62e490d1f4858917880bdb1f905d890a3d814d442584b52b9130967b",
+      "final_acoustic_error": 0.30877276930035996
+    },
+    {
+      "condition": "constant_2d",
+      "method": "random_search",
+      "seed": 0,
+      "episodes": 256,
+      "path": "figures/constant_2d_random_search_final_spectrogram.png",
+      "png_sha256": "d05adc28536ac4d5500143b9f539b1e5dfc8820b827453b43bb839d970c97c75",
+      "source_rollout": "runs/constant_2d/random_search/seed_0/rollout.npz",
+      "source_rollout_sha256": "7f70459d68deb5076659148697a0af72087d9f4760b0b92eb1715b4eaea50df2",
+      "source_summary": "runs/constant_2d/random_search/seed_0/summary.json",
+      "source_summary_sha256": "1fb4c974ddd38966f4d1910603c939c8052ca9d84259f6b6a12222665fe733b9",
+      "final_acoustic_error": 0.09628332688305338
+    },
+    {
+      "condition": "constant_2d",
+      "method": "DE",
+      "seed": 0,
+      "episodes": 256,
+      "path": "figures/constant_2d_DE_final_spectrogram.png",
+      "png_sha256": "28be0d07f65bd5babeadda905b4b84697a07e29936d5465d495afb3b1f03163d",
+      "source_rollout": "runs/constant_2d/DE/seed_0/rollout.npz",
+      "source_rollout_sha256": "8b4ffdfd3dbdb39665633c4ad047e7b6366be3feabd61efc2c4847344520f3d3",
+      "source_summary": "runs/constant_2d/DE/seed_0/summary.json",
+      "source_summary_sha256": "169d81b64e0bc03bd5e584551e80f6cd1b58b4dbc0b309422efc966978efba30",
+      "final_acoustic_error": 3.981526445532407e-05
+    }
+  ]
+}

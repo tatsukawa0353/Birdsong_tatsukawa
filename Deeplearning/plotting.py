@@ -139,3 +139,84 @@ def learning_curves(curves, output):
         fig.tight_layout()
         fig.savefig(output, dpi=150)
         plt.close(fig)
+
+
+def phase0_learning_curves(curves, output):
+    """Plot the nine recorded Phase 0 evaluations for each method's run 0.
+
+    Keep the general learning_curves renderer unchanged for other experiments.
+    Colors match the existing Phase 0 PNG, independently of dictionary order.
+    """
+    colors = {"PPO": "#0072B2", "TD3": "#009E73", "SAC": "#D55E00"}
+    evaluation_steps = np.arange(0, 4097, 512)
+    for name in colors:
+        steps, errors = curves[name]
+        if not np.array_equal(steps, evaluation_steps):
+            raise ValueError(f"{name}: expected recorded evaluations at 0, 512, ..., 4096 steps")
+        if np.shape(errors) != evaluation_steps.shape or not np.isfinite(errors).all():
+            raise ValueError(f"{name}: expected nine finite recorded acoustic errors")
+
+    # Use the same font family and label/tick sizes as draw_spectrogram.
+    # Disable rendering simplification so all recorded vertices are retained.
+    with plt.style.context(["science", "ieee", "no-latex"]), \
+            plt.rc_context({"path.simplify": False}):
+        fig, ax = plt.subplots(figsize=(16, 10))
+        try:
+            for name, color in colors.items():
+                steps, errors = curves[name]
+                ax.plot(steps, errors, color=color, alpha=.8, linewidth=2.8,
+                        linestyle="-", label=name)
+            ax.set_xlabel("Training steps", fontsize=46)
+            ax.set_ylabel("Acoustic error", fontsize=46)
+            ax.set_xlim(0, 4096)
+            ax.set_xticks(evaluation_steps)
+            ax.tick_params(labelsize=30, width=2, length=10, direction="in",
+                           top=False, right=False)
+            for spine in ax.spines.values():
+                spine.set_linewidth(2)
+            ax.legend(fontsize=30, loc="upper right", ncol=3)
+            fig.tight_layout()
+            fig.savefig(output, bbox_inches="tight", pad_inches=.1, dpi=120)
+        finally:
+            plt.close(fig)
+
+
+def phase1_task_a_learning_curves(curves, output):
+    """Draw only the saved run-0 Task A acoustic-error series, without aggregation."""
+    colors = {"TD3": "#0072B2", "SAC": "#D55E00", "Random search": "#009E73",
+              "Differential evolution": "#CC79A7"}
+    evaluation_episodes = np.arange(0, 257, 32)
+    for name in colors:
+        episodes, errors = curves[name]
+        if not np.array_equal(episodes, evaluation_episodes):
+            raise ValueError(f"{name}: expected recorded evaluations at 0, 32, ..., 256 episodes")
+        if (np.shape(errors) != evaluation_episodes.shape or
+                not np.isfinite(errors).all() or np.any(np.asarray(errors) < 0)):
+            raise ValueError(f"{name}: expected nine finite nonnegative recorded acoustic errors")
+
+    # Reserve the upper part of the axes for the four-line legend. A small lower
+    # margin keeps near-zero DE values visible above the bottom frame, unchanged.
+    maximum = max(max(curves[name][1]) for name in colors)
+    upper = max(.1, float(np.ceil(maximum * 1.5 * 10) / 10))
+    with plt.style.context(["science", "ieee", "no-latex"]), \
+            plt.rc_context({"path.simplify": False}):
+        fig, ax = plt.subplots(figsize=(16, 10))
+        try:
+            for name, color in colors.items():
+                episodes, errors = curves[name]
+                ax.plot(episodes, errors, color=color, linewidth=2.8,
+                        linestyle="-", label=name)
+            ax.set_xlabel("Training episodes / candidates", fontsize=46)
+            ax.set_ylabel("Full-episode acoustic error", fontsize=46)
+            ax.set_xlim(0, 256)
+            ax.set_xticks(evaluation_episodes)
+            ax.set_ylim(-upper * .03, upper)
+            ax.tick_params(labelsize=30, width=2, length=10, direction="in",
+                           top=False, right=False)
+            for spine in ax.spines.values():
+                spine.set_linewidth(2)
+            ax.legend(fontsize=30, loc="upper right")
+            fig.tight_layout()
+            fig.savefig(output, bbox_inches="tight", pad_inches=.1, dpi=120)
+        finally:
+            plt.close(fig)
