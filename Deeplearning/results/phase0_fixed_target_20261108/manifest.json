@@ -1,0 +1,89 @@
+{
+  "workflow": "issue14_phase0_fixed_target",
+  "issue_url": "https://github.com/tatsukawa0353/Birdsong_tatsukawa/issues/14",
+  "created_utc": "2026-11-08T13:24:36.517617+00:00",
+  "client_date_jst": "2026-11-08",
+  "settings": {
+    "algorithms": [
+      "SAC",
+      "TD3",
+      "PPO"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "target": "glide",
+    "steps": 4096,
+    "eval_interval": 512,
+    "learning_rate": 0.0003,
+    "ppo_rollout": 256,
+    "threshold": 0.08,
+    "randomize_training_target": false
+  },
+  "environment": {
+    "duration": 0.35,
+    "control_s": 0.01,
+    "sample_rate": 48000,
+    "frequency_low": 500.0,
+    "frequency_high": 3000.0,
+    "target": "glide",
+    "randomize": false,
+    "smooth_weight": 0.0
+  },
+  "acoustic_config": {
+    "window_s": 0.024576,
+    "overlap": 0.75,
+    "max_hz": 10000.0,
+    "floor_db": -80.0,
+    "envelope_weight": 1.0
+  },
+  "acoustic_scale": 1.0,
+  "source_hashes": {
+    "issue14.py": "cd2ba7406683c1115525bde0049d0dc4d9139c2b7777c727bc8d05fc9a24e05e",
+    "sine_env.py": "1c0b3abe035cd698df7cb0226ff8ea396ade53b9ba50b8d970ce837b1059e4a4",
+    "experiments.py": "00edf5f1a81eeb6e5153fc4847f8eb143c66b0d7025c5e0c56bdb1684f956164",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "plotting.py": "6acc645bee2ed7d271fdda8aed4b371763fcbbe933f963ba07813e0a8f4141ed",
+    "configs/phase0.json": "f95355add015d894914f3aaeb5cf24addb9cb804e3afef896a8b5120366ca7e0",
+    "configs/issue14_fixed_target.json": "d986856b7106701430b417bc6b606a792b8dcc990878013238838910ca17ff39",
+    "requirements-lock.txt": "fe5b981f2880c7e60d488b06a1dfb5172ea016e5c76b167e21c17fea17ea01b1"
+  },
+  "command": "/home/tatsukawa0353/Birdsong_tatsukawa/Birdsong_tatsukawa/Deeplearning/issue14.py --output Deeplearning/results/phase0_fixed_target_20261108",
+  "reproducible_command": "Deeplearning/.venv/bin/python -m Deeplearning.issue14 --output /home/tatsukawa0353/Birdsong_tatsukawa/Birdsong_tatsukawa/Deeplearning/results/phase0_fixed_target_20261108",
+  "target_frequency_hz": [
+    1000,
+    2000
+  ],
+  "target_amplitude": "0.6*(0.8+0.2*cos(2*pi*k/34)); not constant",
+  "duration_s": 0.35,
+  "control_s": 0.01,
+  "sample_rate": 48000,
+  "horizon": 35,
+  "phase": "reset to 0 per episode; continuous between 480-sample blocks",
+  "training_budget": "4096 actions = 117 completed episodes and 1 partial step, not 4096 episodes",
+  "evaluation_schedule": "0 plus each 512 callback pre-update; independent final post-update",
+  "presentation_curve": "Replace the final callback entry with the post-update evaluation; retain callback_curve.json",
+  "reward": "negative legacy distance on the corresponding 10 ms block; smooth_weight=0",
+  "primary": "legacy distance on the full 0.35 s waveform; not a sum of block errors",
+  "evaluation": "in-target deterministic evaluation, not held-out or unknown-target generalization",
+  "oracle_error": 2.652511956802719e-07,
+  "old_reference": "Deeplearning/results/phase0",
+  "only_training_condition_change": "randomize_training_target: True -> False",
+  "other_changes": [
+    "retain evaluation timing and weights/buffer/optimizer/RNG audit",
+    "presentation endpoint uses final updated policy",
+    "retain initial/final tracking and raw audio"
+  ],
+  "reproducibility_limit": "Legacy SineEnv.reset(seed=None) reseeds action_space from entropy; retain this behavior. Seeds alone do not ensure bitwise identical warmup actions; actual training actions are saved.",
+  "package_versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "torch": "2.14.1+cpu",
+    "stable-baselines3": "2.9.2",
+    "gymnasium": "1.4.0",
+    "matplotlib": "3.11.2",
+    "SciencePlots": "2.2.2"
+  }
+}

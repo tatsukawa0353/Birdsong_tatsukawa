@@ -1,0 +1,204 @@
+{
+  "algorithm": "PPO",
+  "seed": 1,
+  "requested_steps": 4096,
+  "training_steps": 4096,
+  "training_episodes": 117,
+  "training_partial_episode_steps": 1,
+  "evaluation_steps": 350,
+  "evaluation_episodes": 10,
+  "training_generated_s": 40.96,
+  "evaluation_generated_s": 3.5,
+  "training_wall_s": 4.092510181246325,
+  "evaluation_wall_s": 0.305140083655715,
+  "total_wall_s": 4.421267797937617,
+  "initial_error": 0.12216688674779215,
+  "initial_metrics": {
+    "log_spectral": 0.06716182075350077,
+    "envelope": 0.05500506599429138,
+    "total": 0.12216688674779215,
+    "target_silent": false,
+    "generated_silent": false
+  },
+  "initial_tracking": {
+    "frequency_mae_hz": 321.9593623109925,
+    "frequency_max_abs_hz": 758.0059142783284,
+    "amplitude_mae": 0.07811511749027868,
+    "amplitude_max_abs": 0.13975581569015044
+  },
+  "error": 0.11744932649129092,
+  "metrics": {
+    "log_spectral": 0.06319968812279039,
+    "envelope": 0.054249638368500525,
+    "total": 0.11744932649129092,
+    "target_silent": false,
+    "generated_silent": false
+  },
+  "tracking": {
+    "frequency_mae_hz": 334.80675734556075,
+    "frequency_max_abs_hz": 769.8486633598804,
+    "amplitude_mae": 0.07694694652962285,
+    "amplitude_max_abs": 0.1535280061513185
+  },
+  "final_parameter_sha256": "9b47f80e894849460f7469ac389eb4ce9a74eef16244bd9f6233ae04977dd9f6",
+  "final_evaluation_phase": "post_final_update",
+  "effective_hyperparameters": {
+    "policy": "ActorCriticPolicy",
+    "net_arch": [
+      32,
+      32
+    ],
+    "activation_fn": "Tanh",
+    "device": "cpu",
+    "seed": 1,
+    "torch_threads": 1,
+    "learning_rate": 0.0003,
+    "gamma": 0.99,
+    "batch_size": 64,
+    "n_steps": 256,
+    "n_epochs": 5,
+    "gae_lambda": 0.95,
+    "ent_coef": 0.0,
+    "vf_coef": 0.5,
+    "max_grad_norm": 0.5,
+    "normalize_advantage": true,
+    "use_sde": false,
+    "sde_sample_freq": -1,
+    "clip_range": 0.2,
+    "optimizer_param_groups": {
+      "policy": [
+        {
+          "lr": 0.0003,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-05,
+          "weight_decay": 0,
+          "amsgrad": false,
+          "maximize": false,
+          "foreach": null,
+          "capturable": false,
+          "differentiable": false,
+          "fused": null,
+          "decoupled_weight_decay": false
+        }
+      ]
+    }
+  },
+  "initial_record": {
+    "steps": 0,
+    "error": 0.12216688674779215,
+    "metrics": {
+      "log_spectral": 0.06716182075350077,
+      "envelope": 0.05500506599429138,
+      "total": 0.12216688674779215,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "failed": false,
+    "env_steps": 35,
+    "seconds": 0.028529928997159004,
+    "features": {
+      "spectral_entropy": 0.22331427404700402,
+      "centroid_hz": 1751.0439914483072,
+      "rms": 0.3534627332415833
+    },
+    "gradient_updates": 0,
+    "evaluation_phase": "initial",
+    "parameter_sha256": "bcc3e7f2f36dc8a19049974a6e2912f16aa7e8f79267b7ba7d251604f7311f43",
+    "learner_before": {
+      "policy_sha256": "bcc3e7f2f36dc8a19049974a6e2912f16aa7e8f79267b7ba7d251604f7311f43",
+      "num_timesteps": 0,
+      "gradient_updates": 0,
+      "optimizer_sha256": "6f355129979b81bb5103793b96a4b10a13532895e6046e8cafb446272737e6ba",
+      "rng_sha256": "8367af9242ba0c6aed2050e9088a5f44df52b2184ea58c4af66360a35fcabaa8",
+      "rollout_buffer": {
+        "pos": 0,
+        "full": false,
+        "size": 0
+      }
+    },
+    "learner_after": {
+      "policy_sha256": "bcc3e7f2f36dc8a19049974a6e2912f16aa7e8f79267b7ba7d251604f7311f43",
+      "num_timesteps": 0,
+      "gradient_updates": 0,
+      "optimizer_sha256": "6f355129979b81bb5103793b96a4b10a13532895e6046e8cafb446272737e6ba",
+      "rng_sha256": "8367af9242ba0c6aed2050e9088a5f44df52b2184ea58c4af66360a35fcabaa8",
+      "rollout_buffer": {
+        "pos": 0,
+        "full": false,
+        "size": 0
+      }
+    },
+    "learner_unchanged": true,
+    "tracking": {
+      "frequency_mae_hz": 321.9593623109925,
+      "frequency_max_abs_hz": 758.0059142783284,
+      "amplitude_mae": 0.07811511749027868,
+      "amplitude_max_abs": 0.13975581569015044
+    },
+    "negative_reward_sum": 3.707651471244361,
+    "evaluation_wall_s": 0.03053017391357571
+  },
+  "final_record": {
+    "steps": 4096,
+    "error": 0.11744932649129092,
+    "metrics": {
+      "log_spectral": 0.06319968812279039,
+      "envelope": 0.054249638368500525,
+      "total": 0.11744932649129092,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "failed": false,
+    "env_steps": 35,
+    "seconds": 0.028549865004606545,
+    "features": {
+      "spectral_entropy": 0.2952681528849788,
+      "centroid_hz": 1720.1436587547648,
+      "rms": 0.3679998669489599
+    },
+    "gradient_updates": 80,
+    "evaluation_phase": "post_final_update",
+    "parameter_sha256": "9b47f80e894849460f7469ac389eb4ce9a74eef16244bd9f6233ae04977dd9f6",
+    "learner_before": {
+      "policy_sha256": "9b47f80e894849460f7469ac389eb4ce9a74eef16244bd9f6233ae04977dd9f6",
+      "num_timesteps": 4096,
+      "gradient_updates": 80,
+      "optimizer_sha256": "cb359d562b8355eb69401b2553f32bb1f3d32fb72063d989130af5b41635c51a",
+      "rng_sha256": "3f9da382403e94ae8b9ab205a3f2c4377fa3d0249341b245918e915b47f72780",
+      "rollout_buffer": {
+        "pos": 256,
+        "full": true,
+        "size": 256
+      }
+    },
+    "learner_after": {
+      "policy_sha256": "9b47f80e894849460f7469ac389eb4ce9a74eef16244bd9f6233ae04977dd9f6",
+      "num_timesteps": 4096,
+      "gradient_updates": 80,
+      "optimizer_sha256": "cb359d562b8355eb69401b2553f32bb1f3d32fb72063d989130af5b41635c51a",
+      "rng_sha256": "3f9da382403e94ae8b9ab205a3f2c4377fa3d0249341b245918e915b47f72780",
+      "rollout_buffer": {
+        "pos": 256,
+        "full": true,
+        "size": 256
+      }
+    },
+    "learner_unchanged": true,
+    "tracking": {
+      "frequency_mae_hz": 334.80675734556075,
+      "frequency_max_abs_hz": 769.8486633598804,
+      "amplitude_mae": 0.07694694652962285,
+      "amplitude_max_abs": 0.1535280061513185
+    },
+    "negative_reward_sum": 3.8342605450644047,
+    "evaluation_wall_s": 0.0307159919757396
+  },
+  "failed": false,
+  "training_numerical_failures": 0,
+  "model_sha256": "0d7e00ebfee2d63d5e1a8273506c5e4d77c7ced8dc95a76cd1511b3990025351",
+  "rollout_sha256": "54a112ae166d4c62130c2ba75da1d4db398bff081c8f9bf9126693f8273b6aea",
+  "interpretation": "in-target deterministic evaluation; not held-out generalization"
+}

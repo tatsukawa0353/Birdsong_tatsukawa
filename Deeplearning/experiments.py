@@ -167,11 +167,20 @@ def train_run(name, seed, train_factory, eval_factory, settings, output, *, spec
     return summary, callback.entries
 
 
+def phase0_factories(config):
+    """Keep legacy randomized training by default; allow an explicit fixed goal."""
+    randomize = config.get("randomize_training_target", True)
+    if not isinstance(randomize, bool):
+        raise ValueError("randomize_training_target must be a boolean")
+    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"]))
+    eval_factory = lambda: SineEnv(SineConfig(randomize=False, target=config["target"]))
+    return train_factory, eval_factory
+
+
 def run_phase0(config, output):
     output.mkdir(parents=True, exist_ok=True)
     write_json(output/"config.json", config)
-    train_factory = lambda: SineEnv(SineConfig(randomize=True, target=config["target"]))
-    eval_factory = lambda: SineEnv(SineConfig(randomize=False, target=config["target"]))
+    train_factory, eval_factory = phase0_factories(config)
     summaries, curves, baselines = [], {}, []
     for target in ("constant", "glide"):
         for seed in config["seeds"]:

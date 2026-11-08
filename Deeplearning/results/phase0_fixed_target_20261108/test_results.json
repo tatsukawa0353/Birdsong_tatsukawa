@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "command": "MPLCONFIGDIR=/tmp/birdsong-issue14-tests-mpl PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 Deeplearning/.venv/bin/python -m unittest Deeplearning.tests.test_issue14 Deeplearning.tests.test_core.SineTests Deeplearning.tests.test_core.AcousticTests Deeplearning.tests.test_plotting",
+  "tests_passed": 17,
+  "recorded_wall_s": 3.147,
+  "scope": [
+    "fixed target and legacy random default",
+    "Oracle and phase continuity",
+    "block rewards versus full-episode loss",
+    "evaluation without training or replay insertion",
+    "post-update curve/checkpoint/audio identity",
+    "existing oscillator/acoustic/display checks"
+  ],
+  "test_training_budget_note": "The PPO endpoint regression test trains a separate 64-step temporary model; it is not one of the production nine 4096-step runs."
+}
