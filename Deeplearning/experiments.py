@@ -10,7 +10,8 @@ from stable_baselines3.common.noise import NormalActionNoise
 import torch
 
 from .acoustics import distance, evaluation_features
-from .plotting import comparison, learning_curves, phase0_learning_curves
+from .plotting import (MAX_HZ, PHASE0_MAX_HZ, comparison, learning_curves,
+                       phase0_learning_curves, phase0_all_seed_learning_curves)
 from .sine_env import SineConfig, SineEnv
 
 
@@ -18,19 +19,25 @@ def write_json(path, data):
     Path(path).write_text(json.dumps(data, indent=2, ensure_ascii=False, allow_nan=False)+"\n")
 
 
-def redraw_phase0_learning_curves(directory):
-    """Read saved run-0 curves only; do not train or recompute any errors.
+def redraw_phase0_learning_curves(directory, *, all_seeds=False):
+    """Read saved curves only; do not train or recompute any errors.
 
     Write a separate PNG so the original multi-run learning_curves.png remains.
     """
     directory = Path(directory)
     curves = {}
     for name in ("PPO", "TD3", "SAC"):
-        entries = json.loads((directory/f"{name}_0"/"curve.json").read_text())
-        curves[name] = ([entry["steps"] for entry in entries],
-                        [entry["error"] for entry in entries])
+        curves[name] = {}
+        for seed in ((0, 1, 2) if all_seeds else (0,)):
+            entries = json.loads((directory/f"{name}_{seed}"/"curve.json").read_text())
+            curves[name][seed] = ([entry["steps"] for entry in entries],
+                                  [entry["error"] for entry in entries])
+    if all_seeds:
+        output = directory/"learning_curves_all_seeds_revised.png"
+        phase0_all_seed_learning_curves(curves, output)
+        return output
     output = directory/"learning_curves_revised.png"
-    phase0_learning_curves(curves, output)
+    phase0_learning_curves({name: runs[0] for name, runs in curves.items()}, output)
     return output
 
 
@@ -110,7 +117,7 @@ class EvaluationCallback(BaseCallback):
         return True
 
 
-def train_run(name, seed, train_factory, eval_factory, settings, output):
+def train_run(name, seed, train_factory, eval_factory, settings, output, *, spectrogram_max_hz=MAX_HZ):
     output.mkdir(parents=True, exist_ok=True)
     train_env = train_factory()
     if (getattr(train_env.config, "reward_timing", None) == "aligned" and
@@ -139,7 +146,8 @@ def train_run(name, seed, train_factory, eval_factory, settings, output):
                         motion_mean=np.array([m["mean"] for m in motion]),
                         motion_std=np.array([m["std"] for m in motion]))
     agent.save(output/"agent")
-    comparison(evaluation.target_audio, audio, evaluation.config.sample_rate, output/"spectrogram.png")
+    comparison(evaluation.target_audio, audio, evaluation.config.sample_rate,
+               output/"spectrogram.png", max_hz=spectrogram_max_hz)
     reached = [e["steps"] for e in callback.entries if e["error"] <= settings["threshold"]]
     summary = dict(algorithm=name, seed=seed, requested_steps=settings["steps"],
                    training_steps=agent.num_timesteps,
@@ -183,7 +191,8 @@ def run_phase0(config, output):
         curves[name] = []
         for seed in config["seeds"]:
             print(f"Phase 0: {name}, seed={seed}", flush=True)
-            summary, entries = train_run(name, seed, train_factory, eval_factory, config, output/f"{name}_{seed}")
+            summary, entries = train_run(name, seed, train_factory, eval_factory, config,
+                                         output/f"{name}_{seed}", spectrogram_max_hz=PHASE0_MAX_HZ)
             summaries.append(summary)
             write_json(output/"summary.json", summaries)
             curves[name].append(([e["steps"] for e in entries], [e["error"] for e in entries]))
@@ -283,5 +292,7 @@ if __name__ == "__main__":
     parser.add_argument("--redraw-phase0", type=Path, nargs="?", required=True,
                         const=Path(__file__).resolve().parent/"results"/"phase0",
                         metavar="DIRECTORY", help="Phase 0 results directory (default: results/phase0)")
+    parser.add_argument("--all-seeds", action="store_true",
+                        help="Plot runs 0, 1 and 2 together in a separate revised PNG")
     args = parser.parse_args()
-    print(redraw_phase0_learning_curves(args.redraw_phase0))
+    print(redraw_phase0_learning_curves(args.redraw_phase0, all_seeds=args.all_seeds))

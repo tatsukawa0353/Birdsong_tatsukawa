@@ -2,6 +2,7 @@
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import numpy as np
 import scienceplots  # noqa: F401 registers styles
 from scipy import signal
@@ -19,6 +20,7 @@ CMAP = "gray_r"
 VMIN = -50.0
 VMAX = -20.0
 MAX_HZ = 10000
+PHASE0_MAX_HZ = 2500
 CONTROL_LABELS = (r"$\varepsilon_l$", r"$\varepsilon_r$", r"$p_s$",
                   r"$f_{e,l}$", r"$f_{e,r}$")
 
@@ -71,7 +73,7 @@ def display_spectrum(x, rate):
     return f[keep], t, db[keep]
 
 
-def draw_spectrogram(ax, x, rate):
+def draw_spectrogram(ax, x, rate, *, max_hz=MAX_HZ):
     x = waveform(x)
     if not np.isfinite(rate) or rate <= 0:
         raise ValueError("sample rate must be finite and positive")
@@ -87,7 +89,7 @@ def draw_spectrogram(ax, x, rate):
         raise ValueError("At least two complete spectrogram windows are required for display")
     mesh = ax.pcolormesh(t, f, db, shading="gouraud", cmap=CMAP,
                          vmin=VMIN, vmax=VMAX, rasterized=True)
-    ax.set_ylim(0, min(MAX_HZ, rate/2))
+    ax.set_ylim(0, min(max_hz, MAX_HZ, rate/2))
     # Gouraud shading spans the actual frame centers; do not extrapolate pixels
     # back to t=0 or out to the end of the recording.
     ax.set_xlim(float(t[0]), float(t[-1]))
@@ -98,12 +100,12 @@ def draw_spectrogram(ax, x, rate):
     return mesh
 
 
-def comparison(target, generated, rate, output):
+def comparison(target, generated, rate, output, *, max_hz=MAX_HZ):
     with plt.style.context(["science", "ieee", "no-latex"]):
         fig, axes = plt.subplots(2, 1, figsize=(12, 12), sharex=True)
         try:
             for ax, x, title in zip(axes, (target, generated), ("Target", "Generated")):
-                draw_spectrogram(ax, x, rate)
+                draw_spectrogram(ax, x, rate, max_hz=max_hz)
                 ax.set_title(title, fontsize=22)
             axes[-1].set_xlabel("Time [s]", fontsize=46)
             fig.tight_layout()
@@ -175,6 +177,66 @@ def phase0_learning_curves(curves, output):
             for spine in ax.spines.values():
                 spine.set_linewidth(2)
             ax.legend(fontsize=30, loc="upper right", ncol=3)
+            fig.tight_layout()
+            fig.savefig(output, bbox_inches="tight", pad_inches=.1, dpi=120)
+        finally:
+            plt.close(fig)
+
+
+def phase0_all_seed_learning_curves(curves, output):
+    """Plot all nine recorded runs; color is method, marker is run 0/1/2.
+
+    ``curves[method][seed]`` contains the original (steps, errors) arrays.
+    Separate legend rows identify method colors and run marker shapes.
+    """
+    colors = {"PPO": "#0072B2", "TD3": "#009E73", "SAC": "#D55E00"}
+    markers = {0: "o", 1: "s", 2: "^"}
+    evaluation_steps = np.arange(0, 4097, 512)
+    for name in colors:
+        for seed in markers:
+            steps, errors = curves[name][seed]
+            if not np.array_equal(steps, evaluation_steps):
+                raise ValueError(f"{name}, run {seed}: expected evaluations at 0, 512, ..., 4096 steps")
+            if (np.shape(errors) != evaluation_steps.shape or
+                    not np.isfinite(errors).all() or np.any(np.asarray(errors) < 0)):
+                raise ValueError(f"{name}, run {seed}: expected nine finite nonnegative acoustic errors")
+
+    maximum = max(max(curves[name][seed][1]) for name in colors for seed in markers)
+    upper = max(.2, float(np.ceil(maximum * 1.2 * 10) / 10))
+    with plt.style.context(["science", "ieee", "no-latex"]), \
+            plt.rc_context({"path.simplify": False}):
+        fig, ax = plt.subplots(figsize=(16, 10))
+        try:
+            for name, color in colors.items():
+                for seed, marker in markers.items():
+                    steps, errors = curves[name][seed]
+                    ax.plot(steps, errors, color=color, alpha=.8, linewidth=2.8,
+                            linestyle="-", solid_capstyle="round", solid_joinstyle="round",
+                            marker=marker, markersize=14, markerfacecolor="white",
+                            markeredgecolor=color, markeredgewidth=2.3, clip_on=False,
+                            label=f"{name} ({seed})")
+            ax.set_xlabel("Training steps", fontsize=46)
+            ax.set_ylabel("Acoustic error", fontsize=46)
+            ax.set_xlim(0, 4096)
+            ax.set_xticks(evaluation_steps)
+            ax.set_ylim(0, upper)
+            ax.tick_params(labelsize=30, width=2, length=10, direction="in",
+                           top=False, right=False)
+            for spine in ax.spines.values():
+                spine.set_linewidth(2)
+            method_handles = [Line2D([], [], color=color, alpha=.8, linewidth=2.8,
+                                     linestyle="-", label=name)
+                              for name, color in colors.items()]
+            method_legend = ax.legend(handles=method_handles, fontsize=30,
+                                      loc="upper right", ncol=3, frameon=False)
+            ax.add_artist(method_legend)
+            seed_handles = [Line2D([], [], color="black", linestyle="None", marker=marker,
+                                   markersize=14, markerfacecolor="white", markeredgewidth=2.3,
+                                   label=f"seed {seed}")
+                            for seed, marker in markers.items()]
+            ax.legend(handles=seed_handles, fontsize=30, loc="upper right",
+                      bbox_to_anchor=(1, .91), ncol=3, frameon=False,
+                      handlelength=1, handletextpad=.5, columnspacing=1.5)
             fig.tight_layout()
             fig.savefig(output, bbox_inches="tight", pad_inches=.1, dpi=120)
         finally:
