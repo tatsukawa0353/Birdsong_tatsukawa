@@ -16,6 +16,7 @@ import time
 import numpy as np
 from scipy.io import wavfile
 
+from .legacy_paths import protected_path
 from .acoustics import AcousticConfig, distance
 from .sine_env import SineConfig, SineEnv
 
@@ -216,7 +217,7 @@ class Auditor:
             return
         base = Path(base).resolve()
         for name, expected in mapping.items():
-            destination = (base / name).resolve()
+            destination = (protected_path(name) if protected and base == ROOT.parent else base / name).resolve()
             if not self.check(not Path(name).is_absolute() and destination.is_relative_to(base), "hash_scope", path, "path inside repository", name):
                 continue
             try:

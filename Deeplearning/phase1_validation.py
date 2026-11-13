@@ -20,6 +20,7 @@ import numpy as np
 from scipy.optimize import differential_evolution
 
 from .acoustics import distance
+from .legacy_paths import model_files
 from .model import BirdModel, DEFAULT_CONTROLS, DT, HIGH, LOW, ROOT
 from .model_env import AudioDecimator, ModelConfig, ModelEnv
 from .objectives import BalancedObjective
@@ -46,8 +47,9 @@ def protected_files(output):
     paths += [ROOT / name for name in ("model.py", "model_env.py", "acoustics.py",
                                       "objectives.py", "plotting.py")]
     paths += list((ROOT / "native").glob("*.cpp"))
-    paths += list(ROOT.parent.glob("BirdsongModel*"))
-    return {str(p.relative_to(ROOT.parent)): digest(p) for p in paths if p.is_file()}
+    hashes = {str(p.relative_to(ROOT.parent)): digest(p) for p in paths if p.is_file()}
+    hashes.update({p.name: digest(p) for p in model_files() if p.is_file()})
+    return hashes
 
 
 def source_hashes():

@@ -20,6 +20,7 @@ import numpy as np
 from scipy.io import wavfile
 from scipy.optimize import differential_evolution
 
+from .legacy_paths import model_files
 from .issue13_env import ConstantControlEnv
 from .model import DT, HIGH, LOW, ROOT, LIBRARY
 from .phase1_validation import account, episode
@@ -59,9 +60,9 @@ def protected_files(output):
             if p.is_file():
                 files[str(p.relative_to(ROOT.parent))] = digest(p)
     # Preserve the original research model sources as well as the active bridge.
-    for p in ROOT.parent.glob("BirdsongModel*"):
+    for p in model_files():
         if p.is_file():
-            files[str(p.relative_to(ROOT.parent))] = digest(p)
+            files[p.name] = digest(p)
     return files
 
 

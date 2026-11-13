@@ -7,6 +7,7 @@ import time
 import numpy as np
 from scipy.io import wavfile
 
+from .legacy_paths import LEGACY_SRC
 from .acoustics import distance
 from .experiments import write_json
 from .model import BirdModel, ROOT, build
@@ -19,8 +20,8 @@ def legacy_reference():
     with tempfile.TemporaryDirectory() as directory:
         directory = Path(directory)
         exe, csv = directory/"reference", directory/"reference.csv"
-        subprocess.run(["g++", "-O3", "-std=c++11", "-I", str(ROOT.parent),
-                        str(ROOT/"native/reference.cpp"), str(ROOT.parent/"BirdsongModel_10*10.cpp"),
+        subprocess.run(["g++", "-O3", "-std=c++11", "-I", str(LEGACY_SRC),
+                        str(ROOT/"native/reference.cpp"), str(LEGACY_SRC/"BirdsongModel_10*10.cpp"),
                         "-o", str(exe)], check=True)
         start = time.perf_counter()
         subprocess.run([str(exe), str(csv), "1200000"], check=True)

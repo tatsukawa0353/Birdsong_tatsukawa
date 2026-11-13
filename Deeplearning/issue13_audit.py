@@ -17,6 +17,7 @@ import time
 import numpy as np
 from scipy.io import wavfile
 
+from .legacy_paths import protected_path
 from .acoustics import distance
 from .model import HIGH, LIBRARY, LOW, ROOT
 from .objectives import BalancedObjective
@@ -309,7 +310,7 @@ class Auditor:
             return
         base = Path(base).resolve()
         for relative, expected in mapping.items():
-            destination = (base / relative).resolve()
+            destination = (protected_path(relative) if protected and base == ROOT.parent else base / relative).resolve()
             if not self.check(not Path(relative).is_absolute() and destination.is_relative_to(base), "hash_scope", path, "relative path within repository", relative):
                 continue
             try:

@@ -6,6 +6,7 @@ import unittest
 import numpy as np
 from stable_baselines3.common.env_checker import check_env
 
+from Deeplearning.legacy_paths import LEGACY_SRC
 from Deeplearning.acoustics import AcousticConfig, distance, spectrum, resample
 from Deeplearning.acoustics import load_local_wav
 from Deeplearning.model import BirdModel, DEFAULT_CONTROLS, ROOT, build
@@ -107,7 +108,7 @@ class NativeTests(unittest.TestCase):
 
     def test_original_implementation_regression(self):
         # Original CSV has six significant digits. Tolerance follows its quantization.
-        repo = ROOT.parent
+        repo = LEGACY_SRC
         with tempfile.TemporaryDirectory() as directory:
             directory = Path(directory)
             exe, csv = directory/"reference", directory/"reference.csv"

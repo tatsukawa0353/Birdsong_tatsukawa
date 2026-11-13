@@ -1,0 +1,127 @@
+22 moved C++/header files: identical SHA256; no duplicate root copies.
+phase1_validation: collector retains all 27 historical model keys and hashes.
+issue13: collector retains all 27 historical model keys and hashes.
+issue14: collector retains all 27 historical model keys and hashes.
+Deeplearning/results/phase0_fixed_target_20261108/protected_before.json: 27 historical model hash entries pass unchanged.
+Deeplearning/results/phase1_issue13_20261107/protected_before.json: 27 historical model hash entries pass unchanged.
+Deeplearning/results/phase1_validation_20261031/protected_before.json: 27 historical model hash entries pass unchanged.
+issue13_audit: actual hash method accepts old paths, rejects wrong hashes and paths outside repo.
+issue14_audit: actual hash method accepts old paths, rejects wrong hashes and paths outside repo.
+Python AST: 128 files passed. ML module imports unavailable: stable_baselines3 missing in .venv; no install performed.
+C++ syntax legacy/src/BirdsongModel.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_10*10.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_10*10_2.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_10*10_s(t).cpp: 1 (same as baseline)
+legacy/src/BirdsongModel_10*10_s(t).cpp: In member function ‘void BirdsongModel::step()’:
+legacy/src/BirdsongModel_10*10_s(t).cpp:156:17: error: no matching function for call to ‘BirdsongModel::saveData(double&, double&)’
+  156 |         saveData(s_l, s_r);
+      |         ~~~~~~~~^~~~~~~~~~
+In file included from legacy/src/BirdsongModel_10*10_s(t).cpp:3:
+legacy/src/BirdsongModel_2.h:33:10: note: candidate: ‘void BirdsongModel::saveData()’
+   33 |     void saveData();
+      |          ^~~~~~~~
+legacy/src/BirdsongModel_2.h:33:10: note:   candidate expects 0 arguments, 2 provided
+legacy/src/BirdsongModel_10*10_s(t).cpp: At global scope:
+legacy/src/BirdsongModel_10*10_s(t).cpp:160:6: error: no declaration matches ‘void BirdsongModel::saveData(double, double)’
+  160 | void BirdsongModel::saveData(double s_l, double s_r) {
+      |      ^~~~~~~~~~~~~
+In file included from legacy/src/BirdsongModel_10*10_s(t).cpp:3:
+legacy/src/BirdsongModel_2.h:33:10: note: candidate is: ‘void BirdsongModel::saveData()’
+   33 |     void saveData();
+      |          ^~~~~~~~
+legacy/src/BirdsongModel_2.h:23:7: note: ‘class BirdsongModel’ defined here
+   23 | class BirdsongModel {
+      |       ^~~~~~~~~~~~~
+
+C++ syntax legacy/src/BirdsongModel_distance1.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_epsilon_change.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_linear_epsilon.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_linear_epsilon_ps.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_linear_ps.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_rk_fig5a.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_rk_fig5b.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_rk_fig6.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_rk_normal.cpp: 0 (same as baseline)
+
+C++ syntax legacy/src/BirdsongModel_rk_test1.cpp: 1 (same as baseline)
+legacy/src/BirdsongModel_rk_test1.cpp: In member function ‘void BirdsongModel::step()’:
+legacy/src/BirdsongModel_rk_test1.cpp:148:17: error: no matching function for call to ‘BirdsongModel::saveData(double&, double&)’
+  148 |         saveData(s_l, s_r);
+      |         ~~~~~~~~^~~~~~~~~~
+In file included from legacy/src/BirdsongModel_rk_test1.cpp:3:
+legacy/src/BirdsongModel.h:32:10: note: candidate: ‘void BirdsongModel::saveData()’
+   32 |     void saveData();
+      |          ^~~~~~~~
+legacy/src/BirdsongModel.h:32:10: note:   candidate expects 0 arguments, 2 provided
+legacy/src/BirdsongModel_rk_test1.cpp: At global scope:
+legacy/src/BirdsongModel_rk_test1.cpp:152:6: error: no declaration matches ‘void BirdsongModel::saveData(double, double)’
+  152 | void BirdsongModel::saveData(double s_l, double s_r) {
+      |      ^~~~~~~~~~~~~
+In file included from legacy/src/BirdsongModel_rk_test1.cpp:3:
+legacy/src/BirdsongModel.h:32:10: note: candidate is: ‘void BirdsongModel::saveData()’
+   32 |     void saveData();
+      |          ^~~~~~~~
+legacy/src/BirdsongModel.h:23:7: note: ‘class BirdsongModel’ defined here
+   23 | class BirdsongModel {
+      |       ^~~~~~~~~~~~~
+
+Link main.cpp + BirdsongModel_rk_test1.cpp: 1
+/home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel_rk_test1.cpp: In member function ‘void BirdsongModel::step()’:
+/home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel_rk_test1.cpp:148:17: error: no matching function for call to ‘BirdsongModel::saveData(double&, double&)’
+  148 |         saveData(s_l, s_r);
+      |         ~~~~~~~~^~~~~~~~~~
+In file included from /home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel_rk_test1.cpp:3:
+/home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel.h:32:10: note: candidate: ‘void BirdsongModel::saveData()’
+   32 |     void saveData();
+      |          ^~~~~~~~
+/home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel.h:32:10: note:   candidate expects 0 arguments, 2 provided
+/home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel_rk_test1.cpp: At global scope:
+/home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel_rk_test1.cpp:152:6: error: no declaration matches ‘void BirdsongModel::saveData(double, double)’
+  152 | void BirdsongModel::saveData(double s_l, double s_r) {
+      |      ^~~~~~~~~~~~~
+In file included from /home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel_rk_test1.cpp:3:
+/home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel.h:32:10: note: candidate is: ‘void BirdsongModel::saveData()’
+   32 |     void saveData();
+      |          ^~~~~~~~
+/home/tatsukawa/work/Birdsong_tatsukawa/legacy/src/BirdsongModel.h:23:7: note: ‘class BirdsongModel’ defined here
+   23 | class BirdsongModel {
+      |       ^~~~~~~~~~~~~
+
+Link main_10*10.cpp + BirdsongModel_10*10.cpp: 0
+
+Link main_10*10_2.cpp + BirdsongModel_10*10_2.cpp: 0
+
+Link main_distance1.cpp + BirdsongModel_distance1.cpp: 0
+
+Link main_distance1_single_source.cpp + BirdsongModel_distance1.cpp: 0
+
+Link main_epsilon_change.cpp + BirdsongModel_epsilon_change.cpp: 0
+
+Link main_linear_epsilon.cpp + BirdsongModel_linear_epsilon.cpp: 0
+
+Link main_linear_epsilon_ps.cpp + BirdsongModel_linear_epsilon_ps.cpp: 0
+
+Link main_linear_ps.cpp + BirdsongModel_linear_ps.cpp: 0
+
+Link main_opposite_linear_epsilon_ps.cpp + BirdsongModel_linear_epsilon_ps.cpp: 0
+
+Link main_single_source_linear_epsilon.cpp + BirdsongModel_linear_epsilon.cpp: 0
+
+Link main_single_source_linear_ps.cpp + BirdsongModel_linear_ps.cpp: 0
+
+Link main_subharmonic_linear_epsilon.cpp + BirdsongModel_linear_epsilon.cpp: 0
+
+RL reference compile/link: PASS
+RL native compile/link: PASS
+Final integrity: all preexisting files preserved; only 7 Python path consumers and 4 documentation/inventory files modified. All 22 C++/headers SHA256 unchanged. All prior legacy/ contents, results/snapshots, .gitignore unchanged. main ref unchanged; branch main_deeplearning.

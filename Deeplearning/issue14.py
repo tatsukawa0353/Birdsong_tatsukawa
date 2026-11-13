@@ -22,6 +22,7 @@ import numpy as np
 from scipy.io import wavfile
 import torch
 
+from .legacy_paths import model_files, protected_path
 from .acoustics import AcousticConfig, distance
 from .experiments import EvaluationCallback, make_agent, phase0_factories, rollout, write_json
 from .sine_env import SineConfig, SineEnv, oscillate
@@ -267,16 +268,16 @@ def protected_files():
                 continue
             if path.is_file():
                 result[str(path.relative_to(ROOT.parent))] = digest(path)
-    for path in ROOT.parent.glob("BirdsongModel*"):
+    for path in model_files():
         if path.is_file():
-            result[str(path.relative_to(ROOT.parent))] = digest(path)
+            result[path.name] = digest(path)
     return result
 
 
 def verify_protected(output):
     before = json.loads((output/"protected_before.json").read_text())
     changed = [relative for relative, expected in before.items()
-               if not (ROOT.parent/relative).is_file() or digest(ROOT.parent/relative) != expected]
+               if not protected_path(relative).is_file() or digest(protected_path(relative)) != expected]
     result = dict(passed=not changed, files_checked=len(before), changed=changed)
     write_json(output/"preservation_check.json", result)
     if changed:
