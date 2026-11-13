@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "algorithm": "PPO",
+  "seed": 0,
+  "training_environment_steps": 4096,
+  "n_envs": 1,
+  "completed_training_episodes": 117,
+  "partial_episode_steps": 1,
+  "rollout_training_calls": 16,
+  "sb3_n_updates": 80,
+  "sb3_n_updates_meaning": "PPO epoch counter, not environment steps or optimizer steps",
+  "epochs_per_rollout": 5,
+  "minibatch_optimizer_steps": 320,
+  "optimizer_step_meaning": "Shared Adam step updates policy and value networks together",
+  "evaluation_environment_steps": 70,
+  "evaluation_before_save_reload_steps": 35,
+  "evaluation_after_reload_steps": 35,
+  "training_plus_evaluation_environment_steps": 4166,
+  "finite_checks": "All training rewards/observations/actions/values/log probabilities; all rollout returns/advantages; all 320 backward losses and every logged metric; gradients, parameters and Adam states at all 320 optimizer steps; evaluation/audio",
+  "nonfinite_detected": 0,
+  "trained_policy_changed": true,
+  "model_reload_passed": true,
+  "reload_exact_matches": {
+    "target": true,
+    "audio": true,
+    "actions": true,
+    "generated_controls": true,
+    "target_controls": true,
+    "rewards": true,
+    "sample_rate": true
+  },
+  "final_acoustic_error": 0.10414409434527666,
+  "cpu_model": "INTEL(R) XEON(R) GOLD 6526Y",
+  "device": "cpu",
+  "observed_cpu_ids": [
+    17
+  ],
+  "policy_devices": [
+    "cpu"
+  ],
+  "gpu_used": false,
+  "training_wall_seconds": 6.534844443202019,
+  "training_process_cpu_seconds": 6.481642348999998,
+  "model_save_seconds": 0.005101865157485008,
+  "reload_subprocess_wall_seconds": 5.991349603049457,
+  "total_run_wall_seconds": 18.259726918302476,
+  "max_parent_rss_kib": 646500,
+  "finished_at": "2026-11-13T19:09:03.772145+09:00",
+  "original_file_count": 2200,
+  "changed_original_files": []
+}
