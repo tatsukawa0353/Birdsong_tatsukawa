@@ -1,0 +1,102 @@
+{
+  "started_at": "2026-11-13T20:55:36.899938+09:00",
+  "hostname": "s34",
+  "python": "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/.venv-rl/bin/python",
+  "python_version": "3.10.12",
+  "cuda_visible_devices": "0",
+  "training_environment_steps": 0,
+  "optimizer_updates": 0,
+  "packages": {
+    "torch": "2.5.1+cu121",
+    "stable-baselines3": "2.8.0",
+    "gymnasium": "1.2.3",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "matplotlib": "3.10.8",
+    "SciencePlots": "2.2.2",
+    "cloudpickle": "3.1.2",
+    "Farama-Notifications": "0.0.6"
+  },
+  "torch_path": "/usr/local/lib/python3.10/dist-packages/torch/__init__.py",
+  "prefix": "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/.venv-rl",
+  "cuda_available": true,
+  "cuda_device_count": 1,
+  "nvidia_smi": {
+    "returncode": 0,
+    "stdout": "0, NVIDIA RTX 6000 Ada Generation, GPU-d2c4b444-5157-0fa4-1647-8dd22da18ade, 550.120\n1, NVIDIA RTX 6000 Ada Generation, GPU-2e5f0685-cdfa-2f49-d717-2780b829e675, 550.120\n",
+    "stderr": ""
+  },
+  "gpu_tensor_test": {
+    "device": "cuda:0",
+    "gpu_name": "NVIDIA RTX 6000 Ada Generation",
+    "max_abs_error": 0.0,
+    "finite": true
+  },
+  "models": [
+    {
+      "checkpoint": "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/results/server_smoke_20261113T190418+0900/agent.zip",
+      "device": "cpu",
+      "checkpoint_sha256": "50af0bc2662d718501dc041b104bfbdd5cafaa4db055e2bd50edbc7aff1fc619",
+      "parameter_devices": {
+        "log_std": "cpu",
+        "mlp_extractor.policy_net.0.weight": "cpu",
+        "mlp_extractor.policy_net.0.bias": "cpu",
+        "mlp_extractor.policy_net.2.weight": "cpu",
+        "mlp_extractor.policy_net.2.bias": "cpu",
+        "mlp_extractor.value_net.0.weight": "cpu",
+        "mlp_extractor.value_net.0.bias": "cpu",
+        "mlp_extractor.value_net.2.weight": "cpu",
+        "mlp_extractor.value_net.2.bias": "cpu",
+        "action_net.weight": "cpu",
+        "action_net.bias": "cpu",
+        "value_net.weight": "cpu",
+        "value_net.bias": "cpu"
+      },
+      "policy_sha256": "12c092de2297ac27c954adbdb2a17c40d6c231775fea9a68558900db42480ac1",
+      "saved_training_steps": 4096,
+      "saved_epoch_updates": 80,
+      "evaluation_environment_steps": 35,
+      "error": 0.10414409434527666,
+      "differences_from_original_evaluation": {
+        "audio_max_abs": 0.0,
+        "actions_max_abs": 0.0,
+        "acoustic_error_abs": 0.0
+      },
+      "learner_unchanged": true
+    },
+    {
+      "checkpoint": "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/results/server_smoke_gpu_20261113T194403+0900/agent.zip",
+      "device": "cuda:0",
+      "checkpoint_sha256": "10fc39e8b755f932a784ef18af943dbe30e641e1f1eb035e78610d9401ccf849",
+      "parameter_devices": {
+        "log_std": "cuda:0",
+        "mlp_extractor.policy_net.0.weight": "cuda:0",
+        "mlp_extractor.policy_net.0.bias": "cuda:0",
+        "mlp_extractor.policy_net.2.weight": "cuda:0",
+        "mlp_extractor.policy_net.2.bias": "cuda:0",
+        "mlp_extractor.value_net.0.weight": "cuda:0",
+        "mlp_extractor.value_net.0.bias": "cuda:0",
+        "mlp_extractor.value_net.2.weight": "cuda:0",
+        "mlp_extractor.value_net.2.bias": "cuda:0",
+        "action_net.weight": "cuda:0",
+        "action_net.bias": "cuda:0",
+        "value_net.weight": "cuda:0",
+        "value_net.bias": "cuda:0"
+      },
+      "policy_sha256": "320a0c8a63bb4915b00010fe3d7146a7b0b2483d12078b90c05b0610e7b5d1e0",
+      "saved_training_steps": 4096,
+      "saved_epoch_updates": 80,
+      "evaluation_environment_steps": 35,
+      "error": 0.10508411191207213,
+      "differences_from_original_evaluation": {
+        "audio_max_abs": 0.0,
+        "actions_max_abs": 0.0,
+        "acoustic_error_abs": 0.0
+      },
+      "learner_unchanged": true
+    }
+  ],
+  "status": "PASS",
+  "evaluation_environment_steps": 70,
+  "finished_at": "2026-11-13T20:55:41.851316+09:00"
+}
