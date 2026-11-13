@@ -1,0 +1,106 @@
+{
+  "status": "PASS",
+  "non_device_config_differences": {},
+  "sine_config_identical": true,
+  "packages_identical": true,
+  "parameter_placement_checks": {
+    "parameter_devices_before_training.json": {
+      "log_std": "cuda:0",
+      "mlp_extractor.policy_net.0.weight": "cuda:0",
+      "mlp_extractor.policy_net.0.bias": "cuda:0",
+      "mlp_extractor.policy_net.2.weight": "cuda:0",
+      "mlp_extractor.policy_net.2.bias": "cuda:0",
+      "mlp_extractor.value_net.0.weight": "cuda:0",
+      "mlp_extractor.value_net.0.bias": "cuda:0",
+      "mlp_extractor.value_net.2.weight": "cuda:0",
+      "mlp_extractor.value_net.2.bias": "cuda:0",
+      "action_net.weight": "cuda:0",
+      "action_net.bias": "cuda:0",
+      "value_net.weight": "cuda:0",
+      "value_net.bias": "cuda:0"
+    },
+    "parameter_devices_after_training.json": {
+      "log_std": "cuda:0",
+      "mlp_extractor.policy_net.0.weight": "cuda:0",
+      "mlp_extractor.policy_net.0.bias": "cuda:0",
+      "mlp_extractor.policy_net.2.weight": "cuda:0",
+      "mlp_extractor.policy_net.2.bias": "cuda:0",
+      "mlp_extractor.value_net.0.weight": "cuda:0",
+      "mlp_extractor.value_net.0.bias": "cuda:0",
+      "mlp_extractor.value_net.2.weight": "cuda:0",
+      "mlp_extractor.value_net.2.bias": "cuda:0",
+      "action_net.weight": "cuda:0",
+      "action_net.bias": "cuda:0",
+      "value_net.weight": "cuda:0",
+      "value_net.bias": "cuda:0"
+    },
+    "reload": {
+      "log_std": "cuda:0",
+      "mlp_extractor.policy_net.0.weight": "cuda:0",
+      "mlp_extractor.policy_net.0.bias": "cuda:0",
+      "mlp_extractor.policy_net.2.weight": "cuda:0",
+      "mlp_extractor.policy_net.2.bias": "cuda:0",
+      "mlp_extractor.value_net.0.weight": "cuda:0",
+      "mlp_extractor.value_net.0.bias": "cuda:0",
+      "mlp_extractor.value_net.2.weight": "cuda:0",
+      "mlp_extractor.value_net.2.bias": "cuda:0",
+      "action_net.weight": "cuda:0",
+      "action_net.bias": "cuda:0",
+      "value_net.weight": "cuda:0",
+      "value_net.bias": "cuda:0"
+    }
+  },
+  "training_steps_verified": 4096,
+  "optimizer_steps_verified": 320,
+  "backward_losses_verified": 320,
+  "logged_metric_values_verified": 176,
+  "reward_range": [
+    -0.7743314504623413,
+    -0.0205866526812315
+  ],
+  "minibatch_loss_range": [
+    0.7494951486587524,
+    8.254927635192871
+  ],
+  "startup_inclusive_elapsed_seconds": 23.922545,
+  "separate_process_pids": {
+    "training": 1166001,
+    "reload": 1166187
+  },
+  "gpu_access_difference": {
+    "restricted_cuda_available": false,
+    "unrestricted_cuda_available": true
+  },
+  "audio": {
+    "target.wav": {
+      "sample_rate": 48000,
+      "samples": 16800,
+      "duration_seconds": 0.35,
+      "dtype": "float32",
+      "peak": 0.6000000238418579
+    },
+    "generated.wav": {
+      "sample_rate": 48000,
+      "samples": 16800,
+      "duration_seconds": 0.35,
+      "dtype": "float32",
+      "peak": 0.5569171905517578
+    }
+  },
+  "images": {
+    "frequency_amplitude.png": {
+      "size": [
+        1350,
+        900
+      ],
+      "format": "PNG"
+    },
+    "spectrogram.png": {
+      "size": [
+        1438,
+        1437
+      ],
+      "format": "PNG"
+    }
+  }
+}

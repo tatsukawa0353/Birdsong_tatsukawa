@@ -1,0 +1,42 @@
+{
+  "algorithms": [
+    "PPO"
+  ],
+  "seeds": [
+    0
+  ],
+  "target": "glide",
+  "steps": 4096,
+  "eval_interval": 512,
+  "learning_rate": 0.0003,
+  "ppo_rollout": 256,
+  "threshold": 0.08,
+  "purpose": "server functional smoke test, no method comparison",
+  "evaluation_seed": 0,
+  "evaluation_deterministic": true,
+  "expected_epoch_updates": 80,
+  "reason": "Existing PPO with 256-step rollouts exactly divides 4096.",
+  "requested_device": "cuda:0",
+  "n_envs": 1,
+  "n_steps": 256,
+  "batch_size": 64,
+  "n_epochs": 5,
+  "gamma": 0.99,
+  "gae_lambda": 0.95,
+  "ent_coef": 0.0,
+  "vf_coef": 0.5,
+  "max_grad_norm": 0.5,
+  "target_kl": null,
+  "clip_range": 0.2,
+  "normalize_advantage": true,
+  "policy": "ActorCriticPolicy(\n  (features_extractor): FlattenExtractor(\n    (flatten): Flatten(start_dim=1, end_dim=-1)\n  )\n  (pi_features_extractor): FlattenExtractor(\n    (flatten): Flatten(start_dim=1, end_dim=-1)\n  )\n  (vf_features_extractor): FlattenExtractor(\n    (flatten): Flatten(start_dim=1, end_dim=-1)\n  )\n  (mlp_extractor): MlpExtractor(\n    (policy_net): Sequential(\n      (0): Linear(in_features=5, out_features=32, bias=True)\n      (1): Tanh()\n      (2): Linear(in_features=32, out_features=32, bias=True)\n      (3): Tanh()\n    )\n    (value_net): Sequential(\n      (0): Linear(in_features=5, out_features=32, bias=True)\n      (1): Tanh()\n      (2): Linear(in_features=32, out_features=32, bias=True)\n      (3): Tanh()\n    )\n  )\n  (action_net): Linear(in_features=32, out_features=2, bias=True)\n  (value_net): Linear(in_features=32, out_features=1, bias=True)\n)",
+  "optimizer": "Adam (\nParameter Group 0\n    amsgrad: False\n    betas: (0.9, 0.999)\n    capturable: False\n    differentiable: False\n    eps: 1e-05\n    foreach: None\n    fused: None\n    lr: 0.0003\n    maximize: False\n    weight_decay: 0\n)",
+  "policy_kwargs": {
+    "net_arch": [
+      32,
+      32
+    ]
+  },
+  "device": "cuda:0",
+  "trained_policy_sha256": "320a0c8a63bb4915b00010fe3d7146a7b0b2483d12078b90c05b0610e7b5d1e0"
+}

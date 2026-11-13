@@ -41,9 +41,9 @@ def redraw_phase0_learning_curves(directory, *, all_seeds=False):
     return output
 
 
-def make_agent(name, env, seed, settings):
+def make_agent(name, env, seed, settings, *, device="cpu"):
     torch.set_num_threads(1)
-    common = dict(policy="MlpPolicy", env=env, seed=seed, device="cpu", verbose=0,
+    common = dict(policy="MlpPolicy", env=env, seed=seed, device=device, verbose=0,
                   policy_kwargs=dict(net_arch=[32, 32]), learning_rate=settings["learning_rate"],
                   gamma=settings.get("gamma", .99))
     if name == "PPO":

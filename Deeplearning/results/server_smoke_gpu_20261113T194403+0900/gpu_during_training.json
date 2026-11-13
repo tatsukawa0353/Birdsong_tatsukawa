@@ -1,0 +1,25 @@
+{
+  "sampled_at": "2026-11-13T19:47:46.295290+09:00",
+  "queries": [
+    {
+      "command": [
+        "nvidia-smi",
+        "--query-gpu=index,name,uuid,memory.used,utilization.gpu",
+        "--format=csv,noheader"
+      ],
+      "returncode": 0,
+      "stdout": "0, NVIDIA RTX 6000 Ada Generation, GPU-d2c4b444-5157-0fa4-1647-8dd22da18ade, 551 MiB, 4 %\n1, NVIDIA RTX 6000 Ada Generation, GPU-2e5f0685-cdfa-2f49-d717-2780b829e675, 12 MiB, 0 %\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "nvidia-smi",
+        "--query-compute-apps=pid,gpu_uuid,used_gpu_memory",
+        "--format=csv,noheader"
+      ],
+      "returncode": 0,
+      "stdout": "1166001, GPU-d2c4b444-5157-0fa4-1647-8dd22da18ade, 532 MiB\n",
+      "stderr": ""
+    }
+  ]
+}

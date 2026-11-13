@@ -1,0 +1,123 @@
+{
+  "status": "PASS",
+  "algorithm": "PPO",
+  "seed": 0,
+  "training_environment_steps": 4096,
+  "n_envs": 1,
+  "completed_training_episodes": 117,
+  "partial_episode_steps": 1,
+  "rollout_training_calls": 16,
+  "sb3_n_updates": 80,
+  "sb3_n_updates_meaning": "PPO epoch counter, not environment steps or optimizer steps",
+  "epochs_per_rollout": 5,
+  "minibatch_optimizer_steps": 320,
+  "optimizer_step_meaning": "Shared Adam step updates policy and value networks together",
+  "evaluation_environment_steps": 70,
+  "evaluation_before_save_reload_steps": 35,
+  "evaluation_after_reload_steps": 35,
+  "training_plus_evaluation_environment_steps": 4166,
+  "finite_checks": "All training rewards/observations/actions/values/log probabilities; all rollout returns/advantages; all 320 backward losses and every logged metric; gradients, parameters and Adam states at all 320 optimizer steps; evaluation/audio",
+  "nonfinite_detected": 0,
+  "trained_policy_changed": true,
+  "model_reload_passed": true,
+  "reload_exact_matches": {
+    "target": true,
+    "audio": true,
+    "actions": true,
+    "generated_controls": true,
+    "target_controls": true,
+    "rewards": true,
+    "sample_rate": true
+  },
+  "final_acoustic_error": 0.10508411191207213,
+  "cpu_model": "INTEL(R) XEON(R) GOLD 6526Y",
+  "device": "cuda:0",
+  "observed_cpu_ids": [
+    3
+  ],
+  "policy_devices": [
+    "cuda:0"
+  ],
+  "gpu_used": true,
+  "parameter_devices": {
+    "log_std": "cuda:0",
+    "mlp_extractor.policy_net.0.weight": "cuda:0",
+    "mlp_extractor.policy_net.0.bias": "cuda:0",
+    "mlp_extractor.policy_net.2.weight": "cuda:0",
+    "mlp_extractor.policy_net.2.bias": "cuda:0",
+    "mlp_extractor.value_net.0.weight": "cuda:0",
+    "mlp_extractor.value_net.0.bias": "cuda:0",
+    "mlp_extractor.value_net.2.weight": "cuda:0",
+    "mlp_extractor.value_net.2.bias": "cuda:0",
+    "action_net.weight": "cuda:0",
+    "action_net.bias": "cuda:0",
+    "value_net.weight": "cuda:0",
+    "value_net.bias": "cuda:0"
+  },
+  "gradient_devices": [
+    "cuda:0"
+  ],
+  "loss_devices": [
+    "cuda:0"
+  ],
+  "gpu_logical_index": 0,
+  "gpu_name": "NVIDIA RTX 6000 Ada Generation",
+  "gpu_uuid": "d2c4b444-5157-0fa4-1647-8dd22da18ade",
+  "cuda_visible_devices": "0",
+  "training_cuda_peak_allocated_bytes": 18193408,
+  "training_wall_includes_cuda_synchronization": true,
+  "reload_array_differences": {
+    "target": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "rmse": 0.0,
+      "allclose": true
+    },
+    "audio": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "rmse": 0.0,
+      "allclose": true
+    },
+    "actions": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "rmse": 0.0,
+      "allclose": true
+    },
+    "generated_controls": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "rmse": 0.0,
+      "allclose": true
+    },
+    "target_controls": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "rmse": 0.0,
+      "allclose": true
+    },
+    "rewards": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "rmse": 0.0,
+      "allclose": true
+    },
+    "sample_rate": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "rmse": 0.0,
+      "allclose": true
+    }
+  },
+  "reload_acoustic_error_abs_difference": 0.0,
+  "training_wall_seconds": 13.61399440933019,
+  "training_process_cpu_seconds": 13.33464866,
+  "model_save_seconds": 0.0106315016746521,
+  "reload_subprocess_wall_seconds": 6.248827449977398,
+  "total_run_wall_seconds": 22.059218720532954,
+  "max_parent_rss_kib": 1312592,
+  "finished_at": "2026-11-13T19:47:55.428498+09:00",
+  "original_file_count": 2236,
+  "changed_original_files": []
+}

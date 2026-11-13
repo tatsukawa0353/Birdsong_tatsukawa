@@ -1,0 +1,323 @@
+diff --git a/Deeplearning/experiments.py b/Deeplearning/experiments.py
+index 96d68bb..3d3efe5 100644
+--- a/Deeplearning/experiments.py
++++ b/Deeplearning/experiments.py
+@@ -41,9 +41,9 @@ def redraw_phase0_learning_curves(directory, *, all_seeds=False):
+     return output
+ 
+ 
+-def make_agent(name, env, seed, settings):
++def make_agent(name, env, seed, settings, *, device="cpu"):
+     torch.set_num_threads(1)
+-    common = dict(policy="MlpPolicy", env=env, seed=seed, device="cpu", verbose=0,
++    common = dict(policy="MlpPolicy", env=env, seed=seed, device=device, verbose=0,
+                   policy_kwargs=dict(net_arch=[32, 32]), learning_rate=settings["learning_rate"],
+                   gamma=settings.get("gamma", .99))
+     if name == "PPO":
+diff --git a/Deeplearning/server_smoke.py b/Deeplearning/server_smoke.py
+index 467e763..793e271 100644
+--- a/Deeplearning/server_smoke.py
++++ b/Deeplearning/server_smoke.py
+@@ -13,12 +13,14 @@ import json
+ import os
+ from pathlib import Path
+ import platform
++import re
+ import resource
+ import shutil
+ import socket
+ import subprocess
+ import sys
+ import time
++import traceback
+ from zoneinfo import ZoneInfo
+ 
+ 
+@@ -37,10 +39,18 @@ def digest(path):
+     return hashlib.sha256(path.read_bytes()).hexdigest()
+ 
+ 
++def device_argument(value):
++    if value != "cpu" and re.fullmatch(r"cuda:\d+", value) is None:
++        raise argparse.ArgumentTypeError("Use cpu or an explicit CUDA device such as cuda:0")
++    return value
++
++
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument("--output", type=Path, required=True)
+     parser.add_argument("--evaluate-only", action="store_true")
++    parser.add_argument("--device", type=device_argument, default="cpu",
++                        help="cpu (default) or cuda:N; CUDA failure never falls back to CPU")
+     args = parser.parse_args()
+     out = args.output.resolve()
+     out.mkdir(parents=True, exist_ok=True)
+@@ -52,7 +62,8 @@ def main():
+     os.environ["MPLBACKEND"] = "Agg"
+     marker = out / ("reload_started.json" if args.evaluate_only else "run_started.json")
+     with marker.open("x") as stream:
+-        json.dump({"started_at": now(), "pid": os.getpid(), "python": sys.executable}, stream)
++        json.dump({"started_at": now(), "pid": os.getpid(), "python": sys.executable,
++                   "requested_device": args.device}, stream)
+ 
+     import numpy as np
+     import torch
+@@ -67,6 +78,58 @@ def main():
+ 
+     torch.set_num_threads(1)
+     torch.set_num_interop_threads(1)
++    device = torch.device(args.device)
++    nvidia = subprocess.run(["nvidia-smi", "--query-gpu=index,name,uuid,memory.used,memory.total,utilization.gpu",
++                             "--format=csv,noheader"], capture_output=True, text=True)
++    cpu_model = next((line.split(":", 1)[1].strip() for line in
++                      Path("/proc/cpuinfo").read_text().splitlines()
++                      if line.startswith("model name")), "unknown")
++    packages = {name: importlib.metadata.version(name) for name in
++                ("torch", "stable-baselines3", "gymnasium", "numpy", "scipy", "matplotlib", "SciencePlots")}
++    environment = dict(hostname=socket.gethostname(), platform=platform.platform(),
++                       python=sys.version, executable=sys.executable, prefix=sys.prefix,
++                       base_prefix=sys.base_prefix, cwd=os.getcwd(), pid=os.getpid(), packages=packages,
++                       torch_path=torch.__file__, cpu_model=cpu_model,
++                       cpu_affinity=sorted(os.sched_getaffinity(0)),
++                       torch_threads=torch.get_num_threads(),
++                       torch_interop_threads=torch.get_num_interop_threads(),
++                       requested_device=args.device,
++                       cuda_visible_devices=os.environ.get("CUDA_VISIBLE_DEVICES"),
++                       nvidia_visible_devices=os.environ.get("NVIDIA_VISIBLE_DEVICES"),
++                       nvidia_device_nodes=sorted(str(p) for p in Path("/dev").glob("nvidia*")),
++                       torch_cuda_build=torch.version.cuda,
++                       cuda_available=torch.cuda.is_available(),
++                       cuda_device_count=torch.cuda.device_count(),
++                       nvidia_smi_returncode=nvidia.returncode,
++                       nvidia_smi_output=nvidia.stdout+nvidia.stderr,
++                       matmul_allow_tf32=torch.backends.cuda.matmul.allow_tf32,
++                       cudnn_allow_tf32=torch.backends.cudnn.allow_tf32,
++                       deterministic_algorithms=torch.are_deterministic_algorithms_enabled())
++    environment_path = out / ("reload_environment.json" if args.evaluate_only else "environment.json")
++    write_json(environment_path, environment)
++    if device.type == "cuda":
++        if not environment["cuda_available"] or device.index >= environment["cuda_device_count"]:
++            raise RuntimeError(f"Requested {device}, but CUDA is unavailable or index is invalid; CPU fallback is disabled")
++        torch.cuda.set_device(device)
++        probe = torch.ones(1, device=device)
++        assert probe.device == device
++        torch.cuda.synchronize(device)
++        del probe
++        properties = torch.cuda.get_device_properties(device)
++        environment.update(gpu_logical_index=device.index, gpu_name=properties.name,
++                           gpu_uuid=str(getattr(properties, "uuid", "unavailable")),
++                           gpu_total_memory_bytes=properties.total_memory)
++        write_json(environment_path, environment)
++
++    def synchronize():
++        if device.type == "cuda":
++            torch.cuda.synchronize(device)
++
++    def verify_placement(agent):
++        placements = {name: str(param.device) for name, param in agent.policy.named_parameters()}
++        if agent.device != device or any(value != str(device) for value in placements.values()):
++            raise RuntimeError(f"Device mismatch: requested {device}, actual {placements}")
++        return placements
+ 
+     def finite(name, value):
+         if isinstance(value, torch.Tensor):
+@@ -120,14 +183,34 @@ def main():
+         config = json.loads((out / "config.json").read_text())
+         _, eval_factory = phase0_factories(config)
+         saved_hash = digest(out / "agent.zip")
+-        loaded = PPO.load(out / "agent.zip", device="cpu")
++        assert config.get("requested_device", "cpu") == args.device
++        loaded = PPO.load(out / "agent.zip", device=device)
++        placements = verify_placement(loaded)
++        environment["parameter_devices"] = placements
++        write_json(environment_path, environment)
+         result, data = evaluate(loaded, eval_factory)
+         with np.load(out / "before_reload.npz") as expected:
+             matches = {key: bool(np.array_equal(expected[key], value))
+                        for key, value in data.items()}
+-        assert all(matches.values()), matches
++            differences = {}
++            for key, value in data.items():
++                reference = expected[key].astype(np.float64)
++                delta = np.asarray(value, dtype=np.float64)-reference
++                finite(f"reload_difference/{key}", delta)
++                differences[key] = dict(max_abs=float(np.max(np.abs(delta))),
++                                        mean_abs=float(np.mean(np.abs(delta))),
++                                        rmse=float(np.sqrt(np.mean(delta**2))),
++                                        allclose=bool(np.allclose(reference, value, rtol=1e-5, atol=1e-6)))
+         expected_result = json.loads((out / "before_reload.json").read_text())
+-        assert result["error"] == expected_result["error"]
++        error_difference = abs(result["error"]-expected_result["error"])
++        if device.type == "cpu":
++            assert all(matches.values()), matches
++            assert error_difference == 0
++        write_json(out / "reload_comparison.json", dict(
++            exact_array_matches=matches, array_differences=differences,
++            acoustic_error_before=expected_result["error"], acoustic_error_after=result["error"],
++            acoustic_error_abs_difference=error_difference,
++            diagnostic_tolerances=dict(rtol=1e-5, atol=1e-6)))
+         assert loaded.num_timesteps == 4096
+         assert loaded._n_updates == config["expected_epoch_updates"]
+         assert policy_hash(loaded) == config["trained_policy_sha256"]
+@@ -160,10 +243,12 @@ def main():
+         comparison(data["target"], data["audio"], int(data["sample_rate"]),
+                    out / "spectrogram.png", max_hz=PHASE0_MAX_HZ)
+         result.update(reload_passed=True, exact_array_matches=matches,
++                      array_differences=differences, acoustic_error_abs_difference=error_difference,
+                       policy_sha256=policy_hash(loaded), model_sha256=saved_hash,
+                       training_steps_in_saved_model=loaded.num_timesteps,
+                       epoch_updates_in_saved_model=loaded._n_updates,
+                       policy_devices=sorted({str(p.device) for p in loaded.policy.parameters()}),
++                      parameter_devices=placements,
+                       pid=os.getpid(), finished_at=now(),
+                       reload_evaluation_and_artifacts_seconds=time.perf_counter()-start)
+         write_json(out / "evaluation.json", result)
+@@ -176,7 +261,8 @@ def main():
+                   purpose="server functional smoke test, no method comparison",
+                   evaluation_seed=0, evaluation_deterministic=True,
+                   expected_epoch_updates=80,
+-                  reason="Existing CPU PPO with 256-step rollouts exactly divides 4096.")
++                  reason="Existing PPO with 256-step rollouts exactly divides 4096.",
++                  requested_device=args.device)
+     write_json(out / "config.json", config)
+     snapshot = out / "source_snapshot"
+     snapshot.mkdir()
+@@ -190,7 +276,9 @@ def main():
+     write_json(out / "source_sha256.json", source_hashes)
+     train_factory, eval_factory = phase0_factories(config)
+     train_env = train_factory()
+-    agent = make_agent("PPO", train_env, 0, config)
++    agent = make_agent("PPO", train_env, 0, config, device=device)
++    placements = verify_placement(agent)
++    write_json(out / "parameter_devices_before_training.json", placements)
+     write_json(out / "sine_config.json", dict(training=asdict(train_env.config),
+                evaluation=asdict(SineConfig(randomize=False, target=config["target"]))))
+     config.update(n_envs=agent.n_envs, n_steps=agent.n_steps, batch_size=agent.batch_size,
+@@ -202,26 +290,9 @@ def main():
+                   policy=str(agent.policy), optimizer=str(agent.policy.optimizer),
+                   policy_kwargs=agent.policy_kwargs, device=str(agent.device))
+     write_json(out / "config.json", config)
+-    packages = {name: importlib.metadata.version(name) for name in
+-                ("torch", "stable-baselines3", "gymnasium", "numpy", "scipy", "matplotlib", "SciencePlots")}
+-    nvidia = subprocess.run(["nvidia-smi"], capture_output=True, text=True)
+-    cpu_model = next((line.split(":", 1)[1].strip() for line in
+-                      Path("/proc/cpuinfo").read_text().splitlines()
+-                      if line.startswith("model name")), "unknown")
+-    environment = dict(hostname=socket.gethostname(), platform=platform.platform(),
+-                       python=sys.version, executable=sys.executable, prefix=sys.prefix,
+-                       base_prefix=sys.base_prefix, cwd=os.getcwd(), packages=packages,
+-                       torch_path=torch.__file__, cpu_model=cpu_model,
+-                       cpu_affinity=sorted(os.sched_getaffinity(0)),
+-                       torch_threads=torch.get_num_threads(),
+-                       torch_interop_threads=torch.get_num_interop_threads(),
+-                       torch_cuda_build=torch.version.cuda,
+-                       cuda_available=torch.cuda.is_available(),
+-                       cuda_device_count=torch.cuda.device_count(),
+-                       nvidia_smi_returncode=nvidia.returncode,
+-                       nvidia_smi_output=nvidia.stdout+nvidia.stderr,
++    environment.update(parameter_devices=placements,
+                        policy_devices=sorted({str(p.device) for p in agent.policy.parameters()}))
+-    write_json(out / "environment.json", environment)
++    write_json(environment_path, environment)
+     freeze = subprocess.run([sys.executable, "-m", "pip", "freeze"], capture_output=True, text=True, check=True)
+     (out / "environment-freeze.txt").write_text(freeze.stdout)
+ 
+@@ -266,16 +337,20 @@ def main():
+ 
+     callback = AuditCallback()
+     optimizer_steps = []
++    gradient_devices, loss_devices = set(), set()
+     def before_step(optimizer, _args, _kwargs):
+         for group in optimizer.param_groups:
+             for param in group["params"]:
+                 if param.grad is not None:
+                     finite("gradient", param.grad)
++                    gradient_devices.add(str(param.grad.device))
++                    assert param.grad.device == device
+ 
+     def after_step(optimizer, _args, _kwargs):
+         for group in optimizer.param_groups:
+             for param in group["params"]:
+                 finite("parameter", param)
++                assert param.device == device
+         for state in optimizer.state.values():
+             finite_tree("optimizer_state", state)
+         observed_cpu_ids.add(getcpu())
+@@ -289,15 +364,23 @@ def main():
+         def __torch_function__(self, func, types, args=(), kwargs=None):
+             if func is torch.Tensor.backward:
+                 finite("minibatch_loss", args[0])
++                loss_devices.add(str(args[0].device))
++                assert args[0].device == device
+                 minibatch_losses.append(dict(environment_steps=agent.num_timesteps,
+                                              loss=float(args[0].detach())))
+             return func(*args, **(kwargs or {}))
+ 
+     initial_policy_hash = policy_hash(agent)
++    synchronize()
++    if device.type == "cuda":
++        torch.cuda.reset_peak_memory_stats(device)
+     train_start, cpu_start = time.perf_counter(), time.process_time()
+     with LossAudit():
+         agent.learn(total_timesteps=4096, callback=callback, log_interval=1)
++    synchronize()
+     train_seconds, train_cpu_seconds = time.perf_counter()-train_start, time.process_time()-cpu_start
++    cuda_peak_memory = torch.cuda.max_memory_allocated(device) if device.type == "cuda" else None
++    write_json(out / "parameter_devices_after_training.json", verify_placement(agent))
+     agent.logger.dump(agent.num_timesteps)  # SB3 normally dumps before each train call.
+     for hook in hooks:
+         hook.remove()
+@@ -313,8 +396,10 @@ def main():
+     write_json(out / "training_transitions.json", callback.transitions)
+     config["trained_policy_sha256"] = policy_hash(agent)
+     write_json(out / "config.json", config)
++    synchronize()
+     save_start = time.perf_counter()
+     agent.save(out / "agent.zip")
++    synchronize()
+     save_seconds = time.perf_counter()-save_start
+     result, data = evaluate(agent, eval_factory)
+     write_json(out / "before_reload.json", result)
+@@ -323,7 +408,7 @@ def main():
+     reload_start = time.perf_counter()
+     with (out / "reload.log").open("x") as log:
+         subprocess.run([sys.executable, "-m", "Deeplearning.server_smoke", "--output", str(out),
+-                        "--evaluate-only"], cwd=ROOT.parent,
++                        "--evaluate-only", "--device", args.device], cwd=ROOT.parent,
+                        stdout=log, stderr=subprocess.STDOUT, check=True)
+     reload_seconds = time.perf_counter()-reload_start
+     evaluation = json.loads((out / "evaluation.json").read_text())
+@@ -351,7 +436,16 @@ def main():
+                    model_reload_passed=True, reload_exact_matches=evaluation["exact_array_matches"],
+                    final_acoustic_error=evaluation["error"],
+                    cpu_model=cpu_model, device=str(agent.device), observed_cpu_ids=sorted(observed_cpu_ids),
+-                   policy_devices=environment["policy_devices"], gpu_used=False,
++                   policy_devices=environment["policy_devices"], gpu_used=device.type == "cuda",
++                   parameter_devices=placements, gradient_devices=sorted(gradient_devices),
++                   loss_devices=sorted(loss_devices),
++                   gpu_logical_index=environment.get("gpu_logical_index"),
++                   gpu_name=environment.get("gpu_name"), gpu_uuid=environment.get("gpu_uuid"),
++                   cuda_visible_devices=environment["cuda_visible_devices"],
++                   training_cuda_peak_allocated_bytes=cuda_peak_memory,
++                   training_wall_includes_cuda_synchronization=device.type == "cuda",
++                   reload_array_differences=evaluation["array_differences"],
++                   reload_acoustic_error_abs_difference=evaluation["acoustic_error_abs_difference"],
+                    training_wall_seconds=train_seconds, training_process_cpu_seconds=train_cpu_seconds,
+                    model_save_seconds=save_seconds, reload_subprocess_wall_seconds=reload_seconds,
+                    total_run_wall_seconds=time.perf_counter()-start,
+@@ -367,4 +461,14 @@ def main():
+ 
+ 
+ if __name__ == "__main__":
+-    main()
++    try:
++        main()
++    except Exception as error:
++        if "--output" in sys.argv:
++            failure_out = Path(sys.argv[sys.argv.index("--output")+1]).resolve()
++            if failure_out.is_dir():
++                filename = "reload_failure.json" if "--evaluate-only" in sys.argv else "failure.json"
++                write_json(failure_out / filename, dict(status="ERROR", error_type=type(error).__name__,
++                           error=str(error), traceback=traceback.format_exc(), finished_at=now(),
++                           python=sys.executable, hostname=socket.gethostname(), pid=os.getpid()))
++        raise
