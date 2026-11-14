@@ -20,16 +20,19 @@ class SineConfig:
     smooth_weight: float = 0.0
     reseed_action_space_on_reset: bool = True
     reward_terms: str = "combined"
+    reward_envelope_weight: float = 1.0
 
     def __post_init__(self):
         if self.target not in ("constant", "glide"):
             raise ValueError("Unknown target")
-        if self.reward_terms not in ("combined", "spectral_only", "envelope_only"):
+        if self.reward_terms not in ("combined", "spectral_only", "envelope_only", "weighted"):
             raise ValueError("Unknown reward term selection")
         if not (self.duration > 0 and self.control_s > 0 and self.sample_rate > 0 and
                 0 < self.frequency_low < self.frequency_high < self.sample_rate/2 and
                 self.smooth_weight >= 0):
             raise ValueError("Invalid oscillator configuration")
+        if not np.isfinite(self.reward_envelope_weight) or self.reward_envelope_weight < 0:
+            raise ValueError("reward_envelope_weight must be finite and nonnegative")
         for count in (self.duration/self.control_s, self.sample_rate*self.control_s):
             if abs(count-round(count)) > 1e-8 or count < 1:
                 raise ValueError("Duration and control interval must contain integral blocks/samples")
@@ -102,7 +105,10 @@ class SineEnv(gym.Env):
         a = self.index*self.block
         errors = distance(self.target_audio[a:a+self.block], w, self.config.sample_rate, scale=1.0)
         smooth = self.config.smooth_weight*float(np.mean((action-self.previous)**2))
-        reward_cost = errors[{"combined": "total", "spectral_only": "log_spectral", "envelope_only": "envelope"}[self.config.reward_terms]]
+        if self.config.reward_terms == "weighted":
+            reward_cost = errors["log_spectral"] + self.config.reward_envelope_weight * errors["envelope"]
+        else:
+            reward_cost = errors[{"combined": "total", "spectral_only": "log_spectral", "envelope_only": "envelope"}[self.config.reward_terms]]
         reward = -reward_cost-smooth
         self.audio.append(w)
         self.actions.append(action.copy())
