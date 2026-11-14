@@ -31,7 +31,7 @@ class RewardSelectionTests(unittest.TestCase):
                 np.testing.assert_array_equal(np.concatenate(env.audio),np.concatenate(envs[0].audio))
                 np.testing.assert_array_equal(env.target_audio,envs[0].target_audio)
             self.assertEqual(SineConfig().reward_terms,"combined")
-            with self.assertRaises(ValueError): SineConfig(reward_terms="weighted")
+            with self.assertRaises(ValueError): SineConfig(reward_terms="not_a_mode")
         finally:
             for env in envs: env.close()
 
