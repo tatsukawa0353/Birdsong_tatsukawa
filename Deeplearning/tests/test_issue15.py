@@ -78,4 +78,42 @@ class RewardSelectionTests(unittest.TestCase):
             self.assertEqual(result["training_steps"],256)
 
 
+    def test_weighted_lambda_half_reward_only_changes_training(self):
+        with self.assertRaises(ValueError):
+            SineConfig(reward_terms="weighted", reward_envelope_weight=float("nan"))
+        with self.assertRaises(ValueError):
+            SineConfig(reward_terms="weighted", reward_envelope_weight=-0.1)
+
+        combined = SineEnv(SineConfig(reward_terms="combined"))
+        weighted = SineEnv(SineConfig(reward_terms="weighted", reward_envelope_weight=0.5))
+        try:
+            a, _ = combined.reset(seed=3)
+            b, _ = weighted.reset(seed=3)
+            np.testing.assert_array_equal(a, b)
+            action = combined.encode(1240.0, 0.45)
+            first = combined.step(action)
+            second = weighted.step(action)
+            np.testing.assert_array_equal(first[0], second[0])
+            np.testing.assert_array_equal(np.concatenate(combined.audio), np.concatenate(weighted.audio))
+            metrics = second[4]
+            self.assertAlmostEqual(second[1], -(metrics["log_spectral"] + 0.5 * metrics["envelope"]), places=12)
+            self.assertEqual(first[1], -first[4]["total"])
+        finally:
+            combined.close()
+            weighted.close()
+        settings = dict(target="glide", randomize_training_target=False,
+                        reseed_action_space_on_reset=False, reward_terms="weighted",
+                        reward_envelope_weight=0.5, learning_rate=0.0003, ppo_rollout=256)
+        train, evaluate = phase0_factories(settings)
+        env_train, env_eval = train(), evaluate()
+        try:
+            self.assertEqual(env_train.config.reward_terms, "weighted")
+            self.assertEqual(env_train.config.reward_envelope_weight, 0.5)
+            self.assertEqual(env_eval.config.reward_terms, "combined")
+            self.assertEqual(env_eval.config.reward_envelope_weight, 1.0)
+        finally:
+            env_train.close()
+            env_eval.close()
+
+
 if __name__=="__main__": unittest.main()
