@@ -1,0 +1,46 @@
+{
+  "workflow": "issue15_weighted_lambda_0p5",
+  "preregistered_lambda": 0.5,
+  "created_jst": "2026-11-15T00:06:38.669139+09:00",
+  "branch": "main_deeplearning",
+  "base_config": {
+    "algorithms": [
+      "SAC",
+      "TD3",
+      "PPO"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "target": "glide",
+    "steps": 102400,
+    "eval_interval": 2048,
+    "learning_rate": 0.0003,
+    "ppo_rollout": 256,
+    "threshold": 0.08,
+    "randomize_training_target": false,
+    "reseed_action_space_on_reset": false
+  },
+  "parent_baseline_comparison_sha256": "4e77c9cd4b4e320f77cf4f8ece2c7b37bb4222cab98bbc9995826e0c516c0d7c",
+  "training_reward": "negative local E_spec plus 0.5 * local E_env",
+  "shared_evaluation": "0.35 s combined E_spec + E_env and frequency/amplitude MAE",
+  "source_sha256": {
+    "sine_env.py": "a6311e04b8349cc8dfa13be632502b07b598dd95a87fb563ef63f54b2292334b",
+    "experiments.py": "77f6ab712039597897737a6716d8592f9d9b44ddbccfa928da32731b636143f4",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "issue15_weighted.py": "736e6581cab9393190aafa0643fd8753556a4fe4acd5157f22278348994e5764",
+    "issue15_report.py": "7880e3b5ad05b4b0e5bb3d4a9c14767b1f244d51e0e76f691f8b7a0f024089a6"
+  },
+  "versions": {
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "torch": "2.5.1+cu121",
+    "stable-baselines3": "2.8.0",
+    "gymnasium": "1.2.3"
+  },
+  "baseline_retrained": false,
+  "old_results_overwritten": false
+}
