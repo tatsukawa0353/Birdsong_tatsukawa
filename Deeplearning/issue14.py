@@ -17,6 +17,10 @@ import random
 import shutil
 import sys
 import time
+import subprocess
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import multiprocessing
+from zoneinfo import ZoneInfo
 
 import numpy as np
 from scipy.io import wavfile
@@ -92,6 +96,14 @@ def learner_signature(agent):
         buffer = getattr(agent, name, None)
         if buffer is not None:
             result[name] = dict(pos=int(buffer.pos), full=bool(buffer.full), size=int(buffer.size()))
+            length = buffer.buffer_size if buffer.full else buffer.pos
+            result[name]["content_sha256"] = _state_digest({key: value[:length] for key, value in vars(buffer).items()
+                if isinstance(value, np.ndarray) and value.ndim and value.shape[0] == buffer.buffer_size})
+    result["entropy_sha256"] = _state_digest({key: getattr(agent, key, None) for key in ("log_ent_coef", "ent_coef_tensor")})
+    result["action_rng_sha256"] = _state_digest(agent.action_space.np_random.bit_generator.state)
+    envs = getattr(agent.get_env(), "envs", [])
+    result["training_env_rng_sha256"] = _state_digest([e.unwrapped.np_random.bit_generator.state for e in envs])
+    result["cuda_rng_sha256"] = _state_digest(torch.cuda.get_rng_state_all()) if torch.cuda.is_initialized() else None
     return result
 
 
@@ -137,10 +149,11 @@ def evaluate_agent(agent, factory, steps, phase):
 
 
 class FixedEvaluationCallback(EvaluationCallback):
-    def __init__(self, factory, interval, threshold):
+    def __init__(self, factory, interval, threshold, output=None):
         super().__init__(factory, interval, threshold)
         self.initial_snapshot = None
         self.actions, self.rewards, self.dones = [], [], []
+        self.output, self.best = output, None
 
     def evaluate(self):
         phase = "initial" if self.num_timesteps == 0 else "callback_pre_update"
@@ -150,8 +163,17 @@ class FixedEvaluationCallback(EvaluationCallback):
         self.entries.append(record)
         if self.initial_snapshot is None:
             self.initial_snapshot = snapshot
+        if self.best is None or record["error"] < self.best["error"]:
+            self.best = record
+            if self.output is not None:
+                self.model.save(self.output/"best_agent.zip")
+        if self.output is not None:
+            write_json(self.output/"progress.json", dict(steps=self.num_timesteps, error=record["error"], best_error=self.best["error"]))
 
     def _on_step(self):
+        for name in ("actions", "rewards", "new_obs"):
+            if not np.isfinite(self.locals[name]).all():
+                raise FloatingPointError(f"Non-finite training {name}")
         self.actions.append(np.asarray(self.locals["actions"][0]).copy())
         self.rewards.append(float(self.locals["rewards"][0]))
         self.dones.append(bool(self.locals["dones"][0]))
@@ -208,7 +230,39 @@ def train_one(name, seed, settings, output):
     env = train_factory()
     agent = make_agent(name, env, seed, settings)
     effective = effective_hyperparameters(agent)
-    callback = FixedEvaluationCallback(eval_factory, settings["eval_interval"], settings.get("threshold", .08))
+    callback = FixedEvaluationCallback(eval_factory, settings["eval_interval"], settings.get("threshold", .08), output)
+    from stable_baselines3.common.logger import Logger
+    numeric = {}
+    class FiniteLogger(Logger):
+        def record(self, key, value, exclude=None):
+            if isinstance(value, (int, float, np.number)):
+                if not np.isfinite(value):
+                    raise FloatingPointError(f"Non-finite {key}: {value}")
+                item = numeric.setdefault(key, dict(count=0, minimum=float(value), maximum=float(value)))
+                item.update(count=item["count"]+1, minimum=min(item["minimum"], float(value)), maximum=max(item["maximum"], float(value)))
+            super().record(key, value, exclude)
+    agent.set_logger(FiniteLogger(None, []))
+    optimizer_steps, hooks = {}, []
+    seen = set()
+    for label, parent in (("policy", agent.policy), ("actor", getattr(agent, "actor", None)),
+                          ("critic", getattr(agent, "critic", None)), ("entropy", agent)):
+        optimizer = getattr(parent, "ent_coef_optimizer" if label == "entropy" else "optimizer", None)
+        if optimizer is None or id(optimizer) in seen:
+            continue
+        seen.add(id(optimizer))
+        optimizer_steps[label] = 0
+        def pre(opt, args, kwargs):
+            for group in opt.param_groups:
+                for param in group["params"]:
+                    if param.grad is not None and not torch.isfinite(param.grad).all():
+                        raise FloatingPointError("Non-finite gradient")
+        def post(opt, args, kwargs, label=label):
+            optimizer_steps[label] += 1
+            for group in opt.param_groups:
+                for param in group["params"]:
+                    if not torch.isfinite(param).all():
+                        raise FloatingPointError("Non-finite parameter")
+        hooks.extend([optimizer.register_step_pre_hook(pre), optimizer.register_step_post_hook(post)])
     start = time.perf_counter()
     try:
         agent.learn(total_timesteps=settings["steps"], callback=callback)
@@ -216,6 +270,11 @@ def train_one(name, seed, settings, output):
         if agent.num_timesteps != settings["steps"]:
             raise RuntimeError("Actual training steps differ from the registered budget")
         final, snapshot = evaluate_agent(agent, eval_factory, agent.num_timesteps, "post_final_update")
+        if final["error"] < callback.best["error"]:
+            callback.best = final
+            agent.save(output/"best_agent.zip")
+        write_json(output/"best.json", dict(**callback.best, model_sha256=digest(output/"best_agent.zip"),
+                   selection="minimum recorded in-target error, includes initial; selected on repeated target; not generalization"))
         initial = callback.entries[0]
         # Keep the pre-update callback trace, but the presentation endpoint must
         # be the same final policy as the summary, saved model, waveform and plots.
@@ -246,20 +305,29 @@ def train_one(name, seed, settings, output):
                        initial_record=initial, final_record=final, failed=final["failed"],
                        training_numerical_failures=callback.training_numerical_failures,
                        model_sha256=digest(output/"agent.zip"), rollout_sha256=digest(output/"rollout.npz"),
+                       optimizer_steps=optimizer_steps, sb3_n_updates=int(agent._n_updates),
+                       update_counter_meaning="PPO epochs; TD3/SAC gradient iterations; see optimizer_steps for actual optimizer calls",
+                       nonfinite_detected=0, numeric_training_metrics=numeric,
+                       best_error=callback.best["error"], best_steps=callback.best["steps"],
+                       first_threshold_step=next((e["steps"] for e in curve if e["error"] <= settings.get("threshold", .08)), None),
                        interpretation="in-target deterministic evaluation; not held-out generalization")
         write_json(output/"summary.json", summary)
         print(json.dumps(dict(algorithm=name, seed=seed, initial=initial["error"], final=final["error"],
                               tracking=final["tracking"], training_steps=agent.num_timesteps)), flush=True)
         return summary
     finally:
+        for hook in hooks:
+            hook.remove()
         env.close()
 
 
 def protected_files():
-    excluded = {".venv", "venv", "build", "__pycache__", ".pytest_cache", "private_runs", "sample_song"}
+    excluded = {".venv", ".venv-rl", ".issue14-work", "venv", "build", "__pycache__", ".pytest_cache", "private_runs", "sample_song"}
     result = {}
     for base, directories, names in os.walk(ROOT):
         directories[:] = [name for name in directories if name not in excluded]
+        if Path(base) == ROOT/"results":
+            directories[:] = [name for name in directories if name != DEFAULT_OUTPUT.name]
         for name in names:
             path = Path(base)/name
             # New issue-specific reporting/auditing code may be completed while
@@ -334,14 +402,15 @@ def diagnostics(output, settings):
     return result
 
 
-def run(output, settings):
+def run(output, settings, workers=1):
     output = Path(output).resolve()
     if output.exists():
         raise FileExistsError("Use a new experiment ID; existing results are never overwritten")
     legacy = json.loads((ROOT/"configs/phase0.json").read_text())
-    if (any(settings.get(key) != value for key, value in legacy.items()) or
+    if (any(settings.get(key) != value for key, value in legacy.items() if key not in ("steps", "eval_interval")) or
+            (settings.get("steps"), settings.get("eval_interval")) not in ((4096, 512), (102400, 2048)) or
             settings.get("randomize_training_target") is not False):
-        raise ValueError("Preserve legacy Phase 0 settings and disable training-goal randomization only")
+        raise ValueError("Only the registered 4096/512 or 102400/2048 Phase 0 protocol is allowed")
     preserved = protected_files()
     output.mkdir(parents=True)
     write_json(output/"protected_before.json", preserved)
@@ -349,40 +418,46 @@ def run(output, settings):
     sources = ("issue14.py", "sine_env.py", "experiments.py", "acoustics.py", "plotting.py",
                "configs/phase0.json", "configs/issue14_fixed_target.json", "requirements-lock.txt")
     source_hashes = {name: digest(ROOT/name) for name in sources}
-    for name in sources:
-        destination = output/"source_snapshot"/name
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(ROOT/name, destination)
+    (output/"source_changes.patch").write_text(subprocess.check_output(["git", "diff", "HEAD", "--", *sources], cwd=ROOT, text=True))
     oracle = diagnostics(output, settings)
     manifest = dict(workflow=WORKFLOW, issue_url="https://github.com/tatsukawa0353/Birdsong_tatsukawa/issues/14",
-                    created_utc=datetime.now(timezone.utc).isoformat(), client_date_jst="2026-11-08",
-                    settings=settings, environment=asdict(SineConfig(randomize=False)),
+                    created_utc=datetime.now(timezone.utc).isoformat(), client_date_jst=datetime.now(ZoneInfo("Asia/Tokyo")).date().isoformat(),
+                    settings=settings, environment=asdict(SineConfig(randomize=False, reseed_action_space_on_reset=settings.get("reseed_action_space_on_reset", True))),
                     acoustic_config=asdict(AcousticConfig()), acoustic_scale=1.0,
                     source_hashes=source_hashes, command=" ".join(sys.argv),
-                    reproducible_command=f"Deeplearning/.venv/bin/python -m Deeplearning.issue14 --output {output}",
+                    reproducible_command=f"PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue14 --replace --workers {workers}",
+                    base_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(), workers=workers,
                     target_frequency_hz=[1000, 2000], target_amplitude="0.6*(0.8+0.2*cos(2*pi*k/34)); not constant",
                     duration_s=.35, control_s=.01, sample_rate=48000, horizon=35,
                     phase="reset to 0 per episode; continuous between 480-sample blocks",
-                    training_budget="4096 actions = 117 completed episodes and 1 partial step, not 4096 episodes",
-                    evaluation_schedule="0 plus each 512 callback pre-update; independent final post-update",
+                    training_budget=f"{settings['steps']} actions = {settings['steps']//35} completed episodes and {settings['steps']%35} partial steps",
+                    evaluation_schedule=f"0 plus each {settings['eval_interval']} callback pre-update; independent final post-update",
                     presentation_curve="Replace the final callback entry with the post-update evaluation; retain callback_curve.json",
                     reward="negative legacy distance on the corresponding 10 ms block; smooth_weight=0",
                     primary="legacy distance on the full 0.35 s waveform; not a sum of block errors",
                     evaluation="in-target deterministic evaluation, not held-out or unknown-target generalization",
                     oracle_error=oracle["error"], old_reference="Deeplearning/results/phase0",
-                    only_training_condition_change="randomize_training_target: True -> False",
+                    only_training_condition_change="fixed target retained; registered budget and evaluation interval extended; explicit-only action-space reseeding is an independent reproducibility change",
                     other_changes=["retain evaluation timing and weights/buffer/optimizer/RNG audit",
                                    "presentation endpoint uses final updated policy", "retain initial/final tracking and raw audio"],
-                    reproducibility_limit="Legacy SineEnv.reset(seed=None) reseeds action_space from entropy; retain this behavior. Seeds alone do not ensure bitwise identical warmup actions; actual training actions are saved.",
+                    reproducibility_limit="New runs seed action space on explicit reset only; legacy defaults/results untouched. Old 4096 values are a different RNG-management reference, not a budget-only causal comparison.",
                     package_versions={name: importlib.metadata.version(name) for name in
                                       ("numpy", "scipy", "torch", "stable-baselines3", "gymnasium", "matplotlib", "SciencePlots")})
     write_json(output/"manifest.json", manifest)
     started = time.perf_counter()
     summaries = []
-    for name in settings["algorithms"]:
+    if workers == 1:
         for seed in settings["seeds"]:
-            summaries.append(train_one(name, seed, settings, output/f"{name}_{seed}"))
-            write_json(output/"summary.json", summaries)
+            for name in settings["algorithms"]:
+                summaries.append(train_one(name, seed, settings, output/f"{name}_{seed}"))
+                write_json(output/"summary.json", summaries)
+    else:
+        with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context("spawn")) as pool:
+            futures = [pool.submit(train_one, name, seed, settings, output/f"{name}_{seed}")
+                       for seed in settings["seeds"] for name in settings["algorithms"]]
+            for future in as_completed(futures):
+                summaries.append(future.result())
+                write_json(output/"summary.json", summaries)
     write_json(output/"execution.json", dict(completed_runs=len(summaries), expected_runs=9,
                execution_wall_s=time.perf_counter()-started,
                training_steps=sum(s["training_steps"] for s in summaries),
@@ -397,8 +472,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--config", type=Path, default=CONFIG)
+    parser.add_argument("--workers", type=int, default=3)
+    parser.add_argument("--replace", action="store_true", help="Stage, audit, then replace only the canonical Issue 14 results")
     args = parser.parse_args()
-    run(args.output, json.loads(args.config.read_text()))
+    settings = json.loads(args.config.read_text())
+    if args.replace:
+        from .issue14_transaction import replace_results
+        replace_results(settings, args.workers)
+    else:
+        run(args.output, settings, args.workers)
 
 
 if __name__ == "__main__":

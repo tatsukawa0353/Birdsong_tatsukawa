@@ -18,6 +18,7 @@ class SineConfig:
     target: str = "glide"
     randomize: bool = False
     smooth_weight: float = 0.0
+    reseed_action_space_on_reset: bool = True
 
     def __post_init__(self):
         if self.target not in ("constant", "glide"):
@@ -64,7 +65,8 @@ class SineEnv(gym.Env):
 
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
-        self.action_space.seed(seed)
+        if seed is not None or self.config.reseed_action_space_on_reset:
+            self.action_space.seed(seed)
         c = self.config
         # Evaluation uses a fixed trajectory; training has independently seeded goals.
         start = float(self.np_random.uniform(800, 1500)) if c.randomize else 1000.0

@@ -1,8 +1,8 @@
 {
   "workflow": "issue14_phase0_fixed_target",
   "issue_url": "https://github.com/tatsukawa0353/Birdsong_tatsukawa/issues/14",
-  "created_utc": "2026-11-08T13:24:36.517617+00:00",
-  "client_date_jst": "2026-11-08",
+  "created_utc": "2026-11-14T12:46:47.185819+00:00",
+  "client_date_jst": "2026-11-14",
   "settings": {
     "algorithms": [
       "SAC",
@@ -15,12 +15,13 @@
       2
     ],
     "target": "glide",
-    "steps": 4096,
-    "eval_interval": 512,
+    "steps": 102400,
+    "eval_interval": 2048,
     "learning_rate": 0.0003,
     "ppo_rollout": 256,
     "threshold": 0.08,
-    "randomize_training_target": false
+    "randomize_training_target": false,
+    "reseed_action_space_on_reset": false
   },
   "environment": {
     "duration": 0.35,
@@ -30,7 +31,8 @@
     "frequency_high": 3000.0,
     "target": "glide",
     "randomize": false,
-    "smooth_weight": 0.0
+    "smooth_weight": 0.0,
+    "reseed_action_space_on_reset": false
   },
   "acoustic_config": {
     "window_s": 0.024576,
@@ -41,17 +43,23 @@
   },
   "acoustic_scale": 1.0,
   "source_hashes": {
-    "issue14.py": "cd2ba7406683c1115525bde0049d0dc4d9139c2b7777c727bc8d05fc9a24e05e",
-    "sine_env.py": "1c0b3abe035cd698df7cb0226ff8ea396ade53b9ba50b8d970ce837b1059e4a4",
-    "experiments.py": "00edf5f1a81eeb6e5153fc4847f8eb143c66b0d7025c5e0c56bdb1684f956164",
+    "issue14.py": "f50a067cbb1be06e60fffb604d89fd4fcf781b9b687020a911bf129e52bbd1b8",
+    "sine_env.py": "17d1aed5dea94d0b29e3fbf30ae83fddbb7b6b3c6bf3f9e5d3c0e2d691749b1a",
+    "experiments.py": "eba1986b0f53e87afcb1b9fa89dddaf95f10ceb0f2f74e8cc575fdb9810e3008",
     "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
     "plotting.py": "6acc645bee2ed7d271fdda8aed4b371763fcbbe933f963ba07813e0a8f4141ed",
     "configs/phase0.json": "f95355add015d894914f3aaeb5cf24addb9cb804e3afef896a8b5120366ca7e0",
-    "configs/issue14_fixed_target.json": "d986856b7106701430b417bc6b606a792b8dcc990878013238838910ca17ff39",
-    "requirements-lock.txt": "fe5b981f2880c7e60d488b06a1dfb5172ea016e5c76b167e21c17fea17ea01b1"
+    "configs/issue14_fixed_target.json": "55ea84be95f1ee4640186d24e7d752733971ad10c274b82c68fb30fd36ffe612",
+    "requirements-lock.txt": "fe5b981f2880c7e60d488b06a1dfb5172ea016e5c76b167e21c17fea17ea01b1",
+    "issue14_transaction.py": "772c49cbf73c4914a491b8690b0c6e5ce271d02ffd7679dffd01b58085bc88f1",
+    "issue14_audit.py": "0cd01f7067bc66091ef1f94bf40bf2ee66821fa1cf460585bac88d6a7fde053d",
+    "issue14_report.py": "fca9e5a61570f7670da92160382e6b659bd9ca779f10f4d6020a19f384d30d33",
+    "tests/test_issue14.py": "2179ede7f458a4607b7dccc184a57dfd4b78630c79212016dbd42bcdebc4c6da"
   },
-  "command": "/home/tatsukawa0353/Birdsong_tatsukawa/Birdsong_tatsukawa/Deeplearning/issue14.py --output Deeplearning/results/phase0_fixed_target_20261108",
-  "reproducible_command": "Deeplearning/.venv/bin/python -m Deeplearning.issue14 --output /home/tatsukawa0353/Birdsong_tatsukawa/Birdsong_tatsukawa/Deeplearning/results/phase0_fixed_target_20261108",
+  "command": "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/issue14.py --replace --workers 6",
+  "reproducible_command": "PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue14 --replace --workers 6",
+  "base_commit": "fd8abd0668d61771ec85ee45c937d76b3fa8a1b1",
+  "workers": 6,
   "target_frequency_hz": [
     1000,
     2000
@@ -62,28 +70,46 @@
   "sample_rate": 48000,
   "horizon": 35,
   "phase": "reset to 0 per episode; continuous between 480-sample blocks",
-  "training_budget": "4096 actions = 117 completed episodes and 1 partial step, not 4096 episodes",
-  "evaluation_schedule": "0 plus each 512 callback pre-update; independent final post-update",
+  "training_budget": "102400 actions = 2925 completed episodes and 25 partial steps",
+  "evaluation_schedule": "0 plus each 2048 callback pre-update; independent final post-update",
   "presentation_curve": "Replace the final callback entry with the post-update evaluation; retain callback_curve.json",
   "reward": "negative legacy distance on the corresponding 10 ms block; smooth_weight=0",
   "primary": "legacy distance on the full 0.35 s waveform; not a sum of block errors",
   "evaluation": "in-target deterministic evaluation, not held-out or unknown-target generalization",
-  "oracle_error": 2.652511956802719e-07,
+  "oracle_error": 2.652511957147422e-07,
   "old_reference": "Deeplearning/results/phase0",
-  "only_training_condition_change": "randomize_training_target: True -> False",
+  "only_training_condition_change": "fixed target retained; registered budget and evaluation interval extended; explicit-only action-space reseeding is an independent reproducibility change",
   "other_changes": [
     "retain evaluation timing and weights/buffer/optimizer/RNG audit",
     "presentation endpoint uses final updated policy",
     "retain initial/final tracking and raw audio"
   ],
-  "reproducibility_limit": "Legacy SineEnv.reset(seed=None) reseeds action_space from entropy; retain this behavior. Seeds alone do not ensure bitwise identical warmup actions; actual training actions are saved.",
+  "reproducibility_limit": "New runs seed action space on explicit reset only; legacy defaults/results untouched. Old 4096 values are a different RNG-management reference, not a budget-only causal comparison.",
   "package_versions": {
-    "numpy": "2.5.4",
-    "scipy": "1.18.1",
-    "torch": "2.14.1+cpu",
-    "stable-baselines3": "2.9.2",
-    "gymnasium": "1.4.0",
-    "matplotlib": "3.11.2",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "torch": "2.5.1+cu121",
+    "stable-baselines3": "2.8.0",
+    "gymnasium": "1.2.3",
+    "matplotlib": "3.10.8",
     "SciencePlots": "2.2.2"
-  }
+  },
+  "final_output": "Deeplearning/results/phase0_fixed_target_20261108",
+  "previous_results_commit": "fd8abd0668d61771ec85ee45c937d76b3fa8a1b1",
+  "training_source_hashes": {
+    "issue14.py": "f50a067cbb1be06e60fffb604d89fd4fcf781b9b687020a911bf129e52bbd1b8",
+    "sine_env.py": "17d1aed5dea94d0b29e3fbf30ae83fddbb7b6b3c6bf3f9e5d3c0e2d691749b1a",
+    "experiments.py": "eba1986b0f53e87afcb1b9fa89dddaf95f10ceb0f2f74e8cc575fdb9810e3008",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "plotting.py": "6acc645bee2ed7d271fdda8aed4b371763fcbbe933f963ba07813e0a8f4141ed",
+    "configs/phase0.json": "f95355add015d894914f3aaeb5cf24addb9cb804e3afef896a8b5120366ca7e0",
+    "configs/issue14_fixed_target.json": "55ea84be95f1ee4640186d24e7d752733971ad10c274b82c68fb30fd36ffe612",
+    "requirements-lock.txt": "fe5b981f2880c7e60d488b06a1dfb5172ea016e5c76b167e21c17fea17ea01b1"
+  },
+  "execution_orchestration_source_sha256": "8cce89988da32a803fc5eee7425156ad80d1c69f7280b2f86b74ff08910355db",
+  "post_training_maintenance": [
+    "Report CSVs use LF line endings for clean Git diffs",
+    "Transaction adds exact-publication guard for rerunning uncommitted generated results; original 4096 Git recovery remains unchanged",
+    "Remove transient per-run progress files after successful completion"
+  ]
 }

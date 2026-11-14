@@ -25,7 +25,6 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_OUTPUT = ROOT / "results/phase0_fixed_target_20261108"
 ALGORITHMS = ("PPO", "TD3", "SAC")
 SEEDS = (0, 1, 2)
-SCHEDULE = list(range(0, 4097, 512))
 
 
 def policy_sha256(agent):
@@ -59,6 +58,9 @@ def _plain(value):
 class Auditor:
     def __init__(self, output):
         self.output = Path(output).resolve()
+        settings = json.loads((self.output/"config.json").read_text())
+        self.steps, self.interval = settings["steps"], settings["eval_interval"]
+        self.schedule = list(range(0, self.steps+1, self.interval))
         self.errors = []
         self.checks = 0
         self.counts = dict(runs_expected=9, runs_found=0, curve_points=0,
@@ -254,13 +256,19 @@ class Auditor:
         self.check(settings == self.read_json(ROOT / "configs/issue14_fixed_target.json"), "frozen_configuration", manifest_path, "matching source config", None)
         legacy = self.read_json(ROOT / "configs/phase0.json")
         for key, value in legacy.items():
+            if key in ("steps", "eval_interval"):
+                continue
             self.check(settings.get(key) == value, "legacy_hyperparameter", manifest_path / key, value, settings.get(key))
         self.check(settings.get("randomize_training_target") is False, "fixed_training_target", manifest_path, False, settings.get("randomize_training_target"))
-        self.check(manifest.get("environment") == asdict(SineConfig(randomize=False)), "environment_configuration", manifest_path, asdict(SineConfig(randomize=False)), manifest.get("environment"))
+        if self.steps == 102400:
+            self.check(settings.get("reseed_action_space_on_reset") is False, "explicit_seed_only", manifest_path, False, settings.get("reseed_action_space_on_reset"))
+        expected_environment = asdict(SineConfig(randomize=False, reseed_action_space_on_reset=settings.get("reseed_action_space_on_reset", True)))
+        self.check(manifest.get("environment") == expected_environment, "environment_configuration", manifest_path, expected_environment, manifest.get("environment"))
         self.check(manifest.get("acoustic_config") == asdict(AcousticConfig()), "acoustic_configuration", manifest_path, asdict(AcousticConfig()), manifest.get("acoustic_config"))
         self.scalar(manifest.get("acoustic_scale"), 1., manifest_path / "acoustic_scale")
         self.hashes(manifest.get("source_hashes"), ROOT, manifest_path)
-        self.hashes(manifest.get("source_hashes"), self.output / "source_snapshot", manifest_path / "source_snapshot")
+        if (self.output/"source_snapshot").is_dir():
+            self.hashes(manifest.get("source_hashes"), self.output / "source_snapshot", manifest_path / "source_snapshot")
         before = self.read_json(self.output / "protected_before.json")
         self.hashes(before, ROOT.parent, self.output / "protected_before.json", protected=True)
         preservation = self.read_json(self.output / "preservation_check.json")
@@ -287,9 +295,10 @@ class Auditor:
         execution_path = self.output / "execution.json"
         execution = self.read_json(execution_path)
         if self.check(isinstance(execution, dict), "execution_schema", execution_path, "dict", type(execution).__name__):
-            for key, value in dict(completed_runs=9, expected_runs=9, training_steps=36864,
-                                   evaluation_steps=3150, training_generated_s=368.64,
-                                   evaluation_generated_s=31.5).items():
+            evaluations = (len(self.schedule)+1)*35
+            for key, value in dict(completed_runs=9, expected_runs=9, training_steps=9*self.steps,
+                                   evaluation_steps=9*evaluations, training_generated_s=9*self.steps*.01,
+                                   evaluation_generated_s=9*evaluations*.01).items():
                 self.scalar(execution.get(key), value, execution_path / key)
 
     def audit_run(self, path, name, seed):
@@ -301,23 +310,24 @@ class Auditor:
             return
         self.check((summary.get("algorithm"), summary.get("seed")) == (name, seed), "run_identity", path, (name, seed), (summary.get("algorithm"), summary.get("seed")))
         self.summaries[(name, seed)] = summary
-        wanted = dict(training_steps=4096, requested_steps=4096, training_episodes=117,
-                      training_partial_episode_steps=1, evaluation_steps=350,
-                      evaluation_episodes=10, training_generated_s=40.96,
-                      evaluation_generated_s=3.5, training_numerical_failures=0)
+        evaluations = (len(self.schedule)+1)*35
+        wanted = dict(training_steps=self.steps, requested_steps=self.steps, training_episodes=self.steps//35,
+                      training_partial_episode_steps=self.steps%35, evaluation_steps=evaluations,
+                      evaluation_episodes=len(self.schedule)+1, training_generated_s=self.steps*.01,
+                      evaluation_generated_s=evaluations*.01, training_numerical_failures=0)
         for key, value in wanted.items():
             self.scalar(summary.get(key), value, path / key)
         self.check(summary.get("failed") is False and summary.get("final_evaluation_phase") == "post_final_update", "final_identity", path, "successful post_final_update", None)
         self.counts["training_steps"] += summary["training_steps"]
         self.counts["evaluation_steps"] += summary["evaluation_steps"]
         for entries, source, presentation in ((curve, curve_path, True), (callback, callback_path, False)):
-            self.check([entry.get("steps") for entry in entries] == SCHEDULE, "evaluation_schedule", source, SCHEDULE, [entry.get("steps") for entry in entries])
+            self.check([entry.get("steps") for entry in entries] == self.schedule, "evaluation_schedule", source, self.schedule, [entry.get("steps") for entry in entries])
             self.counts["curve_points" if presentation else "callback_points"] += len(entries)
             for entry in entries:
                 n = entry["steps"]
-                phase = ("initial" if n == 0 else "post_final_update" if presentation and n == 4096 else "callback_pre_update")
+                phase = ("initial" if n == 0 else "post_final_update" if presentation and n == self.steps else "callback_pre_update")
                 self.check(entry.get("evaluation_phase") == phase, "evaluation_timing", source / str(n), phase, entry.get("evaluation_phase"))
-                updates = (80 if n == 4096 and phase == "post_final_update" else max(0, (n-1)//256)*5) if name == "PPO" else max(0, n-256-(phase != "post_final_update"))
+                updates = (self.steps//256*5 if n == self.steps and phase == "post_final_update" else max(0, (n-1)//256)*5) if name == "PPO" else max(0, n-256-(phase != "post_final_update"))
                 self.scalar(entry.get("gradient_updates"), updates, source / str(n) / "gradient_updates")
                 self.eval_record(entry, source / str(n), name)
         self.check(curve[:-1] == callback[:-1], "retained_intermediate_evaluations", curve_path, "identical callback entries through step3584", None)
@@ -339,11 +349,23 @@ class Auditor:
         torch.set_num_threads(1)
         agent = {"PPO": PPO, "TD3": TD3, "SAC": SAC}[name].load(path.parent / "agent.zip", device="cpu")
         self.check(policy_sha256(agent) == summary["final_parameter_sha256"], "reloaded_parameter_hash", path.parent / "agent.zip", summary["final_parameter_sha256"], policy_sha256(agent))
-        self.scalar(agent.num_timesteps, 4096, path.parent / "agent.zip" / "num_timesteps")
-        self.scalar(agent._n_updates, 80 if name == "PPO" else 3840, path.parent / "agent.zip" / "gradient_updates")
+        updates = self.steps//256*5 if name == "PPO" else max(0, self.steps-256)
+        self.scalar(agent.num_timesteps, self.steps, path.parent / "agent.zip" / "num_timesteps")
+        self.scalar(agent._n_updates, updates, path.parent / "agent.zip" / "gradient_updates")
         self.effective_settings(summary.get("effective_hyperparameters"), agent, name, seed, path)
         self.rollout(path.parent / "rollout.npz", curve[-1], agent=agent)
         self.training_trace(path.parent / "training_trace.npz")
+        optimizers = {"policy": updates*4} if name == "PPO" else {"actor": updates//2 if name == "TD3" else updates, "critic": updates}
+        if name == "SAC":
+            optimizers["entropy"] = updates
+        self.check(summary.get("optimizer_steps") == optimizers, "actual_optimizer_counts", path, optimizers, summary.get("optimizer_steps"))
+        best = self.read_json(path.parent/"best.json")
+        expected_best = min(callback+[curve[-1]], key=lambda entry: entry["error"])
+        self.scalar(best["error"], expected_best["error"], path/"best_error")
+        self.scalar(best["steps"], expected_best["steps"], path/"best_steps")
+        best_agent = {"PPO": PPO, "TD3": TD3, "SAC": SAC}[name].load(path.parent/"best_agent.zip", device="cpu")
+        self.check(policy_sha256(best_agent) == best["parameter_sha256"], "best_policy_hash", path, best["parameter_sha256"], policy_sha256(best_agent))
+        self.check(summary.get("nonfinite_detected") == 0, "nonfinite_training", path, 0, summary.get("nonfinite_detected"))
         self.final_timing_comparisons.append(dict(algorithm=name, seed=seed,
             callback_error=callback[-1]["error"], post_final_error=curve[-1]["error"],
             parameter_hash_changed=callback[-1]["parameter_sha256"] != curve[-1]["parameter_sha256"],
@@ -388,13 +410,13 @@ class Auditor:
     def training_trace(self, path):
         with np.load(path, allow_pickle=False) as archive:
             actions, rewards, dones = archive["actions"], archive["rewards"], archive["dones"]
-        valid = self.check(actions.shape == (4096, 2) and rewards.shape == dones.shape == (4096,) and
+        valid = self.check(actions.shape == (self.steps, 2) and rewards.shape == dones.shape == (self.steps,) and
                            np.isfinite(actions).all() and np.isfinite(rewards).all(),
-                           "training_trace_schema", path, "4096 finite action/reward/done records", None)
+                           "training_trace_schema", path, f"{self.steps} finite action/reward/done records", None)
         if valid:
-            expected_dones = (np.arange(4096)+1) % 35 == 0
+            expected_dones = (np.arange(self.steps)+1) % 35 == 0
             self.exact_array(dones, expected_dones, path / "35_step_episodes")
-            self.scalar(int(np.count_nonzero(dones)), 117, path / "completed_episodes")
+            self.scalar(int(np.count_nonzero(dones)), self.steps//35, path / "completed_episodes")
             self.counts["training_trace_steps"] += len(actions)
 
     def oracle(self):

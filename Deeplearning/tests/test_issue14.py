@@ -12,6 +12,20 @@ from Deeplearning.sine_env import SineConfig, SineEnv, oscillate
 
 
 class Issue14EnvironmentTests(unittest.TestCase):
+    def test_explicit_only_seeding_preserves_action_stream_across_episode_resets(self):
+        from gymnasium import spaces
+        reference = spaces.Box(-1, 1, shape=(2,), dtype=np.float32)
+        reference.seed(42)
+        env = SineEnv(SineConfig(reseed_action_space_on_reset=False))
+        try:
+            for episode in range(3):
+                env.reset(seed=42 if episode == 0 else None)
+                for _ in range(35):
+                    np.testing.assert_array_equal(env.action_space.sample(), reference.sample())
+            self.assertTrue(SineConfig().reseed_action_space_on_reset)
+        finally:
+            env.close()
+
     def test_fixed_target_is_identical_across_seeds_and_automatic_resets(self):
         reference = SineEnv(SineConfig(randomize=False))
         reference.reset(seed=10000)
@@ -94,6 +108,24 @@ class Issue14EnvironmentTests(unittest.TestCase):
 
 
 class Issue14EvaluationTests(unittest.TestCase):
+    def test_same_seed_repeats_warmup_updates_and_training_log(self):
+        from Deeplearning.issue14 import train_one
+        settings = self.settings()
+        settings.update(steps=320, eval_interval=160, reseed_action_space_on_reset=False)
+        with TemporaryDirectory(prefix="birdsong-issue14-repeat-") as temporary:
+            paths = [Path(temporary)/name for name in ("first", "second")]
+            summaries = [train_one("TD3", 0, settings, p) for p in paths]
+            for filename in ("training_trace.npz", "rollout.npz"):
+                with np.load(paths[0]/filename) as a, np.load(paths[1]/filename) as b:
+                    for key in a.files:
+                        np.testing.assert_array_equal(a[key], b[key])
+            for filename in ("curve.json", "callback_curve.json"):
+                a, b = [json.loads((p/filename).read_text()) for p in paths]
+                for x, y in zip(a, b):
+                    self.assertEqual(x["error"], y["error"])
+                    self.assertEqual(x["learner_after"], y["learner_after"])
+            self.assertEqual(summaries[0]["final_parameter_sha256"], summaries[1]["final_parameter_sha256"])
+
     @staticmethod
     def settings():
         return dict(algorithms=["PPO", "TD3", "SAC"], seeds=[0, 1, 2],

@@ -1,109 +1,109 @@
 {
   "passed": true,
-  "checks": 10731,
+  "checks": 27525,
   "errors": [],
   "counts": {
     "runs_expected": 9,
     "runs_found": 9,
-    "curve_points": 81,
-    "callback_points": 81,
+    "curve_points": 459,
+    "callback_points": 459,
     "rollout_archives": 19,
     "replayed_sine_steps": 665,
     "policy_reload_episodes": 9,
     "audio_metric_recomputations": 19,
-    "protected_files": 2097,
-    "source_hashes": 16,
-    "learner_unchanged_records": 162,
-    "training_steps": 36864,
-    "evaluation_steps": 3150,
-    "training_trace_steps": 36864,
+    "protected_files": 2156,
+    "source_hashes": 12,
+    "learner_unchanged_records": 918,
+    "training_steps": 921600,
+    "evaluation_steps": 16380,
+    "training_trace_steps": 921600,
     "raw_wav_files": 38
   },
-  "wall_s": 2.417980213998817,
+  "wall_s": 4.503865584731102,
   "callback_vs_post_final": [
     {
       "algorithm": "PPO",
       "seed": 0,
-      "callback_error": 0.11172359592669018,
-      "post_final_error": 0.10504783448629001,
+      "callback_error": 0.03424858823664029,
+      "post_final_error": 0.036413649336554395,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 75,
-      "final_gradient_updates": 80
+      "callback_gradient_updates": 1995,
+      "final_gradient_updates": 2000
     },
     {
       "algorithm": "PPO",
       "seed": 1,
-      "callback_error": 0.11487077178776745,
-      "post_final_error": 0.11744932649129092,
+      "callback_error": 0.037110658418289984,
+      "post_final_error": 0.032259492190046334,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 75,
-      "final_gradient_updates": 80
+      "callback_gradient_updates": 1995,
+      "final_gradient_updates": 2000
     },
     {
       "algorithm": "PPO",
       "seed": 2,
-      "callback_error": 0.11910598611276936,
-      "post_final_error": 0.12370190337315895,
+      "callback_error": 0.024712211126667993,
+      "post_final_error": 0.023966362817877684,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 75,
-      "final_gradient_updates": 80
+      "callback_gradient_updates": 1995,
+      "final_gradient_updates": 2000
     },
     {
       "algorithm": "TD3",
       "seed": 0,
-      "callback_error": 0.03738887167181317,
-      "post_final_error": 0.035579142701385694,
+      "callback_error": 0.022967468987516247,
+      "post_final_error": 0.01968741726729941,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 3839,
-      "final_gradient_updates": 3840
+      "callback_gradient_updates": 102143,
+      "final_gradient_updates": 102144
     },
     {
       "algorithm": "TD3",
       "seed": 1,
-      "callback_error": 0.04625313561101019,
-      "post_final_error": 0.04672629333469573,
+      "callback_error": 0.02422336412674959,
+      "post_final_error": 0.019648780366253324,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 3839,
-      "final_gradient_updates": 3840
+      "callback_gradient_updates": 102143,
+      "final_gradient_updates": 102144
     },
     {
       "algorithm": "TD3",
       "seed": 2,
-      "callback_error": 0.051364431165320044,
-      "post_final_error": 0.05072579262878945,
+      "callback_error": 0.022397279938752304,
+      "post_final_error": 0.022410314524510706,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 3839,
-      "final_gradient_updates": 3840
+      "callback_gradient_updates": 102143,
+      "final_gradient_updates": 102144
     },
     {
       "algorithm": "SAC",
       "seed": 0,
-      "callback_error": 0.08138129870581971,
-      "post_final_error": 0.08215949369225907,
+      "callback_error": 0.029578122997968262,
+      "post_final_error": 0.02988647929767475,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 3839,
-      "final_gradient_updates": 3840
+      "callback_gradient_updates": 102143,
+      "final_gradient_updates": 102144
     },
     {
       "algorithm": "SAC",
       "seed": 1,
-      "callback_error": 0.08324318398233657,
-      "post_final_error": 0.08307004832764797,
+      "callback_error": 0.027536893390491497,
+      "post_final_error": 0.032634313535583596,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 3839,
-      "final_gradient_updates": 3840
+      "callback_gradient_updates": 102143,
+      "final_gradient_updates": 102144
     },
     {
       "algorithm": "SAC",
       "seed": 2,
-      "callback_error": 0.08196341277430932,
-      "post_final_error": 0.08201125487997571,
+      "callback_error": 0.02226738394556016,
+      "post_final_error": 0.024479127691860787,
       "parameter_hash_changed": true,
-      "callback_gradient_updates": 3839,
-      "final_gradient_updates": 3840
+      "callback_gradient_updates": 102143,
+      "final_gradient_updates": 102144
     }
   ],
-  "audited_utc": "2026-11-08T13:29:07.523879+00:00",
+  "audited_utc": "2026-11-14T13:00:28.889525+00:00",
   "scope": "Saved fixed-target Phase 0 artifacts; sine-only replay and saved-audio metric recomputation, no training or syrinx integration.",
   "limitations": [
     "Intermediate unsaved audio cannot be independently recomputed; its metric identity and recorded learner-state invariance are checked.",

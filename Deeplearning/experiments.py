@@ -172,8 +172,11 @@ def phase0_factories(config):
     randomize = config.get("randomize_training_target", True)
     if not isinstance(randomize, bool):
         raise ValueError("randomize_training_target must be a boolean")
-    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"]))
-    eval_factory = lambda: SineEnv(SineConfig(randomize=False, target=config["target"]))
+    reseed = config.get("reseed_action_space_on_reset", True)
+    if not isinstance(reseed, bool):
+        raise ValueError("reseed_action_space_on_reset must be a boolean")
+    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"], reseed_action_space_on_reset=reseed))
+    eval_factory = lambda: SineEnv(SineConfig(randomize=False, target=config["target"], reseed_action_space_on_reset=reseed))
     return train_factory, eval_factory
 
 
