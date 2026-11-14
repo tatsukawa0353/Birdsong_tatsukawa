@@ -197,7 +197,7 @@ def report(folder, aggregates, *, run_wall, report_wall):
         lines.append(f"- {algorithm}: [spectrogram](figures/{algorithm}_seed0_spectrogram.png), "
                      f"[frequency and amplitude tracking](figures/{algorithm}_seed0_controls.png)")
     lines.extend(["", "## Cost and interpretation", "",
-                  f"Nine new weighted runs: {run_wall:.3f} s aggregate wall time for concurrent training.",
+                  f"Nine new weighted runs: {run_wall:.3f} s elapsed wall time with concurrent workers.",
                   f"Report/plot creation: {report_wall:.3f} s.",
                   "Check E_spec and E_env separately, along with f/A MAE. The weighted coefficient "
                   "is not the same as a direct frequency penalty.",
