@@ -84,6 +84,43 @@ def individual_records(folder):
     return results
 
 
+def draw_learning_curves(all_curves, folder):
+    colors = {"combined": "#0072B2", "weighted_lambda_0p5": "#D55E00"}
+    labels = {"combined": "A: combined (lambda=1)",
+              "weighted_lambda_0p5": "D: weighted (lambda=0.5)"}
+    for mean in (False, True):
+        with plt.style.context(["science", "ieee", "no-latex"]), plt.rc_context({"path.simplify": False}):
+            fig, axes = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
+            for ax, algorithm in zip(axes, ALGORITHMS):
+                for condition in colors:
+                    by_seed = []
+                    for seed in SEEDS:
+                        matched = [row for row in all_curves
+                                   if row["condition"] == condition and row["algorithm"] == algorithm
+                                   and int(row["seed"]) == seed]
+                        assert len(matched) == 51
+                        matched.sort(key=lambda row: int(row["steps"]))
+                        by_seed.append(np.array([float(row["E_total"]) for row in matched]))
+                    array = np.array(by_seed)
+                    x = np.arange(0, 102401, 2048)
+                    ax.plot(x, array.mean(axis=0) if mean else array[0],
+                            label=labels[condition], color=colors[condition],
+                            linestyle="-" if condition=="combined" else "--", linewidth=2.6)
+                    if mean:
+                        sd = array.std(axis=0, ddof=1)
+                        ax.fill_between(x, array.mean(axis=0)-sd, array.mean(axis=0)+sd,
+                                        color=colors[condition], alpha=0.12)
+                ax.set_ylabel(f"{algorithm} acoustic error", fontsize=19)
+                ax.tick_params(labelsize=14)
+                ax.legend(fontsize=11, loc="upper right")
+            axes[-1].set_xlim(0, 102400)
+            axes[-1].set_xlabel("Training environment steps", fontsize=19)
+            fig.tight_layout()
+            fig.savefig(figures / ("learning_curves_mean_sd.png" if mean else "learning_curves_seed0.png"),
+                        dpi=140, bbox_inches="tight")
+            plt.close(fig)
+
+
 def plot_results(folder, summaries):
     import matplotlib
     matplotlib.use("Agg")
@@ -128,40 +165,7 @@ def plot_results(folder, summaries):
     write_csv(folder / "comparison_curves.csv", all_curves, list(all_curves[0]))
     figures = folder / "figures"
     figures.mkdir()
-    colors = {"combined": "#0072B2", "spectral_only": "#009E73",
-              "envelope_only": "#D55E00", "weighted_lambda_0p5": "#CC79A7"}
-    labels = {"combined": "A: combined (lambda=1)", "spectral_only": "B: spectral only",
-              "envelope_only": "C: envelope only", "weighted_lambda_0p5": "D: weighted (lambda=0.5)"}
-    for mean in (False, True):
-        with plt.style.context(["science", "ieee", "no-latex"]), plt.rc_context({"path.simplify": False}):
-            fig, axes = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
-            for ax, algorithm in zip(axes, ALGORITHMS):
-                for condition in colors:
-                    by_seed = []
-                    for seed in SEEDS:
-                        matched = [row for row in all_curves
-                                   if row["condition"] == condition and row["algorithm"] == algorithm
-                                   and int(row["seed"]) == seed]
-                        assert len(matched) == 51
-                        matched.sort(key=lambda row: int(row["steps"]))
-                        by_seed.append(np.array([float(row["E_total"]) for row in matched]))
-                    array = np.array(by_seed)
-                    x = np.arange(0, 102401, 2048)
-                    ax.plot(x, array.mean(axis=0) if mean else array[0],
-                            label=labels[condition], color=colors[condition], linewidth=2)
-                    if mean:
-                        sd = array.std(axis=0, ddof=1)
-                        ax.fill_between(x, array.mean(axis=0)-sd, array.mean(axis=0)+sd,
-                                        color=colors[condition], alpha=0.14)
-                ax.set_ylabel(f"{algorithm} acoustic error", fontsize=19)
-                ax.tick_params(labelsize=14)
-                ax.legend(fontsize=11, loc="upper right")
-            axes[-1].set_xlim(0, 102400)
-            axes[-1].set_xlabel("Training environment steps", fontsize=19)
-            fig.tight_layout()
-            fig.savefig(figures / ("learning_curves_mean_sd.png" if mean else "learning_curves_seed0.png"),
-                        dpi=140, bbox_inches="tight")
-            plt.close(fig)
+    draw_learning_curves(all_curves, folder)
     for algorithm in ALGORITHMS:
         directory = folder / f"{algorithm}_0"
         summary = json.loads((directory / "summary.json").read_text())
@@ -272,8 +276,28 @@ def run(workers=6):
     print(f"Weighted lambda=0.5 finished: {DESTINATION}", flush=True)
 
 
+
+def redraw_only():
+    """Update existing A-vs-D curve images from CSV; no training or new output files."""
+    if not DESTINATION.is_dir():
+        raise FileNotFoundError(f"Weighted results not found: {DESTINATION}")
+    csv_file = DESTINATION / "comparison_curves.csv"
+    if not csv_file.is_file():
+        raise FileNotFoundError(csv_file)
+    figure_dir = DESTINATION / "figures"
+    if not figure_dir.is_dir():
+        raise FileNotFoundError(figure_dir)
+    draw_learning_curves(records(csv_file), figure_dir)
+    print("Redrew A (lambda=1) and D (lambda=0.5) only; existing filenames reused.", flush=True)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workers", type=int, default=6)
+    parser.add_argument("--redraw-only", action="store_true",
+                        help="Redraw only A vs D learning curves from saved data (no training)")
     args = parser.parse_args()
-    run(args.workers)
+    if args.redraw_only:
+        redraw_only()
+    else:
+        run(args.workers)
