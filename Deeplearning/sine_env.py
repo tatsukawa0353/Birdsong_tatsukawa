@@ -19,10 +19,13 @@ class SineConfig:
     randomize: bool = False
     smooth_weight: float = 0.0
     reseed_action_space_on_reset: bool = True
+    reward_terms: str = "combined"
 
     def __post_init__(self):
         if self.target not in ("constant", "glide"):
             raise ValueError("Unknown target")
+        if self.reward_terms not in ("combined", "spectral_only", "envelope_only"):
+            raise ValueError("Unknown reward term selection")
         if not (self.duration > 0 and self.control_s > 0 and self.sample_rate > 0 and
                 0 < self.frequency_low < self.frequency_high < self.sample_rate/2 and
                 self.smooth_weight >= 0):
@@ -99,14 +102,16 @@ class SineEnv(gym.Env):
         a = self.index*self.block
         errors = distance(self.target_audio[a:a+self.block], w, self.config.sample_rate, scale=1.0)
         smooth = self.config.smooth_weight*float(np.mean((action-self.previous)**2))
-        reward = -errors["total"]-smooth
+        reward_cost = errors[{"combined": "total", "spectral_only": "log_spectral", "envelope_only": "envelope"}[self.config.reward_terms]]
+        reward = -reward_cost-smooth
         self.audio.append(w)
         self.actions.append(action.copy())
         self.rewards.append(reward)
         self.previous = action.copy()
         self.index += 1
         done = self.index == self.horizon
-        info = dict(**errors, smooth_penalty=smooth)
+        info = dict(**errors, smooth_penalty=smooth, reward_cost=reward_cost,
+                    reward_terms=self.config.reward_terms)
         if done:
             info["episode_metrics"] = distance(self.target_audio, np.concatenate(self.audio), self.config.sample_rate, scale=1.0)
         return self._obs(), float(reward), done, False, info

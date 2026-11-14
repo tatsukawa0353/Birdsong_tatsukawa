@@ -1,5 +1,24 @@
 # Birdsong 制御実験
 
+現在の作業ブランチは `main_deeplearning`。研究室サーバの学習環境は
+`Deeplearning/.venv-rl`（[環境手順](envs/rl/README.md)）。以下の古いPython 3.12環境の
+説明は過去の再現記録で、現在の実行環境とは区別する。
+
+Phase 0の正本は [phase0_fixed_target_20261108](results/phase0_fixed_target_20261108/REPORT.md)
+の1フォルダに統一した。日付は歴史的な保存名であり、実行日は各manifestを参照する。
+固定目標の合算報酬Aは親直下、単独報酬B/Cは `reward_ablation/`、旧ランダム目標の
+全実データは `legacy_random_target/` にある。旧 `results/phase0/` は移設済み。
+`main` の同じパスに残る旧4,096-step結果と取り違えない。
+
+```bash
+# 初回のB/C学習（同名成果があれば上書きしない）
+PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15 --workers 6
+# 保存済みデータだけから比較レポート・図を更新
+PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15_report
+```
+
+既存Aだけを `issue14 --replace` で親ごと置き換える操作は、統合データを保護するため拒否する。
+
 既存のシミュレーション・描画コードを変更せず、Issue #1–#7 の調査・数値 API・音響報酬・強化学習比較をこのフォルダに隔離した。作業結果は [REPORT.md](REPORT.md)、モデル仕様は [model_audit.md](reports/model_audit.md)、実録音の管理は [DATA_POLICY.md](reports/DATA_POLICY.md) を参照。
 
 ## 実行環境

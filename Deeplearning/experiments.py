@@ -175,7 +175,8 @@ def phase0_factories(config):
     reseed = config.get("reseed_action_space_on_reset", True)
     if not isinstance(reseed, bool):
         raise ValueError("reseed_action_space_on_reset must be a boolean")
-    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"], reseed_action_space_on_reset=reseed))
+    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"], reseed_action_space_on_reset=reseed,
+                                             reward_terms=config.get("reward_terms", "combined")))
     eval_factory = lambda: SineEnv(SineConfig(randomize=False, target=config["target"], reseed_action_space_on_reset=reseed))
     return train_factory, eval_factory
 
@@ -299,11 +300,12 @@ def run_model_baselines(config, output):
 
 if __name__ == "__main__":
     import argparse
+    from .legacy_paths import legacy_phase0_root
 
     parser = argparse.ArgumentParser(description="Redraw saved Phase 0 curves without training or evaluation")
     parser.add_argument("--redraw-phase0", type=Path, nargs="?", required=True,
-                        const=Path(__file__).resolve().parent/"results"/"phase0",
-                        metavar="DIRECTORY", help="Phase 0 results directory (default: results/phase0)")
+                        const=legacy_phase0_root(),
+                        metavar="DIRECTORY", help="Historical random-target results (default: unified parent/legacy_random_target)")
     parser.add_argument("--all-seeds", action="store_true",
                         help="Plot runs 0, 1 and 2 together in a separate revised PNG")
     args = parser.parse_args()

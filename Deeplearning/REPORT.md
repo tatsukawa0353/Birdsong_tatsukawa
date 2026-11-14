@@ -1,3 +1,5 @@
+> 2026-11-14 Issue #15: Phase 0の旧ランダム目標データは統一親フォルダ内の `legacy_random_target/` へ移設。以下の実験値・日付は過去の記録のまま、参照リンクのみ更新。
+
 # Issue対応レポート
 
 2026-10-31追加: [Phase 1の基礎検証と手法比較](results/phase1_validation_20261031/REPORT.md)。既知制御・固定値・Oracleの整合性、学習前の誤差マップ、3課題×4手法×3 seedの比較を新規フォルダに保存した。以下の過去実験の数値・条件は当時の記録であり、新しいprefix差分報酬の結果とは別に扱う。
@@ -57,11 +59,11 @@ Issueのクローズ、GitHubへのコメント・成果物公開、コミット
 | TD3 | 0.04389 ± 0.00487 | 3/3 | 9.37 | 350 |
 | PPO | 0.10945 ± 0.00466 | 0/3 | 4.40 | 350 |
 
-![Phase 0学習曲線](results/phase0/learning_curves.png)
+![Phase 0学習曲線](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)
 
-この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0/summary.json)。
+この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。
 
-周波数と振幅の追従誤差は [tracking.csv](results/phase0/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。
+周波数と振幅の追従誤差は [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。
 
 ## 3. Phase 1：モデル内生成音
 

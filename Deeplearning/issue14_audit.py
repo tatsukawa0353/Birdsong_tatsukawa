@@ -12,11 +12,12 @@ import hashlib
 import json
 from pathlib import Path
 import time
+import subprocess
 
 import numpy as np
 from scipy.io import wavfile
 
-from .legacy_paths import protected_path
+from .legacy_paths import protected_path, legacy_phase0_root
 from .acoustics import AcousticConfig, distance
 from .sine_env import SineConfig, SineEnv
 
@@ -61,6 +62,9 @@ class Auditor:
         settings = json.loads((self.output/"config.json").read_text())
         self.steps, self.interval = settings["steps"], settings["eval_interval"]
         self.schedule = list(range(0, self.steps+1, self.interval))
+        integration = self.output/"reward_ablation/manifest.json"
+        self.historical_commit = json.loads(integration.read_text())["control_commit"] if integration.exists() else None
+        self.historical_source_checks = []
         self.errors = []
         self.checks = 0
         self.counts = dict(runs_expected=9, runs_found=0, curve_points=0,
@@ -224,7 +228,17 @@ class Auditor:
                 continue
             try:
                 actual = hashlib.sha256(destination.read_bytes()).hexdigest()
-                self.check(actual == expected, "protected_changed" if protected else "source_changed", destination, expected, actual)
+                historical = False
+                # Result bytes must still agree at the relocated path. Source
+                # and documentation hashes can instead verify the exact Git
+                # version used by the frozen A experiment after later work.
+                if actual != expected and self.historical_commit and not destination.is_relative_to(ROOT/"results"):
+                    name_at_commit = str(destination.relative_to(ROOT.parent))
+                    saved = subprocess.run(["git","show",f"{self.historical_commit}:{name_at_commit}"],cwd=ROOT,capture_output=True)
+                    historical = saved.returncode == 0 and hashlib.sha256(saved.stdout).hexdigest() == expected
+                    if historical:
+                        self.historical_source_checks.append(dict(path=name_at_commit, commit=self.historical_commit, sha256=expected))
+                self.check(actual == expected or historical, "protected_changed" if protected else "source_changed", destination, expected, actual)
                 self.counts["protected_files" if protected else "source_hashes"] += 1
             except OSError as exc:
                 self.check(False, "hash_read", destination, expected, str(exc))
@@ -236,6 +250,7 @@ class Auditor:
         except (OSError, ValueError, KeyError, TypeError, IndexError, AttributeError, RuntimeError) as exc:
             self.check(False, "schema_or_io_error", self.output, "complete valid experiment", f"{type(exc).__name__}: {exc}")
         return dict(passed=not self.errors, checks=self.checks, errors=self.errors,
+                    historical_source_checks=self.historical_source_checks,
                     counts=self.counts, wall_s=time.perf_counter()-start,
                     callback_vs_post_final=self.final_timing_comparisons,
                     audited_utc=datetime.now(timezone.utc).isoformat(),
@@ -263,7 +278,9 @@ class Auditor:
         if self.steps == 102400:
             self.check(settings.get("reseed_action_space_on_reset") is False, "explicit_seed_only", manifest_path, False, settings.get("reseed_action_space_on_reset"))
         expected_environment = asdict(SineConfig(randomize=False, reseed_action_space_on_reset=settings.get("reseed_action_space_on_reset", True)))
-        self.check(manifest.get("environment") == expected_environment, "environment_configuration", manifest_path, expected_environment, manifest.get("environment"))
+        recorded_environment=dict(manifest.get("environment",{}))
+        recorded_environment.setdefault("reward_terms","combined")
+        self.check(recorded_environment == expected_environment, "environment_configuration", manifest_path, expected_environment, recorded_environment)
         self.check(manifest.get("acoustic_config") == asdict(AcousticConfig()), "acoustic_configuration", manifest_path, asdict(AcousticConfig()), manifest.get("acoustic_config"))
         self.scalar(manifest.get("acoustic_scale"), 1., manifest_path / "acoustic_scale")
         self.hashes(manifest.get("source_hashes"), ROOT, manifest_path)
@@ -289,7 +306,7 @@ class Auditor:
         if self.check(isinstance(aggregate, list), "aggregate_summary_schema", aggregate_path, "list of nine summaries", type(aggregate).__name__):
             mapping = {(record.get("algorithm"), record.get("seed")): record for record in aggregate}
             self.check(len(aggregate) == 9 and mapping == self.summaries, "aggregate_summary_identity", aggregate_path, "exact nine individual run summaries", None)
-        with np.load(ROOT / "results/phase0/PPO_0/rollout.npz", allow_pickle=False) as archive:
+        with np.load(legacy_phase0_root()/"PPO_0/rollout.npz", allow_pickle=False) as archive:
             self.exact_array(archive["target"], self.target, self.output / "historical_evaluation_target")
         self.oracle()
         execution_path = self.output / "execution.json"
@@ -450,7 +467,8 @@ def audit(output):
     if not isinstance(manifest, dict) or manifest.get("workflow") != "issue14_phase0_fixed_target":
         raise ValueError("Only an Issue #14 experiment may receive audit.json")
     result = Auditor(output).run()
-    (output / "audit.json").write_text(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False)+"\n")
+    destination = output/"reward_ablation/control_audit.json" if (output/"reward_ablation").is_dir() else output/"audit.json"
+    destination.write_text(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False)+"\n")
     if not result["passed"]:
         raise RuntimeError(f"Issue #14 audit failed: {len(result['errors'])} errors; see {output/'audit.json'}")
     return result

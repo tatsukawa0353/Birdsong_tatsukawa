@@ -1,0 +1,91 @@
+diff --git a/Deeplearning/experiments.py b/Deeplearning/experiments.py
+index 6882e8b..1f94530 100644
+--- a/Deeplearning/experiments.py
++++ b/Deeplearning/experiments.py
+@@ -175,7 +175,8 @@ def phase0_factories(config):
+     reseed = config.get("reseed_action_space_on_reset", True)
+     if not isinstance(reseed, bool):
+         raise ValueError("reseed_action_space_on_reset must be a boolean")
+-    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"], reseed_action_space_on_reset=reseed))
++    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"], reseed_action_space_on_reset=reseed,
++                                             reward_terms=config.get("reward_terms", "combined")))
+     eval_factory = lambda: SineEnv(SineConfig(randomize=False, target=config["target"], reseed_action_space_on_reset=reseed))
+     return train_factory, eval_factory
+ 
+diff --git a/Deeplearning/issue14.py b/Deeplearning/issue14.py
+index 29c7d0b..798bbd4 100644
+--- a/Deeplearning/issue14.py
++++ b/Deeplearning/issue14.py
+@@ -153,6 +153,7 @@ class FixedEvaluationCallback(EvaluationCallback):
+         super().__init__(factory, interval, threshold)
+         self.initial_snapshot = None
+         self.actions, self.rewards, self.dones = [], [], []
++        self.spectral_costs, self.envelope_costs = [], []
+         self.output, self.best = output, None
+ 
+     def evaluate(self):
+@@ -177,6 +178,8 @@ class FixedEvaluationCallback(EvaluationCallback):
+         self.actions.append(np.asarray(self.locals["actions"][0]).copy())
+         self.rewards.append(float(self.locals["rewards"][0]))
+         self.dones.append(bool(self.locals["dones"][0]))
++        self.spectral_costs.append(float(self.locals["infos"][0]["log_spectral"]))
++        self.envelope_costs.append(float(self.locals["infos"][0]["envelope"]))
+         return super()._on_step()
+ 
+ 
+@@ -285,7 +288,8 @@ def train_one(name, seed, settings, output):
+         if parameter_hash(agent) != final["parameter_sha256"]:
+             raise RuntimeError("Final model changed after its evaluation")
+         np.savez_compressed(output/"training_trace.npz", actions=np.asarray(callback.actions),
+-                            rewards=np.asarray(callback.rewards), dones=np.asarray(callback.dones))
++                            rewards=np.asarray(callback.rewards), dones=np.asarray(callback.dones),
++                            log_spectral=np.asarray(callback.spectral_costs), envelope=np.asarray(callback.envelope_costs))
+         write_json(output/"curve.json", curve)
+         write_json(output/"callback_curve.json", callback.entries)
+         summary = dict(algorithm=name, seed=seed, requested_steps=settings["steps"],
+@@ -308,6 +312,8 @@ def train_one(name, seed, settings, output):
+                        optimizer_steps=optimizer_steps, sb3_n_updates=int(agent._n_updates),
+                        update_counter_meaning="PPO epochs; TD3/SAC gradient iterations; see optimizer_steps for actual optimizer calls",
+                        nonfinite_detected=0, numeric_training_metrics=numeric,
++                       training_reward_terms=settings.get("reward_terms", "combined"),
++                       evaluation_reward_terms="combined",
+                        best_error=callback.best["error"], best_steps=callback.best["steps"],
+                        first_threshold_step=next((e["steps"] for e in curve if e["error"] <= settings.get("threshold", .08)), None),
+                        interpretation="in-target deterministic evaluation; not held-out generalization")
+diff --git a/Deeplearning/sine_env.py b/Deeplearning/sine_env.py
+index 1071e26..d0e97a1 100644
+--- a/Deeplearning/sine_env.py
++++ b/Deeplearning/sine_env.py
+@@ -19,10 +19,13 @@ class SineConfig:
+     randomize: bool = False
+     smooth_weight: float = 0.0
+     reseed_action_space_on_reset: bool = True
++    reward_terms: str = "combined"
+ 
+     def __post_init__(self):
+         if self.target not in ("constant", "glide"):
+             raise ValueError("Unknown target")
++        if self.reward_terms not in ("combined", "spectral_only", "envelope_only"):
++            raise ValueError("Unknown reward term selection")
+         if not (self.duration > 0 and self.control_s > 0 and self.sample_rate > 0 and
+                 0 < self.frequency_low < self.frequency_high < self.sample_rate/2 and
+                 self.smooth_weight >= 0):
+@@ -99,14 +102,16 @@ class SineEnv(gym.Env):
+         a = self.index*self.block
+         errors = distance(self.target_audio[a:a+self.block], w, self.config.sample_rate, scale=1.0)
+         smooth = self.config.smooth_weight*float(np.mean((action-self.previous)**2))
+-        reward = -errors["total"]-smooth
++        reward_cost = errors[{"combined": "total", "spectral_only": "log_spectral", "envelope_only": "envelope"}[self.config.reward_terms]]
++        reward = -reward_cost-smooth
+         self.audio.append(w)
+         self.actions.append(action.copy())
+         self.rewards.append(reward)
+         self.previous = action.copy()
+         self.index += 1
+         done = self.index == self.horizon
+-        info = dict(**errors, smooth_penalty=smooth)
++        info = dict(**errors, smooth_penalty=smooth, reward_cost=reward_cost,
++                    reward_terms=self.config.reward_terms)
+         if done:
+             info["episode_metrics"] = distance(self.target_audio, np.concatenate(self.audio), self.config.sample_rate, scale=1.0)
+         return self._obs(), float(reward), done, False, info

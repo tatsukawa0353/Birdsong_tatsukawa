@@ -153,6 +153,7 @@ class FixedEvaluationCallback(EvaluationCallback):
         super().__init__(factory, interval, threshold)
         self.initial_snapshot = None
         self.actions, self.rewards, self.dones = [], [], []
+        self.spectral_costs, self.envelope_costs = [], []
         self.output, self.best = output, None
 
     def evaluate(self):
@@ -177,6 +178,8 @@ class FixedEvaluationCallback(EvaluationCallback):
         self.actions.append(np.asarray(self.locals["actions"][0]).copy())
         self.rewards.append(float(self.locals["rewards"][0]))
         self.dones.append(bool(self.locals["dones"][0]))
+        self.spectral_costs.append(float(self.locals["infos"][0]["log_spectral"]))
+        self.envelope_costs.append(float(self.locals["infos"][0]["envelope"]))
         return super()._on_step()
 
 
@@ -285,7 +288,8 @@ def train_one(name, seed, settings, output):
         if parameter_hash(agent) != final["parameter_sha256"]:
             raise RuntimeError("Final model changed after its evaluation")
         np.savez_compressed(output/"training_trace.npz", actions=np.asarray(callback.actions),
-                            rewards=np.asarray(callback.rewards), dones=np.asarray(callback.dones))
+                            rewards=np.asarray(callback.rewards), dones=np.asarray(callback.dones),
+                            log_spectral=np.asarray(callback.spectral_costs), envelope=np.asarray(callback.envelope_costs))
         write_json(output/"curve.json", curve)
         write_json(output/"callback_curve.json", callback.entries)
         summary = dict(algorithm=name, seed=seed, requested_steps=settings["steps"],
@@ -308,6 +312,8 @@ def train_one(name, seed, settings, output):
                        optimizer_steps=optimizer_steps, sb3_n_updates=int(agent._n_updates),
                        update_counter_meaning="PPO epochs; TD3/SAC gradient iterations; see optimizer_steps for actual optimizer calls",
                        nonfinite_detected=0, numeric_training_metrics=numeric,
+                       training_reward_terms=settings.get("reward_terms", "combined"),
+                       evaluation_reward_terms="combined",
                        best_error=callback.best["error"], best_steps=callback.best["steps"],
                        first_threshold_step=next((e["steps"] for e in curve if e["error"] <= settings.get("threshold", .08)), None),
                        interpretation="in-target deterministic evaluation; not held-out generalization")

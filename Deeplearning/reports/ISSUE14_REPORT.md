@@ -1,8 +1,10 @@
+> Issue #15統合後: 以下のAの結果値は保持。現在のPhase 0索引は [親REPORT](../results/phase0_fixed_target_20261108/REPORT.md)、B/C比較は [Issue #15](ISSUE15_REPORT.md)。
+
 # Issue #14：固定目標音の長期学習
 
 2026-11-14改訂のIssueに従い、PPO・TD3・SAC × seed 0/1/2、計9 runを**各102,400環境ステップ**、ゼロから学習した。評価は2,048ステップ間隔。報酬・音生成・観測・行動・既存ハイパーパラメータは維持し、行動空間の不要な再seedだけを今回の設定で修正した。
 
-[詳細結果レポート](../results/phase0_fixed_target_20261108/REPORT.md) に学習曲線、収束傾向、全seedのMAE、途中最良、更新回数、計算費用を保存した。
+[詳細結果レポート](../results/phase0_fixed_target_20261108/CONTROL_REPORT.md) に学習曲線、収束傾向、全seedのMAE、途中最良、更新回数、計算費用を保存した。
 
 | 手法 | 最終全区間音響誤差（3 seed平均±標本SD） |
 | --- | ---: |
@@ -23,14 +25,14 @@
 
 旧4,096ステップ値との比較には乱数管理・ライブラリ版の差もあるため参考比較とし、予算の推移は今回の同一run内の4,096→102,400ステップで確認する。目標f/Aが観測に含まれる固定正弦波追従のin-target評価であり、未知音への汎化・鳴管制御・実録音模倣・左右音源の効果を証明した結果ではない。Phase 1/2とC++モデルには変更を加えていない。
 
-リポジトリ直下から再実行（監査成功後に指定の既存成果を更新）:
+以下は統合前の単独A再実行コマンドの履歴。統合後の親には固有なB/C・旧データがあるため、この置換操作は安全のため拒否する:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue14 --replace --workers 6
 ```
 
-学習せず図・レポートだけ再生成する場合:
+統合後に保存済みA/B/Cから比較図・レポートだけを再生成する場合:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/birdsong-mpl Deeplearning/.venv-rl/bin/python -m Deeplearning.issue14_report --output Deeplearning/results/phase0_fixed_target_20261108
+PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/birdsong-mpl Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15_report
 ```

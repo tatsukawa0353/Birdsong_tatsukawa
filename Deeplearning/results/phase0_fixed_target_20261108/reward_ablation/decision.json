@@ -1,0 +1,22 @@
+{
+  "weight_search_performed": false,
+  "curriculum_performed": false,
+  "positive_lambda_values_tested": [
+    1
+  ],
+  "spectral_only_equivalent_lambda": 0,
+  "interpretation": "A outperforms either single-term condition on shared final mean total in the algorithms listed; no positive lambda was optimized",
+  "combined_best_algorithms": [
+    "PPO",
+    "TD3",
+    "SAC"
+  ],
+  "next_action": "Retain both terms (lambda=1) as current reference; no immediate weight change justified by this finite ablation. Other positive weights and curricula remain unverified",
+  "spectral_only_minus_combined_final_mean": {
+    "PPO": 0.03104591163503693,
+    "TD3": 0.03635798572523598,
+    "SAC": 0.04140652290175448
+  },
+  "evidence": "comparison_aggregate.csv; common E_spec/E_env/E_total and f/A MAE, three seeds",
+  "necessity": "Not established by single-term ablations alone; use observed accuracy/tradeoffs to preregister a separate weighted study if needed"
+}

@@ -5,6 +5,7 @@ import os
 import numpy as np
 
 from .model import ROOT
+from .legacy_paths import PHASE0_ROOT, legacy_phase0_root
 from .plotting import MAX_HZ, PHASE0_MAX_HZ, comparison, single_spectrogram
 
 
@@ -22,7 +23,7 @@ def redraw(directory):
             continue
         with np.load(path, allow_pickle=False) as data:
             for image in images:
-                max_hz = (PHASE0_MAX_HZ if path.resolve().is_relative_to(ROOT/"results/phase0")
+                max_hz = (PHASE0_MAX_HZ if path.resolve().is_relative_to(PHASE0_ROOT) or path.resolve().is_relative_to(legacy_phase0_root())
                           else MAX_HZ)
                 comparison(data["target"], data["audio"], float(data["sample_rate"]), image,
                            max_hz=max_hz)
@@ -39,7 +40,7 @@ def main():
                        help="Also redraw permission-restricted local experiment plots")
     args = parser.parse_args()
     if args.phase0_only:
-        print(f"Redrew {redraw(ROOT/'results/phase0')} Phase 0 spectrograms (0–2500 Hz)")
+        print(f"Redrew {redraw(legacy_phase0_root())} historical Phase 0 spectrograms (0–2500 Hz)")
         return
     public_count = redraw(ROOT/"results")
     if (ROOT/"results/reference/reference.npz").is_file():

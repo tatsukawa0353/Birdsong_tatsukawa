@@ -1,0 +1,67 @@
+{
+  "steps": 4096,
+  "error": 0.06441138381786912,
+  "metrics": {
+    "log_spectral": 0.06072100711910154,
+    "envelope": 0.0036903766987675794,
+    "total": 0.06441138381786912,
+    "target_silent": false,
+    "generated_silent": false
+  },
+  "failed": false,
+  "env_steps": 35,
+  "seconds": 0.029726503416895866,
+  "features": {
+    "spectral_entropy": 0.5580257372274399,
+    "centroid_hz": 1582.5341903238232,
+    "rms": 0.34749192110766985
+  },
+  "gradient_updates": 3839,
+  "evaluation_phase": "callback_pre_update",
+  "parameter_sha256": "a04cac8dd3e167e4d977cefb81dc6a04a8e5198bd5a2c717fdbcc57072ca7b78",
+  "learner_before": {
+    "policy_sha256": "a04cac8dd3e167e4d977cefb81dc6a04a8e5198bd5a2c717fdbcc57072ca7b78",
+    "num_timesteps": 4096,
+    "gradient_updates": 3839,
+    "optimizer_sha256": "e87888df94e3894d8bfd0eee1755380bb46f70bbb651b364c5619687b2dd1d86",
+    "rng_sha256": "2fd15dfe936bf345768a7c4f2ef7d884ee7556c7862ab94a8abe4cab80012d92",
+    "replay_buffer": {
+      "pos": 4095,
+      "full": false,
+      "size": 4095,
+      "content_sha256": "fbada3e60a581283ac88e784b82d955de6cc5b7fa3e853c9beddc83e3beac017"
+    },
+    "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+    "action_rng_sha256": "f92334f5b7c77e85e538d538dc40a58702d2d823091c957093e4e3c1905986a3",
+    "training_env_rng_sha256": "adccf48202fdab190a3224fe2ff3794765c8fea5a008f01ee34b8594aa9b474f",
+    "cuda_rng_sha256": null
+  },
+  "learner_after": {
+    "policy_sha256": "a04cac8dd3e167e4d977cefb81dc6a04a8e5198bd5a2c717fdbcc57072ca7b78",
+    "num_timesteps": 4096,
+    "gradient_updates": 3839,
+    "optimizer_sha256": "e87888df94e3894d8bfd0eee1755380bb46f70bbb651b364c5619687b2dd1d86",
+    "rng_sha256": "2fd15dfe936bf345768a7c4f2ef7d884ee7556c7862ab94a8abe4cab80012d92",
+    "replay_buffer": {
+      "pos": 4095,
+      "full": false,
+      "size": 4095,
+      "content_sha256": "fbada3e60a581283ac88e784b82d955de6cc5b7fa3e853c9beddc83e3beac017"
+    },
+    "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+    "action_rng_sha256": "f92334f5b7c77e85e538d538dc40a58702d2d823091c957093e4e3c1905986a3",
+    "training_env_rng_sha256": "adccf48202fdab190a3224fe2ff3794765c8fea5a008f01ee34b8594aa9b474f",
+    "cuda_rng_sha256": null
+  },
+  "learner_unchanged": true,
+  "tracking": {
+    "frequency_mae_hz": 282.98143243589317,
+    "frequency_max_abs_hz": 713.9742076396942,
+    "amplitude_mae": 0.004591344297533617,
+    "amplitude_max_abs": 0.009354289555443818
+  },
+  "negative_reward_sum": 2.033087436353543,
+  "evaluation_wall_s": 0.03341873176395893,
+  "model_sha256": "2696dcdf114625cf016c888c8b1bd21c50eae7df1aca5c337edc0826b9693a8f",
+  "selection": "minimum recorded in-target error, includes initial; selected on repeated target; not generalization"
+}

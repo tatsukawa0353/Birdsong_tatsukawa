@@ -40,6 +40,8 @@ def replace_results(settings, workers):
     if not 1 <= workers <= 6:
         raise ValueError("Use 1..6 independent CPU workers")
     target = DEFAULT_OUTPUT.resolve()
+    if (target/"reward_ablation").exists() or (target/"legacy_random_target").exists():
+        raise RuntimeError("Integrated Phase 0 contains unique Issue 15/legacy data; do not replace it through Issue 14")
     if target != ROOT/"results/phase0_fixed_target_20261108" or target.is_symlink():
         raise ValueError("Only the canonical Issue 14 directory may be replaced")
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()

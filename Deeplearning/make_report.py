@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 
 from .model import ROOT
+from .legacy_paths import legacy_phase0_root
 
 
 def read(path):
@@ -18,7 +19,7 @@ def fmt(values):
 
 
 def main():
-    p0 = read("results/phase0/summary.json")
+    p0 = json.loads((legacy_phase0_root()/"summary.json").read_text())
     p1 = read("results/phase1/summary.json")
     extended = read("results/phase1_extended/summary.json")
     baselines = read("results/phase1/baselines.json")
@@ -60,11 +61,11 @@ def main():
     for name in ("SAC", "TD3", "PPO"):
         items = [x for x in p0 if x["algorithm"] == name]
         lines.append(f"| {name} | {fmt([x['error'] for x in items])} | {sum(x['first_threshold_step'] is not None for x in items)}/3 | {np.mean([x['training_and_eval_seconds'] for x in items]):.2f} | {items[0]['evaluation_steps']} |")
-    lines += ["", "![Phase 0学習曲線](results/phase0/learning_curves.png)", "",
-              "この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0/summary.json)。", ""]
+    lines += ["", "![Phase 0学習曲線](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)", "",
+              "この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。", ""]
     tracking = []
     for item in p0:
-        with np.load(ROOT/f"results/phase0/{item['algorithm']}_{item['seed']}/rollout.npz") as data:
+        with np.load(legacy_phase0_root()/f"{item['algorithm']}_{item['seed']}/rollout.npz") as data:
             actions = data["actions"]
             frequency = 500+(actions[:, 0]+1)/2*2500
             amplitude = (actions[:, 1]+1)/2
@@ -72,11 +73,11 @@ def main():
             tracking.append(dict(algorithm=item["algorithm"], seed=item["seed"],
                                  frequency_mae_hz=float(np.mean(abs(frequency-(1000+1000*fraction)))),
                                  amplitude_mae=float(np.mean(abs(amplitude-.6*(.8+.2*np.cos(2*np.pi*fraction)))))))
-    with (ROOT/"results/phase0/tracking.csv").open("w") as stream:
+    with (legacy_phase0_root()/"tracking.csv").open("w") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(tracking[0]))
         writer.writeheader()
         writer.writerows(tracking)
-    lines += ["周波数と振幅の追従誤差は [tracking.csv](results/phase0/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。", "",
+    lines += ["周波数と振幅の追従誤差は [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。", "",
               "## 3. Phase 1：モデル内生成音", "",
               "条件A。目標は左epsilon=4.1e7、共通ps=3.4e6、左右f0=4.9e4で生成した0.35秒。左右の状態・遅延履歴はゼロから開始し、初期過渡も含める。学習の可動値は左epsilonと共通psの2個。", "",
               "| 学習法 | 予算step/seed | 最終誤差（平均±seed標準偏差） | 0.08以下へ到達 |",

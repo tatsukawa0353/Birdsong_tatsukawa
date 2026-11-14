@@ -20,6 +20,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots  # noqa: F401 registers styles
+from .legacy_paths import legacy_phase0_root
 
 from .plotting import (CMAP, NOVERLAP, NPERSEG, PHASE0_MAX_HZ, TARGET_FS,
                        VMAX, VMIN, WINDOW_TYPE, draw_spectrogram,
@@ -415,6 +416,8 @@ def generate_report(output: Path):
     """Read nine completed fixed-target runs; write only new report artifacts."""
     started = time.perf_counter()
     output = Path(output)
+    if (output/"reward_ablation").exists():
+        raise ValueError("Integrated Phase 0: use issue15_report; frozen A report is CONTROL_REPORT.md")
     manifest = _read(output / "manifest.json")
     # Include newly added untracked source files as real patches, too. git diff
     # alone omits them until a user chooses to commit this work.
@@ -492,7 +495,7 @@ def generate_report(output: Path):
                               amplitude_block=a_block,
                               amplitude_interval=f"{a_block * .01:.2f}–{(a_block + 1) * .01:.2f}",
                               amplitude_max_abs=run["tracking"]["amplitude_max_abs"]))
-        old_path = ROOT / "results" / "phase0" / f"{name}_{seed}" / "summary.json"
+        old_path = legacy_phase0_root()/f"{name}_{seed}"/"summary.json"
         old = _read(old_path)
         old_sources[str(old_path.relative_to(ROOT))] = _sha(old_path)
         old_new.append(dict(algorithm=name, seed=seed, old_initial_error=old["initial_error"],

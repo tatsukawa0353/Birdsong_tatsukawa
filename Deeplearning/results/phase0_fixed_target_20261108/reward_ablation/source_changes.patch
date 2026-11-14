@@ -1,0 +1,1476 @@
+diff --git a/Deeplearning/README.md b/Deeplearning/README.md
+index 74aa9d5..b689ef0 100644
+--- a/Deeplearning/README.md
++++ b/Deeplearning/README.md
+@@ -1,5 +1,24 @@
+ # Birdsong 制御実験
+ 
++現在の作業ブランチは `main_deeplearning`。研究室サーバの学習環境は
++`Deeplearning/.venv-rl`（[環境手順](envs/rl/README.md)）。以下の古いPython 3.12環境の
++説明は過去の再現記録で、現在の実行環境とは区別する。
++
++Phase 0の正本は [phase0_fixed_target_20261108](results/phase0_fixed_target_20261108/REPORT.md)
++の1フォルダに統一した。日付は歴史的な保存名であり、実行日は各manifestを参照する。
++固定目標の合算報酬Aは親直下、単独報酬B/Cは `reward_ablation/`、旧ランダム目標の
++全実データは `legacy_random_target/` にある。旧 `results/phase0/` は移設済み。
++`main` の同じパスに残る旧4,096-step結果と取り違えない。
++
++```bash
++# 初回のB/C学習（同名成果があれば上書きしない）
++PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15 --workers 6
++# 保存済みデータだけから比較レポート・図を更新
++PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15_report
++```
++
++既存Aだけを `issue14 --replace` で親ごと置き換える操作は、統合データを保護するため拒否する。
++
+ 既存のシミュレーション・描画コードを変更せず、Issue #1–#7 の調査・数値 API・音響報酬・強化学習比較をこのフォルダに隔離した。作業結果は [REPORT.md](REPORT.md)、モデル仕様は [model_audit.md](reports/model_audit.md)、実録音の管理は [DATA_POLICY.md](reports/DATA_POLICY.md) を参照。
+ 
+ ## 実行環境
+diff --git a/Deeplearning/REPORT.md b/Deeplearning/REPORT.md
+index b4e8f36..804b643 100644
+--- a/Deeplearning/REPORT.md
++++ b/Deeplearning/REPORT.md
+@@ -1,3 +1,5 @@
++> 2026-11-14 Issue #15: Phase 0の旧ランダム目標データは統一親フォルダ内の `legacy_random_target/` へ移設。以下の実験値・日付は過去の記録のまま、参照リンクのみ更新。
++
+ # Issue対応レポート
+ 
+ 2026-10-31追加: [Phase 1の基礎検証と手法比較](results/phase1_validation_20261031/REPORT.md)。既知制御・固定値・Oracleの整合性、学習前の誤差マップ、3課題×4手法×3 seedの比較を新規フォルダに保存した。以下の過去実験の数値・条件は当時の記録であり、新しいprefix差分報酬の結果とは別に扱う。
+@@ -57,11 +59,11 @@ Issueのクローズ、GitHubへのコメント・成果物公開、コミット
+ | TD3 | 0.04389 ± 0.00487 | 3/3 | 9.37 | 350 |
+ | PPO | 0.10945 ± 0.00466 | 0/3 | 4.40 | 350 |
+ 
+-![Phase 0学習曲線](results/phase0/learning_curves.png)
++![Phase 0学習曲線](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)
+ 
+-この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0/summary.json)。
++この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。
+ 
+-周波数と振幅の追従誤差は [tracking.csv](results/phase0/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。
++周波数と振幅の追従誤差は [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。
+ 
+ ## 3. Phase 1：モデル内生成音
+ 
+diff --git a/Deeplearning/SEMINAR_GUIDE_20261110.md b/Deeplearning/SEMINAR_GUIDE_20261110.md
+index e22f7fb..5723382 100644
+--- a/Deeplearning/SEMINAR_GUIDE_20261110.md
++++ b/Deeplearning/SEMINAR_GUIDE_20261110.md
+@@ -1,3 +1,5 @@
++> 2026-11-14 Issue #15: Phase 0の旧ランダム目標データは統一親フォルダ内の `legacy_random_target/` へ移設。以下の実験値・日付は過去の記録のまま、参照リンクのみ更新。
++
+ # 2026年11月10日ゼミ：研究進捗の発表用ガイド
+ 
+ 作成日：2026-11-01、更新日：2026-11-02（JST）。鳥の発声・音声解析・強化学習に詳しくない聴衆を想定した、**本編12枚＋質疑用補足**の制作ガイド。今回はこのMarkdownだけを更新した。新規図表N01〜N07はPowerPoint上で作る予定の図形・表で、画像やスライドはまだ作成していない。
+@@ -117,9 +119,9 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5
+ ### 6. まず簡単な音で手法を比較した
+ 
+ - **理解してほしいこと：** 鳴管モデルの前に正弦波の連続制御で比較し、この小予算の結果からTD3/SACを継続候補にした。
+-- **使用する既存PNG：** **P0-1** [results/phase0/learning_curves.png](results/phase0/learning_curves.png)。全体を使う。横軸は訓練step、縦軸は音響誤差で小さいほどよい。各色の3本はseed別で、平均±SDの図ではない。
++- **使用する既存PNG：** **P0-1** [results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)。全体を使う。横軸は訓練step、縦軸は音響誤差で小さいほどよい。各色の3本はseed別で、平均±SDの図ではない。
+ - **新規作成する図表：** **N03「Phase 0最終誤差の短表」**。D-1からTD3 0.04389±0.00487、SAC 0.07081±0.00307、PPO 0.10945±0.00466を転記する。列は手法と最終誤差だけ。脚注に「平均±標本SD、3 seed、各4096訓練step、全0.35秒評価」。到達数・実時間は補足に残す。
+-- **参照元データ・資料：** [REPORT.md](REPORT.md)「2. Phase 0」、[results/phase0/config.json](results/phase0/config.json)、[summary.json](results/phase0/summary.json)、[ranking.json](results/phase0/ranking.json)。曲線は [results/phase0/](results/phase0/) の9 runにある各 `curve.json`。例：[TD3 seed 0](results/phase0/TD3_0/curve.json)。
++- **参照元データ・資料：** [REPORT.md](REPORT.md)「2. Phase 0」、[results/phase0_fixed_target_20261108/legacy_random_target/config.json](results/phase0_fixed_target_20261108/legacy_random_target/config.json)、[summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)、[ranking.json](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json)。曲線は [results/phase0_fixed_target_20261108/legacy_random_target/](results/phase0_fixed_target_20261108/legacy_random_target/) の9 runにある各 `curve.json`。例：[TD3 seed 0](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/curve.json)。
+ - **口頭説明：** 「正弦波は1つの周波数の基本的な音です。高さと振幅を10 msごとに操作し、目標へ近づけました。stepは操作を決める1回分です。初期乱数を変えた3系列を各4096stepで比較した結果、TD3/SACを次へ進めました」。目標周波数・振幅を観測可能で、学習は高さが変化する音、評価は固定1000→2000 Hzと説明する。
+ - **前後のつながり：** 学習の仕組み→簡単な環境での候補選定→次で複雑な鳴管モデルの検証条件へ移る。
+ - **疑問・注意：** 「正弦波で良ければ鳥でも良い？」→保証されないためPhase 1へ進む。曲線の末尾値と別の最終評価値を混同せず、N03にはsummaryの既存集計を使う。選定は最終評価誤差の中央値に基づく暫定順位で、平均表を選定基準と呼び替えない。
+@@ -192,7 +194,7 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5
+ 
+ | ID | 優先度 | 配置・使用する範囲 | 実際の相対パス |
+ | --- | --- | --- | --- |
+-| P0-1 | 必須 | 本編6。曲線全体、各手法3 seed。 | [results/phase0/learning_curves.png](results/phase0/learning_curves.png) |
++| P0-1 | 必須 | 本編6。曲線全体、各手法3 seed。 | [results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png) |
+ | P1-5 | 必須 | 本編8。OracleのTarget／Generated両段。 | [results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png](results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png) |
+ | P1-6 | 必須 | 本編9。Task A・DEのTarget／Generated両段。 | [results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png](results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png) |
+ | P1-4 | 必須 | 本編10は左上Task Aのみ。左列の中・下段＝B/C、右列balancedは補足。 | [results/phase1_validation_20261031/figures/learning_curves.png](results/phase1_validation_20261031/figures/learning_curves.png) |
+@@ -204,8 +206,8 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5
+ | P1-10 | 補足 | S2。DEの包絡全体。TD3と比較するときは縦軸目盛も読む。 | [results/phase1_validation_20261031/runs/A/DE/seed_0/amplitude_envelope.png](results/phase1_validation_20261031/runs/A/DE/seed_0/amplitude_envelope.png) |
+ | P1-11 | 補足 | S3。Task C・SACの時変2変数制御。上段ε_lと3段目p_s、時間軸を使う。 | [results/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png](results/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png) |
+ | P1-12 | 補足 | S2。Task A・SACの最終Target／Generated両段。 | [results/phase1_validation_20261031/runs/A/SAC/seed_0/spectrogram.png](results/phase1_validation_20261031/runs/A/SAC/seed_0/spectrogram.png) |
+-| P0-2 | 補足 | S5。Phase 0・TD3の目標／生成スペクトログラム両段。 | [results/phase0/TD3_0/spectrogram.png](results/phase0/TD3_0/spectrogram.png) |
+-| P0-3 | 補足 | S5。Phase 0・TD3の周波数／振幅制御全体。目標線の重ね描きはない。 | [results/phase0/TD3_0/controls.png](results/phase0/TD3_0/controls.png) |
++| P0-2 | 補足 | S5。Phase 0・TD3の目標／生成スペクトログラム両段。 | [results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/spectrogram.png](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/spectrogram.png) |
++| P0-3 | 補足 | S5。Phase 0・TD3の周波数／振幅制御全体。目標線の重ね描きはない。 | [results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/controls.png](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/controls.png) |
+ 
+ ### 本編から補足へ移す内容
+ 
+@@ -226,8 +228,8 @@ PNGは閲覧用で、表の数値は以下の資料から転記する。
+ 
+ | 用途 | 実際の相対パス |
+ | --- | --- |
+-| Phase 0の既存集計・条件・最終値・選定基準 | [REPORT.md](REPORT.md)、[config.json](results/phase0/config.json)、[summary.json](results/phase0/summary.json)、[ranking.json](results/phase0/ranking.json) |
+-| Phase 0の追従誤差・曲線と最終評価の具体例 | [tracking.csv](results/phase0/tracking.csv)、[TD3_0/curve.json](results/phase0/TD3_0/curve.json)、[TD3_0/summary.json](results/phase0/TD3_0/summary.json) |
++| Phase 0の既存集計・条件・最終値・選定基準 | [REPORT.md](REPORT.md)、[config.json](results/phase0_fixed_target_20261108/legacy_random_target/config.json)、[summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)、[ranking.json](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json) |
++| Phase 0の追従誤差・曲線と最終評価の具体例 | [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、[TD3_0/curve.json](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/curve.json)、[TD3_0/summary.json](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/summary.json) |
+ | Phase 1の目標・範囲・初期状態・報酬・Task別予算 | [manifest.json](results/phase1_validation_20261031/manifest.json) |
+ | Phase 1の全36 runの初期／最終値・会計 | [per_seed.csv](results/phase1_validation_20261031/per_seed.csv)、[REPORT.md](results/phase1_validation_20261031/REPORT.md)、[DISCUSSION.md](results/phase1_validation_20261031/DISCUSSION.md) |
+ | Oracleと1D/2D探索の測定値 | [oracles.json](results/phase1_validation_20261031/diagnostics/oracles.json)、[landscape_1d.csv](results/phase1_validation_20261031/diagnostics/landscape_1d.csv)、[landscape_2d.csv](results/phase1_validation_20261031/diagnostics/landscape_2d.csv) |
+@@ -255,9 +257,9 @@ PNGは閲覧用で、表の数値は以下の資料から転記する。
+ | SAC | 0.07081 ± 0.00307 | 3/3 | 14.64秒 |
+ | PPO | 0.10945 ± 0.00466 | 0/3 | 4.40秒 |
+ 
+-出典：[REPORT.md](REPORT.md)「2. Phase 0」、[config](results/phase0/config.json)、[summary](results/phase0/summary.json)。選定基準は [ranking](results/phase0/ranking.json) にある「最終held-out音響誤差の中央値・少予算での暫定順位」。広い目標分布や鳴管環境での優劣を検証したものではない。実時間は共有ワークステーション上の参考値で、専用機での厳密な速度順位ではない。
++出典：[REPORT.md](REPORT.md)「2. Phase 0」、[config](results/phase0_fixed_target_20261108/legacy_random_target/config.json)、[summary](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。選定基準は [ranking](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json) にある「最終held-out音響誤差の中央値・少予算での暫定順位」。広い目標分布や鳴管環境での優劣を検証したものではない。実時間は共有ワークステーション上の参考値で、専用機での厳密な速度順位ではない。
+ 
+-図と数表の読み分け：学習曲線は途中評価の推移、最終数表は別の最終評価。例えばTD3 seed 0の曲線末尾は0.044671、最終summaryは0.041344で同値ではない。最終値を図から読み取って数表を書き換えない。根拠は [TD3の曲線記録](results/phase0/TD3_0/curve.json) と [TD3の最終記録](results/phase0/TD3_0/summary.json)。
++図と数表の読み分け：学習曲線は途中評価の推移、最終数表は別の最終評価。例えばTD3 seed 0の曲線末尾は0.044671、最終summaryは0.041344で同値ではない。最終値を図から読み取って数表を書き換えない。根拠は [TD3の曲線記録](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/curve.json) と [TD3の最終記録](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/summary.json)。
+ 
+ ### D-2. Phase 1：共通の条件と予算
+ 
+@@ -380,9 +382,9 @@ Actor–Critic、Q関数、更新式、エントロピー正則化の式は本
+ | --- | --- | --- |
+ | なぜ強化学習を使うのか？ | 将来、時間ごとに操作を選び、複数の目標へ対応する制御法を検討したいからです。ただし今回の単一目標では、RLの優位性はまだ示せていません。まず再現可能な条件で適用を確かめています。 | [Phase 1の考察](results/phase1_validation_20261031/DISCUSSION.md)、本ガイドA |
+ | 直接最適化では駄目なのか？ | 重要な候補です。一定1変数ではDEが良好で、直接法を継続すべき結果です。RLを採用する必然性を前提にせず、生成本数・精度・計算量で比較していきます。 | D-2/3、[考察](results/phase1_validation_20261031/DISCUSSION.md) |
+-| なぜ簡単な正弦波から始めたのか？ | 操作と音の関係が分かりやすい課題で実装・評価・候補手法を確認し、鳴管モデル固有の難しさと切り分けるためです。鳴管での成功を保証する試験ではありません。 | [Phase 0の報告](REPORT.md)、[ranking](results/phase0/ranking.json) |
++| なぜ簡単な正弦波から始めたのか？ | 操作と音の関係が分かりやすい課題で実装・評価・候補手法を確認し、鳴管モデル固有の難しさと切り分けるためです。鳴管での成功を保証する試験ではありません。 | [Phase 0の報告](REPORT.md)、[ranking](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json) |
+ | なぜモデルCase Aだけなのか？ | 右の出力寄与を除いた既存の基準条件で、まず制御法の整合性と再現を確認するためです。Case Aが最も正しい／優れていると示したわけではありません。 | [モデル調査](reports/model_audit.md)、[今回の条件](results/phase1_validation_20261031/manifest.json) |
+-| TD3・SACと他手法の違い、選定の根拠は？ | TD3/SACは過去の試行データを再利用できる連続制御のRLです。TD3は基本の操作へ探索のゆらぎを加え、SACは確率的な操作の幅も学びます。PPOは主に現在の選び方で集めた試行で更新します。Phase 0の4096step・3 seedで、最終評価誤差の中央値がTD3→SAC→PPOだったため暫定的に2手法を継続しました。 | [ranking](results/phase0/ranking.json)、Gの各原典 |
++| TD3・SACと他手法の違い、選定の根拠は？ | TD3/SACは過去の試行データを再利用できる連続制御のRLです。TD3は基本の操作へ探索のゆらぎを加え、SACは確率的な操作の幅も学びます。PPOは主に現在の選び方で集めた試行で更新します。Phase 0の4096step・3 seedで、最終評価誤差の中央値がTD3→SAC→PPOだったため暫定的に2手法を継続しました。 | [ranking](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json)、Gの各原典 |
+ | 今回の結果は研究目的とどうつながるのか？ | 左右の条件で模倣範囲を比べるには、制御法が目標へ近づけることを先に確認する必要があります。今回はその土台の検証で、左右音源の効果自体はまだ評価していません。 | 本ガイドA・B-3・B-12、[考察](results/phase1_validation_20261031/DISCUSSION.md) |
+ | 良いTD3の途中結果を使えばよいのでは？ | 次に取り組むべきことです。今回は9評価点の値だけを記録し、途中最良の重みと音声は残していません。最良時点を保存し、別の評価で再現と安定性を確認する必要があります。 | [A_diagnosis](results/phase1_validation_20261031/A_diagnosis.json)、D-4 |
+ | B/Cは目標を再現できないのでは？ | Oracleでは再現可能です。BではAのDE解を保持した補助再生も一致しました。探索次元・予算・観測のどれが主因かは今回の結果では切り分けていません。 | [Oracle](results/phase1_validation_20261031/diagnostics/oracles.json)、[補助再生](results/phase1_validation_20261031/cross_task_replay/summary.json) |
+diff --git a/Deeplearning/experiments.py b/Deeplearning/experiments.py
+index 6882e8b..9284129 100644
+--- a/Deeplearning/experiments.py
++++ b/Deeplearning/experiments.py
+@@ -175,7 +175,8 @@ def phase0_factories(config):
+     reseed = config.get("reseed_action_space_on_reset", True)
+     if not isinstance(reseed, bool):
+         raise ValueError("reseed_action_space_on_reset must be a boolean")
+-    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"], reseed_action_space_on_reset=reseed))
++    train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"], reseed_action_space_on_reset=reseed,
++                                             reward_terms=config.get("reward_terms", "combined")))
+     eval_factory = lambda: SineEnv(SineConfig(randomize=False, target=config["target"], reseed_action_space_on_reset=reseed))
+     return train_factory, eval_factory
+ 
+@@ -299,11 +300,12 @@ def run_model_baselines(config, output):
+ 
+ if __name__ == "__main__":
+     import argparse
++    from .legacy_paths import legacy_phase0_root
+ 
+     parser = argparse.ArgumentParser(description="Redraw saved Phase 0 curves without training or evaluation")
+     parser.add_argument("--redraw-phase0", type=Path, nargs="?", required=True,
+-                        const=Path(__file__).resolve().parent/"results"/"phase0",
+-                        metavar="DIRECTORY", help="Phase 0 results directory (default: results/phase0)")
++                        const=legacy_phase0_root(),
++                        metavar="DIRECTORY", help="Historical random-target results (default: unified parent/legacy_random_target)")
+     parser.add_argument("--all-seeds", action="store_true",
+                         help="Plot runs 0, 1 and 2 together in a separate revised PNG")
+     args = parser.parse_args()
+diff --git a/Deeplearning/issue14.py b/Deeplearning/issue14.py
+index 29c7d0b..798bbd4 100644
+--- a/Deeplearning/issue14.py
++++ b/Deeplearning/issue14.py
+@@ -153,6 +153,7 @@ class FixedEvaluationCallback(EvaluationCallback):
+         super().__init__(factory, interval, threshold)
+         self.initial_snapshot = None
+         self.actions, self.rewards, self.dones = [], [], []
++        self.spectral_costs, self.envelope_costs = [], []
+         self.output, self.best = output, None
+ 
+     def evaluate(self):
+@@ -177,6 +178,8 @@ class FixedEvaluationCallback(EvaluationCallback):
+         self.actions.append(np.asarray(self.locals["actions"][0]).copy())
+         self.rewards.append(float(self.locals["rewards"][0]))
+         self.dones.append(bool(self.locals["dones"][0]))
++        self.spectral_costs.append(float(self.locals["infos"][0]["log_spectral"]))
++        self.envelope_costs.append(float(self.locals["infos"][0]["envelope"]))
+         return super()._on_step()
+ 
+ 
+@@ -285,7 +288,8 @@ def train_one(name, seed, settings, output):
+         if parameter_hash(agent) != final["parameter_sha256"]:
+             raise RuntimeError("Final model changed after its evaluation")
+         np.savez_compressed(output/"training_trace.npz", actions=np.asarray(callback.actions),
+-                            rewards=np.asarray(callback.rewards), dones=np.asarray(callback.dones))
++                            rewards=np.asarray(callback.rewards), dones=np.asarray(callback.dones),
++                            log_spectral=np.asarray(callback.spectral_costs), envelope=np.asarray(callback.envelope_costs))
+         write_json(output/"curve.json", curve)
+         write_json(output/"callback_curve.json", callback.entries)
+         summary = dict(algorithm=name, seed=seed, requested_steps=settings["steps"],
+@@ -308,6 +312,8 @@ def train_one(name, seed, settings, output):
+                        optimizer_steps=optimizer_steps, sb3_n_updates=int(agent._n_updates),
+                        update_counter_meaning="PPO epochs; TD3/SAC gradient iterations; see optimizer_steps for actual optimizer calls",
+                        nonfinite_detected=0, numeric_training_metrics=numeric,
++                       training_reward_terms=settings.get("reward_terms", "combined"),
++                       evaluation_reward_terms="combined",
+                        best_error=callback.best["error"], best_steps=callback.best["steps"],
+                        first_threshold_step=next((e["steps"] for e in curve if e["error"] <= settings.get("threshold", .08)), None),
+                        interpretation="in-target deterministic evaluation; not held-out generalization")
+diff --git a/Deeplearning/issue14_audit.py b/Deeplearning/issue14_audit.py
+index 8146f1c..9f053ec 100644
+--- a/Deeplearning/issue14_audit.py
++++ b/Deeplearning/issue14_audit.py
+@@ -12,11 +12,12 @@ import hashlib
+ import json
+ from pathlib import Path
+ import time
++import subprocess
+ 
+ import numpy as np
+ from scipy.io import wavfile
+ 
+-from .legacy_paths import protected_path
++from .legacy_paths import protected_path, legacy_phase0_root
+ from .acoustics import AcousticConfig, distance
+ from .sine_env import SineConfig, SineEnv
+ 
+@@ -61,6 +62,9 @@ class Auditor:
+         settings = json.loads((self.output/"config.json").read_text())
+         self.steps, self.interval = settings["steps"], settings["eval_interval"]
+         self.schedule = list(range(0, self.steps+1, self.interval))
++        integration = self.output/"reward_ablation/manifest.json"
++        self.historical_commit = json.loads(integration.read_text())["control_commit"] if integration.exists() else None
++        self.historical_source_checks = []
+         self.errors = []
+         self.checks = 0
+         self.counts = dict(runs_expected=9, runs_found=0, curve_points=0,
+@@ -224,7 +228,17 @@ class Auditor:
+                 continue
+             try:
+                 actual = hashlib.sha256(destination.read_bytes()).hexdigest()
+-                self.check(actual == expected, "protected_changed" if protected else "source_changed", destination, expected, actual)
++                historical = False
++                # Result bytes must still agree at the relocated path. Source
++                # and documentation hashes can instead verify the exact Git
++                # version used by the frozen A experiment after later work.
++                if actual != expected and self.historical_commit and not destination.is_relative_to(ROOT/"results"):
++                    name_at_commit = str(destination.relative_to(ROOT.parent))
++                    saved = subprocess.run(["git","show",f"{self.historical_commit}:{name_at_commit}"],cwd=ROOT,capture_output=True)
++                    historical = saved.returncode == 0 and hashlib.sha256(saved.stdout).hexdigest() == expected
++                    if historical:
++                        self.historical_source_checks.append(dict(path=name_at_commit, commit=self.historical_commit, sha256=expected))
++                self.check(actual == expected or historical, "protected_changed" if protected else "source_changed", destination, expected, actual)
+                 self.counts["protected_files" if protected else "source_hashes"] += 1
+             except OSError as exc:
+                 self.check(False, "hash_read", destination, expected, str(exc))
+@@ -236,6 +250,7 @@ class Auditor:
+         except (OSError, ValueError, KeyError, TypeError, IndexError, AttributeError, RuntimeError) as exc:
+             self.check(False, "schema_or_io_error", self.output, "complete valid experiment", f"{type(exc).__name__}: {exc}")
+         return dict(passed=not self.errors, checks=self.checks, errors=self.errors,
++                    historical_source_checks=self.historical_source_checks,
+                     counts=self.counts, wall_s=time.perf_counter()-start,
+                     callback_vs_post_final=self.final_timing_comparisons,
+                     audited_utc=datetime.now(timezone.utc).isoformat(),
+@@ -263,7 +278,9 @@ class Auditor:
+         if self.steps == 102400:
+             self.check(settings.get("reseed_action_space_on_reset") is False, "explicit_seed_only", manifest_path, False, settings.get("reseed_action_space_on_reset"))
+         expected_environment = asdict(SineConfig(randomize=False, reseed_action_space_on_reset=settings.get("reseed_action_space_on_reset", True)))
+-        self.check(manifest.get("environment") == expected_environment, "environment_configuration", manifest_path, expected_environment, manifest.get("environment"))
++        recorded_environment=dict(manifest.get("environment",{}))
++        recorded_environment.setdefault("reward_terms","combined")
++        self.check(recorded_environment == expected_environment, "environment_configuration", manifest_path, expected_environment, recorded_environment)
+         self.check(manifest.get("acoustic_config") == asdict(AcousticConfig()), "acoustic_configuration", manifest_path, asdict(AcousticConfig()), manifest.get("acoustic_config"))
+         self.scalar(manifest.get("acoustic_scale"), 1., manifest_path / "acoustic_scale")
+         self.hashes(manifest.get("source_hashes"), ROOT, manifest_path)
+@@ -289,7 +306,7 @@ class Auditor:
+         if self.check(isinstance(aggregate, list), "aggregate_summary_schema", aggregate_path, "list of nine summaries", type(aggregate).__name__):
+             mapping = {(record.get("algorithm"), record.get("seed")): record for record in aggregate}
+             self.check(len(aggregate) == 9 and mapping == self.summaries, "aggregate_summary_identity", aggregate_path, "exact nine individual run summaries", None)
+-        with np.load(ROOT / "results/phase0/PPO_0/rollout.npz", allow_pickle=False) as archive:
++        with np.load(legacy_phase0_root()/"PPO_0/rollout.npz", allow_pickle=False) as archive:
+             self.exact_array(archive["target"], self.target, self.output / "historical_evaluation_target")
+         self.oracle()
+         execution_path = self.output / "execution.json"
+@@ -450,7 +467,8 @@ def audit(output):
+     if not isinstance(manifest, dict) or manifest.get("workflow") != "issue14_phase0_fixed_target":
+         raise ValueError("Only an Issue #14 experiment may receive audit.json")
+     result = Auditor(output).run()
+-    (output / "audit.json").write_text(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False)+"\n")
++    destination = output/"reward_ablation/control_audit.json" if (output/"reward_ablation").is_dir() else output/"audit.json"
++    destination.write_text(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False)+"\n")
+     if not result["passed"]:
+         raise RuntimeError(f"Issue #14 audit failed: {len(result['errors'])} errors; see {output/'audit.json'}")
+     return result
+diff --git a/Deeplearning/issue14_report.py b/Deeplearning/issue14_report.py
+index 55ff505..07537b9 100644
+--- a/Deeplearning/issue14_report.py
++++ b/Deeplearning/issue14_report.py
+@@ -20,6 +20,7 @@ matplotlib.use("Agg")
+ import matplotlib.pyplot as plt
+ import numpy as np
+ import scienceplots  # noqa: F401 registers styles
++from .legacy_paths import legacy_phase0_root
+ 
+ from .plotting import (CMAP, NOVERLAP, NPERSEG, PHASE0_MAX_HZ, TARGET_FS,
+                        VMAX, VMIN, WINDOW_TYPE, draw_spectrogram,
+@@ -415,6 +416,8 @@ def generate_report(output: Path):
+     """Read nine completed fixed-target runs; write only new report artifacts."""
+     started = time.perf_counter()
+     output = Path(output)
++    if (output/"reward_ablation").exists():
++        raise ValueError("Integrated Phase 0: use issue15_report; frozen A report is CONTROL_REPORT.md")
+     manifest = _read(output / "manifest.json")
+     # Include newly added untracked source files as real patches, too. git diff
+     # alone omits them until a user chooses to commit this work.
+@@ -492,7 +495,7 @@ def generate_report(output: Path):
+                               amplitude_block=a_block,
+                               amplitude_interval=f"{a_block * .01:.2f}–{(a_block + 1) * .01:.2f}",
+                               amplitude_max_abs=run["tracking"]["amplitude_max_abs"]))
+-        old_path = ROOT / "results" / "phase0" / f"{name}_{seed}" / "summary.json"
++        old_path = legacy_phase0_root()/f"{name}_{seed}"/"summary.json"
+         old = _read(old_path)
+         old_sources[str(old_path.relative_to(ROOT))] = _sha(old_path)
+         old_new.append(dict(algorithm=name, seed=seed, old_initial_error=old["initial_error"],
+diff --git a/Deeplearning/issue14_transaction.py b/Deeplearning/issue14_transaction.py
+index 205787a..f5235ac 100644
+--- a/Deeplearning/issue14_transaction.py
++++ b/Deeplearning/issue14_transaction.py
+@@ -40,6 +40,8 @@ def replace_results(settings, workers):
+     if not 1 <= workers <= 6:
+         raise ValueError("Use 1..6 independent CPU workers")
+     target = DEFAULT_OUTPUT.resolve()
++    if (target/"reward_ablation").exists() or (target/"legacy_random_target").exists():
++        raise RuntimeError("Integrated Phase 0 contains unique Issue 15/legacy data; do not replace it through Issue 14")
+     if target != ROOT/"results/phase0_fixed_target_20261108" or target.is_symlink():
+         raise ValueError("Only the canonical Issue 14 directory may be replaced")
+     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+diff --git a/Deeplearning/legacy_paths.py b/Deeplearning/legacy_paths.py
+index 42a1f7d..68919f2 100644
+--- a/Deeplearning/legacy_paths.py
++++ b/Deeplearning/legacy_paths.py
+@@ -4,6 +4,14 @@ from pathlib import Path
+ 
+ REPO = Path(__file__).resolve().parent.parent
+ LEGACY_SRC = REPO / "legacy" / "src"
++PHASE0_ROOT = REPO / "Deeplearning/results/phase0_fixed_target_20261108"
++
++
++def legacy_phase0_root():
++    """Read the relocated random-target experiment, with pre-migration fallback."""
++    relocated = PHASE0_ROOT / "legacy_random_target"
++    previous = REPO / "Deeplearning/results/phase0"
++    return relocated if relocated.exists() or not previous.exists() else previous
+ 
+ 
+ def model_files():
+@@ -12,11 +20,14 @@ def model_files():
+ 
+ 
+ def protected_path(relative):
+-    """Resolve only historical root model source/header names to their new home.
++    """Resolve historical model and Phase 0 artifact paths to their current home.
+ 
+     Hash values are never altered; all other repository paths retain their meaning.
+     """
+     path = Path(relative)
++    previous = Path("Deeplearning/results/phase0")
++    if path.is_relative_to(previous):
++        return legacy_phase0_root() / path.relative_to(previous)
+     if len(path.parts) == 1 and path.name.startswith("BirdsongModel") and path.suffix in (".cpp", ".h"):
+         return LEGACY_SRC / path.name
+     return REPO / path
+diff --git a/Deeplearning/make_report.py b/Deeplearning/make_report.py
+index 949007a..359469e 100644
+--- a/Deeplearning/make_report.py
++++ b/Deeplearning/make_report.py
+@@ -6,6 +6,7 @@ from pathlib import Path
+ import numpy as np
+ 
+ from .model import ROOT
++from .legacy_paths import legacy_phase0_root
+ 
+ 
+ def read(path):
+@@ -18,7 +19,7 @@ def fmt(values):
+ 
+ 
+ def main():
+-    p0 = read("results/phase0/summary.json")
++    p0 = json.loads((legacy_phase0_root()/"summary.json").read_text())
+     p1 = read("results/phase1/summary.json")
+     extended = read("results/phase1_extended/summary.json")
+     baselines = read("results/phase1/baselines.json")
+@@ -60,11 +61,11 @@ def main():
+     for name in ("SAC", "TD3", "PPO"):
+         items = [x for x in p0 if x["algorithm"] == name]
+         lines.append(f"| {name} | {fmt([x['error'] for x in items])} | {sum(x['first_threshold_step'] is not None for x in items)}/3 | {np.mean([x['training_and_eval_seconds'] for x in items]):.2f} | {items[0]['evaluation_steps']} |")
+-    lines += ["", "![Phase 0学習曲線](results/phase0/learning_curves.png)", "",
+-              "この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0/summary.json)。", ""]
++    lines += ["", "![Phase 0学習曲線](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)", "",
++              "この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。", ""]
+     tracking = []
+     for item in p0:
+-        with np.load(ROOT/f"results/phase0/{item['algorithm']}_{item['seed']}/rollout.npz") as data:
++        with np.load(legacy_phase0_root()/f"{item['algorithm']}_{item['seed']}/rollout.npz") as data:
+             actions = data["actions"]
+             frequency = 500+(actions[:, 0]+1)/2*2500
+             amplitude = (actions[:, 1]+1)/2
+@@ -72,11 +73,11 @@ def main():
+             tracking.append(dict(algorithm=item["algorithm"], seed=item["seed"],
+                                  frequency_mae_hz=float(np.mean(abs(frequency-(1000+1000*fraction)))),
+                                  amplitude_mae=float(np.mean(abs(amplitude-.6*(.8+.2*np.cos(2*np.pi*fraction)))))))
+-    with (ROOT/"results/phase0/tracking.csv").open("w") as stream:
++    with (legacy_phase0_root()/"tracking.csv").open("w") as stream:
+         writer = csv.DictWriter(stream, fieldnames=list(tracking[0]))
+         writer.writeheader()
+         writer.writerows(tracking)
+-    lines += ["周波数と振幅の追従誤差は [tracking.csv](results/phase0/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。", "",
++    lines += ["周波数と振幅の追従誤差は [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。", "",
+               "## 3. Phase 1：モデル内生成音", "",
+               "条件A。目標は左epsilon=4.1e7、共通ps=3.4e6、左右f0=4.9e4で生成した0.35秒。左右の状態・遅延履歴はゼロから開始し、初期過渡も含める。学習の可動値は左epsilonと共通psの2個。", "",
+               "| 学習法 | 予算step/seed | 最終誤差（平均±seed標準偏差） | 0.08以下へ到達 |",
+diff --git a/Deeplearning/redraw.py b/Deeplearning/redraw.py
+index 29aacbd..46adfb5 100644
+--- a/Deeplearning/redraw.py
++++ b/Deeplearning/redraw.py
+@@ -5,6 +5,7 @@ import os
+ import numpy as np
+ 
+ from .model import ROOT
++from .legacy_paths import PHASE0_ROOT, legacy_phase0_root
+ from .plotting import MAX_HZ, PHASE0_MAX_HZ, comparison, single_spectrogram
+ 
+ 
+@@ -22,7 +23,7 @@ def redraw(directory):
+             continue
+         with np.load(path, allow_pickle=False) as data:
+             for image in images:
+-                max_hz = (PHASE0_MAX_HZ if path.resolve().is_relative_to(ROOT/"results/phase0")
++                max_hz = (PHASE0_MAX_HZ if path.resolve().is_relative_to(PHASE0_ROOT) or path.resolve().is_relative_to(legacy_phase0_root())
+                           else MAX_HZ)
+                 comparison(data["target"], data["audio"], float(data["sample_rate"]), image,
+                            max_hz=max_hz)
+@@ -39,7 +40,7 @@ def main():
+                        help="Also redraw permission-restricted local experiment plots")
+     args = parser.parse_args()
+     if args.phase0_only:
+-        print(f"Redrew {redraw(ROOT/'results/phase0')} Phase 0 spectrograms (0–2500 Hz)")
++        print(f"Redrew {redraw(legacy_phase0_root())} historical Phase 0 spectrograms (0–2500 Hz)")
+         return
+     public_count = redraw(ROOT/"results")
+     if (ROOT/"results/reference/reference.npz").is_file():
+diff --git a/Deeplearning/reports/ISSUE14_REPORT.md b/Deeplearning/reports/ISSUE14_REPORT.md
+index 48f2507..99cfe35 100644
+--- a/Deeplearning/reports/ISSUE14_REPORT.md
++++ b/Deeplearning/reports/ISSUE14_REPORT.md
+@@ -1,8 +1,10 @@
++> Issue #15統合後: 以下のAの結果値は保持。現在のPhase 0索引は [親REPORT](../results/phase0_fixed_target_20261108/REPORT.md)、B/C比較は [Issue #15](ISSUE15_REPORT.md)。
++
+ # Issue #14：固定目標音の長期学習
+ 
+ 2026-11-14改訂のIssueに従い、PPO・TD3・SAC × seed 0/1/2、計9 runを**各102,400環境ステップ**、ゼロから学習した。評価は2,048ステップ間隔。報酬・音生成・観測・行動・既存ハイパーパラメータは維持し、行動空間の不要な再seedだけを今回の設定で修正した。
+ 
+-[詳細結果レポート](../results/phase0_fixed_target_20261108/REPORT.md) に学習曲線、収束傾向、全seedのMAE、途中最良、更新回数、計算費用を保存した。
++[詳細結果レポート](../results/phase0_fixed_target_20261108/CONTROL_REPORT.md) に学習曲線、収束傾向、全seedのMAE、途中最良、更新回数、計算費用を保存した。
+ 
+ | 手法 | 最終全区間音響誤差（3 seed平均±標本SD） |
+ | --- | ---: |
+@@ -23,14 +25,14 @@
+ 
+ 旧4,096ステップ値との比較には乱数管理・ライブラリ版の差もあるため参考比較とし、予算の推移は今回の同一run内の4,096→102,400ステップで確認する。目標f/Aが観測に含まれる固定正弦波追従のin-target評価であり、未知音への汎化・鳴管制御・実録音模倣・左右音源の効果を証明した結果ではない。Phase 1/2とC++モデルには変更を加えていない。
+ 
+-リポジトリ直下から再実行（監査成功後に指定の既存成果を更新）:
++以下は統合前の単独A再実行コマンドの履歴。統合後の親には固有なB/C・旧データがあるため、この置換操作は安全のため拒否する:
+ 
+ ```bash
+ PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue14 --replace --workers 6
+ ```
+ 
+-学習せず図・レポートだけ再生成する場合:
++統合後に保存済みA/B/Cから比較図・レポートだけを再生成する場合:
+ 
+ ```bash
+-PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/birdsong-mpl Deeplearning/.venv-rl/bin/python -m Deeplearning.issue14_report --output Deeplearning/results/phase0_fixed_target_20261108
++PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/birdsong-mpl Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15_report
+ ```
+diff --git a/Deeplearning/run.py b/Deeplearning/run.py
+index 8b3fcdb..e902f35 100644
+--- a/Deeplearning/run.py
++++ b/Deeplearning/run.py
+@@ -3,6 +3,7 @@ import json
+ from pathlib import Path
+ 
+ from .experiments import run_phase0, run_phase1
++from .legacy_paths import legacy_phase0_root, PHASE0_ROOT
+ 
+ 
+ def main():
+@@ -13,7 +14,11 @@ def main():
+     args = parser.parse_args()
+     root = Path(__file__).resolve().parent
+     config_path = args.config or root/"configs"/f"{args.phase}.json"
+-    output = args.output or root/"results"/args.phase
++    output = args.output or (legacy_phase0_root() if args.phase=="phase0" else root/"results"/args.phase)
++    if args.phase=="phase0" and not output.resolve().is_relative_to(PHASE0_ROOT):
++        parser.error("New Phase 0 experiments must remain under phase0_fixed_target_20261108")
++    if args.phase=="phase0" and output.exists():
++        parser.error("Historical Phase 0 is preserved; specify a new output under the unified Phase 0 parent, or use issue15")
+     config = json.loads(config_path.read_text())
+     {"phase0": run_phase0, "phase1": run_phase1}[args.phase](config, output)
+ 
+diff --git a/Deeplearning/sine_env.py b/Deeplearning/sine_env.py
+index 1071e26..d0e97a1 100644
+--- a/Deeplearning/sine_env.py
++++ b/Deeplearning/sine_env.py
+@@ -19,10 +19,13 @@ class SineConfig:
+     randomize: bool = False
+     smooth_weight: float = 0.0
+     reseed_action_space_on_reset: bool = True
++    reward_terms: str = "combined"
+ 
+     def __post_init__(self):
+         if self.target not in ("constant", "glide"):
+             raise ValueError("Unknown target")
++        if self.reward_terms not in ("combined", "spectral_only", "envelope_only"):
++            raise ValueError("Unknown reward term selection")
+         if not (self.duration > 0 and self.control_s > 0 and self.sample_rate > 0 and
+                 0 < self.frequency_low < self.frequency_high < self.sample_rate/2 and
+                 self.smooth_weight >= 0):
+@@ -99,14 +102,16 @@ class SineEnv(gym.Env):
+         a = self.index*self.block
+         errors = distance(self.target_audio[a:a+self.block], w, self.config.sample_rate, scale=1.0)
+         smooth = self.config.smooth_weight*float(np.mean((action-self.previous)**2))
+-        reward = -errors["total"]-smooth
++        reward_cost = errors[{"combined": "total", "spectral_only": "log_spectral", "envelope_only": "envelope"}[self.config.reward_terms]]
++        reward = -reward_cost-smooth
+         self.audio.append(w)
+         self.actions.append(action.copy())
+         self.rewards.append(reward)
+         self.previous = action.copy()
+         self.index += 1
+         done = self.index == self.horizon
+-        info = dict(**errors, smooth_penalty=smooth)
++        info = dict(**errors, smooth_penalty=smooth, reward_cost=reward_cost,
++                    reward_terms=self.config.reward_terms)
+         if done:
+             info["episode_metrics"] = distance(self.target_audio, np.concatenate(self.audio), self.config.sample_rate, scale=1.0)
+         return self._obs(), float(reward), done, False, info
+diff --git a/Deeplearning/issue15.py b/Deeplearning/issue15.py
+new file mode 100644
+index 0000000..7b59f08
+--- /dev/null
++++ b/Deeplearning/issue15.py
+@@ -0,0 +1,154 @@
++"""Issue 15: analyze saved A, train B/C, audit, then integrate Phase 0."""
++import argparse
++from concurrent.futures import ProcessPoolExecutor, as_completed
++from datetime import datetime
++import hashlib
++import importlib.metadata
++import json
++import multiprocessing
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import time
++import uuid
++from zoneinfo import ZoneInfo
++
++from .issue15_analysis import analyze, write_json
++
++ROOT = Path(__file__).resolve().parent
++PARENT = ROOT/"results/phase0_fixed_target_20261108"
++LEGACY = ROOT/"results/phase0"
++CONDITIONS = ("spectral_only", "envelope_only")
++
++
++def sha(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
++def inventory(directory):
++    if directory.is_symlink() or any(p.is_symlink() for p in directory.rglob("*")):
++        raise ValueError(f"Refuse symlink source: {directory}")
++    return {str(p.relative_to(directory)): dict(sha256=sha(p), size=p.stat().st_size)
++            for p in directory.rglob("*") if p.is_file()}
++
++
++def worker(condition, name, seed, config, output):
++    from .issue14 import train_one
++    return dict(condition=condition, **train_one(name, seed, config, output))
++
++
++def execute(workers=6):
++    if not 1 <= workers <= 6:
++        raise ValueError("Use 1..6 single-thread CPU workers")
++    if (PARENT/"reward_ablation").exists():
++        raise FileExistsError("Ablation results already exist; use the report command to read them, do not overwrite")
++    branch = subprocess.check_output(["git","branch","--show-current"],cwd=ROOT,text=True).strip()
++    if branch != "main_deeplearning":
++        raise RuntimeError("Issue 15 uses main_deeplearning, not the older main results")
++    commit = subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip()
++    control = inventory(PARENT)
++    legacy = inventory(LEGACY)
++    tracked = set(subprocess.check_output(["git","ls-files","--",str(LEGACY.relative_to(ROOT))],cwd=ROOT,text=True).splitlines())
++    if {str((LEGACY/p).relative_to(ROOT)) for p in legacy} != tracked:
++        raise RuntimeError("Legacy directory has untracked or missing files; preserve and inspect")
++    for filename, item in legacy.items():
++        path = str((LEGACY/filename).relative_to(ROOT.parent))
++        data = subprocess.check_output(["git","show",f"{commit}:{path}"],cwd=ROOT)
++        if hashlib.sha256(data).hexdigest() != item["sha256"]:
++            raise RuntimeError(f"Legacy content differs from recoverable commit: {filename}")
++    work = ROOT/"results/.issue15-work"/(datetime.now(ZoneInfo("Asia/Tokyo")).strftime("%Y%m%dT%H%M%S")+"_"+uuid.uuid4().hex[:8])
++    work.mkdir(parents=True)
++    output = work/"artifacts"
++    output.mkdir()
++    protected = {}
++    for filename in subprocess.check_output(["git","ls-files","-z"],cwd=ROOT,text=True).split("\0"):
++        if not filename: continue
++        p = ROOT/filename
++        if filename.startswith("results/") and not p.is_relative_to(PARENT) and not p.is_relative_to(LEGACY):
++            if p.is_file(): protected[filename] = sha(p)
++    write_json(output/"control_before.json",control)
++    write_json(output/"legacy_inventory.json",dict(commit=commit,old_path=str(LEGACY.relative_to(ROOT.parent)),
++               new_path=str((PARENT/"legacy_random_target").relative_to(ROOT.parent)),files=legacy,git_contents_verified=True))
++    write_json(output/"protected_before.json",protected)
++    shutil.copyfile(PARENT/"REPORT.md",output/"control_report_original.md")
++    analysis = analyze(PARENT,output/"reanalysis")
++    print("JSON-only reanalysis complete; no training or policy evaluation added",flush=True)
++    tests=[sys.executable,"-m","unittest","Deeplearning.tests.test_issue15","Deeplearning.tests.test_issue14",
++           "Deeplearning.tests.test_core.SineTests","Deeplearning.tests.test_core.AcousticTests","Deeplearning.tests.test_plotting"]
++    with (output/"test_results.txt").open("w") as stream:
++        result=subprocess.run(tests,cwd=ROOT.parent,stdout=stream,stderr=subprocess.STDOUT)
++    if result.returncode:
++        raise RuntimeError(f"Tests failed; see {output/'test_results.txt'}")
++    import re
++    count=re.search(r"Ran (\d+) tests?",(output/"test_results.txt").read_text())
++    write_json(output/"test_results.json",dict(passed=True,tests=int(count.group(1)),command=tests))
++    from .issue14 import diagnostics
++    base=json.loads((PARENT/"config.json").read_text())
++    packages={name:importlib.metadata.version(name) for name in ("numpy","scipy","torch","stable-baselines3","gymnasium","matplotlib","SciencePlots")}
++    recorded=json.loads((PARENT/"manifest.json").read_text())["package_versions"]
++    differences={k:dict(control=recorded.get(k),new=v) for k,v in packages.items() if recorded.get(k)!=v}
++    sources=("issue14.py","sine_env.py","experiments.py","acoustics.py","plotting.py","configs/issue14_fixed_target.json")
++    provenance=dict(workflow="issue15_reward_ablation",branch=branch,control_commit=commit,
++        started_at=datetime.now(ZoneInfo("Asia/Tokyo")).isoformat(),workers=workers,
++        base_config=base,package_versions=packages,package_differences_from_control=differences,
++        training_source_sha256={p:sha(ROOT/p) for p in sources},control_retrained=False,
++        common_evaluation="combined full 0.35 s distance and f/A MAE; deterministic separate env",
++        source_code_difference="SineConfig reward selector and info fields; baseline branch retains original total exactly",
++        weight_tuning_preregistered=False,reproducible_command="PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15 --workers 6")
++    write_json(output/"manifest.json",provenance)
++    configs={}
++    for condition in CONDITIONS:
++        folder=output/condition
++        folder.mkdir()
++        config=dict(base,reward_terms=condition)
++        configs[condition]=config
++        write_json(folder/"config.json",config)
++        diagnostics(folder,config)
++    print(f"Tests PASS. Training 18 fresh B/C runs in {output}",flush=True)
++    started=time.perf_counter(); summaries=[]
++    with ProcessPoolExecutor(max_workers=workers,mp_context=multiprocessing.get_context("spawn")) as pool:
++        jobs=[pool.submit(worker,c,name,seed,configs[c],output/c/f"{name}_{seed}")
++              for seed in (0,1,2) for c in CONDITIONS for name in ("SAC","TD3","PPO")]
++        for future in as_completed(jobs):
++            summaries.append(future.result())
++            write_json(output/"summary.json",summaries)
++    write_json(output/"execution.json",dict(completed_runs=len(summaries),training_steps=sum(r["training_steps"] for r in summaries),
++        evaluation_steps=sum(r["evaluation_steps"] for r in summaries),execution_wall_s=time.perf_counter()-started))
++    for condition in CONDITIONS:
++        selected=[{k:v for k,v in r.items() if k!="condition"} for r in summaries if r["condition"]==condition]
++        write_json(output/condition/"summary.json",selected)
++        for p in (output/condition).glob("*_[012]/progress.json"): p.unlink()
++    finish(output)
++
++
++def finish(output):
++    """Resume completed learning in a fresh process; never learn again here."""
++    output=Path(output).resolve()
++    if output.parent.parent!=ROOT/"results/.issue15-work" or output.name!="artifacts":
++        raise ValueError("Finish only a complete isolated Issue 15 staging area")
++    execution=json.loads((output/"execution.json").read_text())
++    if execution["completed_runs"]!=18 or execution["training_steps"]!=1843200 or execution["evaluation_steps"]!=32760:
++        raise RuntimeError("Learning is incomplete; finish cannot substitute for missing runs")
++    control=json.loads((output/"control_before.json").read_text())
++    legacy=json.loads((output/"legacy_inventory.json").read_text())["files"]
++    if inventory(PARENT)!=control or inventory(LEGACY)!=legacy:
++        raise RuntimeError("A or legacy changed during B/C learning; nothing will be published")
++    from .issue15_audit import audit_ablation
++    from .issue15_report import generate_report
++    audit_ablation(output,PARENT)
++    generate_report(output,PARENT)
++    from .issue15_integration import integrate
++    integrate(output,PARENT,LEGACY)
++    shutil.rmtree(output.parent)
++    print(f"Issue 15 complete: {PARENT}",flush=True)
++
++
++if __name__=="__main__":
++    parser=argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--workers",type=int,default=6)
++    parser.add_argument("--finish",type=Path,help="Audit and publish completed staged runs without additional learning")
++    args=parser.parse_args()
++    if args.finish: finish(args.finish)
++    else: execute(args.workers)
+diff --git a/Deeplearning/issue15_analysis.py b/Deeplearning/issue15_analysis.py
+new file mode 100644
+index 0000000..ed02e79
+--- /dev/null
++++ b/Deeplearning/issue15_analysis.py
+@@ -0,0 +1,109 @@
++"""Read existing Issue 14 JSON only: no learning, policy loading or evaluation."""
++import argparse
++import csv
++import hashlib
++import json
++from pathlib import Path
++import time
++
++import matplotlib
++matplotlib.use("Agg")
++import matplotlib.pyplot as plt
++import numpy as np
++import scienceplots
++
++
++ALGORITHMS = ("PPO", "TD3", "SAC")
++COLORS = {"PPO": "#0072B2", "TD3": "#009E73", "SAC": "#D55E00"}
++
++
++def write_json(path, value):
++    Path(path).write_text(json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False)+"\n")
++
++
++def write_csv(path, rows):
++    with Path(path).open("w", newline="") as f:
++        writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
++        writer.writeheader()
++        writer.writerows(rows)
++
++
++def analyze(control, output):
++    control, output = Path(control), Path(output)
++    output.mkdir(parents=True, exist_ok=False)
++    start = time.perf_counter()
++    sources, curves, rows, selected = {}, {}, [], []
++    for algorithm in ALGORITHMS:
++        curves[algorithm] = []
++        for seed in range(3):
++            directory = control/f"{algorithm}_{seed}"
++            records = {}
++            for filename in ("curve.json", "best.json", "summary.json"):
++                p = directory/filename
++                records[filename] = json.loads(p.read_text())
++                sources[str(p.relative_to(control))] = hashlib.sha256(p.read_bytes()).hexdigest()
++            curve = records["curve.json"]
++            assert [p["steps"] for p in curve] == list(range(0, 102401, 2048))
++            curves[algorithm].append(curve)
++            for point in curve:
++                row = dict(algorithm=algorithm, seed=seed, steps=point["steps"],
++                           E_spec=point["metrics"]["log_spectral"], E_env=point["metrics"]["envelope"],
++                           E_total=point["error"], frequency_mae_hz=point["tracking"]["frequency_mae_hz"],
++                           amplitude_mae=point["tracking"]["amplitude_mae"])
++                assert np.isclose(row["E_total"], row["E_spec"]+row["E_env"], rtol=0, atol=1e-14)
++                rows.append(row)
++                if point["steps"] in (0, 20480, 51200, 102400):
++                    selected.append(dict(role="scheduled", **row))
++            best = records["best.json"]
++            selected.append(dict(role="recorded_best", algorithm=algorithm, seed=seed, steps=best["steps"],
++                E_spec=best["metrics"]["log_spectral"], E_env=best["metrics"]["envelope"], E_total=best["error"],
++                frequency_mae_hz=best["tracking"]["frequency_mae_hz"], amplitude_mae=best["tracking"]["amplitude_mae"]))
++    aggregates = []
++    for name in ALGORITHMS:
++        for step in range(0, 102401, 2048):
++            values = [r for r in rows if r["algorithm"]==name and r["steps"]==step]
++            row = dict(algorithm=name, steps=step)
++            for field in ("E_spec", "E_env", "E_total", "frequency_mae_hz", "amplitude_mae"):
++                row[field+"_mean"] = float(np.mean([r[field] for r in values]))
++                row[field+"_sample_sd"] = float(np.std([r[field] for r in values], ddof=1))
++            aggregates.append(row)
++    for mean in (False, True):
++        with plt.style.context(["science", "ieee", "no-latex"]), plt.rc_context({"path.simplify": False}):
++            fig, axes = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
++            for column, (field, label) in enumerate((("log_spectral", "Spectral error"), ("envelope", "Envelope error"), ("total", "Total error"))):
++                for name in ALGORITHMS:
++                    array = np.array([[p["metrics"][field] for p in curve] for curve in curves[name]])
++                    x = [p["steps"] for p in curves[name][0]]
++                    values = array.mean(axis=0) if mean else array[0]
++                    axes[column].plot(x, values, color=COLORS[name], label=name, linewidth=2)
++                    if mean:
++                        sd = array.std(axis=0, ddof=1)
++                        axes[column].fill_between(x, values-sd, values+sd, color=COLORS[name], alpha=.15)
++                axes[column].set_ylabel(label, fontsize=20)
++                axes[column].tick_params(labelsize=15)
++                axes[column].legend(fontsize=15, loc="upper right")
++            axes[-1].set_xlabel("Training environment steps", fontsize=20)
++            axes[-1].set_xlim(0, 102400)
++            fig.tight_layout()
++            fig.savefig(output/("components_mean_sd.png" if mean else "components_seed0.png"), dpi=140, bbox_inches="tight")
++            plt.close(fig)
++    write_csv(output/"components_per_seed.csv", rows)
++    write_csv(output/"components_aggregate.csv", aggregates)
++    write_csv(output/"selected_points.csv", selected)
++    observations = [r for r in aggregates if (r["algorithm"],r["steps"]) in (("TD3",2048),("TD3",102400),("SAC",30720),("SAC",102400))]
++    result = dict(input_sha256=sources, added_training_steps=0,
++                  added_policy_evaluation_steps=0, source="saved curve/best/summary JSON only",
++                  mean_uses_three_seeds=True, sd_ddof=1, smoothing=False,
++                  selected_observations=observations, analysis_wall_s=time.perf_counter()-start)
++    # Exact full commit is supplied by the orchestrator; no branch lookup or
++    # policy evaluation is necessary for this JSON-only analysis.
++    write_json(output/"analysis.json", result)
++    return result
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--control", type=Path, required=True)
++    parser.add_argument("--output", type=Path, required=True)
++    args = parser.parse_args()
++    analyze(args.control, args.output)
+diff --git a/Deeplearning/issue15_audit.py b/Deeplearning/issue15_audit.py
+new file mode 100644
+index 0000000..d33856c
+--- /dev/null
++++ b/Deeplearning/issue15_audit.py
+@@ -0,0 +1,86 @@
++"""Audit common evaluation, reward decomposition and saved B/C artifacts."""
++import hashlib
++import json
++from pathlib import Path
++import time
++
++import numpy as np
++
++from .issue14_audit import Auditor
++from .issue15_analysis import write_json
++
++
++def audit_ablation(output, control):
++    output, control = Path(output), Path(control)
++    start=time.perf_counter(); results={}; distributions=[]
++    base=json.loads((control/"config.json").read_text())
++    for condition in ("spectral_only","envelope_only"):
++        folder=output/condition
++        config=json.loads((folder/"config.json").read_text())
++        if {k:v for k,v in config.items() if k!="reward_terms"} != base or config["reward_terms"]!=condition:
++            raise RuntimeError("Conditions must differ from A only in selected reward terms")
++        auditor=Auditor(folder)
++        expected_files={folder/f"{name}_{seed}/summary.json" for name in ("PPO","TD3","SAC") for seed in (0,1,2)}
++        found_files=set(folder.glob("*_[012]/summary.json"))
++        if found_files!=expected_files:
++            raise RuntimeError("Ablation cohort is incomplete or has unknown runs")
++        auditor.counts["runs_found"]=len(found_files)
++        for name in ("PPO","TD3","SAC"):
++            for seed in (0,1,2):
++                directory=folder/f"{name}_{seed}"
++                auditor.audit_run(directory/"summary.json",name,seed)
++                summary=json.loads((directory/"summary.json").read_text())
++                original=json.loads((control/f"{name}_{seed}/summary.json").read_text())
++                if summary["effective_hyperparameters"]!=original["effective_hyperparameters"]:
++                    raise RuntimeError("Effective learner settings differ from A")
++                if summary["initial_record"]["parameter_sha256"]!=original["initial_record"]["parameter_sha256"] or summary["initial_metrics"]!=original["initial_metrics"]:
++                    raise RuntimeError("Same-seed initial policy or evaluation differs from A")
++                with np.load(directory/"training_trace.npz",allow_pickle=False) as trace:
++                    rewards=trace["rewards"].copy()
++                    spectral=trace["log_spectral"].copy(); envelope=trace["envelope"].copy()
++                    expected=-spectral if condition=="spectral_only" else -envelope
++                    if rewards.shape!=(102400,) or not np.isfinite([rewards,spectral,envelope]).all():
++                        raise RuntimeError("Non-finite or incomplete reward decomposition")
++                    np.testing.assert_allclose(rewards,expected,rtol=1e-6,atol=1e-8)
++                    with np.load(control/f"{name}_{seed}/training_trace.npz") as initial_trace:
++                        np.testing.assert_array_equal(trace["actions"][:256],initial_trace["actions"][:256])
++                if summary["training_reward_terms"]!=condition or summary["evaluation_reward_terms"]!="combined":
++                    raise RuntimeError("Learning reward leaked into common evaluation")
++                for field,data in (("reward",rewards),("local_spectral",spectral),("local_envelope",envelope)):
++                    distributions.append(dict(condition=condition,algorithm=name,seed=seed,quantity=field,
++                        count=len(data),minimum=float(data.min()),mean=float(data.mean()),sd=float(data.std()),
++                        q05=float(np.quantile(data,.05)),median=float(np.median(data)),q95=float(np.quantile(data,.95)),maximum=float(data.max())))
++        auditor.oracle()
++        result=dict(passed=not auditor.errors,checks=auditor.checks,errors=auditor.errors,counts=auditor.counts)
++        write_json(folder/"audit.json",result)
++        if auditor.errors:
++            raise RuntimeError(f"{condition} audit failed: {auditor.errors[:3]}")
++        results[condition]=result
++    # A's scalar reward trace already exists. No training or policy evaluation
++    # is needed to recover its actual distribution; per-step components were
++    # not logged in A and are deliberately not invented here.
++    for name in ("PPO","TD3","SAC"):
++        for seed in (0,1,2):
++            with np.load(control/f"{name}_{seed}/training_trace.npz") as trace:
++                data=trace["rewards"]
++                distributions.append(dict(condition="combined",algorithm=name,seed=seed,quantity="reward",count=len(data),
++                    minimum=float(data.min()),mean=float(data.mean()),sd=float(data.std()),q05=float(np.quantile(data,.05)),
++                    median=float(np.median(data)),q95=float(np.quantile(data,.95)),maximum=float(data.max())))
++    from .issue15_analysis import write_csv
++    write_csv(output/"training_reward_distributions.csv",distributions)
++    manifest=json.loads((output/"manifest.json").read_text())
++    for filename,expected in manifest["training_source_sha256"].items():
++        actual=hashlib.sha256((Path(__file__).parent/filename).read_bytes()).hexdigest()
++        if actual!=expected:
++            prefix=(Path(__file__).parent/filename).read_text().split('if __name__ == "__main__":')[0]
++            cli_only=(filename=="experiments.py" and hashlib.sha256(prefix.encode()).hexdigest()==manifest.get("experiments_import_prefix_sha256"))
++            if not cli_only:
++                raise RuntimeError(f"A computational source changed during learning: {filename}")
++    result=dict(passed=True,conditions={k:dict(checks=v["checks"],counts=v["counts"]) for k,v in results.items()},
++                wall_s=time.perf_counter()-start,source_version_diff=manifest["source_code_difference"],
++                added_training_steps=0,registered_training_steps=1843200,registered_evaluation_steps=32760,
++                audit_policy_evaluation_steps=18*35,local_reward_mapping_verified=True,
++                common_final_evaluation=True)
++    result["initial_policies_and_first_256_actions_match_A"]=True
++    write_json(output/"audit.json",result)
++    return result
+diff --git a/Deeplearning/issue15_report.py b/Deeplearning/issue15_report.py
+new file mode 100644
+index 0000000..b4d0cee
+--- /dev/null
++++ b/Deeplearning/issue15_report.py
+@@ -0,0 +1,253 @@
++"""Read A/B/C saved records; compare identical full-waveform evaluations."""
++import argparse
++import hashlib
++import json
++from pathlib import Path
++import time
++
++import matplotlib
++matplotlib.use("Agg")
++import matplotlib.pyplot as plt
++import numpy as np
++import scienceplots
++
++from .issue15_analysis import write_json, write_csv
++from .issue14_report import _spectrogram, _control_plot, COLORS as ALGORITHM_COLORS
++
++ROOT=Path(__file__).resolve().parent
++PARENT=ROOT/"results/phase0_fixed_target_20261108"
++CONDITIONS=("combined","spectral_only","envelope_only")
++ALGORITHMS=("PPO","TD3","SAC")
++COLORS={"combined":"#0072B2","spectral_only":"#009E73","envelope_only":"#D55E00"}
++LABELS={"combined":"A: combined","spectral_only":"B: spectral only","envelope_only":"C: envelope only"}
++
++
++def digest(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
++def table(headers,rows):
++    return "\n".join(["| "+" | ".join(headers)+" |","| "+" | ".join("---" for _ in headers)+" |",
++        *("| "+" | ".join(map(str,row))+" |" for row in rows)])
++
++
++def fmt(mean,sd): return f"{mean:.6f} ± {sd:.6f}"
++
++
++def controls_with_clear_legend(run,path):
++    try:
++        _control_plot(run,path)
++        return "inside upper right, verified no overlap"
++    except RuntimeError as error:
++        if "legend overlaps" not in str(error): raise
++    snapshot=run["_snapshot"]; times=np.arange(36)*.01
++    with plt.style.context(["science","ieee","no-latex"]),plt.rc_context({"path.simplify":False}):
++        fig,axes=plt.subplots(2,1,figsize=(14,12),sharex=True)
++        try:
++            for i,ax in enumerate(axes):
++                for key,color,label in (("target_controls","black","Target"),("physical_controls",ALGORITHM_COLORS[run["algorithm"]],"Generated")):
++                    values=snapshot[key][:,i]
++                    ax.step(times,np.r_[values,values[-1]],where="post",linewidth=2.8,linestyle="-",color=color,label=label)
++                ax.set_ylabel("Frequency [Hz]" if i==0 else "Amplitude",fontsize=46)
++                ax.tick_params(labelsize=30,width=2,length=10,direction="in",top=False,right=False)
++                for spine in ax.spines.values():spine.set_linewidth(2)
++                ax.legend(loc="lower center",bbox_to_anchor=(.5,1.02),ncol=2,fontsize=30,frameon=False)
++            axes[0].set_ylim(500,3000);axes[1].set_ylim(-.03,1);axes[1].set_xlim(0,.35)
++            axes[1].set_xlabel("Time [s]",fontsize=46)
++            fig.tight_layout(h_pad=3)
++            fig.savefig(path,dpi=120,bbox_inches="tight",pad_inches=.1)
++        finally:plt.close(fig)
++    return "above axes to avoid measured data; physical axis limits unchanged"
++
++
++def generate_report(output,control):
++    output,control=Path(output),Path(control)
++    started=time.perf_counter(); rows=[]; all_curves=[]; runs={}; source_hashes={}; figures=[]
++    for condition in CONDITIONS:
++        runs[condition]={}
++        for name in ALGORITHMS:
++            for seed in (0,1,2):
++                directory=(control if condition=="combined" else output/condition)/f"{name}_{seed}"
++                summary=json.loads((directory/"summary.json").read_text())
++                curve=json.loads((directory/"curve.json").read_text())
++                best=json.loads((directory/"best.json").read_text())
++                assert [p["steps"] for p in curve]==list(range(0,102401,2048))
++                assert curve[-1]["error"]==summary["error"] and curve[-1]["evaluation_phase"]=="post_final_update"
++                logical=Path() if condition=="combined" else Path("reward_ablation")/condition
++                for filename in ("summary.json","curve.json","best.json","agent.zip","rollout.npz"):
++                    source_hashes[str(logical/directory.name/filename)]=digest(directory/filename)
++                row=dict(condition=condition,algorithm=name,seed=seed,E_spec=summary["metrics"]["log_spectral"],
++                    E_env=summary["metrics"]["envelope"],E_total=summary["error"],
++                    frequency_mae_hz=summary["tracking"]["frequency_mae_hz"],amplitude_mae=summary["tracking"]["amplitude_mae"],
++                    initial_E_total=summary["initial_error"],initial_frequency_mae_hz=summary["initial_tracking"]["frequency_mae_hz"],
++                    initial_amplitude_mae=summary["initial_tracking"]["amplitude_mae"],
++                    best_error=best["error"],best_steps=best["steps"],
++                    first_recorded_below_008=next((p["steps"] for p in curve if p["error"]<=.08),None),
++                    training_steps=summary["training_steps"],evaluation_steps=summary["evaluation_steps"],
++                    training_wall_s=summary["training_wall_s"],evaluation_wall_s=summary["evaluation_wall_s"])
++                assert abs(row["E_total"]-row["E_spec"]-row["E_env"])<1e-14
++                rows.append(row)
++                for point in curve:
++                    all_curves.append(dict(condition=condition,algorithm=name,seed=seed,steps=point["steps"],
++                        E_spec=point["metrics"]["log_spectral"],E_env=point["metrics"]["envelope"],E_total=point["error"],
++                        frequency_mae_hz=point["tracking"]["frequency_mae_hz"],amplitude_mae=point["tracking"]["amplitude_mae"]))
++                runs[condition][(name,seed)]=(summary,curve,directory)
++    aggregates=[]
++    for condition in CONDITIONS:
++        for name in ALGORITHMS:
++            selected=[r for r in rows if r["condition"]==condition and r["algorithm"]==name]
++            record=dict(condition=condition,algorithm=name)
++            for field in ("E_spec","E_env","E_total","frequency_mae_hz","amplitude_mae","best_error","training_wall_s","evaluation_wall_s"):
++                record[field+"_mean"]=float(np.mean([r[field] for r in selected]))
++                record[field+"_sample_sd"]=float(np.std([r[field] for r in selected],ddof=1))
++            aggregates.append(record)
++    write_csv(output/"comparison_per_seed.csv",rows)
++    write_csv(output/"comparison_aggregate.csv",aggregates)
++    write_csv(output/"comparison_curves.csv",all_curves)
++    folder=output/"figures";folder.mkdir(exist_ok=True)
++    for mean in (False,True):
++        with plt.style.context(["science","ieee","no-latex"]),plt.rc_context({"path.simplify":False}):
++            fig,axes=plt.subplots(3,1,figsize=(12,12),sharex=True)
++            for ax,name in zip(axes,ALGORITHMS):
++                for condition in CONDITIONS:
++                    curves=[runs[condition][(name,seed)][1] for seed in (0,1,2)]
++                    x=np.array([p["steps"] for p in curves[0]])
++                    array=np.array([[p["error"] for p in curve] for curve in curves])
++                    values=array.mean(axis=0) if mean else array[0]
++                    ax.plot(x,values,label=LABELS[condition],color=COLORS[condition],linewidth=2)
++                    if mean:
++                        sd=array.std(axis=0,ddof=1)
++                        ax.fill_between(x,values-sd,values+sd,color=COLORS[condition],alpha=.15)
++                ax.set_ylabel(name+" acoustic error",fontsize=20); ax.tick_params(labelsize=15)
++                ax.legend(fontsize=13,loc="upper right")
++            axes[-1].set_xlim(0,102400);axes[-1].set_xlabel("Training environment steps",fontsize=20)
++            fig.tight_layout()
++            name="learning_curves_mean_sd.png" if mean else "learning_curves_seed0.png"
++            fig.savefig(folder/name,dpi=140,bbox_inches="tight");plt.close(fig)
++            figures.append(dict(path="figures/"+name,role="three algorithms, shared evaluation, raw 51 points",mean=mean,sd_ddof=1,smoothing=False,threshold_line=False))
++    for condition in CONDITIONS[1:]:
++        for name in ALGORITHMS:
++            summary,curve,directory=runs[condition][(name,0)]
++            with np.load(directory/"rollout.npz",allow_pickle=False) as archive:
++                snapshot={k:archive[k].copy() for k in archive.files}
++            render_run=dict(summary,_snapshot=snapshot)
++            for kind,render in (("spectrogram",_spectrogram),("controls",controls_with_clear_legend)):
++                filename=f"{condition}_{name}_seed0_{kind}.png"
++                layout=render(render_run,folder/filename)
++                figures.append(dict(path="figures/"+filename,condition=condition,algorithm=name,seed=0,
++                    stage="post_final_update",policy_sha256=summary["final_parameter_sha256"],
++                    source=f"{condition}/{name}_0/rollout.npz",title=None,legend_layout=layout))
++    for figure in figures: figure["sha256"]=digest(output/figure["path"])
++    elapsed=time.perf_counter()-started
++    write_json(output/"figure_metadata.json",dict(source_sha256_relative_to_parent=source_hashes,figures=figures,
++        added_training_steps=0,added_policy_evaluation_steps=0,figure_and_report_generation_wall_s=elapsed,
++        common_evaluation="Full 0.35 s combined spectral+envelope error; f/A errors separate"))
++    execution=json.loads((output/"execution.json").read_text()); provenance=json.loads((output/"manifest.json").read_text())
++    analysis=json.loads((output/"reanalysis/analysis.json").read_text())
++    observations=analysis["selected_observations"]
++    by_key={(r["condition"],r["algorithm"]):r for r in aggregates}
++    combined_best=[name for name in ALGORITHMS if by_key[("combined",name)]["E_total_mean"] < min(by_key[(c,name)]["E_total_mean"] for c in CONDITIONS[1:])]
++    findings="今回、合算報酬Aの最終共通誤差平均が両単独条件より小さかった手法: "+", ".join(combined_best)+"。"
++    findings+="スペクトル単独では振幅MAEの残存、包絡単独では周波数MAEの増大が見られ、単一成分の一致を模倣全体の成功と同一視できない。"
++    import csv
++    with (output/"training_reward_distributions.csv").open() as stream:
++        distributions=list(csv.DictReader(stream))
++    reward_rows=[]
++    for condition in CONDITIONS:
++        for name in ALGORITHMS:
++            selected=[r for r in distributions if r['condition']==condition and r['algorithm']==name and r['quantity']=='reward']
++            reward_rows.append([condition,name]+[f"{np.mean([float(r[k]) for r in selected]):.6f}" for k in ('mean','sd','q05','q95')])
++    lines=["# Issue #15：音響報酬の分解・単独報酬比較", "",
++        f"基準ブランチ: `{provenance['branch']}`、Aのcommit: `{provenance['control_commit']}`。mainの旧4,096-step版ではなく、保存済み102,400-step版を対照に使用。", "",
++        "Aは既存の合算報酬、Bはスペクトル単独、Cは包絡単独。B/Cのみ各3手法×3 seed、102,400ステップをゼロから学習した。Aは再学習していない。"
++        "目標・音生成・観測・行動・seed管理・ネットワーク・学習率等は共通で、学習スカラーに含める報酬項だけを変更。評価は全条件で同じ合算距離と周波数/振幅MAE。", "",
++        "## 最終結果（3 seed平均±標本SD）", "",
++        table(["条件","手法","全区間E_spec","全区間E_env","全区間E_total","周波数MAE[Hz]","振幅MAE"],[[r['condition'],r['algorithm']]+[fmt(r[k+'_mean'],r[k+'_sample_sd']) for k in ('E_spec','E_env','E_total','frequency_mae_hz','amplitude_mae')] for r in aggregates]), "",
++        "主結果は最終更新後の方策。全27 runの個別値、初期値、途中最良、参考精度への到達点、計算時間は [comparison_per_seed.csv](comparison_per_seed.csv)。"
++        "到達点は2,048ステップの評価グリッド上の観測値で、真の初到達stepを特定したものではない。0.08は聴覚的同一性の合格基準ではない。", "",
++        findings,"",
++        "## 学習推移", "",
++        "![seed 0比較](figures/learning_curves_seed0.png)", "",
++        "各パネルはPPO・TD3・SAC、各線はA/B/C。同じ51点を平滑化せず描いた。最終点は最終更新後、最後の更新前callbackは各runに別保存。"
++        "[3 seed平均±SD](figures/learning_curves_mean_sd.png) と [comparison_curves.csv](comparison_curves.csv) に全seedの推移を示す。", "",
++        "## 再学習なしのA成分分解", "",
++        "既存curve/best/summary JSONだけを読み、追加学習0・追加方策評価0で再分析した。入力hashは [reanalysis/analysis.json](reanalysis/analysis.json)。", "",
++        table(["手法","step","E_spec平均","E_env平均","E_total平均"],[[r['algorithm'],r['steps'],f"{r['E_spec_mean']:.6f}",f"{r['E_env_mean']:.6f}",f"{r['E_total_mean']:.6f}"] for r in observations]), "",
++        "SACの30,720→最終の悪化は主にスペクトル項の増大で、包絡項は同程度。この記述だけでは包絡報酬の干渉が原因だとはいえない。"
++        "[seed 0成分曲線](reanalysis/components_seed0.png)、[3 seed平均±SD](reanalysis/components_mean_sd.png)、"
++        "[初期・20,480・51,200・最終・各seed最良の比較](reanalysis/selected_points.csv) を保存した。", "",
++        "E_specは80 dBで正規化した対数パワースペクトル差であり、周波数制御誤差そのものではない。E_envは約5 ms RMS包絡差であり、振幅制御誤差そのものではない。"
++        "両者は現行scale=1では無次元でもオーダーや学習寄与は同じとは限らず、周波数MAE[Hz]と無次元振幅MAEを別に比較した。", "",
++        f"例えばTD3のBでは周波数MAEがAの{by_key[('combined','TD3')]['frequency_mae_hz_mean']:.2f} Hzから{by_key[('spectral_only','TD3')]['frequency_mae_hz_mean']:.2f} Hzへ小さくなったが、"
++        f"E_specは{by_key[('combined','TD3')]['E_spec_mean']:.5f}から{by_key[('spectral_only','TD3')]['E_spec_mean']:.5f}へ大きくなった。スペクトル項を周波数制御誤差と置き換えて説明できない具体例である。", "",
++        "## 実際の学習報酬とスケール", "",
++        "学習器には毎step一つのスカラーを渡す。Bは−E_spec、Cは−E_envで、除いた項もinfoとtraining_traceへ記録。評価環境では常に合算報酬を使用する。"
++        "共通の主評価は完成0.35秒波形の距離であり、35個の10 ms局所報酬の和とは異なる。", "",
++        "[training_reward_distributions.csv](training_reward_distributions.csv) に実報酬のmin/mean/SD/分位点/maxとB/C局所成分を記録。"
++        "Aは既存training_traceのスカラー分布を利用し、未記録だったAの局所成分は再生成・推定していない。"
++        "報酬項の除去は数値スケールやSACのentropy項との相対関係も変えるため、差を項の干渉だけへ帰属しない。", "",
++        table(["条件","手法","報酬mean","報酬SD","p05","p95"],reward_rows),"",
++        "上表は各seedの全102,400学習stepを混ぜた報酬分布の統計を3 seedで平均した値で、学習終盤だけの分布ではない。SDはstep分布のSDであり、最終性能表のseed間標本SDとは区別する。","",
++        "## 代表スペクトログラムと制御", "",
++        "全図はseed 0の最終更新後の同じモデル・音声・制御。既存SciencePlots系スタイル、0–2500 Hz、Blackman–Harris窓、表示専用10 MHz、gray_r、−50〜−20 dB、図中タイトルなしを維持。", "",
++        *[f"- {condition} / {name}: [スペクトログラム](figures/{condition}_{name}_seed0_spectrogram.png)、[周波数・振幅](figures/{condition}_{name}_seed0_controls.png)" for condition in CONDITIONS[1:] for name in ALGORITHMS], "",
++        "Aの図は親のfigures/をそのまま利用する。特にCの周波数追従は、合計誤差や包絡項が小さいことだけから成功と判断せず、上のHz単位のMAEと制御図を確認する。", "",
++        "## 重みλ・カリキュラムの判断", "",
++        findings,"",
++        "この共通評価・予算では両項を維持するAを当面の基準とし、今回の結果から直ちに重みを変更する必要性は認めない。"
++        "ただし最適な正のλは同定しておらず、合算報酬の普遍的な必須性やλ=1の最適性を証明したものではない。"
++        "Bはλ=0に相当し、Cはスペクトル係数を0にした対照で、正のλ探索とは区別する。"
++        "段階的切替・新しい正のλの追加学習は未検証で見送り、将来実施する場合は値・予算・seedを事前固定する。判断は [decision.json](decision.json) に記録。", "",
++        "## 計算費用・検証", "",
++        f"B/C新規学習: {execution['completed_runs']} run、学習{execution['training_steps']:,}、run内評価{execution['evaluation_steps']:,}環境ステップ。"
++        f"実行wall {execution['execution_wall_s']:.3f}秒、CPU各1スレッド・独立{provenance['workers']}プロセス。図・比較表生成は約{elapsed:.3f}秒で別計上。厳密な速度順位は評価しない。", "",
++        "[audit.json](audit.json) では全モデルの再読み込み、最終音声/制御/曲線/指標の一致、実更新数、全stepの報酬分解、有限値、評価中に学習器を更新しない署名を検査。"
++        "Oracle・同一目標・再現性・共通評価のテストはtest_results.json/txtを参照。Aと同じライブラリ版を使用し、差異一覧はmanifestに記録した。", "",
++        "## 保存構造と再実行", "",
++        "Phase 0の親はphase0_fixed_target_20261108/の一つ。保存名の日付は歴史的な名前で、実行日ではない。"
++        "Aは親直下、B/Cはこのreward_ablation内、旧ランダム目標の全固有データは親のlegacy_random_target/。"
++        "移設前後の全hash/サイズ・Git復元経路・参照の扱いはlegacy_inventory.json、reference_inventory.json、integration.jsonを参照。", "",
++        "初回実行（既存の同名B/C成果は上書きしない）:", "", "```bash",provenance['reproducible_command'],"```", "",
++        "保存済みの値・図だけを再生成:", "", "```bash", "PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15_report", "```", "",
++        "本結果は目標f/Aが観測される固定正弦波のin-target追従課題。鳴管の逆推定、実録音、左右相互作用、未知音への汎化は示さない。"
++        "3 seedの有限予算・途中最良の選択バイアス・学習報酬スケールの違いを保ったまま解釈する。", "",
++    ]
++    (output/"REPORT.md").write_text("\n".join(lines))
++    spectral_total={r['algorithm']:r['E_total_mean'] for r in aggregates if r['condition']=='spectral_only'}
++    combined_total={r['algorithm']:r['E_total_mean'] for r in aggregates if r['condition']=='combined'}
++    decision=dict(weight_search_performed=False,curriculum_performed=False,positive_lambda_values_tested=[1],spectral_only_equivalent_lambda=0,
++        interpretation="A outperforms either single-term condition on shared final mean total in the algorithms listed; no positive lambda was optimized",
++        combined_best_algorithms=combined_best,
++        next_action="Retain both terms (lambda=1) as current reference; no immediate weight change justified by this finite ablation. Other positive weights and curricula remain unverified",
++        spectral_only_minus_combined_final_mean={k:spectral_total[k]-combined_total[k] for k in ALGORITHMS},
++        evidence="comparison_aggregate.csv; common E_spec/E_env/E_total and f/A MAE, three seeds",
++        necessity="Not established by single-term ablations alone; use observed accuracy/tradeoffs to preregister a separate weighted study if needed")
++    write_json(output/"decision.json",decision)
++    return aggregates
++
++
++def update_index(control,aggregates):
++    text=["# Phase 0：固定目標と報酬アブレーション", "",
++        "正本ブランチはmain_deeplearning。保存名20261108は歴史的な名前で、実行日は各manifestを参照。", "",
++        "- [Issue #15の比較レポート](reward_ablation/REPORT.md)：A/B/C、3手法×3 seed、共通評価。",
++        "- [Issue #14のA長期学習レポート（保存時の原文）](CONTROL_REPORT.md)",
++        "- [再学習なしの成分曲線](reward_ablation/reanalysis/components_mean_sd.png)",
++        "- [A/B/Cの学習曲線](reward_ablation/figures/learning_curves_seed0.png)",
++        "- [旧ランダム目標の実データ](legacy_random_target/)：移設前と全bytes一致。", "",
++        table(["条件","手法","最終共通誤差 平均±標本SD","周波数MAE[Hz]","振幅MAE"],[[r['condition'],r['algorithm'],fmt(r['E_total_mean'],r['E_total_sample_sd']),f"{r['frequency_mae_hz_mean']:.3f}",f"{r['amplitude_mae_mean']:.6f}"] for r in aggregates]), "",
++        "Aは保存済み9 runを再利用。B/Cはそれぞれ9 runをゼロから102,400環境step、2,048step毎に評価。報酬項の選択以外は共通。"
++        "主評価は最終方策の全0.35秒距離とf/A MAEで、局所報酬や途中最良とは区別した。", "",
++        "スカラーの数値スケールが変わるため、差を項の干渉だけで説明しない。λ調整・カリキュラムは未検証で、追加学習は行っていない。"
++        "固定正弦波のin-target成績であり、未知音・鳴管・実録音への一般化は主張しない。", "",
++        "親直下のAモデル・音声・曲線・JSONと既存図は保持した。過去のmanifest/CSV/復元記録にある旧results/phase0パスは履歴で、"
++        "現在はlegacy_random_targetへ対応する。監査・復元用resolverは旧パスのhash値を変更せず解決する。", "",
++    ]
++    (Path(control)/"REPORT.md").write_text("\n".join(text))
++
++
++if __name__=="__main__":
++    parser=argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--output",type=Path,default=PARENT/"reward_ablation")
++    parser.add_argument("--control",type=Path,default=PARENT)
++    args=parser.parse_args()
++    values=generate_report(args.output,args.control)
++    if args.output.resolve()==(args.control/"reward_ablation").resolve(): update_index(args.control,values)
+diff --git a/Deeplearning/issue15_integration.py b/Deeplearning/issue15_integration.py
+new file mode 100644
+index 0000000..035f0a0
+--- /dev/null
++++ b/Deeplearning/issue15_integration.py
+@@ -0,0 +1,130 @@
++"""Publish audited B/C and relocate every legacy byte before removing old path."""
++from datetime import datetime
++import hashlib
++import json
++import os
++from pathlib import Path
++import shutil
++import subprocess
++from zoneinfo import ZoneInfo
++
++from .issue15 import ROOT, inventory, sha
++from .issue15_analysis import write_json
++
++
++def integrate(output,parent,legacy):
++    output,parent,legacy=map(lambda p:Path(p).resolve(),(output,parent,legacy))
++    expected_parent=ROOT/"results/phase0_fixed_target_20261108"
++    if parent!=expected_parent or legacy!=ROOT/"results/phase0":
++        raise ValueError("Integration is limited to the two declared Phase 0 directories")
++    if output.parent.parent!=ROOT/"results/.issue15-work" or output.name!="artifacts":
++        raise ValueError("Publish only the isolated Issue 15 work directory")
++    if any(p.is_symlink() for p in (parent,legacy,output)):
++        raise ValueError("Symlink roots are not eligible")
++    control_before=json.loads((output/"control_before.json").read_text())
++    migration=json.loads((output/"legacy_inventory.json").read_text())
++    if inventory(parent)!=control_before or inventory(legacy)!=migration["files"]:
++        raise RuntimeError("Source artifacts changed; no integration or deletion allowed")
++    if not json.loads((output/"audit.json").read_text())["passed"]:
++        raise RuntimeError("B/C audit gate failed")
++    manifest=json.loads((output/"manifest.json").read_text())
++    source_names=("issue15.py","issue15_analysis.py","issue15_audit.py","issue15_report.py","issue15_integration.py",
++        "issue14.py","issue14_audit.py","issue14_report.py","issue14_transaction.py","sine_env.py","experiments.py",
++        "legacy_paths.py","redraw.py","run.py","make_report.py","tests/test_issue15.py","tests/test_phase0_paths.py")
++    manifest["published_source_sha256"]={name:sha(ROOT/name) for name in source_names}
++    manifest["diagnostic_logging_difference"]="B/C record per-step reward components; no new RNG operations or learner hyperparameters"
++    manifest["path_maintenance_difference"]="experiments.py CLI default relocated; imported learning-source prefix exactly unchanged"
++    patch=subprocess.check_output(["git","diff",manifest["control_commit"],"--",*source_names],cwd=ROOT,text=True)
++    for name in source_names:
++        tracked=subprocess.run(["git","ls-files","--error-unmatch","--",name],cwd=ROOT,capture_output=True)
++        if tracked.returncode:
++            delta=subprocess.run(["git","diff","--no-index","--","/dev/null",str(Path(ROOT.name)/name)],cwd=ROOT.parent,capture_output=True,text=True)
++            if delta.returncode not in (0,1): raise RuntimeError(delta.stderr)
++            patch+=delta.stdout
++    write_json(output/"manifest.json",manifest)
++    (output/"source_changes.patch").write_text(patch)
++    for name,value in json.loads((output/"protected_before.json").read_text()).items():
++        if not (ROOT/name).is_file() or sha(ROOT/name)!=value:
++            raise RuntimeError(f"An unrelated result changed: {name}")
++    destination=parent/"legacy_random_target"
++    ablation=parent/"reward_ablation"
++    archived_report=parent/"CONTROL_REPORT.md"
++    if destination.exists() or ablation.exists() or archived_report.exists():
++        raise FileExistsError("Will not replace integrated or unknown data")
++    copied=output.parent/"legacy_copy"
++    shutil.copytree(legacy,copied,symlinks=True)
++    if inventory(copied)!=migration["files"]:
++        raise RuntimeError("Legacy copy hash or size differs")
++    os.replace(copied,destination)
++    os.replace(output,ablation)
++    original=(ablation/"control_report_original.md").read_bytes()
++    assert hashlib.sha256(original).hexdigest()==control_before["REPORT.md"]["sha256"]
++    archived_report.write_bytes(original)
++    (ablation/"control_report_original.md").unlink()
++    try:
++        # The source path remains present throughout these gates. The resolver
++        # must already read the new copy, including every unique legacy NPZ.
++        from .legacy_paths import legacy_phase0_root, protected_path
++        if legacy_phase0_root()!=destination:
++            raise RuntimeError("Legacy resolver did not select the relocated directory")
++        for relative,value in migration["files"].items():
++            old_relative=Path(migration["old_path"])/relative
++            if sha(protected_path(old_relative))!=value["sha256"]:
++                raise RuntimeError(f"Historical reference mismatch: {relative}")
++            saved=subprocess.check_output(["git","show",f"{migration['commit']}:{old_relative}"],cwd=ROOT)
++            if hashlib.sha256(saved).hexdigest()!=value["sha256"]:
++                raise RuntimeError(f"Git restoration mismatch: {relative}")
++        for name in ("PPO","TD3","SAC"):
++            for seed in (0,1,2):
++                curve=json.loads((destination/f"{name}_{seed}/curve.json").read_text())
++                if [p["steps"] for p in curve]!=list(range(0,4097,512)):
++                    raise RuntimeError("Historical curve loader no longer sees original inputs")
++        from .issue14_audit import Auditor
++        auditor=Auditor(parent)
++        checked=auditor.run()
++        write_json(ablation/"control_audit.json",checked)
++        if not checked["passed"]:
++            raise RuntimeError(f"Frozen A audit failed after relocation: {checked['errors'][:3]}")
++        for name,value in control_before.items():
++            path=archived_report if name=="REPORT.md" else parent/name
++            if sha(path)!=value["sha256"]:
++                raise RuntimeError(f"A changed during integration: {name}")
++        for name,value in json.loads((ablation/"protected_before.json").read_text()).items():
++            if sha(ROOT/name)!=value:
++                raise RuntimeError(f"Unrelated result changed: {name}")
++        if inventory(legacy)!=migration["files"]:
++            raise RuntimeError("Old directory gained unknown files; preserve it")
++        # All checks above passed while both copies existed. Rename the exact
++        # old tree into our private work area; only that verified copy is later
++        # removed. No symlink target or other results directory is traversed.
++        removed=output.parent/"verified_legacy_removed"
++        os.replace(legacy,removed)
++        from .issue15_report import update_index
++        import csv
++        with (ablation/"comparison_aggregate.csv").open() as stream:
++            aggregates=[{k:float(v) if k not in ("condition","algorithm") else v for k,v in r.items()} for r in csv.DictReader(stream)]
++        update_index(parent,aggregates)
++        result=dict(passed=True,completed_at=datetime.now(ZoneInfo("Asia/Tokyo")).isoformat(),
++            branch="main_deeplearning",legacy_files=len(migration["files"]),
++            legacy_hashes_and_sizes_equal=inventory(destination)==migration["files"],
++            old_path_removed=not legacy.exists(),git_restoration_verified=True,
++            control_original_files=len(control_before),control_bytes_unchanged=True,
++            original_control_report="CONTROL_REPORT.md",control_audit_passed=True,
++            protected_results=len(json.loads((ablation/"protected_before.json").read_text())),
++            protected_results_unchanged=True,symlink_targets_followed=False,
++            historical_metadata="A manifest/CSV/protected records retain original paths and hashes; resolver maps moved legacy bytes",
++            historical_completion="Parent completion_verification.json describes original A, not the extended integrated tree",
++            old_legacy_restore_to_empty_directory=f"git archive {migration['commit']} {migration['old_path']} | tar -x -C /path/to/empty/recovery-directory")
++        write_json(ablation/"integration.json",result)
++        if not result["legacy_hashes_and_sizes_equal"] or not result["old_path_removed"]:
++            raise RuntimeError("Post-integration invariant failed")
++    except BaseException:
++        # Preserve failed work and the exact old source; do not destroy an
++        # unexpected file merely to force a rollback.
++        removed=output.parent/"verified_legacy_removed"
++        if removed.exists() and not legacy.exists(): os.replace(removed,legacy)
++        (parent/"REPORT.md").write_bytes(original)
++        if archived_report.exists() and archived_report.read_bytes()==original: archived_report.unlink()
++        if destination.exists(): os.replace(destination,output.parent/"legacy_failed")
++        if ablation.exists(): os.replace(ablation,output)
++        raise
+diff --git a/Deeplearning/tests/test_issue15.py b/Deeplearning/tests/test_issue15.py
+new file mode 100644
+index 0000000..8c5b828
+--- /dev/null
++++ b/Deeplearning/tests/test_issue15.py
+@@ -0,0 +1,81 @@
++"""Reward selection changes only learning scalars; evaluation stays shared."""
++import json
++from pathlib import Path
++from tempfile import TemporaryDirectory
++import unittest
++
++import numpy as np
++
++from Deeplearning.acoustics import distance
++from Deeplearning.experiments import phase0_factories
++from Deeplearning.sine_env import SineConfig, SineEnv
++
++
++class RewardSelectionTests(unittest.TestCase):
++    def test_scalar_decomposition_and_bitwise_identical_generation(self):
++        modes=("combined","spectral_only","envelope_only")
++        envs=[SineEnv(SineConfig(reward_terms=m,reseed_action_space_on_reset=False)) for m in modes]
++        try:
++            observations=[e.reset(seed=0)[0] for e in envs]
++            actions=np.random.default_rng(4).uniform(-1,1,(35,2))
++            for action in actions:
++                records=[e.step(action) for e in envs]
++                for index,(mode,record) in enumerate(zip(modes,records)):
++                    obs,reward,done,truncated,info=record
++                    self.assertIsInstance(reward,float)
++                    self.assertEqual(reward,-info[{"combined":"total","spectral_only":"log_spectral","envelope_only":"envelope"}[mode]])
++                    np.testing.assert_array_equal(obs,records[0][0])
++                    self.assertEqual(info["total"],info["log_spectral"]+info["envelope"])
++                self.assertNotEqual(records[0][1],records[1][1])
++            for env in envs:
++                np.testing.assert_array_equal(np.concatenate(env.audio),np.concatenate(envs[0].audio))
++                np.testing.assert_array_equal(env.target_audio,envs[0].target_audio)
++            self.assertEqual(SineConfig().reward_terms,"combined")
++            with self.assertRaises(ValueError): SineConfig(reward_terms="weighted")
++        finally:
++            for env in envs: env.close()
++
++    def test_all_learning_conditions_use_the_same_combined_evaluation(self):
++        from Deeplearning.issue14 import evaluate_agent
++        from Deeplearning.experiments import make_agent
++        for mode in ("spectral_only","envelope_only"):
++            settings=dict(target="glide",randomize_training_target=False,reseed_action_space_on_reset=False,
++                          reward_terms=mode,learning_rate=.0003,ppo_rollout=256)
++            train,evaluate=phase0_factories(settings)
++            training,testing=train(),evaluate()
++            try:
++                self.assertEqual(training.config.reward_terms,mode)
++                self.assertEqual(testing.config.reward_terms,"combined")
++                agent=make_agent("PPO",training,0,settings)
++                record,snapshot=evaluate_agent(agent,evaluate,0,"initial")
++                expected=distance(snapshot["target"],snapshot["audio"],48000,scale=1)
++                self.assertEqual(record["metrics"],expected)
++                self.assertEqual(agent.num_timesteps,0)
++                self.assertEqual(agent._n_updates,0)
++                self.assertTrue(record["learner_unchanged"])
++            finally:
++                training.close(); testing.close()
++
++    def test_oracle_and_saved_reward_trace(self):
++        from Deeplearning.issue14 import train_one
++        for mode in ("combined","spectral_only","envelope_only"):
++            env=SineEnv(SineConfig(reward_terms=mode))
++            try:
++                env.reset(seed=0)
++                for action in env.goal_actions.copy(): env.step(action)
++                self.assertLess(distance(env.target_audio,np.concatenate(env.audio),48000,scale=1)["total"],1e-5)
++            finally: env.close()
++        settings=dict(target="glide",randomize_training_target=False,reseed_action_space_on_reset=False,
++                      reward_terms="spectral_only",steps=256,eval_interval=128,learning_rate=.0003,ppo_rollout=64,threshold=.08)
++        with TemporaryDirectory(prefix="birdsong-issue15-test-") as directory:
++            p=Path(directory)/"PPO_0"
++            result=train_one("PPO",0,settings,p)
++            with np.load(p/"training_trace.npz") as trace:
++                np.testing.assert_allclose(trace["rewards"],-trace["log_spectral"],rtol=1e-6,atol=1e-8)
++                self.assertGreater(float(np.mean(trace["envelope"])),0)
++            self.assertEqual(result["training_reward_terms"],"spectral_only")
++            self.assertEqual(result["evaluation_reward_terms"],"combined")
++            self.assertEqual(result["training_steps"],256)
++
++
++if __name__=="__main__": unittest.main()
+diff --git a/Deeplearning/tests/test_phase0_paths.py b/Deeplearning/tests/test_phase0_paths.py
+new file mode 100644
+index 0000000..5ef5f07
+--- /dev/null
++++ b/Deeplearning/tests/test_phase0_paths.py
+@@ -0,0 +1,41 @@
++"""Migration compatibility and guards against replacing integrated unique data."""
++import hashlib
++from pathlib import Path
++from tempfile import TemporaryDirectory
++import unittest
++from unittest.mock import patch
++
++from Deeplearning import legacy_paths
++
++
++class Phase0PathTests(unittest.TestCase):
++    def test_old_protection_path_resolves_identical_bytes_after_real_move(self):
++        with TemporaryDirectory(prefix="birdsong-phase0-path-") as temporary:
++            repo=Path(temporary); parent=repo/"Deeplearning/results/phase0_fixed_target_20261108"
++            old=repo/"Deeplearning/results/phase0"
++            old.mkdir(parents=True); parent.mkdir()
++            (old/"unique_glide.npz").write_bytes(b"unique legacy payload")
++            expected=hashlib.sha256((old/"unique_glide.npz").read_bytes()).hexdigest()
++            with patch.object(legacy_paths,"REPO",repo),patch.object(legacy_paths,"PHASE0_ROOT",parent):
++                self.assertEqual(legacy_paths.legacy_phase0_root(),old)
++                old.rename(parent/"legacy_random_target")
++                path=legacy_paths.protected_path("Deeplearning/results/phase0/unique_glide.npz")
++                self.assertEqual(path,parent/"legacy_random_target/unique_glide.npz")
++                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),expected)
++                self.assertFalse(old.exists())
++
++    def test_issue14_replacement_and_report_cannot_overwrite_integrated_results(self):
++        from Deeplearning import issue14_transaction
++        from Deeplearning.issue14_report import generate_report
++        with TemporaryDirectory(prefix="birdsong-phase0-guard-") as temporary:
++            root=Path(temporary)/"Deeplearning"
++            parent=root/"results/phase0_fixed_target_20261108"
++            (parent/"reward_ablation").mkdir(parents=True)
++            marker=parent/"reward_ablation/valuable.txt";marker.write_text("preserve")
++            with patch.object(issue14_transaction,"ROOT",root),patch.object(issue14_transaction,"DEFAULT_OUTPUT",parent):
++                with self.assertRaises(RuntimeError): issue14_transaction.replace_results({},1)
++            with self.assertRaises(ValueError): generate_report(parent)
++            self.assertEqual(marker.read_text(),"preserve")
++
++
++if __name__=="__main__":unittest.main()
+diff --git a/Deeplearning/reports/ISSUE15_REPORT.md b/Deeplearning/reports/ISSUE15_REPORT.md
+new file mode 100644
+index 0000000..9177984
+--- /dev/null
++++ b/Deeplearning/reports/ISSUE15_REPORT.md
+@@ -0,0 +1,35 @@
++# Issue #15：報酬成分の分解・単独報酬比較
++
++作業ブランチは `main_deeplearning`。AはIssue #14の102,400-step実験（commit `45e6ff5e2a8e00b4555452399c5c9123cc5f514d`）を再利用し、B/CのみPPO・TD3・SAC×3 seed、各102,400環境ステップをゼロから学習した。
++
++[Phase 0索引](../results/phase0_fixed_target_20261108/REPORT.md)・[詳細比較レポート](../results/phase0_fixed_target_20261108/reward_ablation/REPORT.md)。
++
++| 手法 | A: 合算 | B: スペクトル単独 | C: 包絡単独 |
++| --- | ---: | ---: | ---: |
++| PPO | 0.030880 ± 0.006337 | 0.061926 ± 0.006444 | 0.064683 ± 0.019779 |
++| TD3 | 0.020582 ± 0.001583 | 0.056940 ± 0.005956 | 0.084909 ± 0.011404 |
++| SAC | 0.029000 ± 0.004149 | 0.070406 ± 0.010367 | 0.058296 ± 0.000578 |
++
++値は同じ全0.35秒の合算距離、3 seed平均±標本SD。3手法ともAの平均がB/Cより小さかった。Bでは周波数MAEが小さくても振幅・全区間スペクトル誤差が残り、Cでは包絡・振幅が合っても周波数が大きく外れた。
++
++既存曲線の再分析は追加学習・追加方策評価0で行い、SAC後半の悪化が主にスペクトル項の増大であることを確認した。これを包絡報酬の干渉が原因だとは断定しない。
++
++学習器には毎step一つのスカラーを渡し、評価環境の報酬・距離は全条件で合算に固定。実報酬分布・局所成分を記録し、スペクトル誤差と周波数MAE、包絡誤差と振幅MAEを区別した。ライブラリ版・実効ハイパーパラメータ・同一seedの初期方策と最初の256行動はAと一致した。
++
++今回の条件では両項を維持するAを当面の基準とする。正のλの最適値は未検証で、追加探索・カリキュラムは実施しない。Bはλ=0相当、Cはスペクトル項を除いた対照で、重み最適化とは区別する。
++
++検証は22件の学習/報酬/Oracle等テストと2件の移設・上書き防止テストがPASS。B/C各9 runのモデル再読み込み・音声/曲線/指標・全step報酬分解・有限値の監査がPASS。Aも移設前後の監査にPASS。学習は新規1,843,200ステップ、run内評価32,760ステップで、回帰テスト・監査の生成費用は別計上。
++
++Phase 0親を `phase0_fixed_target_20261108/` 一つに統合した。旧 `results/phase0/` の68ファイルは `legacy_random_target/` へ全bytes・サイズ一致で移設し、参照・Git復元・A監査PASS後に旧パスを削除。Aの155元ファイルは、元REPORTをCONTROL_REPORT.mdへ保持した以外は同じパス・bytesのまま。対象外の結果1,954ファイルを保護した。
++
++元データ・復元記録の旧パスとhash値は履歴として維持し、resolverで移設先へ対応づける。`main` の旧4,096-step版とは区別し、他ブランチの統合・コミット・push・Issue投稿は行っていない。
++
++保存済みデータから報告・図だけを再生成（追加学習・方策評価なし）:
++
++```bash
++PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/birdsong-mpl Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15_report
++```
++
++学習後の監査入口で親プロセスに古い参照ヘルパーのimportが残り一度停止したが、保存済み18 runを新プロセスの `issue15 --finish` で監査・統合して完了した。再学習は行っていない。postprocessing_resume.jsonに記録。
++
++結果は固定正弦波のin-target追従課題に限る。鳴管・実録音・左右相互作用・未知音への汎化や、λ=1の普遍的最適性は主張しない。
