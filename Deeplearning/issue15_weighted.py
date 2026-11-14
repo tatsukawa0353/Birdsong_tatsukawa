@@ -85,6 +85,10 @@ def individual_records(folder):
 
 
 def draw_learning_curves(all_curves, folder):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import scienceplots
     colors = {"combined": "#0072B2", "weighted_lambda_0p5": "#D55E00"}
     labels = {"combined": "A: combined (lambda=1)",
               "weighted_lambda_0p5": "D: weighted (lambda=0.5)"}
@@ -116,7 +120,7 @@ def draw_learning_curves(all_curves, folder):
             axes[-1].set_xlim(0, 102400)
             axes[-1].set_xlabel("Training environment steps", fontsize=19)
             fig.tight_layout()
-            fig.savefig(figures / ("learning_curves_mean_sd.png" if mean else "learning_curves_seed0.png"),
+            fig.savefig(folder / ("learning_curves_mean_sd.png" if mean else "learning_curves_seed0.png"),
                         dpi=140, bbox_inches="tight")
             plt.close(fig)
 
