@@ -176,7 +176,8 @@ def phase0_factories(config):
     if not isinstance(reseed, bool):
         raise ValueError("reseed_action_space_on_reset must be a boolean")
     train_factory = lambda: SineEnv(SineConfig(randomize=randomize, target=config["target"], reseed_action_space_on_reset=reseed,
-                                             reward_terms=config.get("reward_terms", "combined")))
+                                             reward_terms=config.get("reward_terms", "combined"),
+                                             reward_envelope_weight=config.get("reward_envelope_weight", 1.0)))
     eval_factory = lambda: SineEnv(SineConfig(randomize=False, target=config["target"], reseed_action_space_on_reset=reseed))
     return train_factory, eval_factory
 
