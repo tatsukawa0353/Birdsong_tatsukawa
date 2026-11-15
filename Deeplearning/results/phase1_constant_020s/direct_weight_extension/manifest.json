@@ -1,0 +1,26 @@
+{
+  "created_utc": "2026-11-15T12:31:32.183422+00:00",
+  "workflow": "issue17_all_methods_weight_extension",
+  "base_manifest_sha256": "40f7c873722fda13862092021468636a102ef259bb3616dceaf4fbbdedb40030",
+  "base_source_sha256": {
+    "constant020_env.py": "bfee6852ef2c5c6e142eab768beafe835ae1f7fa5c8afe7541346fea012337e6",
+    "issue17.py": "0591a8ada40355330e1bf79bcd6c16b82d199c9766ea68ba765ad9d73418d17e",
+    "issue17_diagnostics.py": "cc3d2925d3ce4fa6148d4f5efb837192d418b3cbff36f9dea4cf87ef09958041",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "native/model.cpp": "999f8e9b35c90ac46b8bc671a48fc7386f1de40ba02ce72186e54206203f8755",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "configs/issue17_constant020.json": "2903ef5bae3e7974152b550c5682818bf2054e324aba096d16c2f57cce6f0f1b",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "fixed_budget_de.py": "826cbefdf288254c8a3eb0c07445a90e5e1aab284adc638aa8dc4c841defdd4d"
+  },
+  "numerical_sources": {
+    "issue17_direct_weights.py": "e4d8f07a6bd3768b479ae791aa859661d0c78028f7201978a8c25c1811d40fdf",
+    "issue17_selection.py": "089bbe96c3a4a40f0a63c1a905d987d98b5651169be4f63fd8799ec1d4749693"
+  },
+  "target_sha256": "39c30d9010087d191005489bcf34f237193bad9f33cd4d4fe662fc6914814701",
+  "new_training": "9 DE runs only; lambda=.5;4096 candidates;seeds0/1/2",
+  "random_reuse": "All4096 candidates from corresponding lambda1 run; no candidate regeneration",
+  "selection": "min J_lambda, ties first; common E_total post-hoc minimum stored separately",
+  "original_RL_and_lambda1_direct_runs_retrained": false
+}

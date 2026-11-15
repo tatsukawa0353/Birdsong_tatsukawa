@@ -12,11 +12,9 @@ Phase 0の正本は [phase0_fixed_target_20261108](results/phase0_fixed_target_2
 
 Issue #16の[最終学習率比較](results/phase0_fixed_target_20261108/reward_ablation/learning_rate_comparison/REPORT.md)
 でPhase 0を終了した。λ=0.5のTD3/SACについてLR=0.0001を各3 seed追加し、既存LR=0.0003を読み取り専用で比較している。
-Issue #17の[0.20秒・一定制御比較](results/phase1_constant_020s/REPORT.md)は別条件で、
-Case A・1行動を全区間保持・1D/2D/3D・TD3/SACはλ=1/.5、DE/Randomはλ=1、各3 seed×4096候補（計54 run）。
-共通目標の発声・感度・Oracleを先に検証し、LR=0.0003・γ=1・全区間報酬を使う。最初は [正本の索引](results/phase1_constant_020s/README.md) を読む。
-設定・計算量・初期/途中最良/最終の区別・再実行手順は各レポートを参照する。
-保存成果の独立再検証はリポジトリ親から次で実行できる（学習は行わない）。
+Issue #17は [4手法×2λの正本索引](results/phase1_constant_020s/README.md) を最初に確認する。
+0.20秒・一定1D/2D/3D・4096候補。TD3/SACを再学習せずDE λ=.5を追加し、Random λ=.5は全保存候補を再評価した。
+誤差図は同一次元・同一λの4手法をまとめた24枚へ統一。旧単独手法図は削除済み。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl

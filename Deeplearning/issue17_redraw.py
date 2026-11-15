@@ -1,4 +1,4 @@
-"""Redraw only the canonical, single-condition 4096-step figures."""
+"""Redraw the four-method comparisons for each dimension and reward weight."""
 import argparse
 import json
 from pathlib import Path
@@ -16,4 +16,4 @@ if __name__ == '__main__':
         parser.error('Use the 4096-step canonical results; retired pilot plots are not redrawn')
     figures(args.results)
     if (args.results/'checksums.json').exists():refresh_checksums(args.results)
-    print('Redrew separate single-condition figures; no training or evaluation.')
+    print('Redrew24 four-method comparisons; no training or candidate generation.')

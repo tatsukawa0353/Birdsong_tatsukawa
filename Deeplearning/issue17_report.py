@@ -18,6 +18,8 @@ LABELS={'TD3':'TD3','SAC':'SAC','DE':'DE','random_search':'Random'}
 
 
 def report(output):
+    if (Path(output)/'direct_weight_extension/manifest.json').exists():
+        raise RuntimeError('Current72-profile report is preserved; use issue17_redraw for current four-method figures, or issue17_extension render before publication')
     output=Path(output);started=time.perf_counter()
     from .issue17_cleanup import plan_cleanup
     plan_cleanup(output)

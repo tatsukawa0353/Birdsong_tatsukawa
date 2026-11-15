@@ -15,6 +15,9 @@ from .issue17_artifacts import read_record,compress_records
 
 
 def audit(output):
+    if (Path(output)/'direct_weight_extension/manifest.json').exists():
+        from .issue17_extension_audit import audit as audit_extended
+        return audit_extended(Path(output))
     import torch
     from stable_baselines3 import TD3, SAC
     torch.set_num_threads(1)
