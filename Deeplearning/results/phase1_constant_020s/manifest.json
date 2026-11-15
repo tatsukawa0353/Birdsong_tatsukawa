@@ -1,9 +1,9 @@
 {
   "issue": 17,
-  "created_utc": "2026-11-14T16:35:59.122469+00:00",
-  "git_head": "9aab816615536f609fc6791b9fa36425b02ffa6d",
+  "created_utc": "2026-11-15T10:33:44.137165+00:00",
+  "git_head": "31c4569865ecaaebaa65fc0d9e076badc1948402",
   "settings": {
-    "experiment_id": "constant_020s_v1",
+    "experiment_id": "constant_020s_4096_weight_comparison_v2",
     "seeds": [
       0,
       1,
@@ -20,8 +20,19 @@
       "constant_2d",
       "constant_3d"
     ],
-    "episodes": 256,
-    "eval_every_episodes": 8,
+    "episodes": 4096,
+    "eval_every_episodes": 128,
+    "rl_envelope_weights": [
+      1.0,
+      0.5
+    ],
+    "checkpoints": [
+      256,
+      512,
+      1024,
+      2048,
+      4096
+    ],
     "warmup_episodes": 16,
     "learning_rate": 0.0003,
     "batch_size": 32,
@@ -42,19 +53,20 @@
     "sample_rate": 50000,
     "physical_block_s": 0.01,
     "native_dt": 1e-07,
-    "evaluation_schedule": "0,8,...,248 pre-update; 256 post-final-update; 33 independent evaluations",
-    "direct_final_selection": "candidate 256; selected DE incumbent and best-so-far recorded separately"
+    "evaluation_schedule": "0,128,...,3968 after previous gradient update; 4096 post-final-update; 33 independent evaluations",
+    "direct_final_selection": "actual candidate 4096; selected DE incumbent and best-so-far recorded and independently replayed separately"
   },
   "source_sha256": {
-    "constant020_env.py": "0e41a9431d13ed7076d4e81e3733638138698eef9c1b05f5d81e5debd5481ad6",
-    "issue17.py": "597ac1dc1e311681f8bc1991817c732a66666e102eb80c0e288a572f60f4d6a5",
-    "issue17_diagnostics.py": "2d91aef5160ce926e7fd020dddd60f19b90f481621fca81af811c4f4a57d3f48",
+    "constant020_env.py": "bfee6852ef2c5c6e142eab768beafe835ae1f7fa5c8afe7541346fea012337e6",
+    "issue17.py": "0591a8ada40355330e1bf79bcd6c16b82d199c9766ea68ba765ad9d73418d17e",
+    "issue17_diagnostics.py": "cc3d2925d3ce4fa6148d4f5efb837192d418b3cbff36f9dea4cf87ef09958041",
     "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
     "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
     "native/model.cpp": "999f8e9b35c90ac46b8bc671a48fc7386f1de40ba02ce72186e54206203f8755",
     "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
-    "configs/issue17_constant020.json": "f6c835cb4f466f511165045c2eda4d2a35fc2e21bbfc6503c3d4ab3ceb6a6a37",
-    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865"
+    "configs/issue17_constant020.json": "2903ef5bae3e7974152b550c5682818bf2054e324aba096d16c2f57cce6f0f1b",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "fixed_budget_de.py": "826cbefdf288254c8a3eb0c07445a90e5e1aab284adc638aa8dc4c841defdd4d"
   },
   "native_library_sha256": "6e770257addf2835e2582df7caeb39f8401de7f01e184438959c4d13f9ebac68",
   "versions": {
@@ -99,10 +111,16 @@
     10000000.0,
     10000000.0
   ],
-  "reward": "negative full 0.20 s acoustics.distance (log PSD + 5 ms RMS envelope), gamma=1",
+  "reward": "-(full E_spec + lambda * full E_env), gamma=1; RL lambda=1/0.5, DE/Random lambda=1 only",
   "failure_policy": "keep failed candidate, pad diagnostic waveform, reward -1e6; no retries/exclusion",
   "extreme_reward_policy": "finite rewards preserved without clipping; nonfinite loss/gradients/parameters abort and retain failure log",
   "native_failure_accounting": "attempted steps count entire requested 10 ms block; completed steps exclude interrupted block",
-  "condition_order": "finish 1D and 2D cohorts before gated 3D; no budget extension",
-  "endpoint": "final deterministic policy or actual candidate 256; DE incumbent/best are auxiliary"
+  "condition_order": "all dimensions passed physical gates before training; exact fixed budget for all 54 runs",
+  "supersedes": {
+    "experiment": "constant_020s_v1",
+    "episodes": 256,
+    "pilot_manifest_sha256": "035e4a26039be502099a6e10c759605614500181010fa4c958e75c48bef4c7f2",
+    "pilot_target_sha256": "39c30d9010087d191005489bcf34f237193bad9f33cd4d4fe662fc6914814701"
+  },
+  "endpoint": "final deterministic policy or actual candidate 4096; DE incumbent/best are auxiliary"
 }

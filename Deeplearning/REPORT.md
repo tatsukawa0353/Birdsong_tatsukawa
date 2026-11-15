@@ -2,7 +2,7 @@
 
 # Issue対応レポート
 
-2026-10-31追加: [Phase 1の基礎検証と手法比較](results/phase1_validation_20261031/REPORT.md)。既知制御・固定値・Oracleの整合性、学習前の誤差マップ、3課題×4手法×3 seedの比較を新規フォルダに保存した。以下の過去実験の数値・条件は当時の記録であり、新しいprefix差分報酬の結果とは別に扱う。
+2026-10-31追加: [Phase 1の基礎検証と手法比較](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)。既知制御・固定値・Oracleの整合性、学習前の誤差マップ、3課題×4手法×3 seedの比較を新規フォルダに保存した。以下の過去実験の数値・条件は当時の記録であり、新しいprefix差分報酬の結果とは別に扱う。
 
 2026-10-30（JST）。作業場所: `Deeplearning/`。
 
@@ -75,9 +75,9 @@ Issueのクローズ、GitHubへのコメント・成果物公開、コミット
 | SAC | 1050 | 0.20531 ± 0.01819 | 0/3 |
 | SAC追加 | 4200 | 0.22953 ± 0.01452 | 0/3 |
 
-![Phase 1学習曲線](results/phase1/learning_curves.png)
+![Phase 1学習曲線](https://raw.githubusercontent.com/tatsukawa0353/Birdsong_tatsukawa/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1/learning_curves.png)
 
-![追加学習](results/phase1_extended/learning_curves.png)
+![追加学習](https://raw.githubusercontent.com/tatsukawa0353/Birdsong_tatsukawa/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_extended/learning_curves.png)
 
 追加学習は短い実験を見た後にSACだけを選んだ探索的な実験である。最終誤差はseed依存で、長く学習すれば一貫して改善するという結果ではない。
 
@@ -91,7 +91,7 @@ Issueのクローズ、GitHubへのコメント・成果物公開、コミット
 
 主比較のランダム探索・差分進化は、RLと同じ即時報酬の平均を最小化し、30候補×35step=1050step。最終表には選ばれた方策の終端全体誤差を示す。直接探索は2個の**定数**を探索し、RLは時変制御を出力できるため探索次元は異なる。oracleは生成パラメータ既知の検証であり、学習成績ではない。
 
-初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/phase1_terminal_baselines/` に目的関数の注記とともに残した。
+初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/phase1_constant_020s/history/phase1_terminal_baselines/` に目的関数の注記とともに残した。
 
 ランダム行動よりは小さい誤差を得たが、定数制御や直接探索に対するRL固有の優位性は示せていない。既知制御でほぼゼロにできるため、この目標をモデルが表現できないという説明は当てはまらない。最適化・観測・報酬設計を見直す余地がある。
 

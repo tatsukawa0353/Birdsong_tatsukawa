@@ -46,6 +46,22 @@ class Constant020Tests(unittest.TestCase):
                 with self.assertRaises(ValueError):env.step(action)
         finally:env.close()
 
+    def test_weight_changes_reward_without_changing_waveform_or_common_error(self):
+        outputs=[]
+        for weight in (1.,.5):
+            env=Constant020Env((0,2),self.target,self.controls,envelope_weight=weight)
+            try:
+                metrics,values=episode(env,action=[0.,0.])
+                components=metrics['acoustic_components']
+                self.assertEqual(metrics['acoustic_error'],components['log_spectral']+components['envelope'])
+                self.assertEqual(env.rewards[0],-(components['log_spectral']+weight*components['envelope']))
+                self.assertEqual(metrics['envelope_weight'],weight)
+                outputs.append((metrics,values))
+            finally:env.close()
+        self.assertEqual(outputs[0][0]['acoustic_error'],outputs[1][0]['acoustic_error'])
+        self.assertNotEqual(outputs[0][0]['weighted_loss'],outputs[1][0]['weighted_loss'])
+        np.testing.assert_array_equal(outputs[0][1]['audio'],outputs[1][1]['audio'])
+
     def test_failure_retains_candidate_budget_without_scoring_short_prefix(self):
         env=Constant020Env((0,),self.target,self.controls)
         try:

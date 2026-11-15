@@ -13,14 +13,13 @@ Phase 0の正本は [phase0_fixed_target_20261108](results/phase0_fixed_target_2
 Issue #16の[最終学習率比較](results/phase0_fixed_target_20261108/reward_ablation/learning_rate_comparison/REPORT.md)
 でPhase 0を終了した。λ=0.5のTD3/SACについてLR=0.0001を各3 seed追加し、既存LR=0.0003を読み取り専用で比較している。
 Issue #17の[0.20秒・一定制御比較](results/phase1_constant_020s/REPORT.md)は別条件で、
-Case A・1行動を全区間保持・1D/2D/3D・4手法各3 seed×256候補。
-共通目標の発声・感度・Oracleを先に検証し、LR=0.0003・γ=1・全区間報酬を使う。
+Case A・1行動を全区間保持・1D/2D/3D・TD3/SACはλ=1/.5、DE/Randomはλ=1、各3 seed×4096候補（計54 run）。
+共通目標の発声・感度・Oracleを先に検証し、LR=0.0003・γ=1・全区間報酬を使う。最初は [正本の索引](results/phase1_constant_020s/README.md) を読む。
 設定・計算量・初期/途中最良/最終の区別・再実行手順は各レポートを参照する。
 保存成果の独立再検証はリポジトリ親から次で実行できる（学習は行わない）。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl
-Deeplearning/.venv-rl/bin/python -m Deeplearning.issue16 audit
 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue17 audit
 ```
 
@@ -101,7 +100,7 @@ Deeplearning/.venv/bin/python -m Deeplearning.redraw --include-private
 
 ## Phase 1：基礎検証と手法比較（2026-10-31）
 
-新しい検証結果は [Phase 1検証レポート](results/phase1_validation_20261031/REPORT.md)、結果の判断は [考察と補足計算量](results/phase1_validation_20261031/DISCUSSION.md)。実録音を使わず、Case Aの既知の一定目標について、Oracle・誤差マップを確認してから、一定1変数／10 ms時変1変数／10 ms時変2変数を順に比較する。TD3・SAC・ランダム探索・差分進化を各3 seedで実行し、各課題内の0.35秒生成本数を揃える。主評価・直接法の選択は既存の全区間音響誤差、balancedは独立した補助評価とする。RL環境のprefix差分報酬は主評価に一致し、SACにはentropy正則化もある。旧rolling報酬・balanced_alignedとは別条件である。
+新しい検証結果は [Phase 1検証レポート](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)、結果の判断は [考察と補足計算量](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)。実録音を使わず、Case Aの既知の一定目標について、Oracle・誤差マップを確認してから、一定1変数／10 ms時変1変数／10 ms時変2変数を順に比較する。TD3・SAC・ランダム探索・差分進化を各3 seedで実行し、各課題内の0.35秒生成本数を揃える。主評価・直接法の選択は既存の全区間音響誤差、balancedは独立した補助評価とする。RL環境のprefix差分報酬は主評価に一致し、SACにはentropy正則化もある。旧rolling報酬・balanced_alignedとは別条件である。
 
 ```bash
 export MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
@@ -175,3 +174,5 @@ Deeplearning/.venv/bin/python -m Deeplearning.phase2 --target Deeplearning/sampl
 元の `configs/phase2.json` は旧線形写像の再現用として残している。固定は診断の対照であり、外力を恒久的に固定する仕様変更ではない。新写像も模倣の成功を保証しない。これらの結果には `private_analysis.py` の旧Phase 2専用レポートをそのまま適用せず、Issue #9の保存スキーマ・実験設定を用いて比較する。
 
 API の参照: [Gymnasium Env](https://gymnasium.farama.org/api/env/)、[SB3 custom environments](https://stable-baselines3.readthedocs.io/en/master/guide/custom_env.html)、[SB3 examples](https://stable-baselines3.readthedocs.io/en/master/guide/examples.html)。
+
+旧Phase1は正本内の [history](results/phase1_constant_020s/history/README.md) に必要な歴史情報を集約した。旧監査のprotected_beforeは当時の記録で、現行の保存検証はIssue17の新監査に切り替える。Phase0の保存済み監査ログは改変しない。

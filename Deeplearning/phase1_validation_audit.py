@@ -443,6 +443,8 @@ def main():
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
     output = args.output.resolve()
+    if (output / "ARCHIVED.md").exists():
+        parser.error("Archived partial historical results; use python -m Deeplearning.issue17 audit for the current canonical experiment")
     if not output.is_relative_to((ROOT / "results").resolve()):
         parser.error("output must be the new synthetic experiment below Deeplearning/results")
     result = Auditor(output).run()

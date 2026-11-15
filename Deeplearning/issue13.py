@@ -28,7 +28,7 @@ from .phase1_validation_env import DURATION, RATE, TARGET_CONTROLS
 
 
 CONFIG = ROOT / "configs/issue13_reproduction.json"
-DEFAULT_OUTPUT = ROOT / "results/phase1_issue13_20261107"
+DEFAULT_OUTPUT = ROOT / "results/phase1_constant_020s/history/phase1_issue13_20261107"
 WORKFLOW = "issue13_constant_control_reproduction"
 INDICES = {"constant_1d": (0,), "constant_2d": (0, 2)}
 

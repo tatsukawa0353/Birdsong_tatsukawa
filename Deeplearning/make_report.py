@@ -20,9 +20,9 @@ def fmt(values):
 
 def main():
     p0 = json.loads((legacy_phase0_root()/"summary.json").read_text())
-    p1 = read("results/phase1/summary.json")
-    extended = read("results/phase1_extended/summary.json")
-    baselines = read("results/phase1/baselines.json")
+    p1 = read("results/phase1_constant_020s/history/phase1/summary.json")
+    extended = read("results/phase1_constant_020s/history/phase1_extended/summary.json")
+    baselines = read("results/phase1_constant_020s/history/phase1/baselines.json")
     regression = read("results/reference/regression.json")
     benchmark = read("results/reference/benchmark.json")
     lines = ["# Issue対応レポート", "", "2026-10-30（JST）。作業場所: `Deeplearning/`。", "",
@@ -86,8 +86,8 @@ def main():
                                 ("SAC", [x for x in p1 if x["algorithm"] == "SAC"], 1050),
                                 ("SAC追加", extended, 4200)):
         lines.append(f"| {name} | {budget} | {fmt([x['error'] for x in items])} | {sum(x['first_threshold_step'] is not None for x in items)}/3 |")
-    lines += ["", "![Phase 1学習曲線](results/phase1/learning_curves.png)", "",
-              "![追加学習](results/phase1_extended/learning_curves.png)", "",
+    lines += ["", "![Phase 1学習曲線](https://raw.githubusercontent.com/tatsukawa0353/Birdsong_tatsukawa/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1/learning_curves.png)", "",
+              "![追加学習](https://raw.githubusercontent.com/tatsukawa0353/Birdsong_tatsukawa/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_extended/learning_curves.png)", "",
               "追加学習は短い実験を見た後にSACだけを選んだ探索的な実験である。最終誤差はseed依存で、長く学習すれば一貫して改善するという結果ではない。", "",
               "| 比較法 | 最終評価誤差（平均±seed標準偏差） | 探索に使った環境step/seed |", "|---|---:|---:|"]
     for name in ("constant", "random_step", "oracle", "random_search", "differential_evolution"):
@@ -95,7 +95,7 @@ def main():
         steps = items[0].get("search_env_steps", items[0].get("env_steps"))
         lines.append(f"| {name} | {fmt([x['error'] for x in items])} | {steps} |")
     lines += ["", "主比較のランダム探索・差分進化は、RLと同じ即時報酬の平均を最小化し、30候補×35step=1050step。最終表には選ばれた方策の終端全体誤差を示す。直接探索は2個の**定数**を探索し、RLは時変制御を出力できるため探索次元は異なる。oracleは生成パラメータ既知の検証であり、学習成績ではない。", "",
-              "初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/phase1_terminal_baselines/` に目的関数の注記とともに残した。", "",
+              "初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/phase1_constant_020s/history/phase1_terminal_baselines/` に目的関数の注記とともに残した。", "",
               "ランダム行動よりは小さい誤差を得たが、定数制御や直接探索に対するRL固有の優位性は示せていない。既知制御でほぼゼロにできるため、この目標をモデルが表現できないという説明は当てはまらない。最適化・観測・報酬設計を見直す余地がある。", "",
               "時間変化目標は生成と既知制御による追従まで確認したが、RL学習は未実施。制御周期5/10/17.5 ms、変化ペナルティ0/0.01/0.1の診断は [evaluation_sensitivity.json](results/diagnostics/evaluation_sensitivity.json)。これは同じ学習済み方策の**評価時**の感度で、条件ごとの再学習実験とは区別する。", "",
               "## 4. 音響評価", "",

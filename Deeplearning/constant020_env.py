@@ -31,7 +31,10 @@ class Constant020Env(gym.Env):
     horizon = 1
     physical_horizon = BLOCKS
 
-    def __init__(self, indices, target, controls):
+    def __init__(self, indices, target, controls, *, envelope_weight=1.0):
+        if envelope_weight not in (1.0, 0.5):
+            raise ValueError('Envelope weight must be 1.0 or 0.5')
+        self.envelope_weight = float(envelope_weight)
         self.indices = list(indices)
         if tuple(indices) not in INDICES.values():
             raise ValueError('Expected epsilon_l; epsilon_l/ps; or epsilon_l/ps/f0_l')
@@ -50,6 +53,7 @@ class Constant020Env(gym.Env):
         self.model = BirdModel('A')
         self.decision_steps = self.completed_episodes = self.failures = 0
         self.native_blocks = self.native_blocks_completed = self.silent_episodes = 0
+        self.nonvoiced_episodes = 0
         self.integrated_s = self.integrated_completed_s = 0.
         self.done = True
 
@@ -108,16 +112,25 @@ class Constant020Env(gym.Env):
         self.silent_episodes += int(silent)
         self.actions = [np.asarray(action, dtype=np.float64).clip(-1,1).copy()]
         self.applied_control_history = np.tile(controls, (BLOCKS,1))
-        self.rewards = [-float(error)]
+        weighted = (1e6 if failed else components['log_spectral'] +
+                    self.envelope_weight*components['envelope'])
+        self.rewards = [-float(weighted)]
         self.decision_steps += 1
         self.completed_episodes += 1
         self.done = True
+        voiced = bool(np.std(audio[-1000:])/self.loss_scale > .05) and not failed
+        self.nonvoiced_episodes += int(not voiced)
+        normalized_error = (controls-self.fixed_controls)/(HIGH-LOW)
         info = dict(acoustic_error=float(error), acoustic_components=components, failed=failed,
-                    numerical_failure=failed, generated_silent=silent, negative_return=float(error),
+                    numerical_failure=failed, generated_silent=silent, negative_return=float(weighted),
+                    weighted_loss=float(weighted), envelope_weight=self.envelope_weight,
+                    sustained_voiced=voiced, late_ac_rms_over_target_peak=float(np.std(audio[-1000:])/self.loss_scale),
+                    parameter_nrmse=float(np.sqrt(np.mean(normalized_error[self.indices]**2))),
+                    normalized_parameter_error=normalized_error.tolist(),
                     applied_action=self.actions[0].tolist(), applied_controls=controls.tolist())
         obs = np.zeros(self.observation_space.shape, dtype=np.float32)
         obs[0] = 1
-        return obs, -float(error), True, False, info
+        return obs, -float(weighted), True, False, info
 
     def close(self):
         self.model.close()
@@ -128,7 +141,7 @@ def episode(env, *, action=None, agent=None):
     if agent is not None:
         action = agent.predict(obs, deterministic=True)[0]
     _, reward, done, truncated, metrics = env.step(action)
-    assert done and not truncated and -reward == metrics['acoustic_error']
+    assert done and not truncated and -reward == metrics['weighted_loss']
     return metrics, dict(audio=np.concatenate(env.audio).copy(),
                          physical_controls=np.asarray(env.applied_control_history).copy(),
                          actions=np.asarray(env.actions).copy())
@@ -142,4 +155,5 @@ def account(env, wall_s):
                 integrated_s_attempted=env.native_blocks*CONTROL_S,
                 integrated_s_completed=env.native_blocks_completed*CONTROL_S,
                 generated_audio_s=env.completed_episodes*DURATION, failures=env.failures,
-                silent_episodes=env.silent_episodes, wall_s=float(wall_s))
+                silent_episodes=env.silent_episodes, nonvoiced_episodes=env.nonvoiced_episodes,
+                wall_s=float(wall_s))

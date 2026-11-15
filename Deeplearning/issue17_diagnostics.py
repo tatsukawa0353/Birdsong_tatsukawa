@@ -97,16 +97,14 @@ def prepare_diagnostics(folder):
     from .plotting import single_spectrogram
     single_spectrogram(target,RATE,folder/'target_spectrogram.png')
     import matplotlib.pyplot as plt
-    fig,axes=plt.subplots(2,1,figsize=(12,6),sharex=True)
-    axes[0].plot(np.arange(10000)/RATE,target/scale,lw=.6)
-    axes[0].set_ylabel('Waveform / target peak')
-    rms=np.sqrt(np.mean((target.reshape(20,500)/scale)**2,axis=1))
     ac=np.std(target.reshape(20,500)/scale,axis=1)
-    axes[1].plot((np.arange(20)+.5)*.01,rms,label='10 ms RMS')
-    axes[1].plot((np.arange(20)+.5)*.01,ac,label='10 ms AC RMS')
-    axes[1].legend(loc='upper center',bbox_to_anchor=(.5,1.35),ncol=2)
-    axes[1].set_xlim(0,.2);axes[1].set_xlabel('Time [s]');axes[1].set_ylabel('Normalized amplitude')
-    fig.tight_layout();fig.savefig(folder/'target_transient.png',dpi=140);plt.close(fig)
+    for name,x,y,label in (('target_waveform',np.arange(10000)/RATE,target/scale,'Waveform / target peak'),
+                           ('target_transient',(np.arange(20)+.5)*.01,ac,'AC RMS / target peak')):
+        fig,ax=plt.subplots(figsize=(14,9))
+        ax.plot(x,y,lw=2.8)
+        ax.set_xlim(0,.2);ax.set_xlabel('Time [s]',fontsize=46);ax.set_ylabel(label,fontsize=46)
+        ax.tick_params(labelsize=30)
+        fig.tight_layout();fig.savefig(folder/(name+'.png'),dpi=120,bbox_inches='tight',pad_inches=.05);plt.close(fig)
     review['diagnostic_plot_wall_s']=time.perf_counter()-tick
     write_json(folder/'review.json',review)
     if not passed:

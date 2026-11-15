@@ -27,7 +27,7 @@ from .objectives import BalancedObjective
 
 
 CONFIG = ROOT / "configs/phase1_validation.json"
-DEFAULT_OUTPUT = ROOT / "results/phase1_validation_20261031"
+DEFAULT_OUTPUT = ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031"
 TARGET = np.array([4.1e7, 3.5e7, 3.4e6, 4.9e4, 4.9e4])
 RATE, DURATION, CONTROL_S = 50000, .35, .01
 
