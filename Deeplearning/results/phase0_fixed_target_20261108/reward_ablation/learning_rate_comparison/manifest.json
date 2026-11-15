@@ -1,0 +1,34 @@
+{
+  "issue": 16,
+  "created_utc": "2026-11-14T16:31:26.016853+00:00",
+  "git_head": "9aab816615536f609fc6791b9fa36425b02ffa6d",
+  "git_status_before": " M .gitignore\n M results/phase0_fixed_target_20261108/reward_ablation/weighted_lambda_0p5/figures/learning_curves_mean_sd.png\n M results/phase0_fixed_target_20261108/reward_ablation/weighted_lambda_0p5/figures/learning_curves_seed0.png\n?? issue16.py\n",
+  "source_sha256": {
+    "sine_env.py": "a6311e04b8349cc8dfa13be632502b07b598dd95a87fb563ef63f54b2292334b",
+    "experiments.py": "77f6ab712039597897737a6716d8592f9d9b44ddbccfa928da32731b636143f4",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865"
+  },
+  "runner_sha256": "352d5f9e6fd6a1c9566bd487c01ffbf70675c8bc4b5f297ddabdb2c4c48b4507",
+  "versions": {
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "torch": "2.5.1+cu121",
+    "stable-baselines3": "2.8.0",
+    "gymnasium": "1.2.3"
+  },
+  "baseline": "results/phase0_fixed_target_20261108/reward_ablation/weighted_lambda_0p5",
+  "baseline_manifest_sha256": "169ac94e899f61a35900cf240be88386cd658210379b7c8f46635645d52884aa",
+  "baseline_retrained": false,
+  "changed_training_hyperparameters": {
+    "learning_rate": [
+      0.0003,
+      0.0001
+    ]
+  },
+  "training_reward": "-(local E_spec + 0.5 * local E_env)",
+  "evaluation": "full 0.35 s E_spec + E_env; lambda=1; post-final-update endpoint",
+  "registered_training_runs": 6,
+  "device": "cpu",
+  "torch_threads_per_worker": 1
+}

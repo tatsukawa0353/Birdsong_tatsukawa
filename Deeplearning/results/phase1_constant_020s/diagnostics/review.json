@@ -1,0 +1,218 @@
+{
+  "passed": true,
+  "proceed_3d": true,
+  "controls": [
+    41000000.0,
+    35000000.0,
+    3400000.0,
+    300000.0,
+    49000.0
+  ],
+  "target_samples": 10000,
+  "target_rate": 50000,
+  "target_duration_s": 0.2,
+  "f0_selection": "300000: strictly interior, sustained voicing at neighboring values; fixed before optimizer runs",
+  "f0_fraction_of_range": 0.0252235956185308,
+  "survey": [
+    {
+      "f0_l": 49000.0,
+      "peak": 1278290.6798511017,
+      "late_ac_rms": 490730.179149608,
+      "final_20ms_ac_rms": 489882.56035015866
+    },
+    {
+      "f0_l": 100000.0,
+      "peak": 1378523.593186763,
+      "late_ac_rms": 438220.12236985273,
+      "final_20ms_ac_rms": 436121.3434577705
+    },
+    {
+      "f0_l": 300000.0,
+      "peak": 1329647.959827737,
+      "late_ac_rms": 436479.01205275994,
+      "final_20ms_ac_rms": 436654.82521676586
+    },
+    {
+      "f0_l": 600000.0,
+      "peak": 729810.4709181685,
+      "late_ac_rms": 2.9831426218152046e-10,
+      "final_20ms_ac_rms": 2.9831980782937487e-10
+    },
+    {
+      "f0_l": 1000000.0,
+      "peak": 935045.5102161617,
+      "late_ac_rms": 1.3036585255538532e-10,
+      "final_20ms_ac_rms": 1.3043673564823022e-10
+    },
+    {
+      "f0_l": 2000000.0,
+      "peak": 1169475.4082932149,
+      "late_ac_rms": 0.2612459144626637,
+      "final_20ms_ac_rms": 0.00031971761493559557
+    },
+    {
+      "f0_l": 3000000.0,
+      "peak": 1425965.0363095216,
+      "late_ac_rms": 62.26202566113885,
+      "final_20ms_ac_rms": 1.8715896049425351
+    },
+    {
+      "f0_l": 5024500.0,
+      "peak": 1892594.3642682282,
+      "late_ac_rms": 1126.5046604153142,
+      "final_20ms_ac_rms": 116.52017185282826
+    },
+    {
+      "f0_l": 8000000.0,
+      "peak": 2324050.4069095976,
+      "late_ac_rms": 3379.4103194569657,
+      "final_20ms_ac_rms": 467.6197198565631
+    }
+  ],
+  "sensitivity": [
+    {
+      "index": 0,
+      "physical_delta": 25000.0,
+      "plus_error": 0.018381234486804027,
+      "minus_error": 0.021347446744677267,
+      "late_normalized_waveform_difference": 0.46827186529053766,
+      "plus_late_ac_rms": 435500.63412786694,
+      "minus_late_ac_rms": 437218.8959036142
+    },
+    {
+      "index": 2,
+      "physical_delta": 1500.0,
+      "plus_error": 0.001911597743156831,
+      "minus_error": 0.0023989449401114436,
+      "late_normalized_waveform_difference": 0.3120508071446757,
+      "plus_late_ac_rms": 437360.5836230811,
+      "minus_late_ac_rms": 435950.402866051
+    },
+    {
+      "index": 3,
+      "physical_delta": 9951.0,
+      "plus_error": 0.25717433779423726,
+      "minus_error": 0.15803428833990554,
+      "late_normalized_waveform_difference": 0.4647358122966369,
+      "plus_late_ac_rms": 421461.87622904294,
+      "minus_late_ac_rms": 449213.03670566366
+    }
+  ],
+  "normalized_late_waveform_jacobian_singular_values": [
+    1.1487804917283502,
+    1.0002975086128882,
+    0.8244442225446298
+  ],
+  "interpretation": "Local output sensitivity/rank only; does not prove unique global acoustic identification",
+  "inactive_right_controls": [
+    {
+      "index": 1,
+      "waveform_bitwise_equal": true,
+      "acoustic_error": 0.0
+    },
+    {
+      "index": 4,
+      "waveform_bitwise_equal": true,
+      "acoustic_error": 0.0
+    }
+  ],
+  "oracles": [
+    {
+      "condition": "constant_1d",
+      "action_dtype": "float64",
+      "error": 0.0,
+      "max_waveform_abs_error": 0.0,
+      "max_waveform_relative_error": 0.0,
+      "physical_controls": [
+        41000000.0,
+        35000000.0,
+        3400000.0,
+        300000.0,
+        49000.0
+      ]
+    },
+    {
+      "condition": "constant_1d",
+      "action_dtype": "float32",
+      "error": 1.3044342700876255e-08,
+      "max_waveform_abs_error": 5.968825591844507,
+      "max_waveform_relative_error": 4.489026999761501e-06,
+      "physical_controls": [
+        41000000.01490116,
+        35000000.0,
+        3400000.0,
+        300000.0,
+        49000.0
+      ]
+    },
+    {
+      "condition": "constant_2d",
+      "action_dtype": "float64",
+      "error": 0.0,
+      "max_waveform_abs_error": 0.0,
+      "max_waveform_relative_error": 0.0,
+      "physical_controls": [
+        41000000.0,
+        35000000.0,
+        3400000.0,
+        300000.0,
+        49000.0
+      ]
+    },
+    {
+      "condition": "constant_2d",
+      "action_dtype": "float32",
+      "error": 1.5982208747653808e-08,
+      "max_waveform_abs_error": 7.217605572426692,
+      "max_waveform_relative_error": 5.4282079095295055e-06,
+      "physical_controls": [
+        41000000.01490116,
+        35000000.0,
+        3400000.002235174,
+        300000.0,
+        49000.0
+      ]
+    },
+    {
+      "condition": "constant_3d",
+      "action_dtype": "float64",
+      "error": 4.703081617273867e-13,
+      "max_waveform_abs_error": 7.517635822296143e-06,
+      "max_waveform_relative_error": 5.653854290326661e-12,
+      "physical_controls": [
+        41000000.0,
+        35000000.0,
+        3400000.0,
+        300000.00000000023,
+        49000.0
+      ]
+    },
+    {
+      "condition": "constant_3d",
+      "action_dtype": "float32",
+      "error": 7.562905453709288e-06,
+      "max_waveform_abs_error": 3458.794299633708,
+      "max_waveform_relative_error": 0.002601285756932093,
+      "physical_controls": [
+        41000000.01490116,
+        35000000.0,
+        3400000.002235174,
+        299999.87426400185,
+        49000.0
+      ]
+    }
+  ],
+  "sustained_voicing": true,
+  "target_peak": 1329647.959827737,
+  "listening_gain": 7.52078768375319e-07,
+  "final_20ms_ac_rms": 436654.82521676586,
+  "first_20ms_ac_rms": 427799.35799340735,
+  "same_control_035_prefix_bitwise_equal": true,
+  "duration_note": "Fresh 0.20 s generation; same-control 0.35 s prefix is identical by causality. Objective/frame count differs; historical target f0_l=49000 is different.",
+  "setup_generated_sounds": 31,
+  "setup_native_blocks": 635,
+  "setup_native_steps": 63500000,
+  "setup_integrated_s": 6.3500000000000005,
+  "setup_wall_s": 6.7332748947665095,
+  "diagnostic_plot_wall_s": 0.8698552288115025
+}

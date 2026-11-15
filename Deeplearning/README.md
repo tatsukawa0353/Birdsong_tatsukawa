@@ -10,6 +10,20 @@ Phase 0の正本は [phase0_fixed_target_20261108](results/phase0_fixed_target_2
 全実データは `legacy_random_target/` にある。旧 `results/phase0/` は移設済み。
 `main` の同じパスに残る旧4,096-step結果と取り違えない。
 
+Issue #16の[最終学習率比較](results/phase0_fixed_target_20261108/reward_ablation/learning_rate_comparison/REPORT.md)
+でPhase 0を終了した。λ=0.5のTD3/SACについてLR=0.0001を各3 seed追加し、既存LR=0.0003を読み取り専用で比較している。
+Issue #17の[0.20秒・一定制御比較](results/phase1_constant_020s/REPORT.md)は別条件で、
+Case A・1行動を全区間保持・1D/2D/3D・4手法各3 seed×256候補。
+共通目標の発声・感度・Oracleを先に検証し、LR=0.0003・γ=1・全区間報酬を使う。
+設定・計算量・初期/途中最良/最終の区別・再実行手順は各レポートを参照する。
+保存成果の独立再検証はリポジトリ親から次で実行できる（学習は行わない）。
+
+```bash
+export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl
+Deeplearning/.venv-rl/bin/python -m Deeplearning.issue16 audit
+Deeplearning/.venv-rl/bin/python -m Deeplearning.issue17 audit
+```
+
 ```bash
 # 初回のB/C学習（同名成果があれば上書きしない）
 PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15 --workers 6
