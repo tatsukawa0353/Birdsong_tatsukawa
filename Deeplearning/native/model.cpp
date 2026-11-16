@@ -131,7 +131,7 @@ int bird_reset(void* p, const double* controls, const double* state,
                const double* history, int count, int condition) {
     auto& m=*static_cast<Model*>(p);
     if (count!=m.history_size || condition<0 || condition>2) return -1;
-    m.left.params={controls[0],2e4,2e8,controls[3],controls[2],0.04,0.1,1e-4,5e-3,1.0,0.01,1.2e6,1.5e3};
+    m.left.params={controls[0],2e4,2e8,controls[3],controls[2],0.02,0.1,1e-4,5e-3,1.0,0.01,1.2e6,1.5e3};
     m.right.params=m.left.params;
     m.right.params.epsilon=controls[1]; m.right.params.f0=controls[4];
     if (condition==0) { m.right.params.alpha=0; m.right.params.beta=0; }
