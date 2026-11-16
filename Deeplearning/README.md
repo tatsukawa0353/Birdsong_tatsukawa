@@ -17,6 +17,10 @@ Issue #17は [4手法×2λの正本索引](results/phase1_constant_020s/README.m
 誤差図は同一次元・同一λの4手法をまとめた24枚へ統一。旧単独手法図は削除済み。
 スペクトログラムはTarget共通PSD基準でFinal/Selected Bestを分け、一定制御は集約図で確認する。
 Issue #18の [3D発声領域・制限探索の診断](results/phase1_3d_domain_diagnostics/README.md) は別正本。元の全域結果を保持し、範囲のみ変更した追試と比較する。
+Issue #19の [制限3Dのλ比較・Actor/Critic診断](results/phase1_restricted3d_weights/README.md) は、
+既存λ=1を保持してλ=.5を9 run追加した追試。Randomは同じ保存候補を再スコアし、
+主要図は8枚に集約した。再評価・旧成果のhash照合は `python -m Deeplearning.issue19_audit`、
+保存済み結果からの描画は `python -m Deeplearning.issue19_report`。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl

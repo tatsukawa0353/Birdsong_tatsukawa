@@ -1,0 +1,77 @@
+{
+  "images": [
+    {
+      "path": "figures/learning.png",
+      "sha256": "64994821fe11654cd288731707c368fc927bcc57a161951a16355e7204c2e99c",
+      "description": "All vertices retained; mean ± sample SD; RL 33 independent evaluations, direct 4096 candidates"
+    },
+    {
+      "path": "figures/errors.png",
+      "sha256": "9cb53f7924c01f813aa30bb886a8bfc99437fee2f8fda75078b9b00d16e8e50e",
+      "description": "Solid spectral + hatched envelope; dots individual seeds, error bars sample SD of E_total"
+    },
+    {
+      "path": "figures/lambda_deltas.png",
+      "sha256": "cbeda485a807e7ccdef34089d6d6a275ad329211bf1e43714763f1674718e69c",
+      "description": "Paired seeds; circles Final, squares Selected; sample SD"
+    },
+    {
+      "path": "figures/controls.png",
+      "sha256": "27af8d89df11ccd02abafbe47b8175dca4fab0efa915d7e2db3f120a8c596dbe",
+      "description": "One combined physical-control figure; Final/Selected, both weights, all seeds; target line is reference only"
+    },
+    {
+      "path": "figures/critic_scatter.png",
+      "sha256": "6f1cd9dc0c232ff9c188794ebbe2d0fa9fbece339d91a3f88ed3fa25cf6e95ee",
+      "description": "Q1 and Q2 separated; fixed 1005 candidate pool x3 seeds; no synthetic rewards or new sounds"
+    },
+    {
+      "path": "figures/critic_bias.png",
+      "sha256": "a520f7caea1f822e643068558c8ef0dc6a201ef5b28d71207d9bf2fa82a59986",
+      "description": "Low-J fixed-pool decile vs own training points, seed dots and sample SD; negative means pessimism"
+    },
+    {
+      "path": "figures/representative_final.png",
+      "sha256": "11e5bd807f7edba212d16a016d5e76a3024f29c167decce1440e71c713ca689d",
+      "description": "Fixed seed1 across methods/weights; shared Target PSD and RMS normalization",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "rms_ylim": [
+        0.0,
+        0.5378701209934161
+      ],
+      "target_reference_psd": 1522185576.0445347,
+      "seed": 1,
+      "role": "final"
+    },
+    {
+      "path": "figures/representative_selected.png",
+      "sha256": "ecaab879659b8f7786581ff33f76472f80bbf3c5e6e3b57ffa90e888aaf6826c",
+      "description": "Fixed seed1 across methods/weights; shared Target PSD and RMS normalization",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "rms_ylim": [
+        0.0,
+        0.5378701209934161
+      ],
+      "target_reference_psd": 1522185576.0445347,
+      "seed": 1,
+      "role": "selected"
+    }
+  ],
+  "source_sha256": "96e9b5bbf1a777c72fc1c83f982099384307bbe7176a11aaf5879771a2b35051",
+  "no_training_or_reward_changes": true,
+  "no_per_seed_image_grid": true,
+  "reference": "Full-band target maximum display PSD, 10 MHz / Blackman-Harris / 245760 / overlap184320",
+  "common_display_limits_cover_all_48_endpoints": true,
+  "source_records": [
+    "comparison_per_seed.csv",
+    "paired_lambda_deltas.csv",
+    "critic_predictions_all.csv.gz",
+    "endpoint_sources.json"
+  ]
+}
