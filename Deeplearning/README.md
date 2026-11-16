@@ -15,6 +15,8 @@ Issue #16の[最終学習率比較](results/phase0_fixed_target_20261108/reward_
 Issue #17は [4手法×2λの正本索引](results/phase1_constant_020s/README.md) を最初に確認する。
 0.20秒・一定1D/2D/3D・4096候補。TD3/SACを再学習せずDE λ=.5を追加し、Random λ=.5は全保存候補を再評価した。
 誤差図は同一次元・同一λの4手法をまとめた24枚へ統一。旧単独手法図は削除済み。
+スペクトログラムはTarget共通PSD基準でFinal/Selected Bestを分け、一定制御は集約図で確認する。
+Issue #18の [3D発声領域・制限探索の診断](results/phase1_3d_domain_diagnostics/README.md) は別正本。元の全域結果を保持し、範囲のみ変更した追試と比較する。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl

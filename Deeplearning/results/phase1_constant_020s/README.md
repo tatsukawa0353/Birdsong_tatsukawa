@@ -3,6 +3,8 @@
 最初に [REPORT.md](REPORT.md)。次に下表の6条件を確認する。各画像は同じ次元・同じλの4手法を表示する。
 旧単独手法の誤差図は残していない。次元間・λ間を同じ画像には混在させない。
 
+誤差線図は4手法すべて実線・線幅4.0pt。
+
 | 次元 | λ | 実評価:seed0 | 実評価:平均±SD | J採用解:seed0 | J採用解:平均±SD |
 | --- | --- | --- | --- | --- | --- |
 | 1d | 1.0 | [seed0](figures/learning_curves/1d_lambda1_seed0.png) | [平均±SD](figures/learning_curves/1d_lambda1_mean_sd.png) | [seed0](figures/best_observed/1d_lambda1_seed0.png) | [平均±SD](figures/best_observed/1d_lambda1_mean_sd.png) |
@@ -25,36 +27,20 @@ RLは33回の独立評価、DE/Randomは4096候補。候補数・評価数の違
 - [削除した旧単独手法図72枚](direct_weight_extension/deleted_single_curve_images.txt)
 - [元54runの設定](config.json) / [元manifest](manifest.json) / [追加設定](direct_weight_extension/config.json)
 
-## 音響図・物理量図（seed0、実候補4096／最終方策）
+## 一定制御パラメータの集約比較
 
-スペクトログラムは上段Target・下段Generated。既存図は変更せず保持し、新しいDE/Random λ=.5を追加した。
+| 次元 | Final | Selected Best |
+| --- | --- | --- |
+| 1d | [集約図](figures/physical_controls/1d_final.png) | [集約図](figures/physical_controls/1d_selected_best.png) |
+| 2d | [集約図](figures/physical_controls/2d_final.png) | [集約図](figures/physical_controls/2d_selected_best.png) |
+| 3d | [集約図](figures/physical_controls/3d_final.png) | [集約図](figures/physical_controls/3d_selected_best.png) |
 
-| 次元 | 手法 | λ | スペクトログラム | 物理制御 |
-| --- | --- | --- | --- | --- |
-| 1d | TD3 | 1.0 | [図](figures/spectrograms/1d_TD3_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/1d_TD3_lambda1_epsilon_l_seed0.png) |
-| 1d | SAC | 1.0 | [図](figures/spectrograms/1d_SAC_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/1d_SAC_lambda1_epsilon_l_seed0.png) |
-| 1d | DE | 1.0 | [図](figures/spectrograms/1d_DE_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/1d_DE_lambda1_epsilon_l_seed0.png) |
-| 1d | random_search | 1.0 | [図](figures/spectrograms/1d_random_search_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/1d_random_search_lambda1_epsilon_l_seed0.png) |
-| 1d | TD3 | 0.5 | [図](figures/spectrograms/1d_TD3_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/1d_TD3_lambda0p5_epsilon_l_seed0.png) |
-| 1d | SAC | 0.5 | [図](figures/spectrograms/1d_SAC_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/1d_SAC_lambda0p5_epsilon_l_seed0.png) |
-| 1d | DE | 0.5 | [図](figures/spectrograms/1d_DE_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/1d_DE_lambda0p5_epsilon_l_seed0.png) |
-| 1d | random_search | 0.5 | [図](figures/spectrograms/1d_random_search_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/1d_random_search_lambda0p5_epsilon_l_seed0.png) |
-| 2d | TD3 | 1.0 | [図](figures/spectrograms/2d_TD3_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/2d_TD3_lambda1_epsilon_l_seed0.png) / [ps](figures/physical_controls/2d_TD3_lambda1_ps_seed0.png) |
-| 2d | SAC | 1.0 | [図](figures/spectrograms/2d_SAC_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/2d_SAC_lambda1_epsilon_l_seed0.png) / [ps](figures/physical_controls/2d_SAC_lambda1_ps_seed0.png) |
-| 2d | DE | 1.0 | [図](figures/spectrograms/2d_DE_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/2d_DE_lambda1_epsilon_l_seed0.png) / [ps](figures/physical_controls/2d_DE_lambda1_ps_seed0.png) |
-| 2d | random_search | 1.0 | [図](figures/spectrograms/2d_random_search_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/2d_random_search_lambda1_epsilon_l_seed0.png) / [ps](figures/physical_controls/2d_random_search_lambda1_ps_seed0.png) |
-| 2d | TD3 | 0.5 | [図](figures/spectrograms/2d_TD3_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/2d_TD3_lambda0p5_epsilon_l_seed0.png) / [ps](figures/physical_controls/2d_TD3_lambda0p5_ps_seed0.png) |
-| 2d | SAC | 0.5 | [図](figures/spectrograms/2d_SAC_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/2d_SAC_lambda0p5_epsilon_l_seed0.png) / [ps](figures/physical_controls/2d_SAC_lambda0p5_ps_seed0.png) |
-| 2d | DE | 0.5 | [図](figures/spectrograms/2d_DE_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/2d_DE_lambda0p5_epsilon_l_seed0.png) / [ps](figures/physical_controls/2d_DE_lambda0p5_ps_seed0.png) |
-| 2d | random_search | 0.5 | [図](figures/spectrograms/2d_random_search_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/2d_random_search_lambda0p5_epsilon_l_seed0.png) / [ps](figures/physical_controls/2d_random_search_lambda0p5_ps_seed0.png) |
-| 3d | TD3 | 1.0 | [図](figures/spectrograms/3d_TD3_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/3d_TD3_lambda1_epsilon_l_seed0.png) / [ps](figures/physical_controls/3d_TD3_lambda1_ps_seed0.png) / [f0_l](figures/physical_controls/3d_TD3_lambda1_f0_l_seed0.png) |
-| 3d | SAC | 1.0 | [図](figures/spectrograms/3d_SAC_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/3d_SAC_lambda1_epsilon_l_seed0.png) / [ps](figures/physical_controls/3d_SAC_lambda1_ps_seed0.png) / [f0_l](figures/physical_controls/3d_SAC_lambda1_f0_l_seed0.png) |
-| 3d | DE | 1.0 | [図](figures/spectrograms/3d_DE_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/3d_DE_lambda1_epsilon_l_seed0.png) / [ps](figures/physical_controls/3d_DE_lambda1_ps_seed0.png) / [f0_l](figures/physical_controls/3d_DE_lambda1_f0_l_seed0.png) |
-| 3d | random_search | 1.0 | [図](figures/spectrograms/3d_random_search_lambda1_seed0.png) | [epsilon_l](figures/physical_controls/3d_random_search_lambda1_epsilon_l_seed0.png) / [ps](figures/physical_controls/3d_random_search_lambda1_ps_seed0.png) / [f0_l](figures/physical_controls/3d_random_search_lambda1_f0_l_seed0.png) |
-| 3d | TD3 | 0.5 | [図](figures/spectrograms/3d_TD3_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/3d_TD3_lambda0p5_epsilon_l_seed0.png) / [ps](figures/physical_controls/3d_TD3_lambda0p5_ps_seed0.png) / [f0_l](figures/physical_controls/3d_TD3_lambda0p5_f0_l_seed0.png) |
-| 3d | SAC | 0.5 | [図](figures/spectrograms/3d_SAC_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/3d_SAC_lambda0p5_epsilon_l_seed0.png) / [ps](figures/physical_controls/3d_SAC_lambda0p5_ps_seed0.png) / [f0_l](figures/physical_controls/3d_SAC_lambda0p5_f0_l_seed0.png) |
-| 3d | DE | 0.5 | [図](figures/spectrograms/3d_DE_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/3d_DE_lambda0p5_epsilon_l_seed0.png) / [ps](figures/physical_controls/3d_DE_lambda0p5_ps_seed0.png) / [f0_l](figures/physical_controls/3d_DE_lambda0p5_f0_l_seed0.png) |
-| 3d | random_search | 0.5 | [図](figures/spectrograms/3d_random_search_lambda0p5_seed0.png) | [epsilon_l](figures/physical_controls/3d_random_search_lambda0p5_epsilon_l_seed0.png) / [ps](figures/physical_controls/3d_random_search_lambda0p5_ps_seed0.png) / [f0_l](figures/physical_controls/3d_random_search_lambda0p5_f0_l_seed0.png) |
+各図はλの2列、可変係数の行。seed0/1/2と平均±標本SD、目標の破線を表示。f0_lはHzではない。
 
-モデル・音声・rawは runs/<次元>/<手法>/<lambda>/seed_<n>/。新直接法のbest_objectiveとbest_common_posthocを区別する。
-Random λ=.5のsource_reuse.jsonに候補プール・音声の共有元と新規選択音を記録した。
+## Final / Selected BestのスペクトログラムとRMS包絡
+
+[全次元・手法・λ・seedの図一覧](visualization_revision/FIGURES.md)。Final PSD、Selected PSD、Final RMS、Selected RMSを別リンクで案内する。
+
+全図でTarget最大PSDを0 dBとする共通基準・共通範囲・magmaを使用。RMSは双方を同じTargetピークで正規化。校正済みdB SPLではない。
+
+[描画条件](visualization_revision/display_config.json) / [出所一覧](visualization_revision/catalog.json) / [監査](visualization_revision/audit.json) / [削除一覧](visualization_revision/deleted_images.txt)。

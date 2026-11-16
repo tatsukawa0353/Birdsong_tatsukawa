@@ -1,0 +1,1771 @@
+{
+  "images": [
+    {
+      "path": "figures/learning_curves/3d_full_lambda1_seed0.png",
+      "kind": "comparison_curve",
+      "domain": "full",
+      "field": "acoustic_error",
+      "average": false,
+      "image_sha256": "228afda11864fbcfd732d9d4a2658a940711e262ea597010aba3ed6afab76748",
+      "methods": {
+        "random_search": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "90057742295e0a4b14f8d009a1fa3a9b88e02773e671d395e090c9f322aeea05",
+          "sd_sha256": null,
+          "color": "#CC79A7",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "DE": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "07b15ac321bad9746adb7bc822ac8c50bb6dc335bc61412f94bb47c0be5727ff",
+          "sd_sha256": null,
+          "color": "#009E73",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "SAC": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "8bbdc2be2321e14aaeda4659cf1c34e21205689a566f53738bc036e9a25ed1ec",
+          "sd_sha256": null,
+          "color": "#D55E00",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "TD3": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "41f121d7365b577bc04d6ee4cc0f4c0e8450e05600ee78ab9d4b06fb960bd7c2",
+          "sd_sha256": null,
+          "color": "#0072B2",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        }
+      },
+      "line_count": 4,
+      "band_count": 0,
+      "xlabel": "Number of trials",
+      "ylabel": "Acoustic error",
+      "label_fontsize": 46,
+      "tick_fontsizes": [
+        30.0
+      ],
+      "legend_labels": [
+        "TD3",
+        "SAC",
+        "DE",
+        "Random Search"
+      ],
+      "legend_fontsizes": [
+        29.0
+      ],
+      "legend_inside": true,
+      "legend_line_overlaps": [],
+      "legend_band_overlap": false,
+      "title": "",
+      "xlim": [
+        0.0,
+        4096.0
+      ],
+      "ylim": [
+        -0.09172032365385926,
+        0.9366563229962493
+      ],
+      "path_simplify": false,
+      "grid": false
+    },
+    {
+      "path": "figures/learning_curves/3d_full_lambda1_mean_sd.png",
+      "kind": "comparison_curve",
+      "domain": "full",
+      "field": "acoustic_error",
+      "average": true,
+      "image_sha256": "379413878a11fdfccd999e42e00d3f465ffd4436a5c84d58de0c49fe448f6124",
+      "methods": {
+        "random_search": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "c0c9191f93b2a3c29ef299694505eadb3603c0a6edbc278b42ab60c504df8515",
+          "sd_sha256": "503d5fb72d76663da6df631b11e7ec86ad40cfc7e336fd7b3d804bcc7155180f",
+          "color": "#CC79A7",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "DE": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "b5eda220d02a04d65fa87b5cb26aa72a4f0c779e0f6a444a904382a4e5240517",
+          "sd_sha256": "980c279108a637da441a1f3bec918174a55e239db9634fc4de0bd910463efe40",
+          "color": "#009E73",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "SAC": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "ab3a259b1c791f2cea92be79569375abfd98b742d78285ea62aeac215b8479b8",
+          "sd_sha256": "5022f05bd4b0f631d263c84a74438ec0720a8576d218dd3ed6a3999979c1c335",
+          "color": "#D55E00",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "TD3": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "ec3bf861710042e0103e63ea72af1df1168ba1e6ba01b6ba236ad6ca2135a774",
+          "sd_sha256": "ce5a01c8d852b9b3907169320e88933569d1e8d6c7a926e565491a38541532f8",
+          "color": "#0072B2",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        }
+      },
+      "line_count": 4,
+      "band_count": 4,
+      "xlabel": "Number of trials",
+      "ylabel": "Acoustic error",
+      "label_fontsize": 46,
+      "tick_fontsizes": [
+        30.0
+      ],
+      "legend_labels": [
+        "TD3",
+        "SAC",
+        "DE",
+        "Random Search"
+      ],
+      "legend_fontsizes": [
+        29.0
+      ],
+      "legend_inside": true,
+      "legend_line_overlaps": [],
+      "legend_band_overlap": false,
+      "title": "",
+      "xlim": [
+        0.0,
+        4096.0
+      ],
+      "ylim": [
+        -0.09172032365385926,
+        0.9366563229962493
+      ],
+      "path_simplify": false,
+      "grid": false
+    },
+    {
+      "path": "figures/best_observed/3d_full_lambda1_seed0.png",
+      "kind": "comparison_curve",
+      "domain": "full",
+      "field": "objective_selected_common_error",
+      "average": false,
+      "image_sha256": "4d67428b1a316d3c7ae6fddc06c848133ec4a7ed7709d6ddde4855e698957d18",
+      "methods": {
+        "random_search": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "809f6d4f611f02558f2b4812633d2c9e617fe938d005e745dfb386ee3ebcdd9c",
+          "sd_sha256": null,
+          "color": "#CC79A7",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "DE": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "68d81c1ed5d694ef8f7aed283019ac2ae7629153e07aee22558f0f5c2c0062dc",
+          "sd_sha256": null,
+          "color": "#009E73",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "SAC": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "151b836b65ba6aa68d7868383ae2d1cffae5902b516468c1d791cc689fcf61d2",
+          "sd_sha256": null,
+          "color": "#D55E00",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "TD3": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "41f121d7365b577bc04d6ee4cc0f4c0e8450e05600ee78ab9d4b06fb960bd7c2",
+          "sd_sha256": null,
+          "color": "#0072B2",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        }
+      },
+      "line_count": 4,
+      "band_count": 0,
+      "xlabel": "Number of trials",
+      "ylabel": "Acoustic error",
+      "label_fontsize": 46,
+      "tick_fontsizes": [
+        30.0
+      ],
+      "legend_labels": [
+        "TD3",
+        "SAC",
+        "DE",
+        "Random Search"
+      ],
+      "legend_fontsizes": [
+        29.0
+      ],
+      "legend_inside": true,
+      "legend_line_overlaps": [],
+      "legend_band_overlap": false,
+      "title": "",
+      "xlim": [
+        0.0,
+        4096.0
+      ],
+      "ylim": [
+        -0.09172032365385926,
+        0.9366563229962493
+      ],
+      "path_simplify": false,
+      "grid": false
+    },
+    {
+      "path": "figures/best_observed/3d_full_lambda1_mean_sd.png",
+      "kind": "comparison_curve",
+      "domain": "full",
+      "field": "objective_selected_common_error",
+      "average": true,
+      "image_sha256": "8536a02965f7b000b1b7168ee00870b02ca1341227038fc9310526984f2e4486",
+      "methods": {
+        "random_search": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "796cca5500667526edadac8bd165c4511439bb2b09ef2243957ada98322fa16e",
+          "sd_sha256": "46d264a512db10b0b0f221c5ab5610eea0893a74e691b8eb1c5d323bfa76ce8c",
+          "color": "#CC79A7",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "DE": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "92205fa34f04c58da380eb6d341befbc7ca56ddaf89ba6c67f5cc9b8f0cafb24",
+          "sd_sha256": "9673008a285bbafce81a00957ca5af2485b2a250d6716ea63a792ba394516683",
+          "color": "#009E73",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "SAC": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "2ae95e0fe6338144957ca054a494344d8e71b8987b07623489ec0203596b6ddd",
+          "sd_sha256": "d6912e2a98bfef9517a7b28f364e4fcd8c0f096cfe964a6df7d3d86fc840923a",
+          "color": "#D55E00",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "TD3": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "b6d1213cd2f68a4bfc02cf31b285d537504200e019a0ecf5b43028538b36efb3",
+          "sd_sha256": "4f5ccc98a2c1904a8578c39551bd3e18a1390b2b4aef0c2d622ba0768c4f206c",
+          "color": "#0072B2",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        }
+      },
+      "line_count": 4,
+      "band_count": 4,
+      "xlabel": "Number of trials",
+      "ylabel": "Acoustic error",
+      "label_fontsize": 46,
+      "tick_fontsizes": [
+        30.0
+      ],
+      "legend_labels": [
+        "TD3",
+        "SAC",
+        "DE",
+        "Random Search"
+      ],
+      "legend_fontsizes": [
+        29.0
+      ],
+      "legend_inside": true,
+      "legend_line_overlaps": [],
+      "legend_band_overlap": false,
+      "title": "",
+      "xlim": [
+        0.0,
+        4096.0
+      ],
+      "ylim": [
+        -0.09172032365385926,
+        0.9366563229962493
+      ],
+      "path_simplify": false,
+      "grid": false
+    },
+    {
+      "path": "figures/learning_curves/3d_restricted_lambda1_seed0.png",
+      "kind": "comparison_curve",
+      "domain": "restricted",
+      "field": "acoustic_error",
+      "average": false,
+      "image_sha256": "5f66fb746c47d3c1d57af8b42e14bec7d3504faf1693093635f4ce757962f914",
+      "methods": {
+        "random_search": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "644b0f656dd7c2b54c3d39199c1822626765bdb2475785968cc1a7a2f56b96dd",
+          "sd_sha256": null,
+          "color": "#CC79A7",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "DE": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "10b33d39c773bad950611a4edbcfef8488e6104b5db85d765ffd512625a8617e",
+          "sd_sha256": null,
+          "color": "#009E73",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "SAC": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "c3f5dcfbcf74c13c46417cd6885cd78ade829e1199c81deabe694a284bef9524",
+          "sd_sha256": null,
+          "color": "#D55E00",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "TD3": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "17b7ba023edb18ef5507e63483a9c905df4a2b840b043a3d6d31493567ab736e",
+          "sd_sha256": null,
+          "color": "#0072B2",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        }
+      },
+      "line_count": 4,
+      "band_count": 0,
+      "xlabel": "Number of trials",
+      "ylabel": "Acoustic error",
+      "label_fontsize": 46,
+      "tick_fontsizes": [
+        30.0
+      ],
+      "legend_labels": [
+        "TD3",
+        "SAC",
+        "DE",
+        "Random Search"
+      ],
+      "legend_fontsizes": [
+        29.0
+      ],
+      "legend_inside": true,
+      "legend_line_overlaps": [],
+      "legend_band_overlap": false,
+      "title": "",
+      "xlim": [
+        0.0,
+        4096.0
+      ],
+      "ylim": [
+        -0.09172032365385926,
+        0.9366563229962493
+      ],
+      "path_simplify": false,
+      "grid": false
+    },
+    {
+      "path": "figures/learning_curves/3d_restricted_lambda1_mean_sd.png",
+      "kind": "comparison_curve",
+      "domain": "restricted",
+      "field": "acoustic_error",
+      "average": true,
+      "image_sha256": "ea1d7ec32dfa3d168da3e49bf151c15a84d1cb6c0c52b7ddcdde33c6e40b28f7",
+      "methods": {
+        "random_search": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "73b4d75e0314b36653de748f6babd05ce2a2d7e6cd77e27e769d9df383d36308",
+          "sd_sha256": "7a927f04971858dbd59f6e06aaa7ce6d0dbe8f23270ddcf66e646167c2582faa",
+          "color": "#CC79A7",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "DE": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "99165273c169971b10fb527b240196118032e3246f680a81c493323f2f1750c0",
+          "sd_sha256": "ac5fd89e2037ce696e3597a1e2d684ecac7245f432087ec757c1d304b051bb6d",
+          "color": "#009E73",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "SAC": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "5d0f5bcd94ceae87362a0ab63518f6640a2b1e2bfa7c252ab127a06d3785bf3f",
+          "sd_sha256": "bea63d4bdc98f73cbf11fae1460b8efe31e8c91f6d28572d017008f8c3f355eb",
+          "color": "#D55E00",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "TD3": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "156a2d79b6b9ea64d955300be2d773ca1c283689d168a26332c5c47f12f65202",
+          "sd_sha256": "c7528ec1c0ba43fa5c6f9e490915d81995beb764a94cd63868159ca14f09b932",
+          "color": "#0072B2",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        }
+      },
+      "line_count": 4,
+      "band_count": 4,
+      "xlabel": "Number of trials",
+      "ylabel": "Acoustic error",
+      "label_fontsize": 46,
+      "tick_fontsizes": [
+        30.0
+      ],
+      "legend_labels": [
+        "TD3",
+        "SAC",
+        "DE",
+        "Random Search"
+      ],
+      "legend_fontsizes": [
+        29.0
+      ],
+      "legend_inside": true,
+      "legend_line_overlaps": [],
+      "legend_band_overlap": false,
+      "title": "",
+      "xlim": [
+        0.0,
+        4096.0
+      ],
+      "ylim": [
+        -0.09172032365385926,
+        0.9366563229962493
+      ],
+      "path_simplify": false,
+      "grid": false
+    },
+    {
+      "path": "figures/best_observed/3d_restricted_lambda1_seed0.png",
+      "kind": "comparison_curve",
+      "domain": "restricted",
+      "field": "objective_selected_common_error",
+      "average": false,
+      "image_sha256": "67b104d026d2ba1c969c49b67e429ea05bd49506997fe2fa4742cee69578e1cd",
+      "methods": {
+        "random_search": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "00597cea5a50bc1e4225b88f309d08058603895ab42ffbfa867f921657e62af3",
+          "sd_sha256": null,
+          "color": "#CC79A7",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "DE": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "f8e1d0e05cf884570388bec7bdbb880bad1bb976c2defe7f9243f96ad3315a6a",
+          "sd_sha256": null,
+          "color": "#009E73",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "SAC": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "6a823cf9e8eca5f40b8d199ba7157b8f1eaf358fb7297d9394ce437e25fca4ca",
+          "sd_sha256": null,
+          "color": "#D55E00",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "TD3": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "aabfc83f1d497f944f7b5171be82c00b06fabadbe9e2a6f8a19663cdc0328308",
+          "sd_sha256": null,
+          "color": "#0072B2",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        }
+      },
+      "line_count": 4,
+      "band_count": 0,
+      "xlabel": "Number of trials",
+      "ylabel": "Acoustic error",
+      "label_fontsize": 46,
+      "tick_fontsizes": [
+        30.0
+      ],
+      "legend_labels": [
+        "TD3",
+        "SAC",
+        "DE",
+        "Random Search"
+      ],
+      "legend_fontsizes": [
+        29.0
+      ],
+      "legend_inside": true,
+      "legend_line_overlaps": [],
+      "legend_band_overlap": false,
+      "title": "",
+      "xlim": [
+        0.0,
+        4096.0
+      ],
+      "ylim": [
+        -0.09172032365385926,
+        0.9366563229962493
+      ],
+      "path_simplify": false,
+      "grid": false
+    },
+    {
+      "path": "figures/best_observed/3d_restricted_lambda1_mean_sd.png",
+      "kind": "comparison_curve",
+      "domain": "restricted",
+      "field": "objective_selected_common_error",
+      "average": true,
+      "image_sha256": "a6ab1447f5f1c91270742c665a6d14b274daa9b7e3d1e8c7c1520f6497ed8a6e",
+      "methods": {
+        "random_search": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "478691456c7df90bf4716fe6b68369449db5fee1086ff3d61fb8bcd48c4bdb83",
+          "sd_sha256": "b41e2bbea854ac763e09b94987f5709fa9ff287be675ef22d35a3709fa8b0350",
+          "color": "#CC79A7",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "DE": {
+          "vertices": 4096,
+          "x_sha256": "8ff64bb9c05d50d55e41099b3e3301f1b6ff6d43029a9d316859d957efd3b554",
+          "y_sha256": "5ac6c447955cc6fd31b7ee9aef9d1275a192149520479c1660d976b581497797",
+          "sd_sha256": "78c4773463a142e03efbe7aa5167980c0f4551c96e5a01b049725c84541333be",
+          "color": "#009E73",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "SAC": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "ca52040868a0a0c649a74e988cb04731e349f49e05f1ad05de3ac2d9ccad1bcf",
+          "sd_sha256": "f3f4e187f915cb91e1717f807adc81e424776cbb08386abc8929abeee3769842",
+          "color": "#D55E00",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        },
+        "TD3": {
+          "vertices": 33,
+          "x_sha256": "a84dba13346495526060e2fd8adfedebbdbc1a928a9a54fb9d1e0da782dfb3a5",
+          "y_sha256": "89e1830d5d19397eaa4bbb311e425268e4dd6b4e36397b5945d3bf03da247e6a",
+          "sd_sha256": "e49c17603d99971f5c8315800f12e6c5eb24d5534cd1b3b3b0fd7af1c0ff675a",
+          "color": "#0072B2",
+          "linewidth": 4.0,
+          "linestyle": "-"
+        }
+      },
+      "line_count": 4,
+      "band_count": 4,
+      "xlabel": "Number of trials",
+      "ylabel": "Acoustic error",
+      "label_fontsize": 46,
+      "tick_fontsizes": [
+        30.0
+      ],
+      "legend_labels": [
+        "TD3",
+        "SAC",
+        "DE",
+        "Random Search"
+      ],
+      "legend_fontsizes": [
+        29.0
+      ],
+      "legend_inside": true,
+      "legend_line_overlaps": [],
+      "legend_band_overlap": false,
+      "title": "",
+      "xlim": [
+        0.0,
+        4096.0
+      ],
+      "ylim": [
+        -0.09172032365385926,
+        0.9366563229962493
+      ],
+      "path_simplify": false,
+      "grid": false
+    },
+    {
+      "path": "figures/physical_controls/3d_lambda1_final.png",
+      "image_sha256": "cf858af8483808e6e6261687bef4732942126956e5fbc341802e07d3d1e48a15",
+      "rows": 3,
+      "columns": 2,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "sample_sd_ddof": 1,
+      "target_line": "dashed",
+      "f0_l_is_hz": false,
+      "title": "",
+      "kind": "constant_control_comparison",
+      "role": "final"
+    },
+    {
+      "path": "figures/physical_controls/3d_lambda1_selected_best.png",
+      "image_sha256": "b4c9c10258b006b74b638c2e761486f1d9f738f1c8c0b4a58862cf13c4c889be",
+      "rows": 3,
+      "columns": 2,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "sample_sd_ddof": 1,
+      "target_line": "dashed",
+      "f0_l_is_hz": false,
+      "title": "",
+      "kind": "constant_control_comparison",
+      "role": "selected_best"
+    },
+    {
+      "path": "figures/diagnostics/oracle_f0_errors.png",
+      "image_sha256": "d30bfc3ffba9c51ac595827aa99632d0ce4162651cc334af267ec9bc8cdb642d",
+      "kind": "physical_f0_sweep",
+      "observations": 121
+    },
+    {
+      "path": "figures/diagnostics/oracle_f0_voicing.png",
+      "image_sha256": "4f9c12fd59244beeee1e71854cbf40749d0bb047ad7d8c5f083570575708aca9",
+      "kind": "physical_f0_sweep",
+      "observations": 121
+    },
+    {
+      "path": "figures/diagnostics/epsilon_l_f0_E_total.png",
+      "image_sha256": "30c2eeaf220bc450a2f30535ca9e4ba5fe46b77a6437f37d7fb1c7f1850a3c0f",
+      "kind": "physical_slice",
+      "fixed_parameter": "ps",
+      "fixed_value": 3400000.0,
+      "white_contour": "lateAC RMS /target_peak=.05",
+      "cyan_cross": "unchanged target controls"
+    },
+    {
+      "path": "figures/diagnostics/epsilon_l_f0_late_ac_rms_over_target_peak.png",
+      "image_sha256": "7e75a93d8d5c5be03fa17ba64132820ffe723a65cd4886ea1ba0e3724bd5c57c",
+      "kind": "physical_slice",
+      "fixed_parameter": "ps",
+      "fixed_value": 3400000.0,
+      "white_contour": "lateAC RMS /target_peak=.05",
+      "cyan_cross": "unchanged target controls"
+    },
+    {
+      "path": "figures/diagnostics/ps_f0_E_total.png",
+      "image_sha256": "912017aaaafb321b610da970ee428871088b241ec031bb68e27d2d909968171e",
+      "kind": "physical_slice",
+      "fixed_parameter": "epsilon_l",
+      "fixed_value": 41000000.0,
+      "white_contour": "lateAC RMS /target_peak=.05",
+      "cyan_cross": "unchanged target controls"
+    },
+    {
+      "path": "figures/diagnostics/ps_f0_late_ac_rms_over_target_peak.png",
+      "image_sha256": "9e2f15bb96d3a14dfc9506a70342bce75155764758145fb08965d409fcf434e0",
+      "kind": "physical_slice",
+      "fixed_parameter": "epsilon_l",
+      "fixed_value": 41000000.0,
+      "white_contour": "lateAC RMS /target_peak=.05",
+      "cyan_cross": "unchanged target controls"
+    },
+    {
+      "path": "figures/diagnostics/TD3_original_training_vs_policy_f0.png",
+      "image_sha256": "1a78c7f53e2e130cd1b0735322308a07f96952d921da508005669fcb6ef4c0d8",
+      "kind": "original_history",
+      "weight": 1.0
+    },
+    {
+      "path": "figures/diagnostics/SAC_original_training_vs_policy_f0.png",
+      "image_sha256": "af5c904d1323e93ba46c09d41100f4a9f6d11193a6ee080c4ee64d5e4c3c5378",
+      "kind": "original_history",
+      "weight": 1.0
+    },
+    {
+      "path": "figures/diagnostics/representative_waveforms_full.png",
+      "image_sha256": "a47bd2a10bc160f5712c4dac6fd81772b482b9f46550bc38da9e7ce5a6f7331d",
+      "kind": "physical_waveforms",
+      "mode": "full",
+      "normalization": "One target peak for all waveforms",
+      "gray": "Target",
+      "blue": "Generated",
+      "decimation": false
+    },
+    {
+      "path": "figures/diagnostics/representative_waveforms_late.png",
+      "image_sha256": "f67ed0f3279190e231194573ffd0402dcaddaddc1944c998d111ebecde6e6985",
+      "kind": "physical_waveforms",
+      "mode": "late",
+      "normalization": "One target peak for all waveforms",
+      "gray": "Target",
+      "blue": "Generated",
+      "decimation": false
+    },
+    {
+      "path": "figures/spectrograms/final/TD3_lambda1_seed0.png",
+      "image_sha256": "2382ba9c5c2b5330fac17f5546838395796b3734c6711083bc78da8cbd8a5e3d",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "TD3",
+      "seed": 0,
+      "source": "runs/constant_3d/TD3/lambda1/seed_0/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/TD3_lambda1_seed0.png",
+      "image_sha256": "e77e16f3d839c6eaa94a58f0486457136957e177b01ab64837bc5f64e5874bd1",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "TD3",
+      "seed": 0,
+      "source": "runs/constant_3d/TD3/lambda1/seed_0/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/TD3_lambda1_seed0.png",
+      "image_sha256": "42f91902f12d212087298d50b14b7781fd447db8a8af38cb144f480bd9dcf891",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "TD3",
+      "seed": 0,
+      "source": "runs/constant_3d/TD3/lambda1/seed_0/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/TD3_lambda1_seed0.png",
+      "image_sha256": "d53e4a9be01bd1ebfd6257bf17525470a3d61f2d8ffed761ea431fabf8e7b4cb",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "TD3",
+      "seed": 0,
+      "source": "runs/constant_3d/TD3/lambda1/seed_0/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/TD3_lambda1_seed1.png",
+      "image_sha256": "9f6820a30d7e4562d27c1acf4c486898e5f397389835636e5f538d25d558232a",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "TD3",
+      "seed": 1,
+      "source": "runs/constant_3d/TD3/lambda1/seed_1/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/TD3_lambda1_seed1.png",
+      "image_sha256": "ee8d8d4770a58cb1f3ade7508745f83364dcf694be2f8e7b1c96c77e8944d5db",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "TD3",
+      "seed": 1,
+      "source": "runs/constant_3d/TD3/lambda1/seed_1/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/TD3_lambda1_seed1.png",
+      "image_sha256": "31746b9f375a9f709de045d2ef67b86d364340768645feead89e04ae21bfb43b",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "TD3",
+      "seed": 1,
+      "source": "runs/constant_3d/TD3/lambda1/seed_1/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/TD3_lambda1_seed1.png",
+      "image_sha256": "bb1628ad2e09412d9cbd77b4b887f9114ac488d09d25385628a12aafec50134a",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "TD3",
+      "seed": 1,
+      "source": "runs/constant_3d/TD3/lambda1/seed_1/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/TD3_lambda1_seed2.png",
+      "image_sha256": "61ed33bb762b468128f21b5aa5e4d2a39f7b8ae09134efcf87a2183791589583",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "TD3",
+      "seed": 2,
+      "source": "runs/constant_3d/TD3/lambda1/seed_2/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/TD3_lambda1_seed2.png",
+      "image_sha256": "996e2b4d881ec3b680dfa1e04cf37ab5c1129091870b67710a847581772af609",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "TD3",
+      "seed": 2,
+      "source": "runs/constant_3d/TD3/lambda1/seed_2/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/TD3_lambda1_seed2.png",
+      "image_sha256": "756997bf0c63453e16e534f5cadb8f37c725c1df343137f718346abdb13a1ae9",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "TD3",
+      "seed": 2,
+      "source": "runs/constant_3d/TD3/lambda1/seed_2/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/TD3_lambda1_seed2.png",
+      "image_sha256": "edef22e5a877794c1caec4e418d7a248a820fc887beb865f38e940973b10aee9",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "TD3",
+      "seed": 2,
+      "source": "runs/constant_3d/TD3/lambda1/seed_2/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/SAC_lambda1_seed0.png",
+      "image_sha256": "23005d2958ffd581ae08a8b8fbeb5acc1dbb78f370d2e792eb04e8fa74775700",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "SAC",
+      "seed": 0,
+      "source": "runs/constant_3d/SAC/lambda1/seed_0/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/SAC_lambda1_seed0.png",
+      "image_sha256": "d611c52eff37226b4783aafc552782b529661e05c755d221337f58939d4414b6",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "SAC",
+      "seed": 0,
+      "source": "runs/constant_3d/SAC/lambda1/seed_0/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/SAC_lambda1_seed0.png",
+      "image_sha256": "361cc6d4327134d623733a329532d6184936aeeb4b8d3e440951a5f44107105a",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "SAC",
+      "seed": 0,
+      "source": "runs/constant_3d/SAC/lambda1/seed_0/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/SAC_lambda1_seed0.png",
+      "image_sha256": "b61f9ccc8467da3544f6874a53bb75394f1a1ff3caeeb0ae809e68d186e99de5",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "SAC",
+      "seed": 0,
+      "source": "runs/constant_3d/SAC/lambda1/seed_0/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/SAC_lambda1_seed1.png",
+      "image_sha256": "a2ff35222f7b76ac3ef413a5b7a27b269618c9fd69dd4a82f993c69a77ce1edd",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "SAC",
+      "seed": 1,
+      "source": "runs/constant_3d/SAC/lambda1/seed_1/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/SAC_lambda1_seed1.png",
+      "image_sha256": "a66ff5f86d059177a9b1ff367dad020a72138e28960e3d82c1f85447632a7602",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "SAC",
+      "seed": 1,
+      "source": "runs/constant_3d/SAC/lambda1/seed_1/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/SAC_lambda1_seed1.png",
+      "image_sha256": "bf98f6f2e312f2a102e2684622f6e17a2d2f818cf53a17969a9a2fa95ae5ef03",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "SAC",
+      "seed": 1,
+      "source": "runs/constant_3d/SAC/lambda1/seed_1/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/SAC_lambda1_seed1.png",
+      "image_sha256": "2cb2242493b584cd7ac391081a12542ea2e4d12ea42fec8b6273d37e458347ce",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "SAC",
+      "seed": 1,
+      "source": "runs/constant_3d/SAC/lambda1/seed_1/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/SAC_lambda1_seed2.png",
+      "image_sha256": "d2f2f08e152d60783c0acc898b21f9c11fd1e2553e146bbca6178c38372be6a4",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "SAC",
+      "seed": 2,
+      "source": "runs/constant_3d/SAC/lambda1/seed_2/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/SAC_lambda1_seed2.png",
+      "image_sha256": "f8fd14cea2f2ca837edffa326e34de3f9ac2d49512245ec41b113873fe7137cf",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "SAC",
+      "seed": 2,
+      "source": "runs/constant_3d/SAC/lambda1/seed_2/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/SAC_lambda1_seed2.png",
+      "image_sha256": "c39e87b79b356ea4ad038ab8ac6c293c381f42e0b595a1be2cfc1565eb2586a4",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "SAC",
+      "seed": 2,
+      "source": "runs/constant_3d/SAC/lambda1/seed_2/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/SAC_lambda1_seed2.png",
+      "image_sha256": "b32937c1b8e2874f21f96600ef6c0db8abe75234660bbfb644791966006e4aba",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "SAC",
+      "seed": 2,
+      "source": "runs/constant_3d/SAC/lambda1/seed_2/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/DE_lambda1_seed0.png",
+      "image_sha256": "dd8c95b2ae1c584efa2024c9c8f32915638e5da57795074b3713b645f8122ad1",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "DE",
+      "seed": 0,
+      "source": "runs/constant_3d/DE/lambda1/seed_0/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/DE_lambda1_seed0.png",
+      "image_sha256": "13111e8e10c40f6999030c4ed2423a795f63bc6955f040844e967f25014e45f6",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "DE",
+      "seed": 0,
+      "source": "runs/constant_3d/DE/lambda1/seed_0/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/DE_lambda1_seed0.png",
+      "image_sha256": "dd8c95b2ae1c584efa2024c9c8f32915638e5da57795074b3713b645f8122ad1",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "DE",
+      "seed": 0,
+      "source": "runs/constant_3d/DE/lambda1/seed_0/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/DE_lambda1_seed0.png",
+      "image_sha256": "4d7ba2306e3871d2eca9414c534aab94fd4b1fea600babf4beb7776ab2994ca2",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "DE",
+      "seed": 0,
+      "source": "runs/constant_3d/DE/lambda1/seed_0/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/DE_lambda1_seed1.png",
+      "image_sha256": "294057fe8840ae820042a1cc728f2cc2c25fedcbf1e830a07fddf578267f25bb",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "DE",
+      "seed": 1,
+      "source": "runs/constant_3d/DE/lambda1/seed_1/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/DE_lambda1_seed1.png",
+      "image_sha256": "91168a280d5cacf07f263be9e01a08f35969de71b6e1d3b0d0b8657c3e9f4ad1",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "DE",
+      "seed": 1,
+      "source": "runs/constant_3d/DE/lambda1/seed_1/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/DE_lambda1_seed1.png",
+      "image_sha256": "294057fe8840ae820042a1cc728f2cc2c25fedcbf1e830a07fddf578267f25bb",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "DE",
+      "seed": 1,
+      "source": "runs/constant_3d/DE/lambda1/seed_1/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/DE_lambda1_seed1.png",
+      "image_sha256": "91168a280d5cacf07f263be9e01a08f35969de71b6e1d3b0d0b8657c3e9f4ad1",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "DE",
+      "seed": 1,
+      "source": "runs/constant_3d/DE/lambda1/seed_1/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/DE_lambda1_seed2.png",
+      "image_sha256": "868d9312c2316a4c61e8dec97c74efc40b67fa90855caa9f50512a839b25730b",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "DE",
+      "seed": 2,
+      "source": "runs/constant_3d/DE/lambda1/seed_2/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/DE_lambda1_seed2.png",
+      "image_sha256": "93213fbd49626c89c4aac6b32d189e52b5da32910cd9d0f9f9a1687174436564",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "DE",
+      "seed": 2,
+      "source": "runs/constant_3d/DE/lambda1/seed_2/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/DE_lambda1_seed2.png",
+      "image_sha256": "fd5abf111c2aa7de3ac8b3ab8724a24928dceb31836f22f3c0e09640c5ad98da",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "DE",
+      "seed": 2,
+      "source": "runs/constant_3d/DE/lambda1/seed_2/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/DE_lambda1_seed2.png",
+      "image_sha256": "12d1df157ac82e59e95e9e126ebeb5705288d3ddb5a43fd81193b475c498bafd",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "DE",
+      "seed": 2,
+      "source": "runs/constant_3d/DE/lambda1/seed_2/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/random_search_lambda1_seed0.png",
+      "image_sha256": "3e74b2f126ee943153cf5a06e5fa5fe0a9114ed0e0fb7705903f66622e340a01",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "random_search",
+      "seed": 0,
+      "source": "runs/constant_3d/random_search/lambda1/seed_0/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/random_search_lambda1_seed0.png",
+      "image_sha256": "da180d2e5adbbcebc706767cdd918c029d0ea6490ee5442df7469a3979963b57",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "random_search",
+      "seed": 0,
+      "source": "runs/constant_3d/random_search/lambda1/seed_0/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/random_search_lambda1_seed0.png",
+      "image_sha256": "d32ca88a9a4328672b575f74ada5785b6078605cd9827f464648d8dc7b92c200",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "random_search",
+      "seed": 0,
+      "source": "runs/constant_3d/random_search/lambda1/seed_0/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/random_search_lambda1_seed0.png",
+      "image_sha256": "1a9f36f24b8f92676571bcf802497e4bbd3f4019f3b1e29839766682ede92d28",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "random_search",
+      "seed": 0,
+      "source": "runs/constant_3d/random_search/lambda1/seed_0/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/random_search_lambda1_seed1.png",
+      "image_sha256": "7ed6741d293f212e067fa541417e986808acb76a36b2c2b74b0955d80a31b33a",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "random_search",
+      "seed": 1,
+      "source": "runs/constant_3d/random_search/lambda1/seed_1/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/random_search_lambda1_seed1.png",
+      "image_sha256": "1a4d8645d5a7dc5b1c4be26bb9d66b42f7b8b9c6b9897e42366212d27c28d788",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "random_search",
+      "seed": 1,
+      "source": "runs/constant_3d/random_search/lambda1/seed_1/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/random_search_lambda1_seed1.png",
+      "image_sha256": "0d70086bc6270e8b11939b54dd460eba663c1596400fd615def5222580a02bae",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "random_search",
+      "seed": 1,
+      "source": "runs/constant_3d/random_search/lambda1/seed_1/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/random_search_lambda1_seed1.png",
+      "image_sha256": "90924e7ac8c9099b077da2052c3ed4bb318214714eabf1ea37382dea99cee1c9",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "random_search",
+      "seed": 1,
+      "source": "runs/constant_3d/random_search/lambda1/seed_1/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/final/random_search_lambda1_seed2.png",
+      "image_sha256": "d27fdf5f5280f6eb53762534b81b131d01949c88833288ef7ed764d03ccd0dc0",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "final",
+      "method": "random_search",
+      "seed": 2,
+      "source": "runs/constant_3d/random_search/lambda1/seed_2/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/final/random_search_lambda1_seed2.png",
+      "image_sha256": "f8158d26eecc43664ac782f323e543381e14586bff13077b6ad61d6d6df2dc92",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "final",
+      "method": "random_search",
+      "seed": 2,
+      "source": "runs/constant_3d/random_search/lambda1/seed_2/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/selected_best/random_search_lambda1_seed2.png",
+      "image_sha256": "f07ab47e5ff75c3b04f8deb23985c3930f8d3c0c515091cb0772ffddcfaeeb2b",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "selected_best",
+      "method": "random_search",
+      "seed": 2,
+      "source": "runs/constant_3d/random_search/lambda1/seed_2/best/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/selected_best/random_search_lambda1_seed2.png",
+      "image_sha256": "c93e75e0b769ab204ba32df6bbe95f85cce46a98a9140f4e8fcb8572973558e2",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "selected_best",
+      "method": "random_search",
+      "seed": 2,
+      "source": "runs/constant_3d/random_search/lambda1/seed_2/best/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/diagnostic/f0_1000000.png",
+      "image_sha256": "72ee8b14a1a275a2c750bc350bb43a8febea4094251948a78b2a95fb3e964c2e",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_1000000/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/diagnostic/f0_1000000.png",
+      "image_sha256": "a3def4218916d45469a516dc1d264569af73ca054837dc39890341dce194eb2b",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_1000000/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/diagnostic/f0_10000000.png",
+      "image_sha256": "15f9c6d8546f35aadabee843e22a2367e8078aecf5fb0736fa835f9927183509",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_10000000/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/diagnostic/f0_10000000.png",
+      "image_sha256": "d79c20210428f37caa1e61b788ccda3f6576ec686215d0aa40b242f741284de6",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_10000000/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/diagnostic/f0_150000.png",
+      "image_sha256": "47c2154144aa1d117ed155aeacdebef8e658ff0916615839281156e313b8efdf",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_150000/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/diagnostic/f0_150000.png",
+      "image_sha256": "51e4c2d4faad38bff5d0e0c5b3caf01c3994cbdb6edbe4604e80176ebbd041b7",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_150000/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/diagnostic/f0_300000.png",
+      "image_sha256": "67b6d818a71e91cb12d6e811c4064e4b3ad5d8f2744cbfce01cc82750f7293da",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_300000/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/diagnostic/f0_300000.png",
+      "image_sha256": "c890daa7e3f3fbd070ecb6fe317c9e354f21ad253c14d12953e52e20cd8edb37",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_300000/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/diagnostic/f0_49000.png",
+      "image_sha256": "0cf2354fd4675ef7075431d5e1da6fd0a6a9778dc4fe7739709aa5d4b2585895",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_49000/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/diagnostic/f0_49000.png",
+      "image_sha256": "16008930507a8375ff49ff099935501b9e1752e3f131cf2c113cf73f48bd83f9",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_49000/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/diagnostic/f0_500000.png",
+      "image_sha256": "b3e53789d41a2689362fdc410183af8645a6445021b684a1855f136ebdc303e0",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_500000/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/diagnostic/f0_500000.png",
+      "image_sha256": "e194e4ef96a0816a9ae0c785208d70e34d88bd218975dff36ef0b8af1bc1df5c",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_500000/rollout.npz"
+    },
+    {
+      "path": "figures/spectrograms/diagnostic/f0_5000000.png",
+      "image_sha256": "2a9e7c42c58055d9a6b43d6187b6dc884e9839a67ce0b12373e36136809a19e4",
+      "cmap": "magma",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "reference": "Target maximum full-band display PSD",
+      "shared_colorbar": true,
+      "title": "",
+      "kind": "spectrogram",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_5000000/rollout.npz"
+    },
+    {
+      "path": "figures/amplitude_envelopes/diagnostic/f0_5000000.png",
+      "image_sha256": "2af4f99e7b476682f66d3d853f26bc9304e8d4372070f11ba38c45b4725cb67c",
+      "rms_window_ms": 5,
+      "ylim": [
+        0.0,
+        0.6080270932969052
+      ],
+      "normalization": "Both raw waveforms divided by target peak",
+      "title": "",
+      "kind": "rms_envelope",
+      "role": "diagnostic",
+      "method": "physical_survey",
+      "seed": null,
+      "source": "diagnostics/representative_audio/f0_5000000/rollout.npz"
+    }
+  ],
+  "display": {
+    "cmap": "magma",
+    "db_limits": [
+      -70.0,
+      10.0
+    ],
+    "reference_psd": 1522185576.0445347,
+    "rms_ylim": [
+      0.0,
+      0.6080270932969052
+    ]
+  },
+  "no_source_data_thinning": true,
+  "renderer_sha256": "1a6600930ba078e462a56f3cae3fb08270b6385e8b3e2ed6f41664a8ce73a2cf"
+}

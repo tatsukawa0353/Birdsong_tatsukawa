@@ -15,6 +15,9 @@ from .issue17_artifacts import read_record,compress_records
 
 
 def audit(output):
+    if (Path(output)/'visualization_revision/audit.json').exists():
+        from .issue17_visualization import audit as audit_visualization
+        return audit_visualization()
     if (Path(output)/'direct_weight_extension/manifest.json').exists():
         from .issue17_extension_audit import audit as audit_extended
         return audit_extended(Path(output))

@@ -1,0 +1,111 @@
+{
+  "condition": "constant_3d",
+  "method": "DE",
+  "seed": 1,
+  "envelope_weight": 1.0,
+  "settings": {
+    "experiment_id": "constant_020s_4096_weight_comparison_v2",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "methods": [
+      "TD3",
+      "SAC",
+      "DE",
+      "random_search"
+    ],
+    "conditions": [
+      "constant_3d"
+    ],
+    "episodes": 4096,
+    "eval_every_episodes": 128,
+    "rl_envelope_weights": [
+      1.0
+    ],
+    "checkpoints": [
+      256,
+      512,
+      1024,
+      2048,
+      4096
+    ],
+    "warmup_episodes": 16,
+    "learning_rate": 0.0003,
+    "batch_size": 32,
+    "net_arch": [
+      32,
+      32
+    ],
+    "gamma": 1.0,
+    "sac_ent_coef": "auto_0.01",
+    "td3_noise_std": 0.1,
+    "de_population": 8,
+    "de_mutation": [
+      0.5,
+      1.0
+    ],
+    "de_recombination": 0.7,
+    "duration_s": 0.2,
+    "sample_rate": 50000,
+    "physical_block_s": 0.01,
+    "native_dt": 1e-07,
+    "evaluation_schedule": "0,128,...,3968 after previous gradient update; 4096 post-final-update; 33 independent evaluations",
+    "direct_final_selection": "actual candidate 4096; selected DE incumbent and best-so-far recorded and independently replayed separately",
+    "domain_restriction": {
+      "frozen_before_training_utc": "2026-11-15T13:56:50.786842+00:00",
+      "rule": "Keep epsilon_l and ps full ranges and f0_l lower49000. Upper=min(1e7,ceil(1.5*largest_voiced_f0/1e5)*1e5). Use proxy only, never E_total or proximity to target.",
+      "largest_voiced_f0": 476950.0,
+      "restricted_f0_low": 49000.0,
+      "restricted_f0_high": 800000.0,
+      "original_f0_high": 10000000.0,
+      "epsilon_l_range": [
+        25000000.0,
+        50000000.0
+      ],
+      "ps_range": [
+        2500000.0,
+        4000000.0
+      ],
+      "target_f0": 300000.0,
+      "target_fraction_restricted": 0.33422103861517977,
+      "survey_voiced_points": 702,
+      "survey_points": 3388,
+      "voiced_fraction_on_this_nonuniform_grid": 0.20720188902007083,
+      "note": "Grid is nonuniform; this fraction is NOT a physical-volume probability. Upper includes 50% safety margin beyond all observed voiced anchors.",
+      "same_target_and_reward": true,
+      "lambda_for_followup": 1.0,
+      "budget": 4096,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "methods": [
+        "TD3",
+        "SAC",
+        "DE",
+        "random_search"
+      ]
+    }
+  },
+  "indices": [
+    0,
+    2,
+    3
+  ],
+  "source_sha256": {
+    "constant020_env.py": "bfee6852ef2c5c6e142eab768beafe835ae1f7fa5c8afe7541346fea012337e6",
+    "issue17.py": "0591a8ada40355330e1bf79bcd6c16b82d199c9766ea68ba765ad9d73418d17e",
+    "issue17_diagnostics.py": "cc3d2925d3ce4fa6148d4f5efb837192d418b3cbff36f9dea4cf87ef09958041",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "native/model.cpp": "999f8e9b35c90ac46b8bc671a48fc7386f1de40ba02ce72186e54206203f8755",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "configs/issue17_constant020.json": "2903ef5bae3e7974152b550c5682818bf2054e324aba096d16c2f57cce6f0f1b",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "fixed_budget_de.py": "826cbefdf288254c8a3eb0c07445a90e5e1aab284adc638aa8dc4c841defdd4d"
+  },
+  "target_sha256": "39c30d9010087d191005489bcf34f237193bad9f33cd4d4fe662fc6914814701"
+}

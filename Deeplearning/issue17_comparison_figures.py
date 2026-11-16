@@ -17,7 +17,8 @@ from .issue16 import digest
 METHODS=('TD3','SAC','DE','random_search')
 LABELS={'TD3':'TD3','SAC':'SAC','DE':'DE','random_search':'Random Search'}
 COLORS={'TD3':'#0072B2','SAC':'#D55E00','DE':'#009E73','random_search':'#CC79A7'}
-STYLES={'TD3':'-','SAC':'--','DE':':','random_search':'-.'}
+STYLES={method:'-' for method in METHODS}
+LINEWIDTH=4.0
 STYLE={'path.simplify':False,'agg.path.chunksize':0,'axes.grid':False,
        'axes.labelsize':46,'xtick.labelsize':30,'ytick.labelsize':30}
 
@@ -38,7 +39,7 @@ def comparison_curve(trajectories,path,*,limits,average=False):
             values=np.asarray(values)
             if values.shape!=(3,len(x)):raise ValueError('Three aligned seeds required')
             center=values.mean(axis=0) if average else values[0]
-            line,=ax.plot(x,center,color=COLORS[method],ls=STYLES[method],lw=2.8,
+            line,=ax.plot(x,center,color=COLORS[method],ls=STYLES[method],lw=LINEWIDTH,
                           alpha=.65 if method=='random_search' else 1.)
             lines[method]=line
             sd=values.std(axis=0,ddof=1)
@@ -46,7 +47,7 @@ def comparison_curve(trajectories,path,*,limits,average=False):
                 bands.append(ax.fill_between(x,center-sd,center+sd,color=COLORS[method],alpha=.10,linewidth=0))
             metadata[method]=dict(vertices=len(line.get_xydata()),x_sha256=array_hash(line.get_xdata()),
                 y_sha256=array_hash(line.get_ydata()),sd_sha256=array_hash(sd) if average else None,
-                color=line.get_color(),linewidth=line.get_linewidth())
+                color=line.get_color(),linewidth=line.get_linewidth(),linestyle=line.get_linestyle())
         ax.set_xlim(0,4096);ax.set_ylim(*limits);ax.set_xticks([0,1024,2048,3072,4096])
         ax.set_xlabel('Number of trials',fontsize=46,labelpad=12)
         ax.set_ylabel('Acoustic error',fontsize=46,labelpad=12)
@@ -102,7 +103,7 @@ def figures(output):
     old_meta=output/'figure_sources.json'
     metadata=[]
     if old_meta.exists():
-        metadata=[p for p in json.loads(old_meta.read_text())['images'] if p.get('kind') in ('spectrogram','physical_control')]
+        metadata=[p for p in json.loads(old_meta.read_text())['images'] if 'field' not in p]
     source_hash=digest(output/'comparison_curves.csv')
     for condition in ('constant_1d','constant_2d','constant_3d'):
         for weight,label in ((1.,'lambda1'),(.5,'lambda0p5')):
@@ -150,7 +151,8 @@ def figure_audit(output):
             a=np.array([[float(r[image['field']]) for r in run] for run in rows])
             y=a.mean(axis=0) if image['mean'] else a[0];geometry=image['methods'][method]
             if (geometry['x_sha256']!=array_hash(x) or geometry['y_sha256']!=array_hash(y) or
-                geometry['vertices']!=len(x) or geometry['color']!=COLORS[method] or geometry['linewidth']<2.8):
+                geometry['vertices']!=len(x) or geometry['color']!=COLORS[method] or
+                geometry['linewidth']!=LINEWIDTH or geometry['linestyle']!='-'):
                 errors.append(image['path']+':'+method+' data')
             if image['mean'] and geometry['sd_sha256']!=array_hash(a.std(axis=0,ddof=1)):
                 errors.append(image['path']+':'+method+' SD')

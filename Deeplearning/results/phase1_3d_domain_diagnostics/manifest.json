@@ -1,0 +1,167 @@
+{
+  "issue": 18,
+  "created_utc": "2026-11-15T13:59:48.600774+00:00",
+  "git_head": "31c4569865ecaaebaa65fc0d9e076badc1948402",
+  "settings": {
+    "experiment_id": "constant_020s_4096_weight_comparison_v2",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "methods": [
+      "TD3",
+      "SAC",
+      "DE",
+      "random_search"
+    ],
+    "conditions": [
+      "constant_3d"
+    ],
+    "episodes": 4096,
+    "eval_every_episodes": 128,
+    "rl_envelope_weights": [
+      1.0
+    ],
+    "checkpoints": [
+      256,
+      512,
+      1024,
+      2048,
+      4096
+    ],
+    "warmup_episodes": 16,
+    "learning_rate": 0.0003,
+    "batch_size": 32,
+    "net_arch": [
+      32,
+      32
+    ],
+    "gamma": 1.0,
+    "sac_ent_coef": "auto_0.01",
+    "td3_noise_std": 0.1,
+    "de_population": 8,
+    "de_mutation": [
+      0.5,
+      1.0
+    ],
+    "de_recombination": 0.7,
+    "duration_s": 0.2,
+    "sample_rate": 50000,
+    "physical_block_s": 0.01,
+    "native_dt": 1e-07,
+    "evaluation_schedule": "0,128,...,3968 after previous gradient update; 4096 post-final-update; 33 independent evaluations",
+    "direct_final_selection": "actual candidate 4096; selected DE incumbent and best-so-far recorded and independently replayed separately",
+    "domain_restriction": {
+      "frozen_before_training_utc": "2026-11-15T13:56:50.786842+00:00",
+      "rule": "Keep epsilon_l and ps full ranges and f0_l lower49000. Upper=min(1e7,ceil(1.5*largest_voiced_f0/1e5)*1e5). Use proxy only, never E_total or proximity to target.",
+      "largest_voiced_f0": 476950.0,
+      "restricted_f0_low": 49000.0,
+      "restricted_f0_high": 800000.0,
+      "original_f0_high": 10000000.0,
+      "epsilon_l_range": [
+        25000000.0,
+        50000000.0
+      ],
+      "ps_range": [
+        2500000.0,
+        4000000.0
+      ],
+      "target_f0": 300000.0,
+      "target_fraction_restricted": 0.33422103861517977,
+      "survey_voiced_points": 702,
+      "survey_points": 3388,
+      "voiced_fraction_on_this_nonuniform_grid": 0.20720188902007083,
+      "note": "Grid is nonuniform; this fraction is NOT a physical-volume probability. Upper includes 50% safety margin beyond all observed voiced anchors.",
+      "same_target_and_reward": true,
+      "lambda_for_followup": 1.0,
+      "budget": 4096,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "methods": [
+        "TD3",
+        "SAC",
+        "DE",
+        "random_search"
+      ]
+    }
+  },
+  "source_sha256": {
+    "constant020_env.py": "bfee6852ef2c5c6e142eab768beafe835ae1f7fa5c8afe7541346fea012337e6",
+    "issue17.py": "0591a8ada40355330e1bf79bcd6c16b82d199c9766ea68ba765ad9d73418d17e",
+    "issue17_diagnostics.py": "cc3d2925d3ce4fa6148d4f5efb837192d418b3cbff36f9dea4cf87ef09958041",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "native/model.cpp": "999f8e9b35c90ac46b8bc671a48fc7386f1de40ba02ce72186e54206203f8755",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "configs/issue17_constant020.json": "2903ef5bae3e7974152b550c5682818bf2054e324aba096d16c2f57cce6f0f1b",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "fixed_budget_de.py": "826cbefdf288254c8a3eb0c07445a90e5e1aab284adc638aa8dc4c841defdd4d"
+  },
+  "native_library_sha256": "6e770257addf2835e2582df7caeb39f8401de7f01e184438959c4d13f9ebac68",
+  "versions": {
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "torch": "2.5.1+cu121",
+    "stable-baselines3": "2.8.0",
+    "gymnasium": "1.2.3",
+    "matplotlib": "3.10.8",
+    "SciencePlots": "2.2.2"
+  },
+  "platform": "Linux-5.15.0-171-generic-x86_64-with-glibc2.35",
+  "processor": "x86_64",
+  "device": "cpu",
+  "torch_threads_per_worker": 1,
+  "target_sha256": "39c30d9010087d191005489bcf34f237193bad9f33cd4d4fe662fc6914814701",
+  "target_controls": [
+    41000000.0,
+    35000000.0,
+    3400000.0,
+    300000.0,
+    49000.0
+  ],
+  "control_order": [
+    "epsilon_l",
+    "epsilon_r",
+    "ps",
+    "f0_l",
+    "f0_r"
+  ],
+  "low": [
+    25000000.0,
+    25000000.0,
+    2500000.0,
+    49000.0,
+    49000.0
+  ],
+  "high": [
+    50000000.0,
+    50000000.0,
+    4000000.0,
+    10000000.0,
+    10000000.0
+  ],
+  "reward": "Unmodified -(E_spec+E_env); only lambda1 follow-up; target, physics and all learner settings unchanged",
+  "failure_policy": "keep failed candidate, pad diagnostic waveform, reward -1e6; no retries/exclusion",
+  "extreme_reward_policy": "finite rewards preserved without clipping; nonfinite loss/gradients/parameters abort and retain failure log",
+  "native_failure_accounting": "attempted steps count entire requested 10 ms block; completed steps exclude interrupted block",
+  "condition_order": "all dimensions passed physical gates before training; exact fixed budget for all 54 runs",
+  "supersedes": {
+    "experiment": "constant_020s_v1",
+    "episodes": 256,
+    "pilot_manifest_sha256": "035e4a26039be502099a6e10c759605614500181010fa4c958e75c48bef4c7f2",
+    "pilot_target_sha256": "39c30d9010087d191005489bcf34f237193bad9f33cd4d4fe662fc6914814701"
+  },
+  "endpoint": "final deterministic policy or actual candidate 4096; DE incumbent/best are auxiliary",
+  "range_adapter_source_sha256": {
+    "issue18_training.py": "bf61ce01431439ef8577677e5ef46b4911c4cbbf155c74cd70f7dbc2b3ab1aaf",
+    "issue18_domain_env.py": "978ff51f264af952c91942ada0a0b24b4d2a9a15a52a43ff8955b28744870042"
+  },
+  "domain_decision_sha256": "3c3c6cc45b1a2cdeff6c982df58a8984401a18cf213ee180066ee7ce18f2c517",
+  "base_manifest_sha256": "40f7c873722fda13862092021468636a102ef259bb3616dceaf4fbbdedb40030",
+  "baseline": "Existing full-domain Issue17 runs read only; no baseline retraining",
+  "implementation": "Unmodified issue17.run_one; per-child-process env factory supplies only the f0_l range adapter"
+}

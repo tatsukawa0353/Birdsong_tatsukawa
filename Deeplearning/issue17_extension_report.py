@@ -50,6 +50,8 @@ def new_acoustic_figures(stage,runs):
 
 
 def report(stage=WORK,*,render_images=True):
+    if (DEST/'visualization_revision').exists():
+        raise RuntimeError('The visualization revision supersedes legacy horizontal-control/audio plots; use issue17_visualization')
     stage=Path(stage);start=time.perf_counter();runs=load_runs(stage)
     base=json.loads((DEST/'manifest.json').read_text());execution=json.loads((stage/'execution.json').read_text())
     audit=json.loads((stage/'audit.json').read_text())
@@ -295,7 +297,8 @@ Randomは{execution['reused_random_candidates']:,}候補を再利用し、追加
 ## 図と監査・整理
 
 次元×λの6条件、各4手法を同じ画像に表示。seed0生曲線/3 seed平均±標本SD、J採用解のseed0/平均±SDを別々に計24枚。
-SciencePlots、軸46pt、目盛30pt、凡例29ptを内側、線幅2.8pt。共通色・両λで同じ軸、無題・グリッド/注釈/閾値線なし。
+SciencePlots、軸46pt、目盛30pt、凡例29ptを内側、全手法を実線・線幅4.0pt。共通色・両λで同じ軸、無題・グリッド/注釈/閾値線なし。
+Phase 0の実線表記を踏襲し、追加の図修正依頼により線幅を2.8ptから4.0ptへ拡大した。
 全33または4096点を使用し、平滑化/間引き/描画時の頂点省略を行わない。点間の線は観測点を結ぶもので追加評価ではない。
 平均±SD帯は算術的に表示する。下端が0未満でも負の誤差観測があったことを意味しない。
 凡例はデータ/SD帯との交差も検査し、目視確認後に公開する。
@@ -338,6 +341,7 @@ Deeplearning/.venv-rl/bin/python -m Deeplearning.issue17_extension publish
     index=['# Phase1 — 4手法×2λの比較','',
         '最初に [REPORT.md](REPORT.md)。次に下表の6条件を確認する。各画像は同じ次元・同じλの4手法を表示する。',
         '旧単独手法の誤差図は残していない。次元間・λ間を同じ画像には混在させない。','',
+        '誤差線図は4手法すべて実線・線幅4.0pt。','',
         table(['次元','λ','実評価:seed0','実評価:平均±SD','J採用解:seed0','J採用解:平均±SD'],links),'',
         '実評価はRLの現方策と直接法の実候補。J採用解図はminJλで選ぶ解の共通E_totalであり、事後minE_totalではない。',
         'RLは33回の独立評価、DE/Randomは4096候補。候補数・評価数の違いはREPORTを参照。','',

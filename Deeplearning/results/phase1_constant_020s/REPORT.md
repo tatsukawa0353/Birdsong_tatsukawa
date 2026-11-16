@@ -316,7 +316,8 @@ Randomは36,864候補を再利用し、追加候補シミュレーション0、�
 ## 図と監査・整理
 
 次元×λの6条件、各4手法を同じ画像に表示。seed0生曲線/3 seed平均±標本SD、J採用解のseed0/平均±SDを別々に計24枚。
-SciencePlots、軸46pt、目盛30pt、凡例29ptを内側、線幅2.8pt。共通色・両λで同じ軸、無題・グリッド/注釈/閾値線なし。
+SciencePlots、軸46pt、目盛30pt、凡例29ptを内側、全手法を実線・線幅4.0pt。共通色・両λで同じ軸、無題・グリッド/注釈/閾値線なし。
+Phase 0の実線表記を踏襲し、追加の図修正依頼により線幅を2.8ptから4.0ptへ拡大した。
 全33または4096点を使用し、平滑化/間引き/描画時の頂点省略を行わない。点間の線は観測点を結ぶもので追加評価ではない。
 平均±SD帯は算術的に表示する。下端が0未満でも負の誤差観測があったことを意味しない。
 凡例はデータ/SD帯との交差も検査し、目視確認後に公開する。
@@ -347,3 +348,26 @@ Deeplearning/.venv-rl/bin/python -m Deeplearning.issue17_extension publish
 ```
 
 新しい結果のcommit/pushは今回も行わない。GitHub結果リンクはユーザーのpushまで前版を示し得る。
+
+
+## Issue17追加：共通振幅基準と一定制御図の集約
+
+学習・探索・既存数値結果・誤差線図24枚は変更しない。FinalとminJλ Selected Bestの各72波形を全て既存NPZから再利用し、音声再生成は0。RL Selected Bestは33方策評価からの補助解で、未保存ネットワークの復元ではない。
+
+Targetの全帯域最大表示PSD=1522185576.04を全Generatedにも適用。magma、表示範囲(-70.0, 10.0) dBを全手法・λ・seedで固定し、各図に共通カラーバーを置いた。全144波形のdB分布を調べてから範囲を固定し、上端超過は0。下端未満は表示床であり音声や損失を変更していない。0 dBはTargetのピークPSD基準で、校正済みdB SPLではない。
+
+表示は10 MHzへのリサンプリング、Blackman-Harris窓245760点（24.576 ms）、overlap184320点、mean detrend、density PSD、境界のない完全窓、0–10 kHz。リサンプリングは高周波情報を増やさない。既存E_specは元50 kHzでの窓丸め・境界padding・detrend=False・spectrum scaling等が異なる。表示PSDを学習損失と同一視しない。
+
+5 ms RMSはacoustics.distanceと同じ250点kernel・same convolution、共通Targetピーク正規化。両包絡の平均絶対差が既存E_envと一致することを全144例で確認。終盤AC標準偏差の発声proxyとは別の量である。RMSの縦軸は全例で(0.0, 0.6427579523610857)に固定。振幅差を個別ピーク正規化で隠さない。
+
+[全seed図一覧](visualization_revision/FIGURES.md)はFinal/Selected Bestを区別する。Selected BestでDE/Randomの採用可能解を見る一方、Finalの実4096番目候補も残す。3Dの非持続Finalでは終盤AC振動が弱く、RMS包絡がTargetと不一致である。DC・低周波過渡成分によりRMS自体は残る例があり、発声proxyとRMS包絡を混同しない。初期過渡のPSDも選択解と区別できる。
+
+物理図は次元ごとにFinal/Selected Bestの計6枚へ集約。可変係数を行、λを列、4手法を横軸に配置。各seed点と平均±標本SDを表示し、目標は破線。同じ係数のλ間で縦軸を共有し、未制御値は表の固定値のまま。係数はモデル内部の単位であり、特にf0_lを基本周波数Hzと解釈しない。n=3から統計的確実性を主張しない。
+
+新図検証後に旧白黒スペクトログラム24枚と単独水平線48枚を削除。モデル・音声・CSV・run・manifest・Phase0・誤差線図24枚は保持する。[削除一覧](visualization_revision/deleted_images.txt)。新図は144 PSD＋144 RMS＋6パラメータ比較。[監査](visualization_revision/audit.json)に共通基準・保存値照合・保護を記録する。
+
+旧監査の保護表は当時の履歴として改変せず残す。今回明示削除した旧図を含むため、現行の `issue17 audit` は [新しい表示監査](visualization_revision/current_validation.json) へ切り替え、原データ・既存数値と誤差線図のhash不変を確認する。
+
+表示PSDは従来どおりフレーム平均を除去するため、DC・低周波過渡がPSDでは暗くてもRMSには残り得る。これもE_spec（detrend=False）・RMS包絡・AC発声proxyを別々に読む理由である。
+
+表示改訂の再検証はリポジトリ直下で `Deeplearning/.venv-rl/bin/python -m Deeplearning.issue17_visualization audit`。再描画の再現は、本改訂前の72 profile・旧図配置を持つ別作業コピーで `issue17_visualization render` → 目視確認記録 → `issue17_visualization publish` の順に行う。同名の既存改訂は上書き拒否し、学習は再実行しない。
