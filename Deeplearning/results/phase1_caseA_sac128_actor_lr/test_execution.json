@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "tests": 5,
+  "command": "python -m unittest Deeplearning.tests.test_issue24 -v",
+  "native_sound_evaluations": 76,
+  "native_training_candidates": 64,
+  "native_independent_evaluations": 6,
+  "native_endpoint_replays": 6,
+  "synthetic_terminal_episodes": 179,
+  "research_baseline_retraining": 0,
+  "test_source_sha256": "0c104ace0f1ec037cb6252656786e9c0d25d16a4e99f90ece85b3af7bf24cfd7",
+  "guarantees": [
+    "SAC.train is inherited stock method",
+    "3e-4 subclass and stock state/RNG/buffer equal after32 synthetic steps",
+    "First update changes only Actor weights; Critic and temperature bitwise equal",
+    "Scheduler and actual optimizer-step LRs verified",
+    "Short native training, warmup and all retained endpoints replay"
+  ]
+}

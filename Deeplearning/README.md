@@ -33,6 +33,9 @@ Issue #23の [SAC128・λ=.75の安定性診断](results/phase1_caseA_sac128_sta
 既存ログのStage Aを先に記録し、設定を変えず3seedを再現する。中間Critic・Actor更新と
 minJ/minE_totalの別保存を診断する。検証は `python -m Deeplearning.issue23_analysis audit`、
 保存結果の描画・レポート更新は `python -m Deeplearning.issue23_report`。
+Issue #24の [SAC128・λ=.75のActor学習率比較](results/phase1_caseA_sac128_actor_lr/README.md) は、
+Critic/温度のLRを3e-4に固定し、Actorだけ1e-4/3e-5へ変更した6runを既存3e-4と比較する。
+全更新の実効LRを監査し、Final・minJ・minE、到達と維持、行動の移動量を分けて評価する。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl
