@@ -29,6 +29,10 @@ Issue #22の [SAC128・係数和1の報酬重み比較](results/phase1_caseA_sac
 `J=λ E_spec+(1−λ) E_env` のλ=.50/.75/.90を9 run比較する。旧報酬1+1とはスケールが異なる。
 検証は `python -m Deeplearning.issue22_analysis audit`、保存結果からの描画は
 `python -m Deeplearning.issue22_report`。Final・minJのSelected・事後min E_totalを区別する。
+Issue #23の [SAC128・λ=.75の安定性診断](results/phase1_caseA_sac128_stability_diagnostics/README.md) は、
+既存ログのStage Aを先に記録し、設定を変えず3seedを再現する。中間Critic・Actor更新と
+minJ/minE_totalの別保存を診断する。検証は `python -m Deeplearning.issue23_analysis audit`、
+保存結果の描画・レポート更新は `python -m Deeplearning.issue23_report`。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl
