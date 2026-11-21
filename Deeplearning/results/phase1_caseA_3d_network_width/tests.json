@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "new_tests": 3,
+  "new_test_model_evaluations": 78,
+  "test_source_sha256": "7e6331ca7f37c0c05fe8172557f08e279f6489dcfb5bcea963bae3a14b44108b",
+  "output": "test_detects_accidentally_unchanged_twin_critic (Deeplearning.tests.test_issue21.NetworkWidthTests) ... ok\ntest_short_runs_preserve_budget_evaluation_selection_and_model_reloads (Deeplearning.tests.test_issue21.NetworkWidthTests) ... {\"stage\": \"start\", \"method\": \"TD3\", \"width\": 64, \"seed\": 0}\n{\"stage\": \"complete\", \"method\": \"TD3\", \"width\": 64, \"seed\": 0, \"final\": 0.5340646573233063, \"selected\": 0.5338444275654128}\n{\"stage\": \"start\", \"method\": \"SAC\", \"width\": 256, \"seed\": 0}\n{\"stage\": \"complete\", \"method\": \"SAC\", \"width\": 256, \"seed\": 0, \"final\": 0.5330733919825197, \"selected\": 0.5330733919825197}\nok\ntest_width_is_only_effective_change_for_both_methods (Deeplearning.tests.test_issue21.NetworkWidthTests) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 16.611s\n\nOK\n",
+  "initial_harness_failure": "Tuple/list settings representation; no training episode generated in failed attempt",
+  "command": "python -m unittest Deeplearning.tests.test_issue21 -v",
+  "shared_tests": 11,
+  "total_passed_tests": 14,
+  "shared_test_model_evaluations": 62,
+  "total_test_model_evaluations": 140,
+  "injected_failures_in_tests_only": 1,
+  "shared_output": "test_each_dimension_oracle_duration_constant_controls_and_reset (Deeplearning.tests.test_constant020.Constant020Tests) ... ok\ntest_failure_retains_candidate_budget_without_scoring_short_prefix (Deeplearning.tests.test_constant020.Constant020Tests) ... ok\ntest_rejects_old_duration_and_invalid_actions (Deeplearning.tests.test_constant020.Constant020Tests) ... ok\ntest_sb3_auto_reset_retains_terminal_candidate_metadata_and_updates (Deeplearning.tests.test_constant020.Constant020Tests) ... ok\ntest_weight_changes_reward_without_changing_waveform_or_common_error (Deeplearning.tests.test_constant020.Constant020Tests) ... ok\ntest_identity_gain_frequency_timing (Deeplearning.tests.test_core.AcousticTests) ... ok\ntest_silence_noise_invalid_inputs (Deeplearning.tests.test_core.AcousticTests) ... ok\ntest_wav_duration_selection_and_pcm_scaling (Deeplearning.tests.test_core.AcousticTests) ... ok\ntest_window_seconds_and_antialiasing (Deeplearning.tests.test_core.AcousticTests) ... ok\ntest_half_amplitude_stays_six_db_quieter (Deeplearning.tests.test_domain_and_shared_display.SharedDisplayTests) ... ok\ntest_rms_difference_is_existing_envelope_loss (Deeplearning.tests.test_domain_and_shared_display.SharedDisplayTests) ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 13.941s\n\nOK\n",
+  "baseline_critic_smoke": {
+    "passed": true,
+    "models": 6,
+    "pool": 1005,
+    "generated_sounds": 0,
+    "max_difference": 0.0
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "images": [
+    {
+      "path": "figures/learning_curves.png",
+      "sha256": "e8d692607d928efbc67afaa1cbbae27d35c61852fe44a3e756065f7119b7372e",
+      "description": "All 33 observations retained; mean ± sample SD; no training rewards mixed into evaluation curves"
+    },
+    {
+      "path": "figures/endpoint_errors.png",
+      "sha256": "92bca55e835f2e22920e9fd0e4943ef96b394d0c650cf1ca037875e9a80f4b24",
+      "description": "Solid spectral + hatched envelope; individual seed totals and sample SD; goal applies to Final mean and all-seed voicing"
+    },
+    {
+      "path": "figures/paired_differences.png",
+      "sha256": "f8b58e3b1c1827d3e574831a9c49b071be9ab98811271cdc688969a6ab293f0e",
+      "description": "Same-seed differences against width32, dots all seeds and sample SD; no assumption of identical trajectories"
+    },
+    {
+      "path": "figures/physical_controls.png",
+      "sha256": "df565efbc832aa6e7f9838d1c4d32e09b59ce3f5f3ba59b26f52632533d18962",
+      "description": "One combined figure; both endpoints, all seeds, model-internal values and shared target references"
+    },
+    {
+      "path": "figures/critic_scatter.png",
+      "sha256": "a3afac6ca24e4b2333edc5873cf7739a5fdf79e2d59bdf17a9fc1a134a0bdf61",
+      "description": "Only TD3/SAC compared; Q1 and Q2 separate colors/markers; same 1005 saved candidates x3 seeds"
+    },
+    {
+      "path": "figures/critic_metrics.png",
+      "sha256": "50e4c27950fdb460842c3e6821a9da2a28eeaa08f77f6be47d1b77b7c322543a",
+      "description": "Same reward scale and pool for every width; per-seed metrics averaged with sample SD; ties excluded from inversion denominator"
+    },
+    {
+      "path": "figures/audio_final.png",
+      "sha256": "0cedb9d3dc9760b7c811ba354c20f8a6227317d675ecc5b12e9bc17815d73bb8",
+      "description": "Fixed seed1; PSD + display-cropped raw waveform + full RMS; no per-seed image generation",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "rms_ylim": [
+        0.0,
+        0.4191777213909879
+      ],
+      "waveform_crop_s": [
+        0.04,
+        0.06
+      ],
+      "target_reference_psd": 1522185576.0445347
+    },
+    {
+      "path": "figures/audio_selected.png",
+      "sha256": "63d7c9b3a76c1cbbe9b381ef480f1ee61e50c8b67071b8551c592c8abbb12b2e",
+      "description": "Fixed seed1; PSD + display-cropped raw waveform + full RMS; no per-seed image generation",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "rms_ylim": [
+        0.0,
+        0.4191777213909879
+      ],
+      "waveform_crop_s": [
+        0.04,
+        0.06
+      ],
+      "target_reference_psd": 1522185576.0445347
+    }
+  ],
+  "source_sha256": "a4011073694d8a1aca811740248588b705a85d76e7bc6febc482c8ee1bbf0ef6",
+  "comparison_methods": [
+    "TD3",
+    "SAC"
+  ],
+  "widths": [
+    32,
+    64,
+    128,
+    256
+  ],
+  "baseline": "Issue18 lambda1 read only",
+  "target_reference_psd": 1522185576.0445347,
+  "db_limits": [
+    -70.0,
+    10.0
+  ],
+  "rms_ylim": [
+    0.0,
+    0.4191777213909879
+  ],
+  "shared_limits_cover_all_48_endpoints": true,
+  "display": {
+    "sample_rate": 10000000,
+    "nperseg": 245760,
+    "noverlap": 184320,
+    "window": "blackmanharris",
+    "frequency_hz": [
+      0,
+      10000
+    ],
+    "cmap": "magma"
+  },
+  "sources": [
+    "comparison_per_seed.csv",
+    "paired_width_deltas.csv",
+    "critic_predictions.csv.gz",
+    "endpoint_sources.json"
+  ]
+}

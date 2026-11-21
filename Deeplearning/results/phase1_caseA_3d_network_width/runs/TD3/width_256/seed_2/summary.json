@@ -1,0 +1,539 @@
+{
+  "method": "TD3",
+  "width": 256,
+  "seed": 2,
+  "envelope_weight": 1.0,
+  "initial": {
+    "episodes": 0,
+    "acoustic_error": 0.5349618847092715,
+    "acoustic_components": {
+      "log_spectral": 0.21533406527403592,
+      "envelope": 0.3196278194352356,
+      "total": 0.5349618847092715,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "failed": false,
+    "numerical_failure": false,
+    "generated_silent": false,
+    "negative_return": 0.5349618847092715,
+    "weighted_loss": 0.5349618847092715,
+    "envelope_weight": 1.0,
+    "sustained_voiced": false,
+    "late_ac_rms_over_target_peak": 1.209779452638862e-16,
+    "parameter_nrmse": 0.12411891589134481,
+    "normalized_parameter_error": [
+      -0.15643198728561403,
+      0.0,
+      -0.14703336954116822,
+      0.011257772487128228,
+      0.0
+    ],
+    "applied_action": [
+      -0.03286397457122803,
+      -0.09406673908233643,
+      -0.03321945667266846
+    ],
+    "applied_controls": [
+      37089200.31785965,
+      35000000.0,
+      3179449.9456882477,
+      412026.094019413,
+      49000.0
+    ],
+    "actions": [
+      [
+        -0.03286397457122803,
+        -0.09406673908233643,
+        -0.03321945667266846
+      ]
+    ],
+    "physical_controls": [
+      37089200.31785965,
+      35000000.0,
+      3179449.9456882477,
+      412026.094019413,
+      49000.0
+    ],
+    "gradient_updates": 0,
+    "learner_before": {
+      "policy_sha256": "f6bfce2ead85d807c42bace8bc53cda16940430c461fba0cc9af2e8eacb2dd3c",
+      "num_timesteps": 0,
+      "gradient_updates": 0,
+      "optimizer_sha256": "29cce64c47c8db629da9ccf1ad4aae46b3945789c7218dfd6101a1f66a090e19",
+      "rng_sha256": "b2d4e69b2b50c8d2ee71d619e9b8047eec3ff9741d90f76679d4f7ea81b2e1cf",
+      "replay_buffer": {
+        "pos": 0,
+        "full": false,
+        "size": 0,
+        "content_sha256": "35558c6d63c00fcf6575b7bd9b2c994e4804fd315992c8a5ca2c21f4ad198129"
+      },
+      "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+      "action_rng_sha256": "27b3bc92c3c17150438a91ac4a68af10038614a8fd4f65efd936ab1aa9526728",
+      "training_env_rng_sha256": "ec59aee411101dc3bb56e68109864041d4f682791aec4d2662c54576d471c6f0",
+      "cuda_rng_sha256": null
+    },
+    "learner_after": {
+      "policy_sha256": "f6bfce2ead85d807c42bace8bc53cda16940430c461fba0cc9af2e8eacb2dd3c",
+      "num_timesteps": 0,
+      "gradient_updates": 0,
+      "optimizer_sha256": "29cce64c47c8db629da9ccf1ad4aae46b3945789c7218dfd6101a1f66a090e19",
+      "rng_sha256": "b2d4e69b2b50c8d2ee71d619e9b8047eec3ff9741d90f76679d4f7ea81b2e1cf",
+      "replay_buffer": {
+        "pos": 0,
+        "full": false,
+        "size": 0,
+        "content_sha256": "35558c6d63c00fcf6575b7bd9b2c994e4804fd315992c8a5ca2c21f4ad198129"
+      },
+      "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+      "action_rng_sha256": "27b3bc92c3c17150438a91ac4a68af10038614a8fd4f65efd936ab1aa9526728",
+      "training_env_rng_sha256": "ec59aee411101dc3bb56e68109864041d4f682791aec4d2662c54576d471c6f0",
+      "cuda_rng_sha256": null
+    }
+  },
+  "final": {
+    "episodes": 4096,
+    "acoustic_error": 0.2435754479057765,
+    "acoustic_components": {
+      "log_spectral": 0.23289374378616107,
+      "envelope": 0.010681704119615455,
+      "total": 0.2435754479057765,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "failed": false,
+    "numerical_failure": false,
+    "generated_silent": false,
+    "negative_return": 0.2435754479057765,
+    "weighted_loss": 0.2435754479057765,
+    "envelope_weight": 1.0,
+    "sustained_voiced": true,
+    "late_ac_rms_over_target_peak": 0.32634969592909274,
+    "parameter_nrmse": 0.06317527404794432,
+    "normalized_parameter_error": [
+      -0.09764082670211792,
+      0.0,
+      -0.04246786832809448,
+      -0.02522092134901512,
+      0.0
+    ],
+    "applied_action": [
+      0.08471834659576416,
+      0.11506426334381104,
+      -0.9999291300773621
+    ],
+    "applied_controls": [
+      38558979.33244705,
+      35000000.0,
+      3336298.1975078583,
+      49026.611655950546,
+      49000.0
+    ],
+    "actions": [
+      [
+        0.08471834659576416,
+        0.11506426334381104,
+        -0.9999291300773621
+      ]
+    ],
+    "physical_controls": [
+      38558979.33244705,
+      35000000.0,
+      3336298.1975078583,
+      49026.611655950546,
+      49000.0
+    ],
+    "gradient_updates": 4080,
+    "learner_before": {
+      "policy_sha256": "48b356895fec1df28a96e431d6e737fc45d54da0f710891b03c0dc24721107a9",
+      "num_timesteps": 4096,
+      "gradient_updates": 4080,
+      "optimizer_sha256": "870b7b43ee9e374dc32258c7556bf88fd9a66423e7471597eef4303c698eb6e1",
+      "rng_sha256": "1c31f690d2af33faa73a7b81d8340e2313b5da6207d489d101714c991fcf5da5",
+      "replay_buffer": {
+        "pos": 4096,
+        "full": false,
+        "size": 4096,
+        "content_sha256": "e214a2f08091e922d574dba70e9aba8be2be38c05d404637b0c88fdee43dd6fc"
+      },
+      "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+      "action_rng_sha256": "088949b53b372f6bbba79a243ed83c8e53b6957a865bf448c06aea191c3b6395",
+      "training_env_rng_sha256": "adccf48202fdab190a3224fe2ff3794765c8fea5a008f01ee34b8594aa9b474f",
+      "cuda_rng_sha256": null
+    },
+    "learner_after": {
+      "policy_sha256": "48b356895fec1df28a96e431d6e737fc45d54da0f710891b03c0dc24721107a9",
+      "num_timesteps": 4096,
+      "gradient_updates": 4080,
+      "optimizer_sha256": "870b7b43ee9e374dc32258c7556bf88fd9a66423e7471597eef4303c698eb6e1",
+      "rng_sha256": "1c31f690d2af33faa73a7b81d8340e2313b5da6207d489d101714c991fcf5da5",
+      "replay_buffer": {
+        "pos": 4096,
+        "full": false,
+        "size": 4096,
+        "content_sha256": "e214a2f08091e922d574dba70e9aba8be2be38c05d404637b0c88fdee43dd6fc"
+      },
+      "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+      "action_rng_sha256": "088949b53b372f6bbba79a243ed83c8e53b6957a865bf448c06aea191c3b6395",
+      "training_env_rng_sha256": "adccf48202fdab190a3224fe2ff3794765c8fea5a008f01ee34b8594aa9b474f",
+      "cuda_rng_sha256": null
+    }
+  },
+  "selected": {
+    "episodes": 2048,
+    "acoustic_error": 0.24129320306881222,
+    "acoustic_components": {
+      "log_spectral": 0.2305107016212043,
+      "envelope": 0.010782501447607925,
+      "total": 0.24129320306881222,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "failed": false,
+    "numerical_failure": false,
+    "generated_silent": false,
+    "negative_return": 0.24129320306881222,
+    "weighted_loss": 0.24129320306881222,
+    "envelope_weight": 1.0,
+    "sustained_voiced": true,
+    "late_ac_rms_over_target_peak": 0.32409499093823474,
+    "parameter_nrmse": 0.06653078104197521,
+    "normalized_parameter_error": [
+      -0.10764153242111206,
+      0.0,
+      -0.032511210441589354,
+      -0.025206272469826194,
+      0.0
+    ],
+    "applied_action": [
+      0.06471693515777588,
+      0.1349775791168213,
+      -0.9995409250259399
+    ],
+    "applied_controls": [
+      38308961.6894722,
+      35000000.0,
+      3351233.184337616,
+      49172.38265275955,
+      49000.0
+    ],
+    "actions": [
+      [
+        0.06471693515777588,
+        0.1349775791168213,
+        -0.9995409250259399
+      ]
+    ],
+    "physical_controls": [
+      38308961.6894722,
+      35000000.0,
+      3351233.184337616,
+      49172.38265275955,
+      49000.0
+    ],
+    "gradient_updates": 2032,
+    "learner_before": {
+      "policy_sha256": "2a1ce3ae739ff958dccc1902cc6d6ecf459e328d8429fda6b8a5483b718fc38e",
+      "num_timesteps": 2048,
+      "gradient_updates": 2032,
+      "optimizer_sha256": "0b440642fba04b00955f0a71821d264ad12e52674c66257298432ef17b06b366",
+      "rng_sha256": "f162465f051f92e4f5957f9d2cc74b5913a45c59b543bd8c0033adeb97d8fee3",
+      "replay_buffer": {
+        "pos": 2048,
+        "full": false,
+        "size": 2048,
+        "content_sha256": "9c9f496d18e64a91a698022b9b5c7eb0b587dcd4c141f1eba41d6115f7256223"
+      },
+      "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+      "action_rng_sha256": "088949b53b372f6bbba79a243ed83c8e53b6957a865bf448c06aea191c3b6395",
+      "training_env_rng_sha256": "adccf48202fdab190a3224fe2ff3794765c8fea5a008f01ee34b8594aa9b474f",
+      "cuda_rng_sha256": null
+    },
+    "learner_after": {
+      "policy_sha256": "2a1ce3ae739ff958dccc1902cc6d6ecf459e328d8429fda6b8a5483b718fc38e",
+      "num_timesteps": 2048,
+      "gradient_updates": 2032,
+      "optimizer_sha256": "0b440642fba04b00955f0a71821d264ad12e52674c66257298432ef17b06b366",
+      "rng_sha256": "f162465f051f92e4f5957f9d2cc74b5913a45c59b543bd8c0033adeb97d8fee3",
+      "replay_buffer": {
+        "pos": 2048,
+        "full": false,
+        "size": 2048,
+        "content_sha256": "9c9f496d18e64a91a698022b9b5c7eb0b587dcd4c141f1eba41d6115f7256223"
+      },
+      "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+      "action_rng_sha256": "088949b53b372f6bbba79a243ed83c8e53b6957a865bf448c06aea191c3b6395",
+      "training_env_rng_sha256": "adccf48202fdab190a3224fe2ff3794765c8fea5a008f01ee34b8594aa9b474f",
+      "cuda_rng_sha256": null
+    }
+  },
+  "training": {
+    "episodes": 4096,
+    "decision_steps": 4096,
+    "native_blocks_attempted": 81920,
+    "native_blocks_completed": 81920,
+    "native_steps_attempted": 8192000000,
+    "native_steps_completed": 8192000000,
+    "integrated_s_attempted": 819.2,
+    "integrated_s_completed": 819.2,
+    "generated_audio_s": 819.2,
+    "failures": 0,
+    "silent_episodes": 0,
+    "nonvoiced_episodes": 117,
+    "wall_s": 826.5355169158429
+  },
+  "evaluation": {
+    "episodes": 35,
+    "decision_steps": 35,
+    "native_blocks_attempted": 700,
+    "native_blocks_completed": 700,
+    "native_steps_attempted": 70000000,
+    "native_steps_completed": 70000000,
+    "integrated_s_attempted": 7.0,
+    "integrated_s_completed": 7.0,
+    "generated_audio_s": 7.0,
+    "failures": 0,
+    "silent_episodes": 0,
+    "nonvoiced_episodes": 1,
+    "wall_s": 6.826047106646001
+  },
+  "independent_policy_evaluations": 33,
+  "endpoint_replays": 2,
+  "gradient_updates": 4080,
+  "optimizer_steps": {
+    "actor": 2040,
+    "critic": 4080
+  },
+  "effective_hyperparameters": {
+    "policy": "TD3Policy",
+    "net_arch": [
+      256,
+      256
+    ],
+    "activation_fn": "ReLU",
+    "device": "cpu",
+    "seed": 2,
+    "torch_threads": 1,
+    "learning_rate": 0.0003,
+    "gamma": 1.0,
+    "batch_size": 32,
+    "buffer_size": 50000,
+    "learning_starts": 16,
+    "gradient_steps": 1,
+    "tau": 0.005,
+    "n_steps": 1,
+    "policy_delay": 2,
+    "target_policy_noise": 0.2,
+    "target_noise_clip": 0.5,
+    "use_sde": false,
+    "sde_sample_freq": -1,
+    "train_freq": {
+      "frequency": 1,
+      "unit": "step"
+    },
+    "action_noise": {
+      "type": "NormalActionNoise",
+      "mean": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "std": [
+        0.1,
+        0.1,
+        0.1
+      ]
+    },
+    "optimizer_param_groups": {
+      "actor": [
+        {
+          "lr": 0.0003,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false,
+          "maximize": false,
+          "foreach": null,
+          "capturable": false,
+          "differentiable": false,
+          "fused": null
+        }
+      ],
+      "critic": [
+        {
+          "lr": 0.0003,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false,
+          "maximize": false,
+          "foreach": null,
+          "capturable": false,
+          "differentiable": false,
+          "fused": null
+        }
+      ]
+    }
+  },
+  "network_geometry": {
+    "actor": [
+      [
+        8,
+        256
+      ],
+      [
+        256,
+        256
+      ],
+      [
+        256,
+        3
+      ]
+    ],
+    "Q1": [
+      [
+        11,
+        256
+      ],
+      [
+        256,
+        256
+      ],
+      [
+        256,
+        1
+      ]
+    ],
+    "Q2": [
+      [
+        11,
+        256
+      ],
+      [
+        256,
+        256
+      ],
+      [
+        256,
+        1
+      ]
+    ],
+    "critic_targets": [
+      [
+        [
+          11,
+          256
+        ],
+        [
+          256,
+          256
+        ],
+        [
+          256,
+          1
+        ]
+      ],
+      [
+        [
+          11,
+          256
+        ],
+        [
+          256,
+          256
+        ],
+        [
+          256,
+          1
+        ]
+      ]
+    ],
+    "actor_parameters": 68867,
+    "critic_parameters": 138242
+  },
+  "numeric_training_metrics": {
+    "time/episodes": {
+      "count": 1024,
+      "minimum": 4.0,
+      "maximum": 4096.0
+    },
+    "rollout/ep_rew_mean": {
+      "count": 1024,
+      "minimum": -0.5304327400000001,
+      "maximum": -0.25894598
+    },
+    "rollout/ep_len_mean": {
+      "count": 1024,
+      "minimum": 1.0,
+      "maximum": 1.0
+    },
+    "time/fps": {
+      "count": 1024,
+      "minimum": 4.0,
+      "maximum": 5.0
+    },
+    "time/time_elapsed": {
+      "count": 1024,
+      "minimum": 0.0,
+      "maximum": 832.0
+    },
+    "time/total_timesteps": {
+      "count": 1024,
+      "minimum": 4.0,
+      "maximum": 4096.0
+    },
+    "train/learning_rate": {
+      "count": 4080,
+      "minimum": 0.0003,
+      "maximum": 0.0003
+    },
+    "train/n_updates": {
+      "count": 4080,
+      "minimum": 1.0,
+      "maximum": 4080.0
+    },
+    "train/critic_loss": {
+      "count": 4080,
+      "minimum": 7.983294926816598e-05,
+      "maximum": 0.5881443023681641
+    },
+    "train/actor_loss": {
+      "count": 2040,
+      "minimum": 0.04560631513595581,
+      "maximum": 0.5778312087059021
+    }
+  },
+  "nonfinite_detected": 0,
+  "source_sha256": {
+    "issue21_data.py": "932c6ff6e71f5993601b2b498af37a626ac679745a5e3d56b92df41de525ec08",
+    "issue21_training.py": "eecb1e39a01e45a9f3eff7a7f36949c8a525c3a6588299df58342fc901395472",
+    "constant020_env.py": "bfee6852ef2c5c6e142eab768beafe835ae1f7fa5c8afe7541346fea012337e6",
+    "issue18_domain_env.py": "978ff51f264af952c91942ada0a0b24b4d2a9a15a52a43ff8955b28744870042",
+    "issue19_data.py": "0080b87b5006bf169f2516fba4beeca1eff21d208cf58c3b062a6891002bccfe",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "issue17_artifacts.py": "3b76084e49fd38e20678a97f4b83771b3d16248cbe005ec71d840037352b24e4",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "native/model.cpp": "0a7688ed58d0a3f487585347f8972586af156e16b794f77da2deab36513075b5",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5"
+  },
+  "target_sha256": "39c30d9010087d191005489bcf34f237193bad9f33cd4d4fe662fc6914814701",
+  "artifact_sha256": {
+    "config.json": "582d8dfd7a906783de4baf121395799fab630dcf58366e584e7e4e44325c9c18",
+    "agent.zip": "634fa45b0449292408926e149ff6100056156522da1a4ac680e199006ae99156",
+    "selected_agent.zip": "f1022106dede5dbeab8e93f7e06ab3b7f37a4c640b74c3c6c51bd9bd3a01bf7b",
+    "final.npz": "6fbf654a549f61dfd4c24301dec6aba179eeffdfa566b2769c519e675dd690c3",
+    "selected.npz": "c667f65219d9c96d594e10baf565460c96a6ec86216c0b478897398121e97130",
+    "curve.json.gz": "0bf68c37d76d90e4ae8028948a71c9eda5b0c38cdd43a8985340692f547d8132",
+    "training_trace.json.gz": "ec97aa5273d2415524f597760d10f3c5f16ace7f2efc7e63389ba3c3ad7e6a6a"
+  },
+  "artifact_wall_s": 0.21163198817521334,
+  "elapsed_s": 834.5959027009085,
+  "process_cpu_s": 834.51083579
+}

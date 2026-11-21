@@ -21,6 +21,10 @@ Issue #19の [制限3Dのλ比較・Actor/Critic診断](results/phase1_restricte
 既存λ=1を保持してλ=.5を9 run追加した追試。Randomは同じ保存候補を再スコアし、
 主要図は8枚に集約した。再評価・旧成果のhash照合は `python -m Deeplearning.issue19_audit`、
 保存済み結果からの描画は `python -m Deeplearning.issue19_report`。
+Issue #21の [Case A・一定3Dのネットワーク幅比較](results/phase1_caseA_3d_network_width/README.md) は、
+λ=1・同じ目標/範囲/予算を維持し、ActorとCriticの幅64/128/256を18 run比較する。
+32幅はIssue #18の保存結果を参照する。検証は `python -m Deeplearning.issue21_audit`、
+保存結果からの集約図・レポート更新は `python -m Deeplearning.issue21_report`。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl
