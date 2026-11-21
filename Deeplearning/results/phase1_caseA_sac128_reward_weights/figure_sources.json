@@ -1,0 +1,95 @@
+{
+  "images": [
+    {
+      "path": "figures/evaluation_curves.png",
+      "sha256": "673aa2c28ebdb5effdae564163e73e8917d3d81835541cd77fbd35a1da056020",
+      "description": "33 independent policy evaluations; seed mean ± sample SD; own J is separated from common errors"
+    },
+    {
+      "path": "figures/endpoints_and_stability.png",
+      "sha256": "2f3dc434c1cbf001ff4ccb826e1250c61fa5a91ea042dda5193fa61318e1adfa",
+      "description": "Solid spectral / hatched envelope; seed dots and sample SD; posthoc not substituted for Selected/Final"
+    },
+    {
+      "path": "figures/policy_dynamics.png",
+      "sha256": "245f25d9aee3e11e8c84e7bc34ec1c5f48e9784dffdfae4ca28d61254e6fa5d2",
+      "description": "No inferred legacy time series; fixed local MC4096 for squashed entropy/std; differential entropy may be negative"
+    },
+    {
+      "path": "figures/reward_temperature_scale.png",
+      "sha256": "ed11e47085b427cb8a4a14779bfa2bd68ac774ca236de90cfd9eb00e8456d4be",
+      "description": "Training samples only, not policy evaluations; ratio is descriptive, not a causal entropy-dominance measure; old alpha trajectory unavailable"
+    },
+    {
+      "path": "figures/physical_controls.png",
+      "sha256": "e3b00ab478f74d6362b0b06516eb272ae4541691a51dab9d3f70b8b64b7715d6",
+      "description": "All seeds, Final/Selected, one combined control figure; target reference, not constant control-vs-time plots"
+    },
+    {
+      "path": "figures/critic_calibration.png",
+      "sha256": "003cc423b7ae1341818db4e1f261e72633d9ca53c6035ab450226153462c3577",
+      "description": "Each panel uses its own reward/axis scale; raw RMSE across panels is not a scale-free comparison; same1005 saved candidates"
+    },
+    {
+      "path": "figures/audio_final.png",
+      "sha256": "5b95c829a8ea4a3543598be340954adbd774cdbc0ec9165c008827a82f36f2be",
+      "description": "Fixed seed1; shared Target PSD and gain, full RMS and explicitly display-cropped raw waveform",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "rms_ylim": [
+        0.0,
+        0.4466775169590795
+      ]
+    },
+    {
+      "path": "figures/audio_selected.png",
+      "sha256": "0c0434bdac8f39d385576ca754e967acbc4efe1a9986db423bd5da3ba6f1ceef",
+      "description": "Fixed seed1; shared Target PSD and gain, full RMS and explicitly display-cropped raw waveform",
+      "db_limits": [
+        -70.0,
+        10.0
+      ],
+      "rms_ylim": [
+        0.0,
+        0.4466775169590795
+      ]
+    }
+  ],
+  "source_sha256": "dc5a2291799b260ec7e2dc1b9392ec65dcb8d63fdbedea1110cb282ff1c29041",
+  "conditions": [
+    "legacy_sum",
+    "lambda_0p50",
+    "lambda_0p75",
+    "lambda_0p90"
+  ],
+  "display": {
+    "target_reference_psd": 1522185576.0445347,
+    "db_limits": [
+      -70.0,
+      10.0
+    ],
+    "rms_ylim": [
+      0.0,
+      0.4466775169590795
+    ],
+    "cmap": "magma",
+    "display_rate": 10000000,
+    "window": "blackmanharris",
+    "nperseg": 245760,
+    "noverlap": 184320,
+    "frequency_hz": [
+      0,
+      10000
+    ]
+  },
+  "common_limits_cover_all_24_saved_final_selected_sounds": true,
+  "no_simulation": true,
+  "source_data": [
+    "comparison_per_seed.csv",
+    "policy_dynamics.csv",
+    "training_samples.csv.gz",
+    "endpoint_sources.json"
+  ]
+}

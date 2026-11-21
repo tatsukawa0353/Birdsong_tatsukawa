@@ -1,0 +1,582 @@
+{
+  "passed": true,
+  "generated_sounds": 4,
+  "coefficient_checks": [
+    {
+      "lambda_spectral": 0.5,
+      "spectral": 0.5,
+      "envelope": 0.5,
+      "sum": 1.0,
+      "extra_multiplier": 1.0
+    },
+    {
+      "lambda_spectral": 0.75,
+      "spectral": 0.75,
+      "envelope": 0.25,
+      "sum": 1.0,
+      "extra_multiplier": 1.0
+    },
+    {
+      "lambda_spectral": 0.9,
+      "spectral": 0.9,
+      "envelope": 0.09999999999999998,
+      "sum": 1.0,
+      "extra_multiplier": 1.0
+    }
+  ],
+  "lambda0p5_is_exact_half_old_sum": true,
+  "common_waveforms_unchanged": [
+    {
+      "weight": 0.5,
+      "seed": 0,
+      "waveform_max_difference": 0.0,
+      "common_error_difference": 0.0,
+      "J": 0.1146978126174124
+    },
+    {
+      "weight": 0.75,
+      "seed": 1,
+      "waveform_max_difference": 0.0,
+      "common_error_difference": 0.0,
+      "J": 0.13330626884495722
+    },
+    {
+      "weight": 0.9,
+      "seed": 2,
+      "waveform_max_difference": 0.0,
+      "common_error_difference": 0.0,
+      "J": 0.11920601645732665
+    }
+  ],
+  "model_constants": [
+    0.02,
+    0.01,
+    0.0,
+    0.0
+  ],
+  "initial_policies_match": true,
+  "statistics_preserve_rng_and_learner": true,
+  "policies": [
+    {
+      "seed": 0,
+      "network_geometry": {
+        "actor": [
+          [
+            8,
+            128
+          ],
+          [
+            128,
+            128
+          ]
+        ],
+        "Q1": [
+          [
+            11,
+            128
+          ],
+          [
+            128,
+            128
+          ],
+          [
+            128,
+            1
+          ]
+        ],
+        "Q2": [
+          [
+            11,
+            128
+          ],
+          [
+            128,
+            128
+          ],
+          [
+            128,
+            1
+          ]
+        ],
+        "critic_targets": [
+          [
+            [
+              11,
+              128
+            ],
+            [
+              128,
+              128
+            ],
+            [
+              128,
+              1
+            ]
+          ],
+          [
+            [
+              11,
+              128
+            ],
+            [
+              128,
+              128
+            ],
+            [
+              128,
+              1
+            ]
+          ]
+        ],
+        "actor_parameters": 18438,
+        "critic_parameters": 36354
+      },
+      "effective_hyperparameters": {
+        "policy": "SACPolicy",
+        "net_arch": [
+          128,
+          128
+        ],
+        "activation_fn": "ReLU",
+        "device": "cpu",
+        "seed": 0,
+        "torch_threads": 1,
+        "learning_rate": 0.0003,
+        "gamma": 1.0,
+        "batch_size": 32,
+        "buffer_size": 50000,
+        "learning_starts": 16,
+        "gradient_steps": 1,
+        "tau": 0.005,
+        "n_steps": 1,
+        "ent_coef": "auto_0.01",
+        "target_update_interval": 1,
+        "target_entropy": -3.0,
+        "use_sde": false,
+        "sde_sample_freq": -1,
+        "train_freq": {
+          "frequency": 1,
+          "unit": "step"
+        },
+        "initial_entropy_coefficient": 0.009999999776482582,
+        "optimizer_param_groups": {
+          "actor": [
+            {
+              "lr": 0.0003,
+              "betas": [
+                0.9,
+                0.999
+              ],
+              "eps": 1e-08,
+              "weight_decay": 0,
+              "amsgrad": false,
+              "maximize": false,
+              "foreach": null,
+              "capturable": false,
+              "differentiable": false,
+              "fused": null
+            }
+          ],
+          "critic": [
+            {
+              "lr": 0.0003,
+              "betas": [
+                0.9,
+                0.999
+              ],
+              "eps": 1e-08,
+              "weight_decay": 0,
+              "amsgrad": false,
+              "maximize": false,
+              "foreach": null,
+              "capturable": false,
+              "differentiable": false,
+              "fused": null
+            }
+          ]
+        }
+      },
+      "initial_statistics": {
+        "alpha": 0.009999999776482582,
+        "latent_mean": [
+          0.12090583890676498,
+          0.014268886297941208,
+          0.03304297477006912
+        ],
+        "latent_log_std": [
+          -0.062055815011262894,
+          0.019998185336589813,
+          0.0708245038986206
+        ],
+        "latent_std": [
+          0.9398304224014282,
+          1.0201995372772217,
+          1.0733928680419922
+        ],
+        "normalized_action_std_mc": [
+          0.6146757006645203,
+          0.6337451934814453,
+          0.6399723887443542
+        ],
+        "squashed_entropy_mc": 1.9888947010040283,
+        "entropy_mc_se": 0.006938354577869177,
+        "gaussian_entropy": 4.285582542419434,
+        "deterministic_action": [
+          0.12032011896371841,
+          0.014267917722463608,
+          0.033030953258275986
+        ],
+        "entropy_samples": 4096,
+        "entropy_seed": 220026
+      }
+    },
+    {
+      "seed": 1,
+      "network_geometry": {
+        "actor": [
+          [
+            8,
+            128
+          ],
+          [
+            128,
+            128
+          ]
+        ],
+        "Q1": [
+          [
+            11,
+            128
+          ],
+          [
+            128,
+            128
+          ],
+          [
+            128,
+            1
+          ]
+        ],
+        "Q2": [
+          [
+            11,
+            128
+          ],
+          [
+            128,
+            128
+          ],
+          [
+            128,
+            1
+          ]
+        ],
+        "critic_targets": [
+          [
+            [
+              11,
+              128
+            ],
+            [
+              128,
+              128
+            ],
+            [
+              128,
+              1
+            ]
+          ],
+          [
+            [
+              11,
+              128
+            ],
+            [
+              128,
+              128
+            ],
+            [
+              128,
+              1
+            ]
+          ]
+        ],
+        "actor_parameters": 18438,
+        "critic_parameters": 36354
+      },
+      "effective_hyperparameters": {
+        "policy": "SACPolicy",
+        "net_arch": [
+          128,
+          128
+        ],
+        "activation_fn": "ReLU",
+        "device": "cpu",
+        "seed": 1,
+        "torch_threads": 1,
+        "learning_rate": 0.0003,
+        "gamma": 1.0,
+        "batch_size": 32,
+        "buffer_size": 50000,
+        "learning_starts": 16,
+        "gradient_steps": 1,
+        "tau": 0.005,
+        "n_steps": 1,
+        "ent_coef": "auto_0.01",
+        "target_update_interval": 1,
+        "target_entropy": -3.0,
+        "use_sde": false,
+        "sde_sample_freq": -1,
+        "train_freq": {
+          "frequency": 1,
+          "unit": "step"
+        },
+        "initial_entropy_coefficient": 0.009999999776482582,
+        "optimizer_param_groups": {
+          "actor": [
+            {
+              "lr": 0.0003,
+              "betas": [
+                0.9,
+                0.999
+              ],
+              "eps": 1e-08,
+              "weight_decay": 0,
+              "amsgrad": false,
+              "maximize": false,
+              "foreach": null,
+              "capturable": false,
+              "differentiable": false,
+              "fused": null
+            }
+          ],
+          "critic": [
+            {
+              "lr": 0.0003,
+              "betas": [
+                0.9,
+                0.999
+              ],
+              "eps": 1e-08,
+              "weight_decay": 0,
+              "amsgrad": false,
+              "maximize": false,
+              "foreach": null,
+              "capturable": false,
+              "differentiable": false,
+              "fused": null
+            }
+          ]
+        }
+      },
+      "initial_statistics": {
+        "alpha": 0.009999999776482582,
+        "latent_mean": [
+          0.00388355553150177,
+          0.008317658677697182,
+          0.1254500150680542
+        ],
+        "latent_log_std": [
+          -0.08923782408237457,
+          -0.12841856479644775,
+          -0.020344581454992294
+        ],
+        "latent_std": [
+          0.9146280288696289,
+          0.8794851899147034,
+          0.9798609614372253
+        ],
+        "normalized_action_std_mc": [
+          0.6089821457862854,
+          0.589569091796875,
+          0.6118522882461548
+        ],
+        "squashed_entropy_mc": 2.0325756072998047,
+        "entropy_mc_se": 0.004809876438230276,
+        "gaussian_entropy": 4.018814563751221,
+        "deterministic_action": [
+          0.003883535973727703,
+          0.008317466825246811,
+          0.12479603290557861
+        ],
+        "entropy_samples": 4096,
+        "entropy_seed": 220026
+      }
+    },
+    {
+      "seed": 2,
+      "network_geometry": {
+        "actor": [
+          [
+            8,
+            128
+          ],
+          [
+            128,
+            128
+          ]
+        ],
+        "Q1": [
+          [
+            11,
+            128
+          ],
+          [
+            128,
+            128
+          ],
+          [
+            128,
+            1
+          ]
+        ],
+        "Q2": [
+          [
+            11,
+            128
+          ],
+          [
+            128,
+            128
+          ],
+          [
+            128,
+            1
+          ]
+        ],
+        "critic_targets": [
+          [
+            [
+              11,
+              128
+            ],
+            [
+              128,
+              128
+            ],
+            [
+              128,
+              1
+            ]
+          ],
+          [
+            [
+              11,
+              128
+            ],
+            [
+              128,
+              128
+            ],
+            [
+              128,
+              1
+            ]
+          ]
+        ],
+        "actor_parameters": 18438,
+        "critic_parameters": 36354
+      },
+      "effective_hyperparameters": {
+        "policy": "SACPolicy",
+        "net_arch": [
+          128,
+          128
+        ],
+        "activation_fn": "ReLU",
+        "device": "cpu",
+        "seed": 2,
+        "torch_threads": 1,
+        "learning_rate": 0.0003,
+        "gamma": 1.0,
+        "batch_size": 32,
+        "buffer_size": 50000,
+        "learning_starts": 16,
+        "gradient_steps": 1,
+        "tau": 0.005,
+        "n_steps": 1,
+        "ent_coef": "auto_0.01",
+        "target_update_interval": 1,
+        "target_entropy": -3.0,
+        "use_sde": false,
+        "sde_sample_freq": -1,
+        "train_freq": {
+          "frequency": 1,
+          "unit": "step"
+        },
+        "initial_entropy_coefficient": 0.009999999776482582,
+        "optimizer_param_groups": {
+          "actor": [
+            {
+              "lr": 0.0003,
+              "betas": [
+                0.9,
+                0.999
+              ],
+              "eps": 1e-08,
+              "weight_decay": 0,
+              "amsgrad": false,
+              "maximize": false,
+              "foreach": null,
+              "capturable": false,
+              "differentiable": false,
+              "fused": null
+            }
+          ],
+          "critic": [
+            {
+              "lr": 0.0003,
+              "betas": [
+                0.9,
+                0.999
+              ],
+              "eps": 1e-08,
+              "weight_decay": 0,
+              "amsgrad": false,
+              "maximize": false,
+              "foreach": null,
+              "capturable": false,
+              "differentiable": false,
+              "fused": null
+            }
+          ]
+        }
+      },
+      "initial_statistics": {
+        "alpha": 0.009999999776482582,
+        "latent_mean": [
+          0.05272778123617172,
+          -0.042898841202259064,
+          0.09220290184020996
+        ],
+        "latent_log_std": [
+          0.0031164363026618958,
+          -0.06519192457199097,
+          0.06503627449274063
+        ],
+        "latent_std": [
+          1.003121256828308,
+          0.9368876218795776,
+          1.0671976804733276
+        ],
+        "normalized_action_std_mc": [
+          0.635583221912384,
+          0.6082689762115479,
+          0.6372963786125183
+        ],
+        "squashed_entropy_mc": 1.9954733848571777,
+        "entropy_mc_se": 0.006657651159912348,
+        "gaussian_entropy": 4.259776592254639,
+        "deterministic_action": [
+          0.052678968757390976,
+          -0.04287254437804222,
+          0.09194250404834747
+        ],
+        "entropy_samples": 4096,
+        "entropy_seed": 220026
+      }
+    }
+  ],
+  "wall_s": 1.803359154611826,
+  "source_sha256": "f67ac36b348c12772bc462f10e5b6b154d6bb08e63d96f07b1aa3694e381d414"
+}
