@@ -1,0 +1,48 @@
+{
+  "train_points": 12288,
+  "holdout_points": 99,
+  "source_seeds": {
+    "0": 4096,
+    "1": 4096,
+    "2": 4096
+  },
+  "holdout_per_seed": 33,
+  "duplicate_train_raw": 0,
+  "duplicate_train_critic_inputs": 0,
+  "duplicate_holdout_raw": 0,
+  "train_holdout_exact_raw_overlap": 0,
+  "train_holdout_exact_feature_overlap": 0,
+  "nearest_holdout_distance_quantiles": {
+    "0": 0.0007140642221709972,
+    "0.25": 0.003245419213002999,
+    "0.5": 0.007486938238535306,
+    "0.75": 0.010331220486530622,
+    "1": 0.05220775918220474
+  },
+  "nearest_train_distance_quantiles": {
+    "0": 0.0002342429267759846,
+    "0.25": 0.004593483530268406,
+    "0.5": 0.008810133599579769,
+    "0.75": 0.014440182493727206,
+    "1": 0.17768918465680913
+  },
+  "lowJ_holdout_decile_cutoff": 0.04198514466620871,
+  "train_at_or_below_holdout_lowJ_cutoff": 372,
+  "train_E_le_0p10_by_seed": {
+    "0": 1,
+    "1": 288,
+    "2": 358
+  },
+  "source_files": {
+    "results/phase1_caseA_sac128_stability_diagnostics/runs/seed_0/training_trace.json.gz": "41445270147b784dc758b8a50341ac6cbc38e4d6f5541270a54af7938bd25f0a",
+    "results/phase1_caseA_sac128_stability_diagnostics/runs/seed_1/training_trace.json.gz": "c8105831c16daf20948e31719056bd346bdf63fd62b5f9bd9bab7012dfb655ff",
+    "results/phase1_caseA_sac128_stability_diagnostics/runs/seed_2/training_trace.json.gz": "348b5a1d479c1b840a1fc7fff548ba975283733c19302b9b290dcb6c6abb981d",
+    "results/phase1_caseA_sac128_stability_diagnostics/runs/seed_0/curve.json.gz": "d4f82b00bdc200710b5c665572d0b0a7f3a9fbfc2b12dd484c6107b881b413d9",
+    "results/phase1_caseA_sac128_stability_diagnostics/runs/seed_1/curve.json.gz": "a24ce1308cc5757bae63caf7bd8dcd6a52ee780e5104146bda1659ea1bceba89",
+    "results/phase1_caseA_sac128_stability_diagnostics/runs/seed_2/curve.json.gz": "db9d82b1fb0f8506b730a6df430c2f228cd21b2c1e919a2de344a68cac477452"
+  },
+  "training_duplicate_family": "Issue23 exactly reproduces Issue22 lambda.75; use Issue23 only, never pool both copies",
+  "leakage_limits": "Holdout never sampled for fitting/early stopping; same target, correlated trajectories and near neighbors remain; not IID/new-target generalization",
+  "input": "constant reset observation8 + normalized SB3 float32 action3, no standardization/reweighting",
+  "source_sha256": "9b1f5fa72a28913001078326c43dc59eb939598276397755bf1f25b6bb1b7e2c"
+}

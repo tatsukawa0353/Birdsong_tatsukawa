@@ -1,0 +1,191 @@
+{
+  "issue": 25,
+  "created_utc": "2026-11-21T12:58:43.672520+00:00",
+  "git_head": "2d407cfad97ae418ab05e5142cfa896da5a69a7c",
+  "settings": {
+    "experiment_id": "issue25_sac128_critic_lr",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "methods": [
+      "SAC"
+    ],
+    "conditions": [
+      "constant_3d"
+    ],
+    "episodes": 4096,
+    "eval_every_episodes": 128,
+    "checkpoints": [],
+    "warmup_episodes": 16,
+    "learning_rate": 0.0003,
+    "batch_size": 32,
+    "net_arch": [
+      128,
+      128
+    ],
+    "gamma": 1.0,
+    "sac_ent_coef": "auto_0.01",
+    "td3_noise_std": 0.1,
+    "de_population": 8,
+    "de_mutation": [
+      0.5,
+      1.0
+    ],
+    "de_recombination": 0.7,
+    "duration_s": 0.2,
+    "sample_rate": 50000,
+    "physical_block_s": 0.01,
+    "native_dt": 1e-07,
+    "evaluation_schedule": "0,128,...,3968 after previous gradient update; 4096 post-final-update; 33 independent evaluations",
+    "direct_final_selection": "actual candidate 4096; selected DE incumbent and best-so-far recorded and independently replayed separately",
+    "domain_restriction": {
+      "frozen_before_training_utc": "2026-11-15T13:56:50.786842+00:00",
+      "rule": "Keep epsilon_l and ps full ranges and f0_l lower49000. Upper=min(1e7,ceil(1.5*largest_voiced_f0/1e5)*1e5). Use proxy only, never E_total or proximity to target.",
+      "largest_voiced_f0": 476950.0,
+      "restricted_f0_low": 49000.0,
+      "restricted_f0_high": 800000.0,
+      "original_f0_high": 10000000.0,
+      "epsilon_l_range": [
+        25000000.0,
+        50000000.0
+      ],
+      "ps_range": [
+        2500000.0,
+        4000000.0
+      ],
+      "target_f0": 300000.0,
+      "target_fraction_restricted": 0.33422103861517977,
+      "survey_voiced_points": 702,
+      "survey_points": 3388,
+      "voiced_fraction_on_this_nonuniform_grid": 0.20720188902007083,
+      "note": "Grid is nonuniform; this fraction is NOT a physical-volume probability. Upper includes 50% safety margin beyond all observed voiced anchors.",
+      "same_target_and_reward": true,
+      "lambda_for_followup": 1.0,
+      "budget": 4096,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "methods": [
+        "TD3",
+        "SAC",
+        "DE",
+        "random_search"
+      ]
+    },
+    "spectral_weights": [
+      0.75
+    ],
+    "critic_learning_rates": [
+      0.0001,
+      0.001
+    ]
+  },
+  "source_sha256": {
+    "issue25_agent.py": "47144253bcc93a94f738183e6e7be3ed6faf0853e156bb943b2f2bd2c726ce21",
+    "issue25_data.py": "823e3da64c88c4b77f69e70eba3a172e3826768863d5bc641316bad6c8447acc",
+    "issue25_training.py": "a1f7afd4b430caf992f3c3cbe1a47f0c8cb1e24c38b08550f2b2862f46551452",
+    "issue25_offline.py": "6af1f42220a0dacbabb52d16b35380720c47e6f9642122e4f571f406449a46db",
+    "issue25_prepare.py": "9b1f5fa72a28913001078326c43dc59eb939598276397755bf1f25b6bb1b7e2c",
+    "issue24_agent.py": "44873b0433351ace76971bec8609ae912b9fd201b11748cb3867c0fe615a1399",
+    "issue24_data.py": "154bf84901e0bd0c4f69d75608200942e22549811a17f4289cfcdedd38064846",
+    "issue23_data.py": "ae9149532befb0cbf0fc711eecd0a8403ecb47a17ce897652c373c6f1a422a80",
+    "issue23_training.py": "d15a6d68cdf15c5c43c0a68fe819b3b24012722bc523e515eb800beba44ada04",
+    "issue22_data.py": "9c3b311e225b60aecc9f09f2b45e75e3e8d4a31ad1589240ae6af8351ab1b657",
+    "issue22_training.py": "9cd60116ad5ac337786882e07b63a5671e1609a012f8dfb99c59e7438c2e9dcf",
+    "issue21_training.py": "eecb1e39a01e45a9f3eff7a7f36949c8a525c3a6588299df58342fc901395472",
+    "issue21_data.py": "932c6ff6e71f5993601b2b498af37a626ac679745a5e3d56b92df41de525ec08",
+    "issue19_data.py": "0080b87b5006bf169f2516fba4beeca1eff21d208cf58c3b062a6891002bccfe",
+    "issue18_domain_env.py": "978ff51f264af952c91942ada0a0b24b4d2a9a15a52a43ff8955b28744870042",
+    "constant020_env.py": "bfee6852ef2c5c6e142eab768beafe835ae1f7fa5c8afe7541346fea012337e6",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "native/model.cpp": "0a7688ed58d0a3f487585347f8972586af156e16b794f77da2deab36513075b5",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5"
+  },
+  "native_library_sha256": "7b6fe5a7e77ab8f0308e0a8cf58825a1675fa2bbf610aa4c9ae785a2c87fcd92",
+  "target_sha256": "39c30d9010087d191005489bcf34f237193bad9f33cd4d4fe662fc6914814701",
+  "versions": {
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "torch": "2.5.1+cu121",
+    "stable-baselines3": "2.8.0",
+    "gymnasium": "1.2.3",
+    "matplotlib": "3.10.8",
+    "SciencePlots": "2.2.2"
+  },
+  "baseline_manifest_sha256": "bf785ac9232f0b8a9f57b8326279418256ffbd86eb689a735fad5d2442c60279",
+  "previous_manifest_sha256": "079d869b74a466ca15bf2035ded287197e1f57bf3a55c51d5f8fb28d33c89276",
+  "sb3_implementation_sha256": {
+    "SAC.train": "0ac7abe1c18ba7fe1b8a5bbf2b301b6fff4f4573aa02c4342187a953600ce50c",
+    "BaseAlgorithm._update_learning_rate": "2c117a53cb3ada642c5995e23b1f6b28c12ba51023321f9b2e93cb316db1c21a"
+  },
+  "plan_sha256": "fe3f621fa1d01b1f7fbbf672cb693dd5597c9ae2b9a9d41ceadcac4a6907bf08",
+  "data_sha256": {
+    "offline_data.npz": "1a66529dba2a475fc6e5c3110081392556d09d06943cf59396faf41504301b32",
+    "offline_batches.npz": "6dd4ecd9690da8fdb11ca9dbb6819d6286e9bc759f10ce1528edbd256099ac02",
+    "offline_points.csv.gz": "bc15c9d236c71ca67f58c42177007f58d8821ca42031a20f99b4b3dac903c55c",
+    "dataset_audit.json": "ae089b916be36ac6c8711b39577135e1c657e83ff9fcc7ba3b9dbfeed747970a",
+    "holdout_nearest_neighbors.csv": "554df3965bf5bec77bfbf188cb7a7428414aa180169d60de5aafab4bfea2a959"
+  },
+  "local_reference_sha256": {
+    "local_sensitivity.csv": "1baebaf8d1b6c6b9ab96469e42ca7e035199eb1f0d1709a7a69bc09cfccb4807",
+    "local_gradients.csv": "c351ddd581b12a22297e3c5484c6baca26688df8c9366a86133689565582ff8f",
+    "local_execution.json": "0276f866e9649139b71a9c98b56bf9f15dc6ab8fb4d7c60cae7ad4e00b3b0dcc"
+  },
+  "numerical_limits": {
+    "gradient_l2": 1000000.0,
+    "parameter_abs": 1000000.0,
+    "optimizer_moment_abs": 1000000000000.0
+  },
+  "online_runs": 6,
+  "baseline_new_runs": 0,
+  "local_native_sounds": 0,
+  "offline": {
+    "runs": 9,
+    "updates": 4080,
+    "batch_size": 32,
+    "evaluation_updates": [
+      0,
+      128,
+      256,
+      384,
+      512,
+      640,
+      768,
+      896,
+      1024,
+      1152,
+      1280,
+      1408,
+      1536,
+      1664,
+      1792,
+      1920,
+      2048,
+      2176,
+      2304,
+      2432,
+      2560,
+      2688,
+      2816,
+      2944,
+      3072,
+      3200,
+      3328,
+      3456,
+      3584,
+      3712,
+      3840,
+      3968,
+      4080
+    ],
+    "train_points": 12288,
+    "holdout_points": 99
+  },
+  "source_link": "https://github.com/tatsukawa0353/Birdsong_tatsukawa/issues/25"
+}

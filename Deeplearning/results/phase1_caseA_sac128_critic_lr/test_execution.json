@@ -1,0 +1,106 @@
+{
+  "passed": true,
+  "tests": 8,
+  "command": "python -m unittest Deeplearning.tests.test_issue25 -v",
+  "native_sound_evaluations": 171,
+  "native_training_candidates": 145,
+  "native_independent_evaluations": 14,
+  "native_endpoint_replays": 12,
+  "native_failure_injection_candidates": 17,
+  "synthetic_terminal_episodes": 179,
+  "offline_test_fits": 3,
+  "offline_test_updates": 96,
+  "high_lr_native_smoke": [
+    {
+      "seed": 0,
+      "rate": 0.0001,
+      "updates": 16,
+      "numeric_maxima": {
+        "entropy": {
+          "gradient_l2": 5.185116291046143,
+          "parameter_abs": 4.60996675491333,
+          "optimizer_moment_abs": 4.077640533447266
+        },
+        "critic": {
+          "gradient_l2": 0.5709393986681587,
+          "parameter_abs": 0.30273762345314026,
+          "optimizer_moment_abs": 0.21318496763706207
+        },
+        "actor": {
+          "gradient_l2": 0.04396775154628403,
+          "parameter_abs": 0.3549351394176483,
+          "optimizer_moment_abs": 0.00884447805583477
+        }
+      }
+    },
+    {
+      "seed": 0,
+      "rate": 0.001,
+      "updates": 16,
+      "numeric_maxima": {
+        "entropy": {
+          "gradient_l2": 5.17935848236084,
+          "parameter_abs": 4.609968662261963,
+          "optimizer_moment_abs": 4.097835063934326
+        },
+        "critic": {
+          "gradient_l2": 0.5709393986681587,
+          "parameter_abs": 0.3072333037853241,
+          "optimizer_moment_abs": 0.07788176089525223
+        },
+        "actor": {
+          "gradient_l2": 0.10502163758987147,
+          "parameter_abs": 0.35495737195014954,
+          "optimizer_moment_abs": 0.01597468927502632
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "rate": 0.001,
+      "updates": 16,
+      "numeric_maxima": {
+        "entropy": {
+          "gradient_l2": 5.114500045776367,
+          "parameter_abs": 4.609963893890381,
+          "optimizer_moment_abs": 4.07448673248291
+        },
+        "critic": {
+          "gradient_l2": 0.6451604432249985,
+          "parameter_abs": 0.31080761551856995,
+          "optimizer_moment_abs": 0.10412300378084183
+        },
+        "actor": {
+          "gradient_l2": 0.11534688575346948,
+          "parameter_abs": 0.3534923195838928,
+          "optimizer_moment_abs": 0.019895030185580254
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "rate": 0.001,
+      "updates": 16,
+      "numeric_maxima": {
+        "entropy": {
+          "gradient_l2": 5.175719261169434,
+          "parameter_abs": 4.609967231750488,
+          "optimizer_moment_abs": 4.108177661895752
+        },
+        "critic": {
+          "gradient_l2": 0.7267082544196196,
+          "parameter_abs": 0.31163233518600464,
+          "optimizer_moment_abs": 0.10495787113904953
+        },
+        "actor": {
+          "gradient_l2": 0.0867288584237315,
+          "parameter_abs": 0.35686081647872925,
+          "optimizer_moment_abs": 0.015828467905521393
+        }
+      }
+    }
+  ],
+  "test_source_sha256": "6d864a7d09a7b7de17ad45edc3dab79eba84111328459c8bb5fb07e954a49b13",
+  "offline_test_recheck_passed": true,
+  "prior_test_correction": "Compressed artifact reader requires logical .json path; corrected before full experiments. The one offline-only test was rerun; no additional native calls."
+}
