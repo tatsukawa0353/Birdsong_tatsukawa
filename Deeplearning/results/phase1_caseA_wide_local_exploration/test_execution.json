@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "tests": 6,
+  "command": "python -m unittest Deeplearning.tests.test_issue26 -v",
+  "synthetic_terminal_episodes": 6208,
+  "prefix_seeds": 3,
+  "prefix_steps": 256,
+  "prefix_conditions": [
+    "stock",
+    "B",
+    "C",
+    "D"
+  ],
+  "pure_local_candidate_draws": 16384,
+  "native_sound_evaluations": 121,
+  "native_training_candidates": 96,
+  "native_policy_evaluations": 9,
+  "native_replay_sounds": 12,
+  "native_shared_domain_sounds": 4,
+  "test_source_sha256": "aace2592e1a42220a6908875bf21176c3c2b072afb88ca77fd8ea4b52a229afd",
+  "verification_history": [
+    {
+      "scope": "initial six-test suite",
+      "native_short_run_passed": true,
+      "synthetic_assertion_format_error": true
+    },
+    {
+      "scope": "four synthetic tests repeated",
+      "log": "test_all3_seeds_stock_B_C_D_first256_match_full_state_and_history (Deeplearning.tests.test_issue26.LocalBehaviorTests) ... ok\ntest_intersection_uniform_is_dense_not_grid_or_boundary_clipping (Deeplearning.tests.test_issue26.LocalBehaviorTests) ... ERROR\ntest_first_tied_nonvoiced_sample_remains_center_and_eval_cannot_replace (Deeplearning.tests.test_issue26.LocalBehaviorTests) ... ok\ntest_normal_component_allows_steps_beyond_local_radius (Deeplearning.tests.test_issue26.LocalBehaviorTests) ... ok\n\n======================================================================\nERROR: test_intersection_uniform_is_dense_not_grid_or_boundary_clipping (Deeplearning.tests.test_issue26.LocalBehaviorTests)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/tests/test_issue26.py\", line 74, in test_intersection_uniform_is_dense_not_grid_or_boundary_clipping\n    np.testing.assert_allclose(actual.mean(0),(lower+upper)/2,rtol=0,atol=.03*(upper-lower))\n  File \"/usr/local/lib/python3.10/dist-packages/numpy/testing/_private/utils.py\", line 1714, in assert_allclose\n    header = f'Not equal to tolerance rtol={rtol:g}, atol={atol:g}'\nTypeError: unsupported format string passed to numpy.ndarray.__format__\n\n----------------------------------------------------------------------\nRan 4 tests in 12.803s\n\nFAILED (errors=1)\n",
+      "prefix_and_center_and_normal_component_passed": true
+    },
+    {
+      "scope": "corrected uniform assertion and shared native controls",
+      "log": "test_intersection_uniform_is_dense_not_grid_or_boundary_clipping (Deeplearning.tests.test_issue26.LocalBehaviorTests) ... ok\ntest_shared_physical_controls_reproduce_same_sound_across_domains (Deeplearning.tests.test_issue26.LocalBehaviorTests) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 1.863s\n\nOK\n",
+      "passed": true
+    }
+  ],
+  "note": "NumPy assert_allclose array-atol formatting was corrected in the test only. Native short-run evidence retained; targeted reruns passed. Counts include those reruns; no full research run yet."
+}

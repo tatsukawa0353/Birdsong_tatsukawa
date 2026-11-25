@@ -39,6 +39,9 @@ Critic/温度のLRを3e-4に固定し、Actorだけ1e-4/3e-5へ変更した6run�
 Issue #25の [SAC128・λ=.75のCritic学習率比較](results/phase1_caseA_sac128_critic_lr/README.md) は、
 Actor/温度LRを3e-4に固定したオンライン6runと、既存12288経験・隔離99候補での固定回帰9本を分けて評価する。
 事前計画・データ分割・数値停止基準を凍結し、Final音響精度とCritic予測精度を並列に報告する。
+Issue #26の [広域探索と連続局所候補の比較](results/phase1_caseA_wide_local_exploration/README.md) は、
+f0_l上限を1e7へ戻した通常SACと、局所80%・SAC20%の2半径を9runで比較する。
+最初256試行を一致させ、学習候補の発見・Actorの獲得・Finalの保持を分けて記録する。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl

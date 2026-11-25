@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/issue26_analysis.py", line 305, in <module>
+    {'audit':audit,'aggregate':aggregate,'listening':listening}[a.stage]()
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/issue26_analysis.py", line 196, in aggregate
+    d=dict(condition=c,seed=seed,candidates=len(trace),voiced=int(voice.sum()),voiced_fraction=float(voice.mean()),failed=int(fail.sum()),silent=s['training']['silent_episodes'],
+NameError: name 's' is not defined. Did you mean: 'ps'?
