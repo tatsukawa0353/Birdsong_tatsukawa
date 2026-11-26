@@ -1,0 +1,895 @@
+{
+  "status": "complete",
+  "target": "T3",
+  "dim": 4,
+  "method": "TD3",
+  "seed": 1,
+  "initial": {
+    "episodes": 0,
+    "acoustic_error": 0.32683981459505224,
+    "acoustic_components": {
+      "log_spectral": 0.2978091988986827,
+      "envelope": 0.02903061569636954,
+      "total": 0.32683981459505224,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "weighted_loss": 0.2306145530981044,
+    "failed": false,
+    "sustained_voiced": true,
+    "generated_silent": false,
+    "applied_action": [
+      0.14681506156921387,
+      -0.02056288719177246,
+      0.05072140693664551,
+      0.04540681838989258
+    ],
+    "applied_controls": [
+      39335188.26961517,
+      34691556.69212341,
+      3288041.055202484,
+      441550.26030540466,
+      49000.0
+    ],
+    "model_condition": "B",
+    "late_ac_rms_over_target_peak": 0.17365848322314442,
+    "actions": [
+      [
+        0.14681506156921387,
+        -0.02056288719177246,
+        0.05072140693664551,
+        0.04540681838989258
+      ]
+    ],
+    "physical_controls": [
+      39335188.26961517,
+      34691556.69212341,
+      3288041.055202484,
+      441550.26030540466,
+      49000.0
+    ],
+    "policy_statistics": {
+      "method": "TD3",
+      "latent_mean": [
+        0.14681512117385864,
+        -0.0205629114061594,
+        0.050721436738967896,
+        0.04540680721402168
+      ],
+      "latent_std": [
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "normalized_action_std_mc": [
+        0.0991461531505806,
+        0.1002798737606045,
+        0.10036629494635631,
+        0.09911687106900936
+      ],
+      "deterministic_action": [
+        0.14681506156921387,
+        -0.02056288719177246,
+        0.05072140693664551,
+        0.04540681838989258
+      ],
+      "clip_fraction": 0.0,
+      "gaussian_entropy": null,
+      "alpha": null,
+      "entropy_samples": 4096,
+      "entropy_seed": 220026
+    },
+    "gradient_updates": 0,
+    "optimizer_steps": {
+      "actor": 0,
+      "critic": 0
+    },
+    "optimizer_lrs": {
+      "actor": [
+        0.0003
+      ],
+      "critic": [
+        0.0003
+      ]
+    },
+    "physical_action_std_mc": [
+      1239326.9143822575,
+      1504198.1064090675,
+      75274.72120976723,
+      37218.385086413015
+    ],
+    "training_incumbent": null,
+    "learner_before": {
+      "learner": {
+        "policy_sha256": "5b4b1dd5057cbbcb9df92d1a58834ee40a1e18a071b2112b3edc1e84d8ee93cc",
+        "num_timesteps": 0,
+        "gradient_updates": 0,
+        "optimizer_sha256": "29cce64c47c8db629da9ccf1ad4aae46b3945789c7218dfd6101a1f66a090e19",
+        "rng_sha256": "6d3c2f81ee8395d88ad3748f5f9d3b0494d0a676528b94923b92fc44a3925289",
+        "replay_buffer": {
+          "pos": 0,
+          "full": false,
+          "size": 0,
+          "content_sha256": "2a3afcfdbe3736d655902b0fb08b211597ba3820f2dd9d6894dd21850727f6b9"
+        },
+        "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+        "action_rng_sha256": "4c14dcb743ae139f38d9b8d6b953ef5c8c38f3344c9ba17563233c3f338d1681",
+        "training_env_rng_sha256": "cfaa1b0ab6ceb509334cc7247f43173de6783a58bcb7e0f837bceb75950c3245",
+        "cuda_rng_sha256": null
+      },
+      "training_best": "b483a4ba291c44c6b495f929cc54f7a5839495ee03a91f02ef1b6fac535cd3ed",
+      "transition_rows": 0,
+      "transition_checks": 0
+    },
+    "learner_after": {
+      "learner": {
+        "policy_sha256": "5b4b1dd5057cbbcb9df92d1a58834ee40a1e18a071b2112b3edc1e84d8ee93cc",
+        "num_timesteps": 0,
+        "gradient_updates": 0,
+        "optimizer_sha256": "29cce64c47c8db629da9ccf1ad4aae46b3945789c7218dfd6101a1f66a090e19",
+        "rng_sha256": "6d3c2f81ee8395d88ad3748f5f9d3b0494d0a676528b94923b92fc44a3925289",
+        "replay_buffer": {
+          "pos": 0,
+          "full": false,
+          "size": 0,
+          "content_sha256": "2a3afcfdbe3736d655902b0fb08b211597ba3820f2dd9d6894dd21850727f6b9"
+        },
+        "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+        "action_rng_sha256": "4c14dcb743ae139f38d9b8d6b953ef5c8c38f3344c9ba17563233c3f338d1681",
+        "training_env_rng_sha256": "cfaa1b0ab6ceb509334cc7247f43173de6783a58bcb7e0f837bceb75950c3245",
+        "cuda_rng_sha256": null
+      },
+      "training_best": "b483a4ba291c44c6b495f929cc54f7a5839495ee03a91f02ef1b6fac535cd3ed",
+      "transition_rows": 0,
+      "transition_checks": 0
+    }
+  },
+  "final": {
+    "episodes": 4096,
+    "acoustic_error": 0.14096112351971585,
+    "acoustic_components": {
+      "log_spectral": 0.0816305037555709,
+      "envelope": 0.05933061976414496,
+      "total": 0.14096112351971585,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "weighted_loss": 0.07605553275771441,
+    "failed": false,
+    "sustained_voiced": true,
+    "generated_silent": false,
+    "applied_action": [
+      -0.9848139882087708,
+      0.24216830730438232,
+      -0.09540116786956787,
+      -0.9912483096122742
+    ],
+    "applied_controls": [
+      25189825.147390366,
+      38632524.609565735,
+      3178449.124097824,
+      52286.25974059105,
+      49000.0
+    ],
+    "model_condition": "B",
+    "late_ac_rms_over_target_peak": 0.22695430455609653,
+    "actions": [
+      [
+        -0.9848139882087708,
+        0.24216830730438232,
+        -0.09540116786956787,
+        -0.9912483096122742
+      ]
+    ],
+    "physical_controls": [
+      25189825.147390366,
+      38632524.609565735,
+      3178449.124097824,
+      52286.25974059105,
+      49000.0
+    ],
+    "policy_statistics": {
+      "method": "TD3",
+      "latent_mean": [
+        -0.9848139882087708,
+        0.24216827750205994,
+        -0.09540113806724548,
+        -0.9912483096122742
+      ],
+      "latent_std": [
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "normalized_action_std_mc": [
+        0.06313686233289244,
+        0.1002798737606045,
+        0.10036629494635627,
+        0.06134024425737239
+      ],
+      "deterministic_action": [
+        -0.9848139882087708,
+        0.24216830730438232,
+        -0.09540116786956787,
+        -0.9912483096122742
+      ],
+      "clip_fraction": 0.7060546875,
+      "gaussian_entropy": null,
+      "alpha": null,
+      "entropy_samples": 4096,
+      "entropy_seed": 220026
+    },
+    "gradient_updates": 4080,
+    "optimizer_steps": {
+      "actor": 2040,
+      "critic": 4080
+    },
+    "optimizer_lrs": {
+      "actor": [
+        0.0003
+      ],
+      "critic": [
+        0.0003
+      ]
+    },
+    "physical_action_std_mc": [
+      789210.7791611555,
+      1504198.1064090675,
+      75274.7212097672,
+      23033.26171864333
+    ],
+    "training_incumbent": {
+      "episodes": 3593,
+      "acoustic_error": 0.11137440679501968,
+      "acoustic_components": {
+        "log_spectral": 0.07835554824009558,
+        "envelope": 0.033018858554924105,
+        "total": 0.11137440679501968,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "weighted_loss": 0.06702137581880271,
+      "failed": false,
+      "sustained_voiced": true,
+      "generated_silent": false,
+      "applied_action": [
+        -0.9637379050254822,
+        0.16296637058258057,
+        -0.23578548431396484,
+        -1.0
+      ],
+      "applied_controls": [
+        25453276.187181473,
+        37444495.55873871,
+        3073160.8867645264,
+        49000.0,
+        49000.0
+      ],
+      "model_condition": "B",
+      "late_ac_rms_over_target_peak": 0.21370285455099491
+    },
+    "learner_before": {
+      "learner": {
+        "policy_sha256": "f0a7713d3a778f902d7205bc9338df2e037f385ee68fc5c93dbb195c9d77078d",
+        "num_timesteps": 4096,
+        "gradient_updates": 4080,
+        "optimizer_sha256": "dfc207801467ca8bff414457924078e87bb70d2180dec2d6991a2a04940f1a21",
+        "rng_sha256": "120ded1b33f15c8433446ecb27eaefacc30933b4622f9f844f9e5fe5b9c273d2",
+        "replay_buffer": {
+          "pos": 4096,
+          "full": false,
+          "size": 4096,
+          "content_sha256": "be7382636f5f4022fe013b6e614266052e4fd6241a5651109a308307eacb9f29"
+        },
+        "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+        "action_rng_sha256": "1af9004d8b4cc0069c9cf35986f82e5b9e11f3b83762f24f11d421e331594010",
+        "training_env_rng_sha256": "d8a1c56acde8f2fdef34d6bbe35e02b006ae4035f625a9bb42e80ceedabf69d9",
+        "cuda_rng_sha256": null
+      },
+      "training_best": "c41b32a99407f76ddfac02fc3dbf9f6687b1106cb3d162de2a54b3013a771523",
+      "transition_rows": 4096,
+      "transition_checks": 4096
+    },
+    "learner_after": {
+      "learner": {
+        "policy_sha256": "f0a7713d3a778f902d7205bc9338df2e037f385ee68fc5c93dbb195c9d77078d",
+        "num_timesteps": 4096,
+        "gradient_updates": 4080,
+        "optimizer_sha256": "dfc207801467ca8bff414457924078e87bb70d2180dec2d6991a2a04940f1a21",
+        "rng_sha256": "120ded1b33f15c8433446ecb27eaefacc30933b4622f9f844f9e5fe5b9c273d2",
+        "replay_buffer": {
+          "pos": 4096,
+          "full": false,
+          "size": 4096,
+          "content_sha256": "be7382636f5f4022fe013b6e614266052e4fd6241a5651109a308307eacb9f29"
+        },
+        "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+        "action_rng_sha256": "1af9004d8b4cc0069c9cf35986f82e5b9e11f3b83762f24f11d421e331594010",
+        "training_env_rng_sha256": "d8a1c56acde8f2fdef34d6bbe35e02b006ae4035f625a9bb42e80ceedabf69d9",
+        "cuda_rng_sha256": null
+      },
+      "training_best": "c41b32a99407f76ddfac02fc3dbf9f6687b1106cb3d162de2a54b3013a771523",
+      "transition_rows": 4096,
+      "transition_checks": 4096
+    }
+  },
+  "selected": {
+    "episodes": 3200,
+    "acoustic_error": 0.1307784613585815,
+    "acoustic_components": {
+      "log_spectral": 0.08651885560047165,
+      "envelope": 0.04425960575810987,
+      "total": 0.1307784613585815,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "weighted_loss": 0.0759540431398812,
+    "failed": false,
+    "sustained_voiced": true,
+    "generated_silent": false,
+    "applied_action": [
+      -0.9309532642364502,
+      0.07432067394256592,
+      -0.018686532974243164,
+      -0.9474601149559021
+    ],
+    "applied_controls": [
+      25863084.197044373,
+      36114810.10913849,
+      3235985.1002693176,
+      68728.72683405876,
+      49000.0
+    ],
+    "model_condition": "B",
+    "late_ac_rms_over_target_peak": 0.22186097043837652,
+    "actions": [
+      [
+        -0.9309532642364502,
+        0.07432067394256592,
+        -0.018686532974243164,
+        -0.9474601149559021
+      ]
+    ],
+    "physical_controls": [
+      25863084.197044373,
+      36114810.10913849,
+      3235985.1002693176,
+      68728.72683405876,
+      49000.0
+    ],
+    "policy_statistics": {
+      "method": "TD3",
+      "latent_mean": [
+        -0.9309532642364502,
+        0.07432064414024353,
+        -0.01868654042482376,
+        -0.9474601149559021
+      ],
+      "latent_std": [
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "normalized_action_std_mc": [
+        0.07909883062327917,
+        0.10027987376060452,
+        0.1003662949463563,
+        0.0750525119781624
+      ],
+      "deterministic_action": [
+        -0.9309532642364502,
+        0.07432067394256592,
+        -0.018686532974243164,
+        -0.9474601149559021
+      ],
+      "clip_fraction": 0.46826171875,
+      "gaussian_entropy": null,
+      "alpha": null,
+      "entropy_samples": 4096,
+      "entropy_seed": 220026
+    },
+    "gradient_updates": 3184,
+    "optimizer_steps": {
+      "actor": 1592,
+      "critic": 3184
+    },
+    "optimizer_lrs": {
+      "actor": [
+        0.0003
+      ],
+      "critic": [
+        0.0003
+      ]
+    },
+    "physical_action_std_mc": [
+      988735.3827909897,
+      1504198.1064090678,
+      75274.72120976722,
+      28182.21824779998
+    ],
+    "training_incumbent": {
+      "episodes": 1015,
+      "acoustic_error": 0.11686454778639485,
+      "acoustic_components": {
+        "log_spectral": 0.07908851648396685,
+        "envelope": 0.03777603130242801,
+        "total": 0.11686454778639485,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "weighted_loss": 0.06876039518858214,
+      "failed": false,
+      "sustained_voiced": true,
+      "generated_silent": false,
+      "applied_action": [
+        -0.9573683738708496,
+        0.16768789291381836,
+        -0.23699939250946045,
+        -1.0
+      ],
+      "applied_controls": [
+        25532895.32661438,
+        37515318.393707275,
+        3072250.4556179047,
+        49000.0,
+        49000.0
+      ],
+      "model_condition": "B",
+      "late_ac_rms_over_target_peak": 0.2093912861901628
+    },
+    "learner_before": {
+      "learner": {
+        "policy_sha256": "7d18fa3c99d21d524154f3c389a16c108d532334dac8b43f0e6aa5fedc7247d0",
+        "num_timesteps": 3200,
+        "gradient_updates": 3184,
+        "optimizer_sha256": "f3df107ceb24ac1c8d9b708bdc345a3d630ee282c2fd2c351d346e170bd6d775",
+        "rng_sha256": "be5dbe1a658a9e2e4675438c74951033eed727b220c17823df97c568b59abc9d",
+        "replay_buffer": {
+          "pos": 3200,
+          "full": false,
+          "size": 3200,
+          "content_sha256": "5fff3d4c56fb2fff6bf480dc90f68bc17c69833189ea5be09b8f04e15f1e4f8f"
+        },
+        "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+        "action_rng_sha256": "1af9004d8b4cc0069c9cf35986f82e5b9e11f3b83762f24f11d421e331594010",
+        "training_env_rng_sha256": "d8a1c56acde8f2fdef34d6bbe35e02b006ae4035f625a9bb42e80ceedabf69d9",
+        "cuda_rng_sha256": null
+      },
+      "training_best": "6609282029513242770992dad287bf7436a5e0a9e58b0d74815b0bace260c7ac",
+      "transition_rows": 3200,
+      "transition_checks": 3200
+    },
+    "learner_after": {
+      "learner": {
+        "policy_sha256": "7d18fa3c99d21d524154f3c389a16c108d532334dac8b43f0e6aa5fedc7247d0",
+        "num_timesteps": 3200,
+        "gradient_updates": 3184,
+        "optimizer_sha256": "f3df107ceb24ac1c8d9b708bdc345a3d630ee282c2fd2c351d346e170bd6d775",
+        "rng_sha256": "be5dbe1a658a9e2e4675438c74951033eed727b220c17823df97c568b59abc9d",
+        "replay_buffer": {
+          "pos": 3200,
+          "full": false,
+          "size": 3200,
+          "content_sha256": "5fff3d4c56fb2fff6bf480dc90f68bc17c69833189ea5be09b8f04e15f1e4f8f"
+        },
+        "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+        "action_rng_sha256": "1af9004d8b4cc0069c9cf35986f82e5b9e11f3b83762f24f11d421e331594010",
+        "training_env_rng_sha256": "d8a1c56acde8f2fdef34d6bbe35e02b006ae4035f625a9bb42e80ceedabf69d9",
+        "cuda_rng_sha256": null
+      },
+      "training_best": "6609282029513242770992dad287bf7436a5e0a9e58b0d74815b0bace260c7ac",
+      "transition_rows": 3200,
+      "transition_checks": 3200
+    }
+  },
+  "posthoc": {
+    "episodes": 896,
+    "acoustic_error": 0.12772989598357945,
+    "acoustic_components": {
+      "log_spectral": 0.08936155391720668,
+      "envelope": 0.03836834206637277,
+      "total": 0.12772989598357945,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "weighted_loss": 0.0766132509544982,
+    "failed": false,
+    "sustained_voiced": true,
+    "generated_silent": false,
+    "applied_action": [
+      -0.9577779173851013,
+      0.00495457649230957,
+      -0.022995471954345703,
+      -0.9262735843658447
+    ],
+    "applied_controls": [
+      25527776.032686234,
+      35074318.64738464,
+      3232753.3960342407,
+      76684.2690706253,
+      49000.0
+    ],
+    "model_condition": "B",
+    "late_ac_rms_over_target_peak": 0.21169152864274532,
+    "actions": [
+      [
+        -0.9577779173851013,
+        0.00495457649230957,
+        -0.022995471954345703,
+        -0.9262735843658447
+      ]
+    ],
+    "physical_controls": [
+      25527776.032686234,
+      35074318.64738464,
+      3232753.3960342407,
+      76684.2690706253,
+      49000.0
+    ],
+    "policy_statistics": {
+      "method": "TD3",
+      "latent_mean": [
+        -0.9577779173851013,
+        0.0049546146765351295,
+        -0.02299548126757145,
+        -0.9262735843658447
+      ],
+      "latent_std": [
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "normalized_action_std_mc": [
+        0.07171834525544478,
+        0.10027987376060452,
+        0.1003662949463563,
+        0.08061801380947624
+      ],
+      "deterministic_action": [
+        -0.9577779173851013,
+        0.00495457649230957,
+        -0.022995471954345703,
+        -0.9262735843658447
+      ],
+      "clip_fraction": 0.487548828125,
+      "gaussian_entropy": null,
+      "alpha": null,
+      "entropy_samples": 4096,
+      "entropy_seed": 220026
+    },
+    "gradient_updates": 880,
+    "optimizer_steps": {
+      "actor": 440,
+      "critic": 880
+    },
+    "optimizer_lrs": {
+      "actor": [
+        0.0003
+      ],
+      "critic": [
+        0.0003
+      ]
+    },
+    "physical_action_std_mc": [
+      896479.3156930597,
+      1504198.1064090678,
+      75274.72120976722,
+      30272.064185458326
+    ],
+    "training_incumbent": {
+      "episodes": 894,
+      "acoustic_error": 0.1188231869876662,
+      "acoustic_components": {
+        "log_spectral": 0.08367203848857398,
+        "envelope": 0.03515114849909221,
+        "total": 0.1188231869876662,
+        "target_silent": false,
+        "generated_silent": false
+      },
+      "weighted_loss": 0.07154181599120354,
+      "failed": false,
+      "sustained_voiced": true,
+      "generated_silent": false,
+      "applied_action": [
+        -1.0,
+        0.0134352445602417,
+        -0.15880727767944336,
+        -1.0
+      ],
+      "applied_controls": [
+        25000000.0,
+        35201528.668403625,
+        3130894.5417404175,
+        49000.0,
+        49000.0
+      ],
+      "model_condition": "B",
+      "late_ac_rms_over_target_peak": 0.19541539165677022
+    },
+    "learner_before": {
+      "learner": {
+        "policy_sha256": "9772657ab6c930da2c2937691f7181afb7e11def10a0af2c3398b761e4dc3079",
+        "num_timesteps": 896,
+        "gradient_updates": 880,
+        "optimizer_sha256": "1099ce0eb216cfe5cc6812aab2bf6cf55c4c782a10e987f81578c85604f45583",
+        "rng_sha256": "6010e49d89d070e8d4a8743c71358c4d8c4e2a911336babdcf1bb53bc33b816a",
+        "replay_buffer": {
+          "pos": 896,
+          "full": false,
+          "size": 896,
+          "content_sha256": "93cbf3a77201b5c2c9c8189d74e68085bdaf0583ab80c550a2a710d5a16fe084"
+        },
+        "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+        "action_rng_sha256": "1af9004d8b4cc0069c9cf35986f82e5b9e11f3b83762f24f11d421e331594010",
+        "training_env_rng_sha256": "d8a1c56acde8f2fdef34d6bbe35e02b006ae4035f625a9bb42e80ceedabf69d9",
+        "cuda_rng_sha256": null
+      },
+      "training_best": "b2139a255a4df93533568ffb5cedb697927cbc7703074edcc98727c1a1c8da6c",
+      "transition_rows": 896,
+      "transition_checks": 896
+    },
+    "learner_after": {
+      "learner": {
+        "policy_sha256": "9772657ab6c930da2c2937691f7181afb7e11def10a0af2c3398b761e4dc3079",
+        "num_timesteps": 896,
+        "gradient_updates": 880,
+        "optimizer_sha256": "1099ce0eb216cfe5cc6812aab2bf6cf55c4c782a10e987f81578c85604f45583",
+        "rng_sha256": "6010e49d89d070e8d4a8743c71358c4d8c4e2a911336babdcf1bb53bc33b816a",
+        "replay_buffer": {
+          "pos": 896,
+          "full": false,
+          "size": 896,
+          "content_sha256": "93cbf3a77201b5c2c9c8189d74e68085bdaf0583ab80c550a2a710d5a16fe084"
+        },
+        "entropy_sha256": "1f5e64c60388422a3b832530b870301d48b6b15451255c441dae9faf5d61e02a",
+        "action_rng_sha256": "1af9004d8b4cc0069c9cf35986f82e5b9e11f3b83762f24f11d421e331594010",
+        "training_env_rng_sha256": "d8a1c56acde8f2fdef34d6bbe35e02b006ae4035f625a9bb42e80ceedabf69d9",
+        "cuda_rng_sha256": null
+      },
+      "training_best": "b2139a255a4df93533568ffb5cedb697927cbc7703074edcc98727c1a1c8da6c",
+      "transition_rows": 896,
+      "transition_checks": 896
+    }
+  },
+  "training_best": {
+    "episodes": 3593,
+    "acoustic_error": 0.11137440679501968,
+    "acoustic_components": {
+      "log_spectral": 0.07835554824009558,
+      "envelope": 0.033018858554924105,
+      "total": 0.11137440679501968,
+      "target_silent": false,
+      "generated_silent": false
+    },
+    "weighted_loss": 0.06702137581880271,
+    "failed": false,
+    "sustained_voiced": true,
+    "generated_silent": false,
+    "applied_action": [
+      -0.9637379050254822,
+      0.16296637058258057,
+      -0.23578548431396484,
+      -1.0
+    ],
+    "applied_controls": [
+      25453276.187181473,
+      37444495.55873871,
+      3073160.8867645264,
+      49000.0,
+      49000.0
+    ],
+    "model_condition": "B",
+    "late_ac_rms_over_target_peak": 0.21370285455099491
+  },
+  "training": {
+    "episodes": 4096,
+    "decision_steps": 4096,
+    "native_blocks_attempted": 81920,
+    "native_blocks_completed": 81920,
+    "native_steps_attempted": 8192000000,
+    "native_steps_completed": 8192000000,
+    "integrated_s_attempted": 819.2,
+    "integrated_s_completed": 819.2,
+    "generated_audio_s": 819.2,
+    "failures": 0,
+    "silent_episodes": 0,
+    "nonvoiced_episodes": 0,
+    "wall_s": 893.3061157679185
+  },
+  "evaluation": {
+    "episodes": 33,
+    "decision_steps": 33,
+    "native_blocks_attempted": 660,
+    "native_blocks_completed": 660,
+    "native_steps_attempted": 66000000,
+    "native_steps_completed": 66000000,
+    "integrated_s_attempted": 6.6000000000000005,
+    "integrated_s_completed": 6.6000000000000005,
+    "generated_audio_s": 6.6000000000000005,
+    "failures": 0,
+    "silent_episodes": 0,
+    "nonvoiced_episodes": 0,
+    "wall_s": 7.20153293851763
+  },
+  "independent_policy_evaluations": 33,
+  "optimizer_steps": {
+    "actor": 2040,
+    "critic": 4080
+  },
+  "optimizer_lr_checks": {
+    "actor": 2040,
+    "critic": 4080
+  },
+  "internal_update_counter": 4080,
+  "PPO_rollouts": null,
+  "transition_checks": 4096,
+  "native_checks": 90114,
+  "network_geometry": {
+    "actor_layers": [
+      [
+        8,
+        128
+      ],
+      [
+        128,
+        128
+      ],
+      [
+        128,
+        4
+      ]
+    ],
+    "critic_layers": [
+      [
+        [
+          12,
+          128
+        ],
+        [
+          128,
+          128
+        ],
+        [
+          128,
+          1
+        ]
+      ],
+      [
+        [
+          12,
+          128
+        ],
+        [
+          128,
+          128
+        ],
+        [
+          128,
+          1
+        ]
+      ]
+    ],
+    "actor_parameters": 18180,
+    "critic_parameters": 36610,
+    "total_policy_parameters": 109580,
+    "activation": "ReLU",
+    "critic_target_parameters": 36610,
+    "actor_target_parameters": 18180,
+    "entropy_parameter_count": 0
+  },
+  "effective_hyperparameters": {
+    "learning_rate": 0.0003,
+    "gamma": 1.0,
+    "batch_size": 32,
+    "buffer_size": 50000,
+    "learning_starts": 16,
+    "gradient_steps": 1,
+    "tau": 0.005,
+    "policy_delay": 2,
+    "target_policy_noise": 0.2,
+    "target_noise_clip": 0.5,
+    "n_steps": 1,
+    "use_sde": false,
+    "train_freq": {
+      "frequency": 1,
+      "unit": "step"
+    },
+    "device": "cpu",
+    "net_arch": [
+      128,
+      128
+    ],
+    "optimizer_groups": {
+      "actor": [
+        {
+          "lr": 0.0003,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false,
+          "maximize": false,
+          "foreach": null,
+          "capturable": false,
+          "differentiable": false,
+          "fused": null
+        }
+      ],
+      "critic": [
+        {
+          "lr": 0.0003,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false,
+          "maximize": false,
+          "foreach": null,
+          "capturable": false,
+          "differentiable": false,
+          "fused": null
+        }
+      ]
+    }
+  },
+  "numerical_maxima": {
+    "actor": {
+      "gradient_l2": 0.4551447383600996,
+      "parameter_abs": 0.3914896547794342,
+      "optimizer_moment_abs": 0.07799457758665085
+    },
+    "critic": {
+      "gradient_l2": 0.7715816409047188,
+      "parameter_abs": 0.3854532837867737,
+      "optimizer_moment_abs": 0.15671317279338837
+    }
+  },
+  "source_sha256": {
+    "issue27g_data.py": "5fb42f0ffea21141307ca14355efe7ea8cdeafaba7fd745dd577612a99a4186b",
+    "issue27g_native.py": "1f1d6fa1fbaef6e45c39a81ccf43399e75e269a533d23755bc52d5561354b9f8",
+    "issue27g_env.py": "458ca5bc68c5d6f27d19360cfff6e2371e08c08aeae0be3652f5796f4a36b4e4",
+    "issue27g_agent.py": "a8d795dc319b035bed083aca0b19588fa94eaa9c242c27bdeba8bcf721fe1510",
+    "issue27g_training.py": "79996be8ec74173964f9dc948ad1a36414f12a15792caa30541d01ca8c8ad734",
+    "issue27g_prepare.py": "247a1cb5c799d82345d0b318f60ac0356c45c28e0e53198fd7b02ae1e7b0ee91",
+    "issue27f_agent.py": "b914124205258e83a4da0ebfbf8b496aa5bef28383dd92d92ca6b04676e7373b",
+    "issue27f_prepare.py": "e7ae2e39f02abbb0f0d3ce18831fbad954782d787b9b41c455d4977c43324dc3",
+    "issue27f_native.py": "8505c3e85ed464b783392efc5e6dde9b0d8ae691cb5637ca9d01f6d165a81d22",
+    "issue27f_data.py": "6cdb23b8c17ca09fcc9305e127e67e35bfd514bfede1604f2872a72a288786ce",
+    "issue27_probe.cpp": "1765ad7f7b7277b1be9666bbd060f0ebb5aaf0abc879e62b7584fb89e6fecc68",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "native/model.cpp": "0a7688ed58d0a3f487585347f8972586af156e16b794f77da2deab36513075b5",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "constant020_env.py": "bfee6852ef2c5c6e142eab768beafe835ae1f7fa5c8afe7541346fea012337e6",
+    "issue18_domain_env.py": "978ff51f264af952c91942ada0a0b24b4d2a9a15a52a43ff8955b28744870042",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "issue19_data.py": "0080b87b5006bf169f2516fba4beeca1eff21d208cf58c3b062a6891002bccfe",
+    "issue23_data.py": "ae9149532befb0cbf0fc711eecd0a8403ecb47a17ce897652c373c6f1a422a80",
+    "issue22_data.py": "9c3b311e225b60aecc9f09f2b45e75e3e8d4a31ad1589240ae6af8351ab1b657",
+    "issue25_agent.py": "47144253bcc93a94f738183e6e7be3ed6faf0853e156bb943b2f2bd2c726ce21"
+  },
+  "elapsed_s": 900.9194112578407,
+  "process_cpu_s": 900.6634522580001,
+  "artifact_sha256": {
+    "config.json": "5fcedf78e05422c3793f34a2a52e645606e235570b4b3849e7af9bf477f92001",
+    "curve.json.gz": "7d385327c2c696d9bc7556437c52496963a213b62cb176bd1f8c33d9cbc7c637",
+    "final.npz": "9708fd7a89c588440694a6908e80cbb3460269e94f7bb741498bb63545ea1d86",
+    "final.pt": "800799ac3d6c5c3f79611bc28009d2d262406e1d75a6e2ea92e2f91685f2cd0d",
+    "optimizer_events.json.gz": "89dca9c3cbf390d5f28a863cc635e41f7e613db155b6aa9fb47f19bc2f243d8d",
+    "posthoc.npz": "b04df77bd54ddadb82fcd84bc1ab0b0688290fd3d86dd0f95de9a9b04e91c4e1",
+    "posthoc.pt": "0b735d67f0be6cb51c48423ac9a70221bbc00b88b70aca70461b08f500aec0d9",
+    "selected.npz": "c85a8a6a9c9db2845600de39ae8a8cb8f266ab63db8a1e04fd4075ba9ce5942b",
+    "selected.pt": "099e6d01c7bca6241fb897e28cdd3265d95a05775f3a23a5ff05b1c6bb30cc52",
+    "training_best.npz": "df3efc523731eb0610e5cf363d187fc95a6490334009a6739904eaf4143073db",
+    "training_metrics.json.gz": "4f8f3dc4a10f62d50e59068a9dead2ef5e25f833fb7d5c3325a5c5c24b362122",
+    "training_trace.json.gz": "269b5c5e46c539d9d91c1e76e4de6c54aba60c2e49a8b0b698a686b28d55f1ab"
+  }
+}

@@ -1,0 +1,69 @@
+test_01_targets_and_six_mappings (__main__.Preflight) ... ok
+test_02_standard_update_parity (__main__.Preflight) ... ok
+test_03_T1_four_dimensional_right_epsilon_changes_output (__main__.Preflight) ... ok
+test_04_native_smoke_six_cases_three_methods (__main__.Preflight) ... {"stage": "start", "target": "T1", "dim": 3, "method": "SAC", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T1", "dim": 3, "method": "TD3", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T2", "dim": 3, "method": "SAC", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T2", "dim": 3, "method": "TD3", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T3", "dim": 3, "method": "TD3", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T1", "dim": 4, "method": "TD3", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T2", "dim": 3, "method": "PPO", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T2", "dim": 4, "method": "SAC", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T3", "dim": 3, "method": "PPO", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T2", "dim": 4, "method": "PPO", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T3", "dim": 4, "method": "SAC", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T1", "dim": 4, "method": "PPO", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T1", "dim": 4, "method": "SAC", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T3", "dim": 4, "method": "PPO", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T1", "dim": 3, "method": "PPO", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T3", "dim": 4, "method": "TD3", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T2", "dim": 4, "method": "TD3", "seed": 0, "budget": 128}
+{"stage": "start", "target": "T3", "dim": 3, "method": "SAC", "seed": 0, "budget": 128}
+{"stage": "complete", "target": "T3", "dim": 3, "method": "PPO", "seed": 0, "Final_E": 0.1774566624098251, "Final_voiced": true}
+{"stage": "complete", "target": "T1", "dim": 4, "method": "TD3", "seed": 0, "Final_E": 0.3039935898036713, "Final_voiced": false}
+{"stage": "complete", "target": "T1", "dim": 3, "method": "SAC", "seed": 0, "Final_E": 0.3034695741273223, "Final_voiced": false}
+{"stage": "complete", "target": "T1", "dim": 4, "method": "PPO", "seed": 0, "Final_E": 0.30391903118266095, "Final_voiced": false}
+{"stage": "complete", "target": "T2", "dim": 3, "method": "SAC", "seed": 0, "Final_E": 0.37813220461348496, "Final_voiced": true}
+{"stage": "complete", "target": "T2", "dim": 3, "method": "PPO", "seed": 0, "Final_E": 0.38889096942517254, "Final_voiced": true}
+{"stage": "complete", "target": "T2", "dim": 4, "method": "SAC", "seed": 0, "Final_E": 0.3689950166330319, "Final_voiced": true}
+{"stage": "complete", "target": "T1", "dim": 3, "method": "TD3", "seed": 0, "Final_E": 0.3040673973007733, "Final_voiced": false}
+{"stage": "complete", "target": "T3", "dim": 4, "method": "PPO", "seed": 0, "Final_E": 0.3173667073376007, "Final_voiced": true}
+{"stage": "complete", "target": "T3", "dim": 4, "method": "TD3", "seed": 0, "Final_E": 0.3883838270810841, "Final_voiced": true}
+{"stage": "complete", "target": "T2", "dim": 4, "method": "TD3", "seed": 0, "Final_E": 0.41410279335446026, "Final_voiced": true}
+{"stage": "complete", "target": "T2", "dim": 4, "method": "PPO", "seed": 0, "Final_E": 0.37106744246865453, "Final_voiced": true}
+{"stage": "complete", "target": "T1", "dim": 3, "method": "PPO", "seed": 0, "Final_E": 0.3038136348967124, "Final_voiced": false}
+{"stage": "complete", "target": "T2", "dim": 3, "method": "TD3", "seed": 0, "Final_E": 0.3772089598618478, "Final_voiced": true}
+{"stage": "complete", "target": "T1", "dim": 4, "method": "SAC", "seed": 0, "Final_E": 0.30375716050284046, "Final_voiced": false}
+{"stage": "complete", "target": "T3", "dim": 3, "method": "SAC", "seed": 0, "Final_E": 0.23614450835620682, "Final_voiced": true}
+{"stage": "complete", "target": "T3", "dim": 4, "method": "SAC", "seed": 0, "Final_E": 0.3110370074533977, "Final_voiced": true}
+{"stage": "complete", "target": "T3", "dim": 3, "method": "TD3", "seed": 0, "Final_E": 0.2625811198957312, "Final_voiced": true}
+ERROR
+
+======================================================================
+ERROR: test_04_native_smoke_six_cases_three_methods (__main__.Preflight)
+----------------------------------------------------------------------
+concurrent.futures.process._RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/concurrent/futures/process.py", line 246, in _process_worker
+    r = call_item.fn(*call_item.args, **call_item.kwargs)
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/tests/test_issue27g.py", line 44, in smoke_replay
+    agent,meta=load_checkpoint(p/f'{role}.pt',method,0,CONFIG);metrics,values=episode(env,agent=agent)
+TypeError: load_checkpoint() missing 1 required positional argument: 'seed'
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/tests/test_issue27g.py", line 110, in test_04_native_smoke_six_cases_three_methods
+    for f in as_completed(futures):result.append(f.result())
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+TypeError: load_checkpoint() missing 1 required positional argument: 'seed'
+
+----------------------------------------------------------------------
+Ran 4 tests in 37.824s
+
+FAILED (errors=1)

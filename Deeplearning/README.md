@@ -52,6 +52,10 @@ Issueの停止条件に従ってSACは未実施。3音の物理対照・oracle�
 左f0=49000、右f0=1e7/49000の18点が持続proxyを満たし、左右49000の人工Targetを選定した。
 SAC/TD3/PPO×3seed×4096step（36864学習音）と297独立評価、36保存結果の独立再生を完了。
 旧成果と元物理式は保持し、Final/Selected/training_best/posthoc・左右状態・共通PSD図を分けて報告した。
+同Issueの [3Target×一定3D/4Dの比較](results/phase1_caseB_self_target_020s_3targets_3d4d/REPORT.md) は、
+指定T1/T2/T3でSAC/TD3/PPO×3seedの54run、221184学習音・1782評価・216独立再生を完了した。
+中断した27本は途中成果を保持して同じseed・条件で復旧し、中断分の計算回数は別会計の範囲として記録。
+物理式・過去成果を保護し、同一Target内の次元差、制御同定誤差、共通書式の集約図を報告している。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl
