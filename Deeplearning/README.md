@@ -45,6 +45,9 @@ f0_l上限を1e7へ戻した通常SACと、局所80%・SAC20%の2半径を9run�
 Issue #27の [Case B自己Targetの事前診断](results/phase1_caseB_self_target_020s_sac128/README.md) は、
 左右の音響結合と右f0=1e7を実libraryで確認した。指定Targetが非持続だったため、
 Issueの停止条件に従ってSACは未実施。3音の物理対照・oracle一致・左右状態を保存している。
+同Issueの [2026-11-26改訂：Case Bの9条件診断](results/phase1_caseB_self_target_020s_methods/README.md) は別成果。
+指定したε_l×p_sの全9点が非持続で、SAC/TD3/PPOの学習は停止条件に従い未開始。
+初回の停止記録と元の物理モデルを保持し、全候補の音・左右状態・寄与を保存した。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl

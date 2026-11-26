@@ -1,0 +1,126 @@
+{
+  "issue": 27,
+  "revision": "2026-11-26",
+  "created_utc": "2026-11-26T05:03:11.329724+00:00",
+  "planned_settings": {
+    "episodes": 4096,
+    "eval_every_episodes": 128,
+    "learning_rate": 0.0003,
+    "gamma": 1.0,
+    "batch_size": 32,
+    "buffer_size": 50000,
+    "warmup_episodes": 16,
+    "train_freq": 1,
+    "gradient_steps": 1,
+    "sac_ent_coef": "auto_0.01",
+    "td3_noise_std": 0.1,
+    "ppo_n_steps": 128,
+    "ppo_n_epochs": 10,
+    "ppo_clip_range": 0.2
+  },
+  "planned_method_protocols": {
+    "SAC": {
+      "net_arch": [
+        128,
+        128
+      ],
+      "expected_optimizer_steps": {
+        "actor": 4080,
+        "critic": 4080,
+        "entropy": 4080
+      },
+      "ent_coef": "auto_0.01",
+      "target_entropy": -3
+    },
+    "TD3": {
+      "net_arch": [
+        128,
+        128
+      ],
+      "expected_optimizer_steps": {
+        "actor": 2040,
+        "critic": 4080
+      },
+      "noise_std": 0.1,
+      "policy_delay": 2
+    },
+    "PPO": {
+      "net_arch": {
+        "pi": [
+          128,
+          128
+        ],
+        "vf": [
+          128,
+          128
+        ]
+      },
+      "n_steps": 128,
+      "n_epochs": 10,
+      "clip_range": 0.2,
+      "expected_optimizer_steps": 1280,
+      "expected_epochs": 320
+    }
+  },
+  "status": "stopped_stageA_no_voiced_Target",
+  "preflight_passed": false,
+  "source_sha256": {
+    "issue27r_data.py": "8afc930b08ee91091ae44f63cf453a798ee714caddf278cdd00c3da5e75a3d3e",
+    "issue27r_native.py": "a39a4a949d4c5c7b4d2415d8c958db672f078c380aeb7ca199270952a8597370",
+    "issue27r_prepare.py": "1145fec00be6f8b1263f43562241903fccf946a46950911c16f924509a8e02c3",
+    "issue27_probe.cpp": "1765ad7f7b7277b1be9666bbd060f0ebb5aaf0abc879e62b7584fb89e6fecc68",
+    "model.py": "478e9a34dfe5ff5cbb1d07212f5f1f8342f09303667c695fbd40531fca9614ef",
+    "native/model.cpp": "0a7688ed58d0a3f487585347f8972586af156e16b794f77da2deab36513075b5",
+    "model_env.py": "5b2457e9b4d179bdd9d0cb8ceac9a0ec6d6c6c95060cfd26ce59ee0621650636",
+    "acoustics.py": "bc330d6229cbdb523728bc5cc1291d59abda76c24ce596402de270230c1d7bf5",
+    "constant020_env.py": "bfee6852ef2c5c6e142eab768beafe835ae1f7fa5c8afe7541346fea012337e6",
+    "issue18_domain_env.py": "978ff51f264af952c91942ada0a0b24b4d2a9a15a52a43ff8955b28744870042",
+    "issue14.py": "cefec1bb0f4852c2e843e3745d691cfa5564bdc5b6e83e5ecac8fbb94736e865",
+    "issue19_data.py": "0080b87b5006bf169f2516fba4beeca1eff21d208cf58c3b062a6891002bccfe",
+    "issue23_data.py": "ae9149532befb0cbf0fc711eecd0a8403ecb47a17ce897652c373c6f1a422a80",
+    "issue22_data.py": "9c3b311e225b60aecc9f09f2b45e75e3e8d4a31ad1589240ae6af8351ab1b657",
+    "issue25_agent.py": "47144253bcc93a94f738183e6e7be3ed6faf0853e156bb943b2f2bd2c726ce21"
+  },
+  "native_library_sha256": "7b6fe5a7e77ab8f0308e0a8cf58825a1675fa2bbf610aa4c9ae785a2c87fcd92",
+  "probe_sha256": "cd1b9a3bf83ad5c0b08e618059913f0575d827359f34c2cfe8133d4198a198e1",
+  "target_sha256": null,
+  "target_choice": null,
+  "plan_sha256": "90a79376def11d7f00e966b4bc10fa3bd2cede5a662332264e43e51153430e2d",
+  "versions": {
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "torch": "2.5.1+cu121",
+    "stable-baselines3": "2.8.0",
+    "gymnasium": "1.2.3",
+    "matplotlib": "3.10.8",
+    "SciencePlots": "2.2.2"
+  },
+  "candidate_sha256": {
+    "c00.npz": "cf6745e1ef4d95b776a9ffcae8793927081d2a2c419b76c163265a6a42ac19cd",
+    "c01.npz": "9a3c423f374727cded916029d5aefa86cd11a89aa6a0c408a5e0e9ec9c7bded3",
+    "c02.npz": "8017c19e7710a1b98b2fb3392745ad14b174297d049af2f6268db69996a0a81b",
+    "c10.npz": "00eb7edd79b3133486d281850cf8e90372efb94e546a708ba73d1c1a15be6952",
+    "c11.npz": "fd50656467039789d0ad7e6bcd9f7143bf433d221039c5139f932dff799204c7",
+    "c12.npz": "bb41fbd0f1b80e03858a2c859eba369f6b9e9dc675100428980037251e3d45ab",
+    "c20.npz": "dec7070e5178969415fd4674399018d39d08a54e078ca9d18ef6f69e8111b324",
+    "c21.npz": "23fda121b8da0adb486a429f1c8c203238de687d74e43850104a7d5f7996f50f",
+    "c22.npz": "bfd7be717ce683a352202fea79112be22a1548e6a726c3b373b3995b24423e4b"
+  },
+  "methods": [
+    "SAC",
+    "TD3",
+    "PPO"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "planned_runs": 9,
+  "actual_training_runs": 0,
+  "actual_training_candidates": 0,
+  "actual_gradient_updates": 0,
+  "method_smoke_tests": "not started: Stage A failed",
+  "no_0p10_gate": true,
+  "source_link": "https://github.com/tatsukawa0353/Birdsong_tatsukawa/issues/27"
+}

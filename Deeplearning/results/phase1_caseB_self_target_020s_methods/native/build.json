@@ -1,0 +1,32 @@
+{
+  "commands": [
+    [
+      "g++",
+      "-O3",
+      "-std=c++11",
+      "-fPIC",
+      "-shared",
+      "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/issue27_probe.cpp",
+      "-o",
+      "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/results/phase1_caseB_self_target_020s_methods/native/libissue27r_probe.so"
+    ],
+    [
+      "g++",
+      "-O3",
+      "-std=c++11",
+      "-fPIC",
+      "-shared",
+      "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/native/model.cpp",
+      "-o",
+      "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/results/phase1_caseB_self_target_020s_methods/native/libsource_reference.so"
+    ]
+  ],
+  "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+  "native_source_sha256": "0a7688ed58d0a3f487585347f8972586af156e16b794f77da2deab36513075b5",
+  "loaded_library_sha256": "7b6fe5a7e77ab8f0308e0a8cf58825a1675fa2bbf610aa4c9ae785a2c87fcd92",
+  "probe_source_sha256": "1765ad7f7b7277b1be9666bbd060f0ebb5aaf0abc879e62b7584fb89e6fecc68",
+  "probe_sha256": "cd1b9a3bf83ad5c0b08e618059913f0575d827359f34c2cfe8133d4198a198e1",
+  "reference_library_sha256": "7b6fe5a7e77ab8f0308e0a8cf58825a1675fa2bbf610aa4c9ae785a2c87fcd92",
+  "unchanged_source_build_binary_exact": true,
+  "actual_advance": "Function pointer to BirdModel.lib.bird_advance; actual model memory, read-only observations"
+}
