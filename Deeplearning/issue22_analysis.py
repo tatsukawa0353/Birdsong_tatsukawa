@@ -1,4 +1,5 @@
 """Reward-aware endpoint audits and offline Q diagnostics; no old-file writes."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 import gzip
@@ -154,7 +155,7 @@ def diagnose():
 def integrity():
     ready();checked=0
     with (OUT/'protected_before.csv').open() as stream:
-        for r in csv.DictReader(stream):assert digest(ROOT/r['path'])==r['sha256'],r['path'];checked+=1
+        for r in csv.DictReader(stream):assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path'];checked+=1
     links=0;broken=[]
     for doc in OUT.glob('*.md'):
         for match in re.finditer(r'\]\(([^)]+)\)',doc.read_text()):
@@ -165,7 +166,7 @@ def integrity():
     assert not broken,broken
     for r in json.loads((OUT/'endpoint_sources.json').read_text()) if (OUT/'endpoint_sources.json').exists() else []:
         for kind in ('model','audio'):
-            if r[kind+'_path']:assert digest(ROOT/r[kind+'_path'])==r[kind+'_sha256']
+            if r[kind+'_path']:assert digest(resolve_result_path(ROOT/r[kind+'_path']))==r[kind+'_sha256']
     images=list((OUT/'figures').glob('*.png'));assert len(images)<=10
     if (OUT/'figure_sources.json').exists():
         registry=json.loads((OUT/'figure_sources.json').read_text())['images'];assert len(registry)==len(images)==8

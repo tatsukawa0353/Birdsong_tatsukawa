@@ -1,4 +1,5 @@
 """Render Issue26 and freeze local provenance, protected files and storage."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import io
 import json
@@ -29,7 +30,7 @@ def integrity():
     if not path.exists():write_json(path,dict(status='running'))
     protected=csv_rows('protected_before.csv');changed=[];deleted=[];broken=[];links=0
     for r in protected:
-        p=ROOT/r['path']
+        p=resolve_result_path(ROOT/r['path'])
         if not p.exists():deleted.append(r['path'])
         elif digest(p)!=r['sha256']:changed.append(r['path'])
     for p in (OUT/'README.md',OUT/'REPORT.md',OUT/'PLAN.md',OUT/'STAGE_B.md',OUT/'REPRODUCE.md'):
@@ -52,7 +53,7 @@ def integrity():
             for r in csv_rows('wav_index.csv'):
                 rate,wave=wavfile.read(io.BytesIO(archive.read(r['wav'])))
                 assert rate==50000 and wave.dtype==np.float32 and wave.shape==(10000,) and float(r['gain'])==gain
-                with np.load(ROOT/r['source']) as z:np.testing.assert_array_equal(wave,(z[r['raw_key']]*gain).astype(np.float32))
+                with np.load(resolve_result_path(ROOT/r['source'])) as z:np.testing.assert_array_equal(wave,(z[r['raw_key']]*gain).astype(np.float32))
                 wavs+=1
     assert json.loads((OUT/'audit.json').read_text())['passed']
     assert json.loads((OUT/'aggregate_execution.json').read_text())['source_sha256']==digest(ROOT/'issue26_analysis.py')

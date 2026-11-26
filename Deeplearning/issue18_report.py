@@ -282,7 +282,7 @@ Deeplearning/.venv-rl/bin/python -m Deeplearning.issue18_report
         '- [Final/Selectedの各seed](comparison_per_seed.csv) / [平均±標本SD](comparison_aggregate.csv) / [制御値と目標差](parameter_errors.csv)\n'
         '- [元の学習サンプルと方策評価](diagnostics/existing_history_summary.csv) / [発声・誤差地形](diagnostics/domain_grid.csv)\n'
         '- [時間と回数](execution.json) / [独立再読み込み監査](audit.json) / [描画条件と出所](figure_sources.json)\n'
-        '- [元の全域3Dを含むIssue17](../phase1_constant_020s/README.md)\n')
+        '- [元の全域3Dを含むIssue17](../parameter_dimension/README.md)\n')
     write_json(OUT/'report_timing.json',dict(wall_s=time.perf_counter()-start,images=len(metadata)))
     print('Issue18 report and figures complete',flush=True)
 

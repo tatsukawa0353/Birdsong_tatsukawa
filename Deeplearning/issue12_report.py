@@ -197,7 +197,7 @@ def main(source, output):
     lines += ["左右x/yの端点、全積分点のmotion_mean/std、発声持続の診断は元の保存値を保持した。Case Bの強制外力値から厳密な振動停止や生体の閉鎖を確定しない。Phase 1は既知制御でモデル自身の音声を作る2制御課題、Phase 2は未知の実録音・3/4/5制御・フィルタとゲインの差を含む。時刻/前行動/現在状態しか観測せず、遅延履歴と目標特徴は未観測。Phase 1の未収束は学習上の問題を残すが、Phase 2のモデル表現限界を確定する証拠ではない。", "",
               "## 検証と再現", "",
               "[score_verification.json](score_verification.json) で旧全体誤差・既定balanced・保存frame_partsを照合。各領域の時間重み付き成分を合計すると既定全体損失へ戻る。元Issue #11の全ファイル集合とSHA256、元の物理・報酬・表示コードの前後一致は [source_integrity.json](source_integrity.json)。既存の学習重みや音声も含め、元フォルダへ書き込んでいない。", "",
-              "録音を使わないゼロ・有声・雑音・弱音・誤発声・タイミング・マスク差のテストと既存回帰56件が成功した。既存回帰には合成入力の短い学習API異常終了テストがあり、本Issueの追加RL実験とは区別する。公開可能な合成固定波形と診断表は `Deeplearning/results/issue12_synthetic/`、合成テストログは `Deeplearning/reports/issue12_validation.txt`。高い閾値・エネルギー重みで弱い実発声の欠落が軽く採点され得ることも説明に含める。", "",
+              "録音を使わないゼロ・有声・雑音・弱音・誤発声・タイミング・マスク差のテストと既存回帰56件が成功した。既存回帰には合成入力の短い学習API異常終了テストがあり、本Issueの追加RL実験とは区別する。公開可能な合成固定波形と診断表は `Deeplearning/results/reference/activity_mask/`、合成テストログは `Deeplearning/reports/issue12_validation.txt`。高い閾値・エネルギー重みで弱い実発声の欠落が軽く採点され得ることも説明に含める。", "",
               "```bash", "export MPLCONFIGDIR=/tmp/birdsong-mpl", "export OPENBLAS_NUM_THREADS=1", "export OMP_NUM_THREADS=1",
               "Deeplearning/.venv/bin/python -m Deeplearning.issue12 ab",
               "Deeplearning/.venv/bin/python -m Deeplearning.issue12 controls",

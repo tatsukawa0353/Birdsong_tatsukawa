@@ -1,4 +1,5 @@
 """Immutable inputs and compact records for the restricted-3D weight study."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import gzip
 import json
 from pathlib import Path
@@ -13,8 +14,8 @@ from .issue17_selection import selection_curve
 from .issue15_analysis import write_json
 from .issue18_domain_env import DomainEnv
 
-BASE = ROOT / 'results/phase1_3d_domain_diagnostics'
-OUT = ROOT / 'results/phase1_restricted3d_weights'
+BASE = ROOT / 'results/Phase1/CaseA/domain_diagnostics'
+OUT = ROOT / 'results/Phase1/CaseA/reward_weights/restricted_domain'
 METHODS = ('TD3', 'SAC', 'DE', 'random_search')
 WEIGHTS = (1., .5)
 INDICES = (0, 2, 3)
@@ -24,7 +25,7 @@ SOURCES = ('issue19_data.py', 'issue19_training.py', 'constant020_env.py',
 
 
 def source_hashes():
-    return {name: digest(ROOT/name) for name in SOURCES}
+    return {name: digest(resolve_result_path(ROOT/name)) for name in SOURCES}
 
 
 def target_data():
@@ -73,7 +74,7 @@ def save_audio(path, values):
 def ready():
     from .model import LIBRARY
     m = json.loads((OUT/'manifest.json').read_text())
-    if m['source_sha256'] != source_hashes() or m['native_library_sha256'] != digest(LIBRARY):
+    if not source_hashes_match(m['source_sha256'], source_hashes()) or m['native_library_sha256'] != digest(LIBRARY):
         raise RuntimeError('Frozen study sources or native library changed')
     if digest(BASE/'diagnostics/target.npz') != m['target_sha256']:
         raise RuntimeError('Original target changed')

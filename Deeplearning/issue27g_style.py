@@ -1,5 +1,4 @@
 """One effective SciencePlots configuration, inherited from Issue17 code."""
-from contextlib import contextmanager
 from pathlib import Path
 import hashlib
 import matplotlib
@@ -7,28 +6,17 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import numpy as np
-import scienceplots
-from cycler import cycler
 from .issue27g_data import OUT
 from .issue16 import digest
 from .issue15_analysis import write_json
 
-COLORS={'TD3':'#0072B2','SAC':'#D55E00','PPO':'#009E73','Target':'#222222'}
-STYLE={'font.size':30,'axes.labelsize':46,'xtick.labelsize':30,'ytick.labelsize':30,'legend.fontsize':29,
-    'lines.linewidth':4.,'lines.linestyle':'-','axes.grid':False,'axes.titlesize':30,'path.simplify':False,'agg.path.chunksize':0,
-    'axes.spines.top':False,'axes.spines.right':False,'figure.constrained_layout.use':True,
-    'xtick.top':False,'ytick.right':False,'xtick.minor.top':False,'ytick.minor.right':False,
-    'axes.prop_cycle':cycler(color=['#0072B2','#D55E00','#009E73','#CC79A7','#222222'])}
-ITEMS=[]
-@contextmanager
-def context():
-    with plt.style.context(['science','ieee','no-latex']),plt.rc_context(STYLE):yield
+from .plot_style import COLORS, STYLE, context, colorbar
 
+ITEMS=[]
 def identify(ax,label):
     ax.text(.025,.965,label,transform=ax.transAxes,ha='left',va='top',fontsize=29,bbox=dict(facecolor='white',alpha=.88,edgecolor='none',pad=3))
 def bar(fig,mesh,axes):
-    b=fig.colorbar(mesh,ax=np.asarray(axes).ravel().tolist(),pad=.025,shrink=.95)
-    b.set_label('Relative PSD [dB]',fontsize=46);b.ax.tick_params(labelsize=30);return b
+    return colorbar(fig,mesh,axes)
 def save(fig,name,description):
     # Assert effective properties on actual artists, not only rcParams.
     fig.canvas.draw();fonts=set();line_widths=set();legends=[];vertices=[]

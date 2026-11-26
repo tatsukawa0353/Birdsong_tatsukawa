@@ -7,6 +7,7 @@ files are read. Historical results are not rescanned: their preservation is
 checked using the preservation_check.json produced by the experiment runner.
 No simulation, training, recording access or existing artifact rewrite occurs.
 """
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 from datetime import datetime, timezone
@@ -232,7 +233,7 @@ class Auditor:
         self.check(set(settings["tasks"]) == set(TASKS), "three_tasks", self.output / "manifest.json", TASKS, list(settings["tasks"]))
         self.scalar(settings.get("gamma"), 1, self.output / "manifest.json" / "gamma")
         for name in SOURCE_NAMES:
-            source = ROOT / name
+            source = resolve_result_path(ROOT / name)
             actual = hashlib.sha256(source.read_bytes()).hexdigest()
             self.check(actual == manifest["source_hashes"][name], "source_hash_changed", source, manifest["source_hashes"][name], actual)
             self.counts["source_hashes_checked"] += 1

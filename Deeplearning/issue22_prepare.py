@@ -1,4 +1,5 @@
 """Validate coefficient sums, actual library and reward-only comparison before fitting."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import ctypes
 from datetime import datetime,timezone
@@ -27,10 +28,10 @@ def prepare(before_path=Path('/tmp/birdsong-issue22-before.json'),output=OUT):
     torch.set_num_threads(1);output=Path(output)
     if output.exists():raise FileExistsError('Existing results preserved')
     before=json.loads(Path(before_path).read_text())
-    for r in before['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
+    for r in before['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
     output.mkdir(parents=True);write_csv(output/'protected_before.csv',before.pop('files'));write_json(output/'storage_before.json',before)
     tick=time.perf_counter();previous=json.loads((BASE/'manifest.json').read_text())
-    for name,h in previous['source_sha256'].items():assert digest(ROOT/name)==h,name
+    for name,h in previous['source_sha256'].items():assert digest(resolve_result_path(ROOT/name))==h,name
     assert digest(LIBRARY)==previous['native_library_sha256'] and digest(TARGET)==previous['target_sha256']
     versions={p:importlib.metadata.version(p) for p in previous['versions']};assert versions==previous['versions']
     config=dict(previous['settings']);config.update(experiment_id='issue22_sac128_sum_one_reward',methods=['SAC'],net_arch=[128,128],

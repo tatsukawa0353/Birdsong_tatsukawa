@@ -11,9 +11,9 @@ from Deeplearning import legacy_paths
 class Phase0PathTests(unittest.TestCase):
     def test_old_protection_path_resolves_identical_bytes_after_real_move(self):
         with TemporaryDirectory(prefix="birdsong-phase0-path-") as temporary:
-            repo=Path(temporary); parent=repo/"Deeplearning/results/phase0_fixed_target_20261108"
+            repo=Path(temporary); parent=repo/"Deeplearning/results/Phase0/synthetic"
             old=repo/"Deeplearning/results/phase0"
-            old.mkdir(parents=True); parent.mkdir()
+            old.mkdir(parents=True); parent.mkdir(parents=True)
             (old/"unique_glide.npz").write_bytes(b"unique legacy payload")
             expected=hashlib.sha256((old/"unique_glide.npz").read_bytes()).hexdigest()
             with patch.object(legacy_paths,"REPO",repo),patch.object(legacy_paths,"PHASE0_ROOT",parent):
@@ -29,7 +29,7 @@ class Phase0PathTests(unittest.TestCase):
         from Deeplearning.issue14_report import generate_report
         with TemporaryDirectory(prefix="birdsong-phase0-guard-") as temporary:
             root=Path(temporary)/"Deeplearning"
-            parent=root/"results/phase0_fixed_target_20261108"
+            parent=root/"results/Phase0/synthetic"
             (parent/"reward_ablation").mkdir(parents=True)
             marker=parent/"reward_ablation/valuable.txt";marker.write_text("preserve")
             with patch.object(issue14_transaction,"ROOT",root),patch.object(issue14_transaction,"DEFAULT_OUTPUT",parent):

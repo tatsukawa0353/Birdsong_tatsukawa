@@ -1,4 +1,5 @@
 """Nine SAC128 runs; change the specified sum-one terminal objective only."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor,as_completed
 import json
@@ -25,7 +26,7 @@ def run_one(weight,seed,output=OUT):
     if weight not in WEIGHTS:raise ValueError('Only the registered sum-one weights may be trained')
     folder=folder_for(weight,seed,output)
     if (folder/'summary.json').exists():
-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
+        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h
         return s
     folder.mkdir(parents=True,exist_ok=False);train=environment(weight);evaluation=environment(weight)

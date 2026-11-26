@@ -95,7 +95,7 @@ def update_root_index():
     position=text.find(marker)
     if position>=0:
         end=text.find('\n\n',position)
-        text=text[:position]+('Issue #17は [4手法×2λの正本索引](results/phase1_constant_020s/README.md) を最初に確認する。\n'
+        text=text[:position]+('Issue #17は [4手法×2λの正本索引](results/Phase1/CaseA/parameter_dimension/README.md) を最初に確認する。\n'
             '0.20秒・一定1D/2D/3D・4096候補。TD3/SACを再学習せずDE λ=.5を追加し、Random λ=.5は全保存候補を再評価した。\n'
             '誤差図は同一次元・同一λの4手法をまとめた24枚へ統一。旧単独手法図は削除済み。')+text[end:]
         p.write_text(text)

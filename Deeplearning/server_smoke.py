@@ -3,6 +3,7 @@
 Uses the existing make_agent, SineEnv and acoustic reward without changes.
 Run from the repository root with ``python -m Deeplearning.server_smoke``.
 """
+from .result_paths import resolve as resolve_result_path
 import argparse
 import ctypes
 from dataclasses import asdict
@@ -270,7 +271,7 @@ def main():
                      "acoustics.py", "plotting.py", "configs/phase0.json"):
         dest = snapshot / filename
         dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(ROOT / filename, dest)
+        shutil.copyfile(resolve_result_path(ROOT / filename), dest)
     source_hashes = {str(p.relative_to(snapshot)): digest(p)
                      for p in snapshot.rglob("*") if p.is_file()}
     write_json(out / "source_sha256.json", source_hashes)

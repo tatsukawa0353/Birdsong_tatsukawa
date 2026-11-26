@@ -1,4 +1,5 @@
 """Coefficient-sum-one rewards; immutable SAC128 baseline and shared diagnostics."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import json
 from pathlib import Path
 
@@ -11,10 +12,10 @@ from .issue19_data import pack,metric_row,save_audio
 from .issue21_data import target_data
 from .issue16 import digest
 
-BASE=ROOT/'results/phase1_caseA_3d_network_width'
-TARGET=ROOT/'results/phase1_3d_domain_diagnostics/diagnostics/target.npz'
-POOL=ROOT/'results/phase1_restricted3d_weights/critic_pool.csv'
-OUT=ROOT/'results/phase1_caseA_sac128_reward_weights'
+BASE=ROOT/'results/Phase1/CaseA/network_width'
+TARGET=ROOT/'results/Phase1/CaseA/domain_diagnostics/diagnostics/target.npz'
+POOL=ROOT/'results/Phase1/CaseA/reward_weights/restricted_domain/critic_pool.csv'
+OUT=ROOT/'results/Phase1/CaseA/reward_weights/sac128'
 WEIGHTS=(.5,.75,.9)
 CONDITIONS=('legacy_sum',*WEIGHTS)
 SEEDS=(0,1,2)
@@ -25,7 +26,7 @@ ENTROPY_SAMPLES=4096
 ENTROPY_SEED=220026
 
 
-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
+def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
 
 
 def coefficients(weight):
@@ -108,7 +109,7 @@ def policy_statistics(agent):
 def ready(output=OUT):
     from .model import LIBRARY
     m=json.loads((Path(output)/'manifest.json').read_text())
-    assert m['source_sha256']==source_hashes(),'Frozen training implementation changed'
+    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen training implementation changed'
     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
     assert m['critic_pool_sha256']==digest(POOL)
     return m

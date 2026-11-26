@@ -1,4 +1,5 @@
 """Add only DE lambda=.5; rescore the saved Random pool. Never construct an RL agent."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor,as_completed
 from datetime import datetime,timezone
@@ -29,7 +30,7 @@ MUTABLE=('README.md','REPORT.md','comparison_aggregate.csv','comparison_per_seed
 
 
 def current_sources():
-    return {name:digest(ROOT/name) for name in NUMERICAL}
+    return {name:digest(resolve_result_path(ROOT/name)) for name in NUMERICAL}
 
 
 def write_curve(path,records):
@@ -70,7 +71,7 @@ def prepare():
 
 def ready():
     manifest=json.loads((WORK/'manifest.json').read_text())
-    if manifest['numerical_sources']!=current_sources():raise RuntimeError('Extension numerical sources changed')
+    if not source_hashes_match(manifest['numerical_sources'], current_sources()):raise RuntimeError('Extension numerical sources changed')
     base,target,controls=load_ready(DEST)
     if digest(DEST/'manifest.json')!=manifest['base_manifest_sha256']:raise RuntimeError('Base manifest changed')
     return base,target,controls

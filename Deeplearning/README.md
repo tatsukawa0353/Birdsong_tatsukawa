@@ -1,58 +1,66 @@
 # Birdsong 制御実験
 
+成果物は研究目的別の[results/README.md](results/README.md)から参照する。
+2026-11-26にPhase/Case/目的で再編し、再生成図・重複データを削減した。
+[移行対応・削除一覧・容量比較・検証手順](results/maintenance/20261126/README.md)を保存している。
+過去のmanifest/hash/PLANは計算時の原本であり、移行後は
+`python -m Deeplearning.results_maintenance audit` で保持・パスを検証する。
+旧report/freezeの再実行は別checkout/出力先で行い、完了成果を上書きしない。
+今後の管理は[AGENTS.md](AGENTS.md)、描画設定は[plot_style.py](plot_style.py)を参照する。
+
 現在の作業ブランチは `main_deeplearning`。研究室サーバの学習環境は
 `Deeplearning/.venv-rl`（[環境手順](envs/rl/README.md)）。以下の古いPython 3.12環境の
 説明は過去の再現記録で、現在の実行環境とは区別する。
 
-Phase 0の正本は [phase0_fixed_target_20261108](results/phase0_fixed_target_20261108/REPORT.md)
-の1フォルダに統一した。日付は歴史的な保存名であり、実行日は各manifestを参照する。
+Phase 0の正本は [Phase0/synthetic](results/Phase0/synthetic/REPORT.md)
+に統一した。旧保存名はphase0_fixed_target_20261108であり、実行日は各manifestを参照する。
 固定目標の合算報酬Aは親直下、単独報酬B/Cは `reward_ablation/`、旧ランダム目標の
 全実データは `legacy_random_target/` にある。旧 `results/phase0/` は移設済み。
 `main` の同じパスに残る旧4,096-step結果と取り違えない。
 
-Issue #16の[最終学習率比較](results/phase0_fixed_target_20261108/reward_ablation/learning_rate_comparison/REPORT.md)
+Issue #16の[最終学習率比較](results/Phase0/synthetic/reward_ablation/learning_rate_comparison/REPORT.md)
 でPhase 0を終了した。λ=0.5のTD3/SACについてLR=0.0001を各3 seed追加し、既存LR=0.0003を読み取り専用で比較している。
-Issue #17は [4手法×2λの正本索引](results/phase1_constant_020s/README.md) を最初に確認する。
+Issue #17は [4手法×2λの正本索引](results/Phase1/CaseA/parameter_dimension/README.md) を最初に確認する。
 0.20秒・一定1D/2D/3D・4096候補。TD3/SACを再学習せずDE λ=.5を追加し、Random λ=.5は全保存候補を再評価した。
 誤差図は同一次元・同一λの4手法をまとめた24枚へ統一。旧単独手法図は削除済み。
 スペクトログラムはTarget共通PSD基準でFinal/Selected Bestを分け、一定制御は集約図で確認する。
-Issue #18の [3D発声領域・制限探索の診断](results/phase1_3d_domain_diagnostics/README.md) は別正本。元の全域結果を保持し、範囲のみ変更した追試と比較する。
-Issue #19の [制限3Dのλ比較・Actor/Critic診断](results/phase1_restricted3d_weights/README.md) は、
+Issue #18の [3D発声領域・制限探索の診断](results/Phase1/CaseA/domain_diagnostics/README.md) は別正本。元の全域結果を保持し、範囲のみ変更した追試と比較する。
+Issue #19の [制限3Dのλ比較・Actor/Critic診断](results/Phase1/CaseA/reward_weights/restricted_domain/README.md) は、
 既存λ=1を保持してλ=.5を9 run追加した追試。Randomは同じ保存候補を再スコアし、
 主要図は8枚に集約した。再評価・旧成果のhash照合は `python -m Deeplearning.issue19_audit`、
 保存済み結果からの描画は `python -m Deeplearning.issue19_report`。
-Issue #21の [Case A・一定3Dのネットワーク幅比較](results/phase1_caseA_3d_network_width/README.md) は、
+Issue #21の [Case A・一定3Dのネットワーク幅比較](results/Phase1/CaseA/network_width/README.md) は、
 λ=1・同じ目標/範囲/予算を維持し、ActorとCriticの幅64/128/256を18 run比較する。
 32幅はIssue #18の保存結果を参照する。検証は `python -m Deeplearning.issue21_audit`、
 保存結果からの集約図・レポート更新は `python -m Deeplearning.issue21_report`。
-Issue #22の [SAC128・係数和1の報酬重み比較](results/phase1_caseA_sac128_reward_weights/README.md) は、
+Issue #22の [SAC128・係数和1の報酬重み比較](results/Phase1/CaseA/reward_weights/sac128/README.md) は、
 `J=λ E_spec+(1−λ) E_env` のλ=.50/.75/.90を9 run比較する。旧報酬1+1とはスケールが異なる。
 検証は `python -m Deeplearning.issue22_analysis audit`、保存結果からの描画は
 `python -m Deeplearning.issue22_report`。Final・minJのSelected・事後min E_totalを区別する。
-Issue #23の [SAC128・λ=.75の安定性診断](results/phase1_caseA_sac128_stability_diagnostics/README.md) は、
+Issue #23の [SAC128・λ=.75の安定性診断](results/Phase1/CaseA/stability_diagnostics/README.md) は、
 既存ログのStage Aを先に記録し、設定を変えず3seedを再現する。中間Critic・Actor更新と
 minJ/minE_totalの別保存を診断する。検証は `python -m Deeplearning.issue23_analysis audit`、
 保存結果の描画・レポート更新は `python -m Deeplearning.issue23_report`。
-Issue #24の [SAC128・λ=.75のActor学習率比較](results/phase1_caseA_sac128_actor_lr/README.md) は、
+Issue #24の [SAC128・λ=.75のActor学習率比較](results/Phase1/CaseA/learning_rate/actor/README.md) は、
 Critic/温度のLRを3e-4に固定し、Actorだけ1e-4/3e-5へ変更した6runを既存3e-4と比較する。
 全更新の実効LRを監査し、Final・minJ・minE、到達と維持、行動の移動量を分けて評価する。
-Issue #25の [SAC128・λ=.75のCritic学習率比較](results/phase1_caseA_sac128_critic_lr/README.md) は、
+Issue #25の [SAC128・λ=.75のCritic学習率比較](results/Phase1/CaseA/learning_rate/critic/README.md) は、
 Actor/温度LRを3e-4に固定したオンライン6runと、既存12288経験・隔離99候補での固定回帰9本を分けて評価する。
 事前計画・データ分割・数値停止基準を凍結し、Final音響精度とCritic予測精度を並列に報告する。
-Issue #26の [広域探索と連続局所候補の比較](results/phase1_caseA_wide_local_exploration/README.md) は、
+Issue #26の [広域探索と連続局所候補の比較](results/Phase1/CaseA/exploration_strategy/README.md) は、
 f0_l上限を1e7へ戻した通常SACと、局所80%・SAC20%の2半径を9runで比較する。
 最初256試行を一致させ、学習候補の発見・Actorの獲得・Finalの保持を分けて記録する。
-Issue #27の [Case B自己Targetの事前診断](results/phase1_caseB_self_target_020s_sac128/README.md) は、
+Issue #27の [Case B自己Targetの事前診断](results/Phase1/CaseB/target_diagnostics/initial_stop/README.md) は、
 左右の音響結合と右f0=1e7を実libraryで確認した。指定Targetが非持続だったため、
 Issueの停止条件に従ってSACは未実施。3音の物理対照・oracle一致・左右状態を保存している。
-同Issueの [2026-11-26改訂：Case Bの9条件診断](results/phase1_caseB_self_target_020s_methods/README.md) は別成果。
+同Issueの [2026-11-26改訂：Case Bの9条件診断](results/Phase1/CaseB/target_diagnostics/high_left_force/README.md) は別成果。
 指定したε_l×p_sの全9点が非持続で、SAC/TD3/PPOの学習は停止条件に従い未開始。
 初回の停止記録と元の物理モデルを保持し、全候補の音・左右状態・寄与を保存した。
-同Issueの [左右外力18点と3手法の再改訂結果](results/phase1_caseB_self_target_020s_methods_f0lr_scan/REPORT.md) は、
+同Issueの [左右外力18点と3手法の再改訂結果](results/Phase1/CaseB/target_diagnostics/low_forces/REPORT.md) は、
 左f0=49000、右f0=1e7/49000の18点が持続proxyを満たし、左右49000の人工Targetを選定した。
 SAC/TD3/PPO×3seed×4096step（36864学習音）と297独立評価、36保存結果の独立再生を完了。
 旧成果と元物理式は保持し、Final/Selected/training_best/posthoc・左右状態・共通PSD図を分けて報告した。
-同Issueの [3Target×一定3D/4Dの比較](results/phase1_caseB_self_target_020s_3targets_3d4d/REPORT.md) は、
+同Issueの [3Target×一定3D/4Dの比較](results/Phase1/CaseB/3targets_3d4d/REPORT.md) は、
 指定T1/T2/T3でSAC/TD3/PPO×3seedの54run、221184学習音・1782評価・216独立再生を完了した。
 中断した27本は途中成果を保持して同じseed・条件で復旧し、中断分の計算回数は別会計の範囲として記録。
 物理式・過去成果を保護し、同一Target内の次元差、制御同定誤差、共通書式の集約図を報告している。
@@ -139,7 +147,7 @@ Deeplearning/.venv/bin/python -m Deeplearning.redraw --include-private
 
 ## Phase 1：基礎検証と手法比較（2026-10-31）
 
-新しい検証結果は [Phase 1検証レポート](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)、結果の判断は [考察と補足計算量](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)。実録音を使わず、Case Aの既知の一定目標について、Oracle・誤差マップを確認してから、一定1変数／10 ms時変1変数／10 ms時変2変数を順に比較する。TD3・SAC・ランダム探索・差分進化を各3 seedで実行し、各課題内の0.35秒生成本数を揃える。主評価・直接法の選択は既存の全区間音響誤差、balancedは独立した補助評価とする。RL環境のprefix差分報酬は主評価に一致し、SACにはentropy正則化もある。旧rolling報酬・balanced_alignedとは別条件である。
+新しい検証結果は [Phase 1検証レポート](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)、結果の判断は [考察と補足計算量](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)。実録音を使わず、Case Aの既知の一定目標について、Oracle・誤差マップを確認してから、一定1変数／10 ms時変1変数／10 ms時変2変数を順に比較する。TD3・SAC・ランダム探索・差分進化を各3 seedで実行し、各課題内の0.35秒生成本数を揃える。主評価・直接法の選択は既存の全区間音響誤差、balancedは独立した補助評価とする。RL環境のprefix差分報酬は主評価に一致し、SACにはentropy正則化もある。旧rolling報酬・balanced_alignedとは別条件である。
 
 ```bash
 export MPLCONFIGDIR=/tmp/birdsong-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
@@ -165,7 +173,7 @@ Deeplearning/.venv/bin/python -m Deeplearning.issue12 controls
 Deeplearning/.venv/bin/python -m Deeplearning.issue12 report
 ```
 
-`ab` でA/B内部メモを先に生成し、`all` で全段階を実行する。`synthetic` は数学的に作る合成音だけを公開可能な `results/issue12_synthetic/` へ保存する。入力と出力の重複を拒否し、元Issue #11の全ファイル集合とSHA256を前後照合する。報酬・物理・音声・表示を変更せず、新たな学習や報酬採用は行わない。
+`ab` でA/B内部メモを先に生成し、`all` で全段階を実行する。`synthetic` は数学的に作る合成音だけを公開可能な `results/reference/activity_mask/` へ保存する。入力と出力の重複を拒否し、元Issue #11の全ファイル集合とSHA256を前後照合する。報酬・物理・音声・表示を変更せず、新たな学習や報酬採用は行わない。
 
 ## Issue #11：実録音での報酬比較（ローカル限定）
 
@@ -187,13 +195,13 @@ Deeplearning/.venv/bin/python -m Deeplearning.issue11 all --local-permission-con
 Deeplearning/.venv/bin/python -m Deeplearning.issue10 all
 ```
 
-段階別は `audit`（固定合成波形・感度・時間集計）、`train`（1050step×3 seed）、`baselines`（oracle/定数/ランダム/DE）、`extend`（事前条件を満たした手法を全条件4200stepで比較）、`glide`（定数目標での再現性に応じてRLまたはoracleのみ）、`report`。設定は `configs/issue10.json`、全成果物は `results/issue10/`。`train`/`extend` は同設定の学習済み結果を再利用する。`report` は既存結果の整合性も再計算する。
+段階別は `audit`（固定合成波形・感度・時間集計）、`train`（1050step×3 seed）、`baselines`（oracle/定数/ランダム/DE）、`extend`（事前条件を満たした手法を全条件4200stepで比較）、`glide`（定数目標での再現性に応じてRLまたはoracleのみ）、`report`。設定は `configs/issue10.json`、全成果物は `results/Phase1/CaseA/reward_diagnostics/`。`train`/`extend` は同設定の学習済み結果を再利用する。`report` は既存結果の整合性も再計算する。
 
 環境の選択は `ModelConfig(loss_kind="balanced", reward_timing="context")` または `reward_timing="aligned"`。alignedは新規frame寄与を一度だけ評価し、環境の `reward_discount` を学習器のgammaと一致させる。既定は `loss_kind="baseline", reward_timing="context"`。全条件の最終 `error` は従来の `acoustics.distance`、`objective_error` は新しい全体損失、`mean_reward_cost` と `discounted_reward_cost` は実際のstep報酬の集計。表示の色範囲は報酬設定へ渡さない。
 
 ## Issue #9：発声状態と外力制御の診断
 
-対応結果は [ISSUE9_REPORT.md](reports/ISSUE9_REPORT.md)、録音由来の比較表はローカル限定の `private_runs/issue9/REPORT.md`。合成の発声マップは `results/issue9/` に保存した。
+対応結果は [ISSUE9_REPORT.md](reports/ISSUE9_REPORT.md)、録音由来の比較表はローカル限定の `private_runs/issue9/REPORT.md`。合成の発声マップは `results/reference/phonation_domain/` に保存した。
 
 ```bash
 Deeplearning/.venv/bin/python -m Deeplearning.issue9 all --local-permission-confirmed
@@ -214,4 +222,4 @@ Deeplearning/.venv/bin/python -m Deeplearning.phase2 --target Deeplearning/sampl
 
 API の参照: [Gymnasium Env](https://gymnasium.farama.org/api/env/)、[SB3 custom environments](https://stable-baselines3.readthedocs.io/en/master/guide/custom_env.html)、[SB3 examples](https://stable-baselines3.readthedocs.io/en/master/guide/examples.html)。
 
-旧Phase1は正本内の [history](results/phase1_constant_020s/history/README.md) に必要な歴史情報を集約した。旧監査のprotected_beforeは当時の記録で、現行の保存検証はIssue17の新監査に切り替える。Phase0の保存済み監査ログは改変しない。
+旧Phase1は正本内の [history](results/Phase1/CaseA/parameter_dimension/history/README.md) に必要な歴史情報を集約した。旧監査のprotected_beforeは当時の記録で、現行の保存検証はIssue17の新監査に切り替える。Phase0の保存済み監査ログは改変しない。

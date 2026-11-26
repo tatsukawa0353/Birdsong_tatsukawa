@@ -2,7 +2,7 @@
 
 # Issue対応レポート
 
-2026-10-31追加: [Phase 1の基礎検証と手法比較](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)。既知制御・固定値・Oracleの整合性、学習前の誤差マップ、3課題×4手法×3 seedの比較を新規フォルダに保存した。以下の過去実験の数値・条件は当時の記録であり、新しいprefix差分報酬の結果とは別に扱う。
+2026-10-31追加: [Phase 1の基礎検証と手法比較](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)。既知制御・固定値・Oracleの整合性、学習前の誤差マップ、3課題×4手法×3 seedの比較を新規フォルダに保存した。以下の過去実験の数値・条件は当時の記録であり、新しいprefix差分報酬の結果とは別に扱う。
 
 2026-10-30（JST）。作業場所: `Deeplearning/`。
 
@@ -59,11 +59,11 @@ Issueのクローズ、GitHubへのコメント・成果物公開、コミット
 | TD3 | 0.04389 ± 0.00487 | 3/3 | 9.37 | 350 |
 | PPO | 0.10945 ± 0.00466 | 0/3 | 4.40 | 350 |
 
-![Phase 0学習曲線](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)
+![Phase 0学習曲線](results/Phase0/synthetic/legacy_random_target/learning_curves.png)
 
-この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。
+この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/Phase0/synthetic/legacy_random_target/summary.json)。
 
-周波数と振幅の追従誤差は [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。
+周波数と振幅の追従誤差は [tracking.csv](results/Phase0/synthetic/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。
 
 ## 3. Phase 1：モデル内生成音
 
@@ -91,11 +91,11 @@ Issueのクローズ、GitHubへのコメント・成果物公開、コミット
 
 主比較のランダム探索・差分進化は、RLと同じ即時報酬の平均を最小化し、30候補×35step=1050step。最終表には選ばれた方策の終端全体誤差を示す。直接探索は2個の**定数**を探索し、RLは時変制御を出力できるため探索次元は異なる。oracleは生成パラメータ既知の検証であり、学習成績ではない。
 
-初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/phase1_constant_020s/history/phase1_terminal_baselines/` に目的関数の注記とともに残した。
+初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/Phase1/CaseA/parameter_dimension/history/phase1_terminal_baselines/` に目的関数の注記とともに残した。
 
 ランダム行動よりは小さい誤差を得たが、定数制御や直接探索に対するRL固有の優位性は示せていない。既知制御でほぼゼロにできるため、この目標をモデルが表現できないという説明は当てはまらない。最適化・観測・報酬設計を見直す余地がある。
 
-時間変化目標は生成と既知制御による追従まで確認したが、RL学習は未実施。制御周期5/10/17.5 ms、変化ペナルティ0/0.01/0.1の診断は [evaluation_sensitivity.json](results/diagnostics/evaluation_sensitivity.json)。これは同じ学習済み方策の**評価時**の感度で、条件ごとの再学習実験とは区別する。
+時間変化目標は生成と既知制御による追従まで確認したが、RL学習は未実施。制御周期5/10/17.5 ms、変化ペナルティ0/0.01/0.1の診断は [evaluation_sensitivity.json](results/reference/implementation_diagnostics/evaluation_sensitivity.json)。これは同じ学習済み方策の**評価時**の感度で、条件ごとの再学習実験とは区別する。
 
 ## 4. 音響評価
 
@@ -103,7 +103,7 @@ Blackman–Harris窓24.576 ms、75%重複。短区間はゼロパディングし
 
 同一音で誤差ゼロ、周波数・音量・タイミングのずれで正の誤差となること、無音/雑音/非有限値/長さ不一致、サンプルレート変更に対する秒単位窓、アンチエイリアスをテストした。
 
-SE、既存SCI定義に対応するf_MSF/f_AFF、ACI、自己相関HNR診断は学習後に別途計算した。SCIはSAPとの照合済み値ではなく、HNR・ACIも学習報酬として有効性を確認したものではない。雑音様の目標を自動除外しない。単一の値を複雑さ全体の尺度にせず、時間変動・スペクトル図と併記する。合成音の記述量は [descriptors.json](results/diagnostics/descriptors.json)。
+SE、既存SCI定義に対応するf_MSF/f_AFF、ACI、自己相関HNR診断は学習後に別途計算した。SCIはSAPとの照合済み値ではなく、HNR・ACIも学習報酬として有効性を確認したものではない。雑音様の目標を自動除外しない。単一の値を複雑さ全体の尺度にせず、時間変動・スペクトル図と併記する。合成音の記述量は [descriptors.json](results/reference/implementation_diagnostics/descriptors.json)。
 
 ## 5. 実録音0.35秒
 

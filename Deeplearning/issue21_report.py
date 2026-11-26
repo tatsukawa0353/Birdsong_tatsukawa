@@ -1,4 +1,5 @@
 """Report the width experiment without retraining or changing any old artifact."""
+from .result_paths import resolve as resolve_result_path
 import csv
 import gzip
 import io
@@ -46,7 +47,7 @@ def listening_archive():
     with zipfile.ZipFile(OUT/'new_listening_audio.zip','w',compression=zipfile.ZIP_DEFLATED) as archive:
         for r in registry:
             if r['width']==32:continue
-            with np.load(ROOT/r['audio_path']) as z:audio=z['audio'].copy()
+            with np.load(resolve_result_path(ROOT/r['audio_path'])) as z:audio=z['audio'].copy()
             data=io.BytesIO();wavfile.write(data,50000,(audio*gain).astype(np.float32));payload=data.getvalue()
             import hashlib
             h=hashlib.sha256(payload).hexdigest();name=f'{r["method"]}_w{r["width"]}_seed{r["seed"]}_{r["role"]}.wav'
@@ -66,7 +67,7 @@ def freeze():
     for name in ('artifact_checksums.json','storage_after.json'):
         if not (OUT/name).exists():(OUT/name).write_text('{}\n')
     integrity()
-    new=[ROOT/p for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines() if (ROOT/p).is_file()]
+    new=[resolve_result_path(ROOT/p) for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines() if (resolve_result_path(ROOT/p)).is_file()]
     status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],cwd=ROOT,text=True).splitlines()
     before=json.loads((OUT/'storage_before.json').read_text())['workspace']['total']
     for _ in range(4):
@@ -129,7 +130,7 @@ def report():
     for dimension in (1,2):
         for method in METHODS:
             for seed in SEEDS:
-                p=ROOT/f'results/phase1_constant_020s/runs/constant_{dimension}d/{method}/lambda1/seed_{seed}/summary.json'
+                p=ROOT/f'results/Phase1/CaseA/parameter_dimension/runs/constant_{dimension}d/{method}/lambda1/seed_{seed}/summary.json'
                 s=json.loads(p.read_text());lower.append(dict(dimension=dimension,method=method,seed=seed,E_total=s['final']['acoustic_error'],source=str(p.relative_to(ROOT)),source_sha256=digest(p)))
     write_csv(OUT/'lower_dimensional_reference.csv',lower)
     listening_archive()

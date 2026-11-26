@@ -6,7 +6,7 @@
 
 **ローカルのリンク先は、このガイドのある `Deeplearning/` からの相対パス。** 実在するファイル／ディレクトリだけをリンクした。既存学会スライドは対応するファイルを今回特定できていないため、ファイルパス・スライド番号を記載しない。研究結果は既存レポート・保存値に基づき、新しい計算や未記載の過去成果を加えていない。
 
-制作時はまずBの一覧と各スライドを読む。画像を探すときはC、数値を転記するときはD、説明・質疑の準備にはE〜Gを使う。**D以降の詳細を、そのまま本編へ詰め込む必要はない。** 主な実験の根拠は [Phase 1レポート](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md) と [考察](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)。
+制作時はまずBの一覧と各スライドを読む。画像を探すときはC、数値を転記するときはD、説明・質疑の準備にはE〜Gを使う。**D以降の詳細を、そのまま本編へ詰め込む必要はない。** 主な実験の根拠は [Phase 1レポート](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md) と [考察](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)。
 
 ## A. 発表概要
 
@@ -90,7 +90,7 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 - **使用する既存PNG：** なし。
 - **既存学会スライドから流用予定：** これまでのモデル研究の位置づけを示す説明。対応ファイル・スライド番号は未確認。過去成果の図を足す場合も1点以内とし、元の条件・結論を確認する。
 - **新規作成する図表：** **N01「過去／現在／将来の流れ図」**。3箱を矢印でつなぐ。「これまで：左右音源条件と生成音の特性」「現在：正弦波→既知制御の鳴管音で制御法の基礎検証」「将来：実際のさえずりの模倣→左右音源条件ごとの模倣範囲・獲得効率」。現在の箱を強調し、将来を達成済みと見せない。
-- **参照元データ・資料：** 本ガイドA、[Phase 1の考察](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)。先行研究は [Amador et al. (2013)](https://doi.org/10.1038/nature11967)（モデルによる実録音再構成）、[Sankar et al. (2026), eLife Reviewed Preprint v1](https://doi.org/10.7554/eLife.112141.1)（鳴管モデルを用いたRL関連の感覚運動学習）。詳細・確認範囲はG。
+- **参照元データ・資料：** 本ガイドA、[Phase 1の考察](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)。先行研究は [Amador et al. (2013)](https://doi.org/10.1038/nature11967)（モデルによる実録音再構成）、[Sankar et al. (2026), eLife Reviewed Preprint v1](https://doi.org/10.7554/eLife.112141.1)（鳴管モデルを用いたRL関連の感覚運動学習）。詳細・確認範囲はG。
 - **口頭説明：** 「モデルを変えるとどんな音が出るかに加えて、同じ目標をどこまでまねられるかで比較したい。そのためには、まず目標へ近づく制御の選び方を確かめる必要があります。モデルでの再構成やRLの先行研究はあり、私たちは今後、左右音源の相互作用による模倣範囲と獲得効率の違いを調べたいと考えています」。
 - **前後のつながり：** 研究目的→今回制御法を検証する理由→次で、制御される鳴管モデル自体を説明する。
 - **疑問・注意：** 「もう実録音を学習した結果なのか？」→今回はモデル内の音まで。「RLを使うのが新規なのか？」→それ自体は新規と主張しない。先行研究の独立スライドは設けず、上記2報を脚注に置く。
@@ -111,7 +111,7 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 - **理解してほしいこと：** 操作を選び、音を生成し、目標との違いから学ぶ試行錯誤が強化学習。
 - **使用する既存PNG：** なし。
 - **新規作成する図表：** **N02「音声模倣の学習ループ」**。中央に「エージェント（操作を選ぶプログラム）→制御値→鳴管モデル→生成音→目標音との比較→報酬→選び方の更新」を描く。目標音は**比較の箱へ**入れ、モデルからエージェントへは「観測：時刻・直前の操作・振動状態の一部」を返す。下端に「1試行＝0.35秒、誤差が小さいほどよい」を記す。配置の詳細はE-2。
-- **参照元データ・資料：** [Phase 1のmanifest](results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json)、[phase1_validation_env.py](phase1_validation_env.py)、[model_env.py](model_env.py)。手法の原典は [TD3](https://proceedings.mlr.press/v80/fujimoto18a.html)、[SAC](https://proceedings.mlr.press/v80/haarnoja18b.html)。
+- **参照元データ・資料：** [Phase 1のmanifest](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json)、[phase1_validation_env.py](phase1_validation_env.py)、[model_env.py](model_env.py)。手法の原典は [TD3](https://proceedings.mlr.press/v80/fujimoto18a.html)、[SAC](https://proceedings.mlr.press/v80/haarnoja18b.html)。
 - **口頭説明：** 「正解の操作は学習器に教えず、音の違いを手掛かりに操作の選び方を更新します。今回は連続値を操作できるTD3とSACを候補にします。TD3は基本の操作に探索のゆらぎを加え、SACは操作の候補の幅も調整しながら学びます」。
 - **前後のつながり：** 制御値を選ぶ必要性→選び方を学ぶ仕組み→次で、その候補を簡単な音で比較した結果を示す。
 - **疑問・注意：** 「物理モデルを使うならモデルベースRL？」→物理モデルは試行する環境で、TD3/SACはモデルフリーRL。内部に遷移モデルを学習して先読みする手法ではない。実際の鳥の脳の学習過程を再現したとの主張もしない。Phase 1では目標波形を観測へ直接渡していない。
@@ -119,9 +119,9 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 ### 6. まず簡単な音で手法を比較した
 
 - **理解してほしいこと：** 鳴管モデルの前に正弦波の連続制御で比較し、この小予算の結果からTD3/SACを継続候補にした。
-- **使用する既存PNG：** **P0-1** [results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)。全体を使う。横軸は訓練step、縦軸は音響誤差で小さいほどよい。各色の3本はseed別で、平均±SDの図ではない。
+- **使用する既存PNG：** **P0-1** [results/Phase0/synthetic/legacy_random_target/learning_curves.png](results/Phase0/synthetic/legacy_random_target/learning_curves.png)。全体を使う。横軸は訓練step、縦軸は音響誤差で小さいほどよい。各色の3本はseed別で、平均±SDの図ではない。
 - **新規作成する図表：** **N03「Phase 0最終誤差の短表」**。D-1からTD3 0.04389±0.00487、SAC 0.07081±0.00307、PPO 0.10945±0.00466を転記する。列は手法と最終誤差だけ。脚注に「平均±標本SD、3 seed、各4096訓練step、全0.35秒評価」。到達数・実時間は補足に残す。
-- **参照元データ・資料：** [REPORT.md](REPORT.md)「2. Phase 0」、[results/phase0_fixed_target_20261108/legacy_random_target/config.json](results/phase0_fixed_target_20261108/legacy_random_target/config.json)、[summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)、[ranking.json](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json)。曲線は [results/phase0_fixed_target_20261108/legacy_random_target/](results/phase0_fixed_target_20261108/legacy_random_target) の9 runにある各 `curve.json`。例：[TD3 seed 0](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/curve.json)。
+- **参照元データ・資料：** [REPORT.md](REPORT.md)「2. Phase 0」、[results/Phase0/synthetic/legacy_random_target/config.json](results/Phase0/synthetic/legacy_random_target/config.json)、[summary.json](results/Phase0/synthetic/legacy_random_target/summary.json)、[ranking.json](results/Phase0/synthetic/legacy_random_target/ranking.json)。曲線は [results/Phase0/synthetic/legacy_random_target/](results/Phase0/synthetic/legacy_random_target) の9 runにある各 `curve.json`。例：[TD3 seed 0](results/Phase0/synthetic/legacy_random_target/TD3_0/curve.json)。
 - **口頭説明：** 「正弦波は1つの周波数の基本的な音です。高さと振幅を10 msごとに操作し、目標へ近づけました。stepは操作を決める1回分です。初期乱数を変えた3系列を各4096stepで比較した結果、TD3/SACを次へ進めました」。目標周波数・振幅を観測可能で、学習は高さが変化する音、評価は固定1000→2000 Hzと説明する。
 - **前後のつながり：** 学習の仕組み→簡単な環境での候補選定→次で複雑な鳴管モデルの検証条件へ移る。
 - **疑問・注意：** 「正弦波で良ければ鳥でも良い？」→保証されないためPhase 1へ進む。曲線の末尾値と別の最終評価値を混同せず、N03にはsummaryの既存集計を使う。選定は最終評価誤差の中央値に基づく暫定順位で、平均表を選定基準と呼び替えない。
@@ -131,7 +131,7 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 - **理解してほしいこと：** 既知制御から作った同じ目標を使い、一定1変数から時変1変数・2変数へ操作の自由度を増やした。
 - **使用する既存PNG：** なし。
 - **新規作成する図表：** **N04「Task定義・予算表」**。D-2から次の3行を転記する。A＝左の係数ε_l・1回決定して保持・直接法の系列探索1次元・256試行／256step、B＝ε_l・10 msごと35回・直接法の系列探索35次元・128試行／4480step、C＝ε_lと圧力p_s・10 msごと35回・直接法の系列探索70次元・128試行／4480step。脚注に「全Task＝モデルCase A、同じ0.35秒の一定制御由来目標、各手法3 seed」。RLの1回の行動はA/Bで1値、Cで2値。全制御値・計算資源の詳細はD-2に残す。
-- **参照元データ・資料：** [results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json](results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json)、[REPORT.md](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)「手法比較」。1試行・1行動のAと、35回操作するB/Cは別の課題。
+- **参照元データ・資料：** [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json)、[REPORT.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)「手法比較」。1試行・1行動のAと、35回操作するB/Cは別の課題。
 - **口頭説明：** 「正解が存在する音で、まず選び方を検証します。時変とは操作を途中で変えられるという意味で、目標音は全Taskで一定制御から作った同じ音です。同じTaskの中では、4手法で生成本数・制御範囲・全区間の評価を揃えました」。
 - **前後のつながり：** 正弦波から鳴管へ→比較条件の共有→次で本当に同じ制御なら再現できるかを確認する。
 - **疑問・注意：** 「Task Cは左右2音源？」→違う。**Task A/B/Cは操作の自由度、モデルCase A/B/Cは音源条件で、今回は全てモデルCase A。** A/B/C間の予算は同一ではなく、自由度だけの因果効果を示す比較ではない。
@@ -139,9 +139,9 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 ### 8. 学習前に、正解を再現できることを確認した
 
 - **理解してほしいこと：** 正解制御をそのまま再生するOracleで、実装上の到達可能性を確認できた。
-- **使用する既存PNG：** **P1-5** [results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png)。上段Target・下段Generatedの両方を使い、「横＝時間、縦＝周波数、黒い線＝強い周波数成分」と初めてここで説明する。
+- **使用する既存PNG：** **P1-5** [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png)。上段Target・下段Generatedの両方を使い、「横＝時間、縦＝周波数、黒い線＝強い周波数成分」と初めてここで説明する。
 - **新規作成する図表：** なし。「全0.35秒の音響誤差＝0（float64、A/B/C共通）」とテキスト注記する。旧固定値不一致の数表、1D/2D誤差マップは補足へ回す。
-- **参照元データ・資料：** [diagnostics/oracles.json](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/oracles.json)、画像の波形は [diagnostics/oracle_A/rollout.npz](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/oracle_A/rollout.npz)。固定値・初期状態の確認は [DISCUSSION.md](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md) とD-3。
+- **参照元データ・資料：** [diagnostics/oracles.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/oracles.json)、画像の波形は [diagnostics/oracle_A/rollout.npz](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/oracle_A/rollout.npz)。固定値・初期状態の確認は [DISCUSSION.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md) とD-3。
 - **口頭説明：** 「Oracleは正解を知っている対照です。学習ではありません。同じ固定値・初期状態で正解制御を再生し、全17500サンプルの一致を確認しました。この再現可能な音を、探索でも見つけられるかを調べます」。
 - **前後のつながり：** 条件定義→正解が再生できる確認→次で正解を与えない4手法の比較へ進む。
 - **疑問・注意：** 「絵が同じなら完全一致？」→完全一致の根拠は保存波形と数値。図は端の不完全な窓を表示せず、評価は全0.35秒。非学習変数の固定値を目標生成値に合わせた検証で、元の物理モデルを変更した結果ではない。
@@ -149,9 +149,9 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 ### 9. 一定1変数では直接最適化が良好だった
 
 - **理解してほしいこと：** Task AではDEがほぼ完全再現し、TD3/SACの最終方策には誤差が残った。
-- **使用する既存PNG：** **P1-6** [results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png)。Target／Generatedの両段。図はseed 0の代表例として選び、最良seedと称さない。
+- **使用する既存PNG：** **P1-6** [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png)。Target／Generatedの両段。図はseed 0の代表例として選び、最良seedと称さない。
 - **新規作成する図表：** **N05「Task A・4手法最終比較表」**。D-3のTask AからTD3 0.219398±0.0301、SAC 0.300167±0.0259、ランダム探索 0.00756326±0.00651、DE 3.53133×10⁻¹¹±1.04×10⁻¹¹を転記する。列は手法・最終全区間誤差だけ。脚注に「各256試行・3 seed、平均±標本SD、RLは最終方策／直接法は探索中の最良候補」。
-- **参照元データ・資料：** [REPORT.md](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)「手法比較」、seed別値は [per_seed.csv](results/phase1_constant_020s/history/phase1_validation_20261031/per_seed.csv) のTask A。画像の波形は [runs/A/DE/seed_0/rollout.npz](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/DE/seed_0/rollout.npz)。
+- **参照元データ・資料：** [REPORT.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)「手法比較」、seed別値は [per_seed.csv](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/per_seed.csv) のTask A。画像の波形は [runs/A/DE/seed_0/rollout.npz](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/DE/seed_0/rollout.npz)。
 - **口頭説明：** 「ランダム探索は範囲内の操作を無作為に試す方法、差分進化DEは複数の候補を比較・更新して良い制御を探す方法です。今回は一つの値だけを探すので直接法が有利になり得ます。DEで約3.5×10⁻¹¹まで下がり、RL固有の優位性は示せていません」。
 - **前後のつながり：** 正解の再生→探索でどこまで近づくか→次で、RLはずっと悪かったのかを学習曲線から調べる。
 - **疑問・注意：** 「比較は公平？」→同じTaskでは生成本数・範囲・評価を揃えたが、RLは最終方策、直接法はbest-so-farで選択則と初期候補が異なる。最終結果の比較という範囲に限定する。
@@ -159,9 +159,9 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 ### 10. 途中で改善しても、最終まで維持できなかった
 
 - **理解してほしいこと：** TD3は途中で低誤差を観測したが、安定した最終方策の獲得には至らなかった。
-- **使用する既存PNG：** 主図は **P1-4** [results/phase1_constant_020s/history/phase1_validation_20261031/figures/learning_curves.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/figures/learning_curves.png) の**左上＝Task A・主音響誤差だけ**。補助に **P1-7** [runs/A/TD3/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png) のTarget／Generated両段を置き、「最終方策・seed 0」と明記する。6パネル全体は本編に縮小して置かない。
+- **使用する既存PNG：** 主図は **P1-4** [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/figures/learning_curves.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/figures/learning_curves.png) の**左上＝Task A・主音響誤差だけ**。補助に **P1-7** [runs/A/TD3/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png) のTarget／Generated両段を置き、「最終方策・seed 0」と明記する。6パネル全体は本編に縮小して置かない。
 - **新規作成する図表：** なし。「seed 0：160試行時 0.01858 → 256試行後 0.24198」と短く注記する。3 seedの途中最良／最終の表はD-4を補足として使う。
-- **参照元データ・資料：** [A_diagnosis.json](results/phase1_constant_020s/history/phase1_validation_20261031/A_diagnosis.json)、[runs/A/](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A) の各 `curve.json`。具体例：[TD3 seed 0の曲線](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/curve.json)、[最終波形](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/rollout.npz)。
+- **参照元データ・資料：** [A_diagnosis.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/A_diagnosis.json)、[runs/A/](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A) の各 `curve.json`。具体例：[TD3 seed 0の曲線](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/curve.json)、[最終波形](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/rollout.npz)。
 - **口頭説明：** 「線は3回の平均、帯はそのばらつき、細線は各回です。各seedで途中に良い評価値は観測しましたが、最後には悪化しました。途中最良の重みと音声は保存していないため、この図の音声は最終のものです」。
 - **前後のつながり：** 最終値の比較→途中の改善と維持を分ける→次で操作を増やしたTask B/Cの到達状況をまとめる。
 - **疑問・注意：** 「一番良い時点を使えば解決？」→現状は評価値の記録だけで、その時点を再生できない。次は最良方策の保存・再評価が必要。9評価点の最良であり、全訓練時点の最小値ではない。原因を過学習などと断定しない。
@@ -171,7 +171,7 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 - **理解してほしいこと：** 1試行の制御系列が35/70個の値からなる時変制御では、RL・直接法とも今回の予算で十分な模倣精度を確認できなかった。
 - **使用する既存PNG：** なし。B/C曲線・制御図は補足で使う。
 - **新規作成する図表：** **N06「Task B/Cの短い結果表」**。D-2・D-3から、2行に絞って転記する。「B：1変数×35回＝35個の制御値、最終誤差0.08以下は0/12 run」「C：2変数×35回＝70個の制御値、0/12 run」。表の共通脚注は「TD3/SAC/ランダム探索/DE×3 seed、各128試行。**0.08は暫定比較線で、聴覚的成功の保証ではない**」。手法別の平均±SDはD-3へ置く。
-- **参照元データ・資料：** [REPORT.md](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)「手法比較」、[per_seed.csv](results/phase1_constant_020s/history/phase1_validation_20261031/per_seed.csv)、[DISCUSSION.md](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)「目的関数と比較の限界」「時変制御でも実現できる解」。新しい閾値評価や再集計は行わず、既存の到達数をまとめる。
+- **参照元データ・資料：** [REPORT.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)「手法比較」、[per_seed.csv](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/per_seed.csv)、[DISCUSSION.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)「目的関数と比較の限界」「時変制御でも実現できる解」。新しい閾値評価や再集計は行わず、既存の到達数をまとめる。
 - **口頭説明：** 「B/Cでも正解制御を入れれば再現できます。しかし、1試行の制御系列が35個、70個の値からなる課題では、今回の128試行で十分な精度を確認できませんでした。直接法はこの系列全体を探索し、RLは各時刻に1個／2個の値を選びます。制御の自由度と探索の難しさ、予算の関係を次に調べます」。
 - **前後のつながり：** 一定制御での不安定さ→自由度を増やしても残る課題→次で確認済み事項と次の検証をまとめる。
 - **疑問・注意：** 「操作を増やすと必ず悪くなる？」→断定できない。Aと予算も異なり、B/CでもOracleは一致する。モデルの再現能力不足やRL一般の不可能性を示す結果ではない。
@@ -181,7 +181,7 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 - **理解してほしいこと：** 今回は制御法の基礎検証で、安定した制御獲得を確認することが左右音源比較への次の段階。
 - **使用する既存PNG：** なし。
 - **新規作成する図表：** **N07「確認済み／未確認／次の検証」**。3行に絞る。「確認済み：Oracle再現・一定1変数のDE」「未確認：RL最終性能の安定・時変制御の十分な模倣」「次：途中最良の保存→自由度と予算の検証→SAPの独立評価」。下端に「その後：複数目標・実録音→左右音源条件ごとの模倣範囲・獲得効率」を添える。
-- **参照元データ・資料：** [DISCUSSION.md](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)「次に判断すべきこと」、[REPORT.md](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)「SAP評価への準備」、本ガイドF。
+- **参照元データ・資料：** [DISCUSSION.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)「次に判断すべきこと」、[REPORT.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)「SAP評価への準備」、本ガイドF。
 - **口頭説明：** 「今回は再現可能な目標で、制御法がどこまで働くかを切り分けました。左右音源の効果を比較する前に、制御獲得の不安定さと評価を整理します。その先で、実際のさえずりをどこまでまねられるかを比べたいと考えています」。
 - **前後のつながり：** 3枚目の過去／現在／将来の流れへ戻り、研究目的と今回の未解決事項をつなぐ。
 - **疑問・注意：** 「結局、左右2音源の効果は分かった？」→今回は未検証。公式SAPも未実施で、予定を導入済みと説明しない。
@@ -194,20 +194,20 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 
 | ID | 優先度 | 配置・使用する範囲 | 実際の相対パス |
 | --- | --- | --- | --- |
-| P0-1 | 必須 | 本編6。曲線全体、各手法3 seed。 | [results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png) |
-| P1-5 | 必須 | 本編8。OracleのTarget／Generated両段。 | [results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png) |
-| P1-6 | 必須 | 本編9。Task A・DEのTarget／Generated両段。 | [results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png) |
-| P1-4 | 必須 | 本編10は左上Task Aのみ。左列の中・下段＝B/C、右列balancedは補足。 | [results/phase1_constant_020s/history/phase1_validation_20261031/figures/learning_curves.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/figures/learning_curves.png) |
-| P1-7 | 必須 | 本編10。Task A・TD3の**最終**Target／Generated両段。 | [results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png) |
-| P1-1 | 推奨 | 補足S1。1変数誤差マップの上段主指標を中心に使う。 | [results/phase1_constant_020s/history/phase1_validation_20261031/figures/landscape_1d.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/figures/landscape_1d.png) |
-| P1-8 | 推奨 | 補足S2。TD3の制御図、最上段ε_l。時間0〜0.35秒と目標4.1×10⁷を注記。 | [results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/controls.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/controls.png) |
-| P1-9 | 推奨 | 補足S2。TD3の目標／生成5 ms RMS包絡の全体。 | [results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/amplitude_envelope.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/amplitude_envelope.png) |
-| P1-2 | 補足 | S1。2変数誤差マップの左主指標、右balancedは尺度に注意。 | [results/phase1_constant_020s/history/phase1_validation_20261031/figures/landscape_2d.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/figures/landscape_2d.png) |
-| P1-10 | 補足 | S2。DEの包絡全体。TD3と比較するときは縦軸目盛も読む。 | [results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/DE/seed_0/amplitude_envelope.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/amplitude_envelope.png) |
-| P1-11 | 補足 | S3。Task C・SACの時変2変数制御。上段ε_lと3段目p_s、時間軸を使う。 | [results/phase1_constant_020s/history/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png) |
-| P1-12 | 補足 | S2。Task A・SACの最終Target／Generated両段。 | [results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/SAC/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/SAC/seed_0/spectrogram.png) |
-| P0-2 | 補足 | S5。Phase 0・TD3の目標／生成スペクトログラム両段。 | [results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/spectrogram.png](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/spectrogram.png) |
-| P0-3 | 補足 | S5。Phase 0・TD3の周波数／振幅制御全体。目標線の重ね描きはない。 | [results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/controls.png](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/controls.png) |
+| P0-1 | 必須 | 本編6。曲線全体、各手法3 seed。 | [results/Phase0/synthetic/legacy_random_target/learning_curves.png](results/Phase0/synthetic/legacy_random_target/learning_curves.png) |
+| P1-5 | 必須 | 本編8。OracleのTarget／Generated両段。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/diagnostics/oracle_A/spectrogram.png) |
+| P1-6 | 必須 | 本編9。Task A・DEのTarget／Generated両段。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/spectrogram.png) |
+| P1-4 | 必須 | 本編10は左上Task Aのみ。左列の中・下段＝B/C、右列balancedは補足。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/figures/learning_curves.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/figures/learning_curves.png) |
+| P1-7 | 必須 | 本編10。Task A・TD3の**最終**Target／Generated両段。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/spectrogram.png) |
+| P1-1 | 推奨 | 補足S1。1変数誤差マップの上段主指標を中心に使う。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/figures/landscape_1d.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/figures/landscape_1d.png) |
+| P1-8 | 推奨 | 補足S2。TD3の制御図、最上段ε_l。時間0〜0.35秒と目標4.1×10⁷を注記。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/controls.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/controls.png) |
+| P1-9 | 推奨 | 補足S2。TD3の目標／生成5 ms RMS包絡の全体。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/amplitude_envelope.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/amplitude_envelope.png) |
+| P1-2 | 補足 | S1。2変数誤差マップの左主指標、右balancedは尺度に注意。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/figures/landscape_2d.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/figures/landscape_2d.png) |
+| P1-10 | 補足 | S2。DEの包絡全体。TD3と比較するときは縦軸目盛も読む。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/DE/seed_0/amplitude_envelope.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/amplitude_envelope.png) |
+| P1-11 | 補足 | S3。Task C・SACの時変2変数制御。上段ε_lと3段目p_s、時間軸を使う。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/C/SAC/seed_0/controls.png) |
+| P1-12 | 補足 | S2。Task A・SACの最終Target／Generated両段。 | [results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/SAC/seed_0/spectrogram.png](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/SAC/seed_0/spectrogram.png) |
+| P0-2 | 補足 | S5。Phase 0・TD3の目標／生成スペクトログラム両段。 | [results/Phase0/synthetic/legacy_random_target/TD3_0/spectrogram.png](results/Phase0/synthetic/legacy_random_target/TD3_0/spectrogram.png) |
+| P0-3 | 補足 | S5。Phase 0・TD3の周波数／振幅制御全体。目標線の重ね描きはない。 | [results/Phase0/synthetic/legacy_random_target/TD3_0/controls.png](results/Phase0/synthetic/legacy_random_target/TD3_0/controls.png) |
 
 ### 本編から補足へ移す内容
 
@@ -215,10 +215,10 @@ N01〜N07の仕様は各スライドを参照。本編に使う既存PNGは**5�
 
 | 補足候補 | 内容・図 | 主な出典／準備時の注意 |
 | --- | --- | --- |
-| S1：実装と誤差分布 | 固定値不一致、float32/64 Oracle、1D・2Dマップ（P1-1/2） | D-3、[oracles](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/oracles.json)、[1D CSV](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/landscape_1d.csv)、[2D CSV](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/landscape_2d.csv)。22／140候補の粗い探索で、候補間の谷幅やランダム成功確率は未確定。balancedと主指標を混ぜない。 |
+| S1：実装と誤差分布 | 固定値不一致、float32/64 Oracle、1D・2Dマップ（P1-1/2） | D-3、[oracles](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/oracles.json)、[1D CSV](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/landscape_1d.csv)、[2D CSV](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/landscape_2d.csv)。22／140候補の粗い探索で、候補間の谷幅やランダム成功確率は未確定。balancedと主指標を混ぜない。 |
 | S2：音・操作・振幅の照合 | TD3の制御・包絡、DE包絡、SACスペクトログラム（P1-8/9/10/12） | 各PNGと同じrunの保存波形。ε_lの正解線は制御図に重ねていないので注記する。表示の濃淡を絶対振幅の比較に使わない。 |
-| S3：時変制御と全数表 | B/Cの曲線、時変2変数制御例（P1-4中下段、P1-11）、4手法×全Taskの数表 | D-2/3、[per_seed.csv](results/phase1_constant_020s/history/phase1_validation_20261031/per_seed.csv)。A/B/Cで予算が違い、自由度だけの比較ではない。 |
-| S4：途中最良と会計 | TD3の途中最良／最終3 seed表、初期値、計算時間・積分時間 | D-4、[A_diagnosis](results/phase1_constant_020s/history/phase1_validation_20261031/A_diagnosis.json)、[execution_summary](results/phase1_constant_020s/history/phase1_validation_20261031/execution_summary.json)。途中最良の重み・音声は未保存。 |
+| S3：時変制御と全数表 | B/Cの曲線、時変2変数制御例（P1-4中下段、P1-11）、4手法×全Taskの数表 | D-2/3、[per_seed.csv](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/per_seed.csv)。A/B/Cで予算が違い、自由度だけの比較ではない。 |
+| S4：途中最良と会計 | TD3の途中最良／最終3 seed表、初期値、計算時間・積分時間 | D-4、[A_diagnosis](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/A_diagnosis.json)、[execution_summary](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/execution_summary.json)。途中最良の重み・音声は未保存。 |
 | S5：学習・評価の技術詳細 | Phase 0の操作図、報酬の厳密な式、モデル式、TD3/SAC/PPOの違い、旧報酬診断 | P0-2/3、E-2、G、[モデル調査](reports/model_audit.md)、[Issue #10](reports/ISSUE10_REPORT.md)。旧実験を今回の報酬・数表に混ぜない。 |
 | S6：先行研究・独立評価 | 文献の確認範囲、SAPと独自特徴量の区別 | E-3、F、G。公式SAPは未実施。 |
 
@@ -228,19 +228,19 @@ PNGは閲覧用で、表の数値は以下の資料から転記する。
 
 | 用途 | 実際の相対パス |
 | --- | --- |
-| Phase 0の既存集計・条件・最終値・選定基準 | [REPORT.md](REPORT.md)、[config.json](results/phase0_fixed_target_20261108/legacy_random_target/config.json)、[summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)、[ranking.json](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json) |
-| Phase 0の追従誤差・曲線と最終評価の具体例 | [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、[TD3_0/curve.json](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/curve.json)、[TD3_0/summary.json](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/summary.json) |
-| Phase 1の目標・範囲・初期状態・報酬・Task別予算 | [manifest.json](results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json) |
-| Phase 1の全36 runの初期／最終値・会計 | [per_seed.csv](results/phase1_constant_020s/history/phase1_validation_20261031/per_seed.csv)、[REPORT.md](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)、[DISCUSSION.md](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md) |
-| Oracleと1D/2D探索の測定値 | [oracles.json](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/oracles.json)、[landscape_1d.csv](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/landscape_1d.csv)、[landscape_2d.csv](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/landscape_2d.csv) |
-| TD3の途中最良・9評価点・最終評価 | [A_diagnosis.json](results/phase1_constant_020s/history/phase1_validation_20261031/A_diagnosis.json)、[curve.json](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/curve.json)、[summary.json](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/summary.json) |
-| TD3の元振幅の波形・制御・保存形式、最終モデル | [rollout.npz](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/rollout.npz)、[audio_format.json](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/audio_format.json)、[agent.zip](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0/agent.zip)（最終のみ） |
-| AのDE解をBで保持した補助再生（主比較と区別） | [cross_task_replay/summary.json](results/phase1_constant_020s/history/phase1_validation_20261031/cross_task_replay/summary.json) |
-| 計算量・実時間と既存の独立監査 | [execution_summary.json](results/phase1_constant_020s/history/phase1_validation_20261031/execution_summary.json)、[final_audit.json](results/phase1_constant_020s/history/phase1_validation_20261031/final_audit.json) |
+| Phase 0の既存集計・条件・最終値・選定基準 | [REPORT.md](REPORT.md)、[config.json](results/Phase0/synthetic/legacy_random_target/config.json)、[summary.json](results/Phase0/synthetic/legacy_random_target/summary.json)、[ranking.json](results/Phase0/synthetic/legacy_random_target/ranking.json) |
+| Phase 0の追従誤差・曲線と最終評価の具体例 | [tracking.csv](results/Phase0/synthetic/legacy_random_target/tracking.csv)、[TD3_0/curve.json](results/Phase0/synthetic/legacy_random_target/TD3_0/curve.json)、[TD3_0/summary.json](results/Phase0/synthetic/legacy_random_target/TD3_0/summary.json) |
+| Phase 1の目標・範囲・初期状態・報酬・Task別予算 | [manifest.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json) |
+| Phase 1の全36 runの初期／最終値・会計 | [per_seed.csv](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/per_seed.csv)、[REPORT.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)、[DISCUSSION.md](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md) |
+| Oracleと1D/2D探索の測定値 | [oracles.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/oracles.json)、[landscape_1d.csv](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/landscape_1d.csv)、[landscape_2d.csv](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/landscape_2d.csv) |
+| TD3の途中最良・9評価点・最終評価 | [A_diagnosis.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/A_diagnosis.json)、[curve.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/curve.json)、[summary.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/summary.json) |
+| TD3の元振幅の波形・制御・保存形式、最終モデル | [rollout.npz](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/rollout.npz)、[audio_format.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/audio_format.json)、[agent.zip](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0/agent.zip)（最終のみ） |
+| AのDE解をBで保持した補助再生（主比較と区別） | [cross_task_replay/summary.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/cross_task_replay/summary.json) |
+| 計算量・実時間と既存の独立監査 | [execution_summary.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/execution_summary.json)、[final_audit.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/final_audit.json) |
 
 スペクトログラムは**表示専用に個別ピーク正規化**した図。Phase 1は表示用10 MHz再サンプリング、Blackman–Harris、nperseg=245760、noverlap=184320、gray_r、−50〜−20 dB、0〜10 kHz。完全な窓の中心だけを表示し、表示時間は0.012288〜0.331776秒。**主評価は全0.35秒で、個別ゲイン調整をしない。**
 
-元振幅の例は [DEの目標WAV](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/target_raw.wav)、[生成WAV](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/generated_raw.wav)、[float64データ](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/DE/seed_0/rollout.npz)、[形式説明](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/DE/seed_0/audio_format.json)。WAVはIEEE float32で±1を超えるモデル振幅を保持するため、再生時にクリップする場合がある。定量値の正本はfloat64 NPZで、モデル出力のSI音圧への校正は行っていない。
+元振幅の例は [DEの目標WAV](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/target_raw.wav)、[生成WAV](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/generated_raw.wav)、[float64データ](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/DE/seed_0/rollout.npz)、[形式説明](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/DE/seed_0/audio_format.json)。WAVはIEEE float32で±1を超えるモデル振幅を保持するため、再生時にクリップする場合がある。定量値の正本はfloat64 NPZで、モデル出力のSI音圧への校正は行っていない。
 
 
 ## D. 主な数値結果
@@ -257,9 +257,9 @@ PNGは閲覧用で、表の数値は以下の資料から転記する。
 | SAC | 0.07081 ± 0.00307 | 3/3 | 14.64秒 |
 | PPO | 0.10945 ± 0.00466 | 0/3 | 4.40秒 |
 
-出典：[REPORT.md](REPORT.md)「2. Phase 0」、[config](results/phase0_fixed_target_20261108/legacy_random_target/config.json)、[summary](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。選定基準は [ranking](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json) にある「最終held-out音響誤差の中央値・少予算での暫定順位」。広い目標分布や鳴管環境での優劣を検証したものではない。実時間は共有ワークステーション上の参考値で、専用機での厳密な速度順位ではない。
+出典：[REPORT.md](REPORT.md)「2. Phase 0」、[config](results/Phase0/synthetic/legacy_random_target/config.json)、[summary](results/Phase0/synthetic/legacy_random_target/summary.json)。選定基準は [ranking](results/Phase0/synthetic/legacy_random_target/ranking.json) にある「最終held-out音響誤差の中央値・少予算での暫定順位」。広い目標分布や鳴管環境での優劣を検証したものではない。実時間は共有ワークステーション上の参考値で、専用機での厳密な速度順位ではない。
 
-図と数表の読み分け：学習曲線は途中評価の推移、最終数表は別の最終評価。例えばTD3 seed 0の曲線末尾は0.044671、最終summaryは0.041344で同値ではない。最終値を図から読み取って数表を書き換えない。根拠は [TD3の曲線記録](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/curve.json) と [TD3の最終記録](results/phase0_fixed_target_20261108/legacy_random_target/TD3_0/summary.json)。
+図と数表の読み分け：学習曲線は途中評価の推移、最終数表は別の最終評価。例えばTD3 seed 0の曲線末尾は0.044671、最終summaryは0.041344で同値ではない。最終値を図から読み取って数表を書き換えない。根拠は [TD3の曲線記録](results/Phase0/synthetic/legacy_random_target/TD3_0/curve.json) と [TD3の最終記録](results/Phase0/synthetic/legacy_random_target/TD3_0/summary.json)。
 
 ### D-2. Phase 1：共通の条件と予算
 
@@ -275,7 +275,7 @@ PNGは閲覧用で、表の数値は以下の資料から転記する。
 
 各Taskの全4手法がseed 0/1/2で、計36 run。同じTask内では同じ目標・範囲・評価・生成本数。Task間の予算は同一ではない。初期＋8 checkpointの9評価、合計3.15秒の追加積分/runを訓練とは別に計上。Aの評価間隔は32 episode、B/Cは16 episode。
 
-出典：[Phase 1レポート](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)、[manifest](results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json)、[per_seed.csv](results/phase1_constant_020s/history/phase1_validation_20261031/per_seed.csv)。
+出典：[Phase 1レポート](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)、[manifest](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json)、[per_seed.csv](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/per_seed.csv)。
 
 ### D-3. Oracleと最終性能
 
@@ -288,7 +288,7 @@ Oracleは既知制御の再生で、seed学習の成績ではない。
 | float32 Oracle（Task C） | 1.16347×10⁻⁸ | 今回のRL残差を丸めだけで説明する根拠はない。 |
 | 旧1変数decodeの固定p_s不一致 | 0.392859 | 固定圧力が目標3.4×10⁶ではなく3.0×10⁶となる整合性の問題。 |
 
-出典：[oracles.json](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/oracles.json)、[考察](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)。旧1変数decodeのパラメータNRMSEは学習対象ε_lだけの値で、圧力不一致を含まない。小さいNRMSEを音響的成功の証拠にしない。
+出典：[oracles.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/oracles.json)、[考察](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)。旧1変数decodeのパラメータNRMSEは学習対象ε_lだけの値で、圧力不一致を含まない。小さいNRMSEを音響的成功の証拠にしない。
 
 次表は主評価の**最終値**、各3 seedの平均±標本標準偏差。予算はD-2のとおり、A=256 episode、B/C=128 episode。
 
@@ -303,7 +303,7 @@ Oracleは既知制御の再生で、seed学習の成績ではない。
 - CのSACは他手法より最終平均が小さいが、初期平均0.246463から最終0.253838へ改善していない。BのTD3はDEより平均が小さいが、seed間の幅が大きい。単純な優位性の主張にしない。
 - 学習曲線はRLでは各評価時点の決定論的actor、直接法ではその時点のbest-so-farを評価する。最終数表はRLの最終actorと直接法の最良候補の比較であり、選択則は異なる。直接法の初期値はランダム候補、RLは未学習の決定論的方策で、同じ初期音ではない。
 
-出典：[REPORTの集計表](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)、[DISCUSSIONの判断](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)。
+出典：[REPORTの集計表](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)、[DISCUSSIONの判断](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)。
 
 ### D-4. Task A・TD3の途中最良と最終
 
@@ -315,9 +315,9 @@ Oracleは既知制御の再生で、seed学習の成績ではない。
 | 1 | 128 | 0.04857 | 0.18524 |
 | 2 | 224 | 0.07736 | 0.23097 |
 
-出典：[A_diagnosis.json](results/phase1_constant_020s/history/phase1_validation_20261031/A_diagnosis.json)、[DISCUSSION](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)。途中の良い値を観測したが、途中重み・音声は保存されていない。現在の最終スペクトログラムや最終モデルを、途中最良時点のものとして提示しない。
+出典：[A_diagnosis.json](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/A_diagnosis.json)、[DISCUSSION](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)。途中の良い値を観測したが、途中重み・音声は保存されていない。現在の最終スペクトログラムや最終モデルを、途中最良時点のものとして提示しない。
 
-補足：AのDE解をBで35回保持した別の再生では、3 seedとも元Aの音声・制御とbitwise一致し、誤差2.90〜4.73×10⁻¹¹だった。Bにも許容解があるという確認で、Bの128候補の探索がその解を得た結果ではない。元Aの探索費用256 episode/seedを要した補助比較で、追加評価は合計3 episode・積分1.05秒。出典：[cross_task_replayの記録](results/phase1_constant_020s/history/phase1_validation_20261031/cross_task_replay/summary.json)。
+補足：AのDE解をBで35回保持した別の再生では、3 seedとも元Aの音声・制御とbitwise一致し、誤差2.90〜4.73×10⁻¹¹だった。Bにも許容解があるという確認で、Bの128候補の探索がその解を得た結果ではない。元Aの探索費用256 episode/seedを要した補助比較で、追加評価は合計3 episode・積分1.05秒。出典：[cross_task_replayの記録](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/cross_task_replay/summary.json)。
 
 ## E. 専門外の聴衆への説明と想定質問（発表者用補足）
 
@@ -380,16 +380,16 @@ Actor–Critic、Q関数、更新式、エントロピー正則化の式は本�
 
 | 優先する質問 | 回答案 | 根拠 |
 | --- | --- | --- |
-| なぜ強化学習を使うのか？ | 将来、時間ごとに操作を選び、複数の目標へ対応する制御法を検討したいからです。ただし今回の単一目標では、RLの優位性はまだ示せていません。まず再現可能な条件で適用を確かめています。 | [Phase 1の考察](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)、本ガイドA |
-| 直接最適化では駄目なのか？ | 重要な候補です。一定1変数ではDEが良好で、直接法を継続すべき結果です。RLを採用する必然性を前提にせず、生成本数・精度・計算量で比較していきます。 | D-2/3、[考察](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md) |
-| なぜ簡単な正弦波から始めたのか？ | 操作と音の関係が分かりやすい課題で実装・評価・候補手法を確認し、鳴管モデル固有の難しさと切り分けるためです。鳴管での成功を保証する試験ではありません。 | [Phase 0の報告](REPORT.md)、[ranking](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json) |
-| なぜモデルCase Aだけなのか？ | 右の出力寄与を除いた既存の基準条件で、まず制御法の整合性と再現を確認するためです。Case Aが最も正しい／優れていると示したわけではありません。 | [モデル調査](reports/model_audit.md)、[今回の条件](results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json) |
-| TD3・SACと他手法の違い、選定の根拠は？ | TD3/SACは過去の試行データを再利用できる連続制御のRLです。TD3は基本の操作へ探索のゆらぎを加え、SACは確率的な操作の幅も学びます。PPOは主に現在の選び方で集めた試行で更新します。Phase 0の4096step・3 seedで、最終評価誤差の中央値がTD3→SAC→PPOだったため暫定的に2手法を継続しました。 | [ranking](results/phase0_fixed_target_20261108/legacy_random_target/ranking.json)、Gの各原典 |
-| 今回の結果は研究目的とどうつながるのか？ | 左右の条件で模倣範囲を比べるには、制御法が目標へ近づけることを先に確認する必要があります。今回はその土台の検証で、左右音源の効果自体はまだ評価していません。 | 本ガイドA・B-3・B-12、[考察](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md) |
-| 良いTD3の途中結果を使えばよいのでは？ | 次に取り組むべきことです。今回は9評価点の値だけを記録し、途中最良の重みと音声は残していません。最良時点を保存し、別の評価で再現と安定性を確認する必要があります。 | [A_diagnosis](results/phase1_constant_020s/history/phase1_validation_20261031/A_diagnosis.json)、D-4 |
-| B/Cは目標を再現できないのでは？ | Oracleでは再現可能です。BではAのDE解を保持した補助再生も一致しました。探索次元・予算・観測のどれが主因かは今回の結果では切り分けていません。 | [Oracle](results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/oracles.json)、[補助再生](results/phase1_constant_020s/history/phase1_validation_20261031/cross_task_replay/summary.json) |
-| SAPなどの独立評価はあるのか？ | 公式SAPは未実施です。balancedは補助診断で、公式SAPスコアではありません。元振幅のNPZ/WAVを保存しており、学習とは独立したSAP評価を今後検討します。 | [SAP評価への準備](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)、C・F |
-| 今回、左右2音源が優れるといえるのか？ | いえません。全TaskがモデルCase Aで、左右音源条件を変えた対照比較ではありません。Task Cは2つの制御変数であって、モデルCase Cではありません。 | [manifest](results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json)、[モデル調査](reports/model_audit.md) |
+| なぜ強化学習を使うのか？ | 将来、時間ごとに操作を選び、複数の目標へ対応する制御法を検討したいからです。ただし今回の単一目標では、RLの優位性はまだ示せていません。まず再現可能な条件で適用を確かめています。 | [Phase 1の考察](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)、本ガイドA |
+| 直接最適化では駄目なのか？ | 重要な候補です。一定1変数ではDEが良好で、直接法を継続すべき結果です。RLを採用する必然性を前提にせず、生成本数・精度・計算量で比較していきます。 | D-2/3、[考察](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md) |
+| なぜ簡単な正弦波から始めたのか？ | 操作と音の関係が分かりやすい課題で実装・評価・候補手法を確認し、鳴管モデル固有の難しさと切り分けるためです。鳴管での成功を保証する試験ではありません。 | [Phase 0の報告](REPORT.md)、[ranking](results/Phase0/synthetic/legacy_random_target/ranking.json) |
+| なぜモデルCase Aだけなのか？ | 右の出力寄与を除いた既存の基準条件で、まず制御法の整合性と再現を確認するためです。Case Aが最も正しい／優れていると示したわけではありません。 | [モデル調査](reports/model_audit.md)、[今回の条件](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json) |
+| TD3・SACと他手法の違い、選定の根拠は？ | TD3/SACは過去の試行データを再利用できる連続制御のRLです。TD3は基本の操作へ探索のゆらぎを加え、SACは確率的な操作の幅も学びます。PPOは主に現在の選び方で集めた試行で更新します。Phase 0の4096step・3 seedで、最終評価誤差の中央値がTD3→SAC→PPOだったため暫定的に2手法を継続しました。 | [ranking](results/Phase0/synthetic/legacy_random_target/ranking.json)、Gの各原典 |
+| 今回の結果は研究目的とどうつながるのか？ | 左右の条件で模倣範囲を比べるには、制御法が目標へ近づけることを先に確認する必要があります。今回はその土台の検証で、左右音源の効果自体はまだ評価していません。 | 本ガイドA・B-3・B-12、[考察](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md) |
+| 良いTD3の途中結果を使えばよいのでは？ | 次に取り組むべきことです。今回は9評価点の値だけを記録し、途中最良の重みと音声は残していません。最良時点を保存し、別の評価で再現と安定性を確認する必要があります。 | [A_diagnosis](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/A_diagnosis.json)、D-4 |
+| B/Cは目標を再現できないのでは？ | Oracleでは再現可能です。BではAのDE解を保持した補助再生も一致しました。探索次元・予算・観測のどれが主因かは今回の結果では切り分けていません。 | [Oracle](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/oracles.json)、[補助再生](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/cross_task_replay/summary.json) |
+| SAPなどの独立評価はあるのか？ | 公式SAPは未実施です。balancedは補助診断で、公式SAPスコアではありません。元振幅のNPZ/WAVを保存しており、学習とは独立したSAP評価を今後検討します。 | [SAP評価への準備](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)、C・F |
+| 今回、左右2音源が優れるといえるのか？ | いえません。全TaskがモデルCase Aで、左右音源条件を変えた対照比較ではありません。Task Cは2つの制御変数であって、モデルCase Cではありません。 | [manifest](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json)、[モデル調査](reports/model_audit.md) |
 | 今回の新規性はRLを鳴管に使った点か？ | それ自体を新規とは主張しません。モデルでの音声再構成・RLによる模倣・左右相互作用には先行研究があります。今後の焦点は、左右相互作用が模倣可能範囲と獲得効率へ与える影響です。今回それを解明したとは述べません。 | Gの先行研究 |
 
 発表全体で、到達可能性・発声の成立・模倣精度・学習の安定性を分ける。音が出るだけで模倣成功とせず、0.08を知覚的な合格基準にしない。[Issue #10レポート](reports/ISSUE10_REPORT.md) の局所報酬診断を今回の訓練結果に混ぜず、無音優遇を全設定で否定したとも述べない。
@@ -406,7 +406,7 @@ Actor–Critic、Q関数、更新式、エントロピー正則化の式は本�
 | 4 | **時変目標、複数目標、未知目標・初期状態へ拡張** | 今回は一定制御由来の単一目標。時間ごとに操作できることと、変化する複数の目標へ対応できることを区別する。 |
 | 5 | **実録音へ適用した後、左右音源条件を比較** | 制御の安定性と独立評価を確認して研究目的へ進む。音源条件、可動自由度、最適化予算の効果を混同しない。録音由来の非公開成果は非公開管理を維持する。 |
 
-根拠：[DISCUSSIONの未解決事項](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md)、[REPORTのSAP・検証範囲](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)。
+根拠：[DISCUSSIONの未解決事項](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md)、[REPORTのSAP・検証範囲](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)。
 
 ## G. 先行研究の位置づけ（質疑用補足）
 
@@ -439,10 +439,10 @@ Actor–Critic、Q関数、更新式、エントロピー正則化の式は本�
 
 | 対象 | 整理候補として記録する理由 | 将来確認すべきこと |
 | --- | --- | --- |
-| [旧Phase 1](results/phase1_constant_020s/history/phase1)、[旧追加学習](results/phase1_constant_020s/history/phase1_extended)、[旧終端直接法](https://github.com/tatsukawa0353/Birdsong_tatsukawa/tree/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_terminal_baselines)、[Issue #10](results/issue10)、[今回の基礎検証](results/phase1_constant_020s/history/phase1_validation_20261031) | 同じPhase 1に見える名前でも、報酬・予算・探索自由度が異なる。発表時に取り違えやすい。 | 削除する重複とはみなさず、将来の一覧に実験世代・目的関数・制御次元・公開範囲を付ける候補。 |
+| [旧Phase 1](results/Phase1/CaseA/parameter_dimension/history/phase1)、[旧追加学習](results/Phase1/CaseA/parameter_dimension/history/phase1_extended)、[旧終端直接法](https://github.com/tatsukawa0353/Birdsong_tatsukawa/tree/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_terminal_baselines)、[Issue #10](results/Phase1/CaseA/reward_diagnostics)、[今回の基礎検証](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031) | 同じPhase 1に見える名前でも、報酬・予算・探索自由度が異なる。発表時に取り違えやすい。 | 削除する重複とはみなさず、将来の一覧に実験世代・目的関数・制御次元・公開範囲を付ける候補。 |
 | [DEの目標WAV](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/DE/seed_0/target_raw.wav) と [TD3の目標WAV](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/target_raw.wav) | この2ファイルは今回の読み取り確認でSHA256が一致。各runの自己完結性のため同一目標が保存されている。 | 共通目標への参照・保存単位の見直し候補。ただし出典・再現性・既存パスへの依存を確認してから別作業とする。今回は両方保持。 |
-| [TD3 seed 0の初期評価](https://github.com/tatsukawa0353/Birdsong_tatsukawa/tree/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/initial) と [最終評価](results/phase1_constant_020s/history/phase1_validation_20261031/runs/A/TD3/seed_0) | 同名の図があっても初期／最終の比較という異なる役割がある。似た画像を削除対象にしない。 | 将来、評価時点・seed・Taskが分かる索引の充実を検討。今のファイル名・構成を維持する。 |
-| [README](README.md)、[全体REPORT](REPORT.md)、[今回のREPORT](results/phase1_constant_020s/history/phase1_validation_20261031/REPORT.md)、[今回のDISCUSSION](results/phase1_constant_020s/history/phase1_validation_20261031/DISCUSSION.md) | 入口となる文書が複数あり、過去結果と最新条件を読み違えやすい。 | 文書の役割・更新日・過去実験との差を将来の入口案内で明示する候補。今回は元文書を編集しない。 |
+| [TD3 seed 0の初期評価](https://github.com/tatsukawa0353/Birdsong_tatsukawa/tree/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_validation_20261031/runs/A/TD3/seed_0/initial) と [最終評価](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A/TD3/seed_0) | 同名の図があっても初期／最終の比較という異なる役割がある。似た画像を削除対象にしない。 | 将来、評価時点・seed・Taskが分かる索引の充実を検討。今のファイル名・構成を維持する。 |
+| [README](README.md)、[全体REPORT](REPORT.md)、[今回のREPORT](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/REPORT.md)、[今回のDISCUSSION](results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/DISCUSSION.md) | 入口となる文書が複数あり、過去結果と最新条件を読み違えやすい。 | 文書の役割・更新日・過去実験との差を将来の入口案内で明示する候補。今回は元文書を編集しない。 |
 
 録音由来の非公開データ・図・数値は今回の索引・転載の対象外。非公開領域を公開側へ統合する整理は行わない。
 

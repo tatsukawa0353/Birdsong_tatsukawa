@@ -1,4 +1,5 @@
 """Report and final preservation audit from completed saved results; native0."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 import csv
 import json
@@ -75,7 +76,7 @@ Targetは **b3_c00、[ε_l, ε_r, p_s, f0_l, f0_r]=[3.0e7,3.5e7,3.0e6,49000,4900
 
 {choice['reason']} 持続proxy={f['late_ac_ratio']:.10f}、直線除去後={f['detrended_ac_ratio']:.10f}。entropy={f['spectral_entropy']:.6f}、peak数={f['spectral_peak_count']}。entropyは末尾0.10sのWelch PSD（100–10000Hz）における正規化Shannon entropy、peak数はコード記載のprominence/強度閾値による記述量で、生理学的複雑性指標とは区別する。候補間の物理表示を確認後、方法別smokeと正式学習の前に選定した。選定後の差し替えはない。
 
-元native/model.cppとmodel.py、既存libbirdsong.soは変更していない。[同一ソース再ビルドのbyte/hash一致](native/build.json)。Case B native condition=1、左右α=1.2e6/β=1500、右ε=3.5e7、x0=.02cm/D=.01、dt=1e-7を実メモリで検査した。元BirdModel('B')のPython制御処理は右f0を1e7へ固定するため、独立ConfiguredCaseB subclassの_controlsのみでIssue指定の右固定値を設定した。元Bのコンストラクタ・native reset/式/固定係数はそのままで、Aへの置換や右αβのゼロ化はない。[初回REPORT](../phase1_caseB_self_target_020s_sac128/REPORT.md)と[前回9点REPORT](../phase1_caseB_self_target_020s_methods/REPORT.md)の停止理由と次案を確認して着手した。
+元native/model.cppとmodel.py、既存libbirdsong.soは変更していない。[同一ソース再ビルドのbyte/hash一致](native/build.json)。Case B native condition=1、左右α=1.2e6/β=1500、右ε=3.5e7、x0=.02cm/D=.01、dt=1e-7を実メモリで検査した。元BirdModel('B')のPython制御処理は右f0を1e7へ固定するため、独立ConfiguredCaseB subclassの_controlsのみでIssue指定の右固定値を設定した。元Bのコンストラクタ・native reset/式/固定係数はそのままで、Aへの置換や右αβのゼロ化はない。[初回REPORT](../initial_stop/REPORT.md)と[前回9点REPORT](../high_left_force/REPORT.md)の停止理由と次案を確認して着手した。
 
 各音0.20s、2,000,000 native step、50kHz/10000sample。初期4状態、遅延履歴、16次15kHz lowpass状態を0にし、200分の1にデシメートする。左右f0は外力係数であり音響基本周波数Hzではない。学習では右f0=49000を全run固定する一方、左f0は[49000,800000]を探索させた。
 
@@ -233,7 +234,7 @@ manifestのcore hashesは学習前に凍結。implementation_checksumsは終了�
     sources=OUT/'executed_sources';sources.mkdir(exist_ok=True)
     copied={}
     for rel in sorted(set(CORE)|{str(p.relative_to(ROOT)) for p in ROOT.glob('issue27f*.py')}|{'tests/test_issue27f.py'}):
-        dest=sources/rel;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/rel,dest);copied[rel]=digest(dest)
+        dest=sources/rel;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(resolve_result_path(ROOT/rel),dest);copied[rel]=digest(dest)
     write_json(OUT/'executed_source_checksums.json',copied)
     # Explicit full-block statistics for candidates and all independently audited endpoints.
     blocks=[]
@@ -247,11 +248,11 @@ manifestのcore hashesは学習前に凍結。implementation_checksumsは終了�
         old_sounds_regenerated=0,research_runs=9,failed_runs=0,retries=0,additional_grid=0))
 
 def audit():
-    manifest=ready();assert read(OUT/'preflight/tests.json')['source_sha256']==hashes()
+    manifest=ready();assert source_hashes_match(read(OUT/'preflight/tests.json')['source_sha256'], hashes())
     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
     protected=rows('protected_before.csv');changed=[];deleted=[];broken=[];links=0
     for r in protected:
-        p=ROOT/r['path']
+        p=resolve_result_path(ROOT/r['path'])
         if not p.exists():deleted.append(r['path'])
         elif digest(p)!=r['sha256']:changed.append(r['path'])
     for path in (OUT/'REPORT.md',OUT/'README.md',OUT/'PLAN.md',OUT/'REPRODUCE.md'):
@@ -263,14 +264,14 @@ def audit():
     for name,root in (('implementation_checksums.json',ROOT),('artifact_checksums.json',OUT)):
         if (OUT/name).exists():
             for path,h in read(OUT/name).items():assert digest(root/path)==h,path
-    for path,h in read(OUT/'executed_source_checksums.json').items():assert digest(OUT/'executed_sources'/path)==h and digest(ROOT/path)==h
+    for path,h in read(OUT/'executed_source_checksums.json').items():assert digest(OUT/'executed_sources'/path)==h and digest(resolve_result_path(ROOT/path))==h
     for r in rows('audio_index.csv'):
         rate,wave=wavfile.read(OUT/r['wav']);assert rate==50000 and wave.shape==(10000,) and wave.dtype==np.float32
         np.testing.assert_array_equal(wave,(load(OUT/r['raw_npz'])['audio']*float(r['gain'])).astype(np.float32))
     assert read(OUT/'audit/endpoints.json')['passed'] and read(OUT/'physics_audit.json')['passed']
     assert read(OUT/'execution.json')['training_candidates']==36864 and read(OUT/'execution.json')['independent_policy_evaluations']==297
     for s in summaries():
-        assert s['status']=='complete' and s['source_sha256']==hashes()
+        assert s['status']=='complete' and source_hashes_match(s['source_sha256'], hashes())
         for name,h in s['artifact_sha256'].items():assert digest(folder(s['method'],s['seed'])/name)==h
     result=dict(passed=not changed and not deleted and not broken,original_files_checked=len(protected),original_files_changed=changed,original_files_deleted=deleted,
         local_links_checked=links,broken_links=broken,wavs_checked=len(rows('audio_index.csv')),native_sounds_generated=0,stageA_candidates=18,research_runs=9,

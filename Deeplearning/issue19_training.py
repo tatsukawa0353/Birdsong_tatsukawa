@@ -1,4 +1,5 @@
 """Nine runs, unchanged learners / candidate streams, lambda=.5 only."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import json
@@ -26,7 +27,7 @@ def run_one(method, seed):
     folder = folder_for(method, seed, .5)
     if (folder/'summary.json').exists():
         s = json.loads((folder/'summary.json').read_text())
-        if s['source_sha256'] != source_hashes():
+        if not source_hashes_match(s['source_sha256'], source_hashes()):
             raise RuntimeError('Completed run has different sources')
         return s
     folder.mkdir(parents=True, exist_ok=False)

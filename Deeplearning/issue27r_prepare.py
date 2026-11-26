@@ -1,4 +1,5 @@
 """Nine predefined Case B sounds, physical Target selection, then protocol freeze."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 from datetime import datetime,timezone
 import importlib.metadata
@@ -18,7 +19,7 @@ from .issue16 import digest
 def scan(before=Path('/tmp/birdsong-issue27r-before.json')):
     if OUT.exists():raise FileExistsError('Existing revised study preserved')
     r=json.loads(Path(before).read_text())
-    for item in r['files']:assert digest(ROOT/item['path'])==item['sha256'],item['path']
+    for item in r['files']:assert digest(resolve_result_path(ROOT/item['path']))==item['sha256'],item['path']
     OUT.mkdir(parents=True);(OUT/'preflight/candidates').mkdir(parents=True)
     write_csv(OUT/'protected_before.csv',r.pop('files'));write_json(OUT/'storage_before.json',r)
     (OUT/'PLAN.md').write_text('''# Issue27改訂 — 計算前の凍結計画

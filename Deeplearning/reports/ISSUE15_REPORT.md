@@ -2,7 +2,7 @@
 
 作業ブランチは `main_deeplearning`。AはIssue #14の102,400-step実験（commit `45e6ff5e2a8e00b4555452399c5c9123cc5f514d`）を再利用し、B/CのみPPO・TD3・SAC×3 seed、各102,400環境ステップをゼロから学習した。
 
-[Phase 0索引](../results/phase0_fixed_target_20261108/REPORT.md)・[詳細比較レポート](../results/phase0_fixed_target_20261108/reward_ablation/REPORT.md)。
+[Phase 0索引](../results/Phase0/synthetic/REPORT.md)・[詳細比較レポート](../results/Phase0/synthetic/reward_ablation/REPORT.md)。
 
 | 手法 | A: 合算 | B: スペクトル単独 | C: 包絡単独 |
 | --- | ---: | ---: | ---: |

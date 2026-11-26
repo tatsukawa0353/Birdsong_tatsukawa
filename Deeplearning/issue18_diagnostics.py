@@ -17,7 +17,7 @@ from .issue15_analysis import write_json
 from .issue16 import digest
 from .model import LOW,HIGH
 
-OUT=ROOT/'results/phase1_3d_domain_diagnostics'
+OUT=ROOT/'results/Phase1/CaseA/domain_diagnostics'
 _ENV=None
 
 

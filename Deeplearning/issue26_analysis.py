@@ -1,4 +1,5 @@
 """Replay, sampler reconstruction and descriptive statistics for Issue26 only."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 import gzip
@@ -295,7 +296,7 @@ def listening():
             items.append(dict(wav=name,source=raw,raw_key='target' if name=='Target.wav' else 'audio',gain=gain,peak=float(abs(wave).max()),samples=10000,sample_rate=50000,clipped_samples=0))
         add('Target.wav',target,str(TARGET.relative_to(ROOT)))
         for r in rows:
-            raw=ROOT/r['raw_npz']
+            raw=resolve_result_path(ROOT/r['raw_npz'])
             with np.load(raw) as a:add(f"{r['condition']}_seed{r['seed']}_{r['role']}.wav",a['audio'],r['raw_npz'])
     write_csv(OUT/'wav_index.csv',items);return items
 

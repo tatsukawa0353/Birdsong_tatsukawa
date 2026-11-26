@@ -4,7 +4,7 @@
 
 **一定1変数では、旧結果と共通する108評価点がすべて完全一致した。毎エピソード評価でTD3の低誤差点をより細かく観測・保存できたが、最終方策の悪化も再現した。一定2変数ではDEの最終誤差が最小となり、RLの安定した高精度獲得は確認できなかった。**
 
-新しい成果は [phase1_issue13_20261107](../results/phase1_constant_020s/history/phase1_issue13_20261107) に保存した。[詳細レポート](../results/phase1_constant_020s/history/phase1_issue13_20261107/REPORT.md)、[全seedの数表](../results/phase1_constant_020s/history/phase1_issue13_20261107/per_seed.csv)、[独立監査](../results/phase1_constant_020s/history/phase1_issue13_20261107/final_audit.json) から元データへ辿れる。旧結果と、前の依頼で作成した修正図・描画コードは保持した。
+新しい成果は [phase1_issue13_20261107](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107) に保存した。[詳細レポート](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/REPORT.md)、[全seedの数表](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/per_seed.csv)、[独立監査](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/final_audit.json) から元データへ辿れる。旧結果と、前の依頼で作成した修正図・描画コードは保持した。
 
 ## 1. 実験条件
 
@@ -21,7 +21,7 @@
 
 主評価は**全0.35秒の対数PSD誤差＋5 ms RMS包絡誤差**で、小さいほどよい。γ=1の報酬和はその負値に一致する。生成音ごとのゲイン・位相調整はしない。balancedは補助診断で、訓練・候補選択の目的関数には使わない。SACの学習にはエントロピー項もあり、全手法の学習目的すべてが同一とは述べない。
 
-両条件のfloat64 Oracleは全17,500サンプルが目標と完全一致し、音響誤差0。float32行動では1変数3.04496×10⁻⁹、2変数1.16347×10⁻⁸だった。[Oracle記録](../results/phase1_constant_020s/history/phase1_issue13_20261107/diagnostics/oracles.json) を確認してから主実験へ進んだ。
+両条件のfloat64 Oracleは全17,500サンプルが目標と完全一致し、音響誤差0。float32行動では1変数3.04496×10⁻⁹、2変数1.16347×10⁻⁸だった。[Oracle記録](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/diagnostics/oracles.json) を確認してから主実験へ進んだ。
 
 ## 2. 最終性能
 
@@ -32,7 +32,7 @@
 | 一定1変数 | 0.2193975 ± 0.03009 | 0.3001667 ± 0.02590 | 0.007563262 ± 0.006513 | 3.531329×10⁻¹¹ ± 1.041×10⁻¹¹ |
 | 一定2変数 | 0.1756284 ± 0.05486 | 0.2475580 ± 0.1063 | 0.1283039 ± 0.08348 | 0.0007384369 ± 0.001236 |
 
-出典：[集計CSV](../results/phase1_constant_020s/history/phase1_issue13_20261107/aggregate.csv)、[各runの値](../results/phase1_constant_020s/history/phase1_issue13_20261107/per_seed.csv)。
+出典：[集計CSV](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/aggregate.csv)、[各runの値](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/per_seed.csv)。
 
 1変数のDEはほぼ完全再現し、Random SearchもRLの最終方策より小さい誤差となった。2変数でもDEの最終誤差が最小で、seed別は約3.98×10⁻⁵、2.17×10⁻³、9.98×10⁻⁶。256候補で残った誤差を、完全収束や知覚的な成功の証明とは扱わない。
 
@@ -48,7 +48,7 @@
 | 1 | 109 | 0.0003791324 | 0.1852449 |
 | 2 | 203 | 0.0005689197 | 0.2309664 |
 
-旧結果と共通する9時点×4手法×3 seedの108点は、音響誤差がすべて完全一致した。[点単位の照合](../results/phase1_constant_020s/history/phase1_issue13_20261107/historical_A_shared_checkpoints.csv)。最良値が旧報告より小さいのは、同じ学習過程を毎回評価して従来の記録間隔の間を観測した結果で、学習法を改善した結果ではない。
+旧結果と共通する9時点×4手法×3 seedの108点は、音響誤差がすべて完全一致した。[点単位の照合](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/historical_A_shared_checkpoints.csv)。最良値が旧報告より小さいのは、同じ学習過程を毎回評価して従来の記録間隔の間を観測した結果で、学習法を改善した結果ではない。
 
 今回は各評価点の行動・適用制御・誤差内訳・勾配更新回数を保存し、最良時点の `best_observed/agent.zip` と音声NPZ/WAVも保存した。最終はrun直下の `agent.zip`・`rollout.npz` に対応する。保存した最良方策・最終方策の行動は独立に照合済み。ただし、選択した最良方策の評価も同じ固定目標によるもので、未知の目標への汎化を測ったものではない。
 
@@ -58,15 +58,15 @@
 
 - [一定1変数・seed 0の4曲線](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_issue13_20261107/figures/constant_1d_learning_curves.png)
 - [一定2変数・seed 0の4曲線](https://github.com/tatsukawa0353/Birdsong_tatsukawa/blob/31c4569865ecaaebaa65fc0d9e076badc1948402/Deeplearning/results/phase1_issue13_20261107/figures/constant_2d_learning_curves.png)
-- [描画した全座標CSV](../results/phase1_constant_020s/history/phase1_issue13_20261107/seed0_learning_curve_points.csv)
-- [曲線の書式・入力ハッシュ](../results/phase1_constant_020s/history/phase1_issue13_20261107/figures/plot_metadata.json)
-- [最終スペクトログラムと音声の対応記録](../results/phase1_constant_020s/history/phase1_issue13_20261107/figures/presentation_spectrograms_metadata.json)
+- [描画した全座標CSV](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/seed0_learning_curve_points.csv)
+- [曲線の書式・入力ハッシュ](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/figures/plot_metadata.json)
+- [最終スペクトログラムと音声の対応記録](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/figures/presentation_spectrograms_metadata.json)
 
 両曲線は同じ表示範囲・SciencePlots字体・軸46 pt・目盛りと凡例30 pt・線幅2.8。各手法1本だけで、平均・帯・他seed線・0.08線・タイトル・図内seed表記はない。凡例はグラフ内右上に置き、線と重ならないことを確認した。横軸 `Number of trials` は訓練エピソード／候補数で、独立評価の回数を加算していない。
 
-発表用最終スペクトログラムはseed 0の各runの最終NPZから8枚生成した。上段Target、下段Generatedで、上側のタイトルは置かない。元runの診断用スペクトログラムも保持している。8 runの具体的な曲線JSON・最終PNG・NPZ・生成WAVへのリンクは [詳細レポートの索引](../results/phase1_constant_020s/history/phase1_issue13_20261107/REPORT.md) を参照。
+発表用最終スペクトログラムはseed 0の各runの最終NPZから8枚生成した。上段Target、下段Generatedで、上側のタイトルは置かない。元runの診断用スペクトログラムも保持している。8 runの具体的な曲線JSON・最終PNG・NPZ・生成WAVへのリンクは [詳細レポートの索引](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/REPORT.md) を参照。
 
-元データの配置は `results/phase1_constant_020s/history/phase1_issue13_20261107/runs/<condition>/<method>/seed_<n>/`。各runの `config.json`、`curve.json`、`summary.json` は直接読めるJSON、音声と制御の正本はfloat64 NPZ。WAVは元振幅を保持したfloat32で、個別のゲイン正規化やクリップをしていない。スペクトログラムのピーク正規化は表示専用。モデル出力はSI音圧へ校正しておらず、公式SAP評価も未実施。
+元データの配置は `results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/runs/<condition>/<method>/seed_<n>/`。各runの `config.json`、`curve.json`、`summary.json` は直接読めるJSON、音声と制御の正本はfloat64 NPZ。WAVは元振幅を保持したfloat32で、個別のゲイン正規化やクリップをしていない。スペクトログラムのピーク正規化は表示専用。モデル出力はSI音圧へ校正しておらず、公式SAP評価も未実施。
 
 ## 5. 計算量と実時間
 
@@ -79,7 +79,7 @@
 
 各runの訓練は256本・89.6秒。RLは初期＋毎試行の257評価で89.95秒/runを追加した。直接法は各候補の目的値とbest-so-farを記録して曲線へ再利用し、初期・最終の独立再生2本で0.7秒/runを追加した。初期ランダム候補は訓練の候補1にも数え、無料の探索候補として追加していない。
 
-訓練実時間のrun別合計は1,942.88秒、追加評価は985.58秒、artifact保存は72.00秒。最大3 workerで並列実行しているため、run合計時間3,014.28秒を経過時間とは呼ばない。manifest作成から全訓練完了の集計まで約1,154.00秒で、準備・コマンド間の確認も含む。監査・発表用画像生成・ソフトウェアテストは主訓練と分離した。[計算量の詳細](../results/phase1_constant_020s/history/phase1_issue13_20261107/execution_summary.json)、[run別会計CSV](../results/phase1_constant_020s/history/phase1_issue13_20261107/compute.csv)。
+訓練実時間のrun別合計は1,942.88秒、追加評価は985.58秒、artifact保存は72.00秒。最大3 workerで並列実行しているため、run合計時間3,014.28秒を経過時間とは呼ばない。manifest作成から全訓練完了の集計まで約1,154.00秒で、準備・コマンド間の確認も含む。監査・発表用画像生成・ソフトウェアテストは主訓練と分離した。[計算量の詳細](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/execution_summary.json)、[run別会計CSV](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/compute.csv)。
 
 主訓練・評価とも数値発散0。評価密度、方策選択則、ネットワーク更新・保存のコストが異なるため、256本の訓練予算を揃えたことを全計算量の一致とは説明しない。
 
@@ -96,7 +96,7 @@
 | [issue13_audit.py](../issue13_audit.py) | 学習・物理再積分を行わない独立監査。 |
 | [test_issue13.py](../tests/test_issue13.py) | Oracle、旧1D等価性、2D保持の等価性、固定値・カウント・失敗・seed継続の8テスト。 |
 
-環境の8テストは全PASS。最終独立監査は**107,130項目すべてPASS**。24 run・曲線6,168点を検査し、保存済み74 NPZ（初期/最終/最良72＋float64 Oracle2）の主音響誤差・balancedを独立再計算した。WAV148本、最終/最良checkpoint24本の行動も一致。既存1,543ファイルと計算ソースsnapshotのSHA256を照合し、不変を確認した。[監査結果](../results/phase1_constant_020s/history/phase1_issue13_20261107/final_audit.json)、[保護検査](../results/phase1_constant_020s/history/phase1_issue13_20261107/preservation_check.json)。
+環境の8テストは全PASS。最終独立監査は**107,130項目すべてPASS**。24 run・曲線6,168点を検査し、保存済み74 NPZ（初期/最終/最良72＋float64 Oracle2）の主音響誤差・balancedを独立再計算した。WAV148本、最終/最良checkpoint24本の行動も一致。既存1,543ファイルと計算ソースsnapshotのSHA256を照合し、不変を確認した。[監査結果](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/final_audit.json)、[保護検査](../results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107/preservation_check.json)。
 
 未保存の途中の音声全てを再生成したわけではない。途中はJSONの制御・誤差内訳・更新回数・最良値追跡の整合性を確認し、保存した初期/最終/最良について波形から独立確認した範囲を区別する。
 

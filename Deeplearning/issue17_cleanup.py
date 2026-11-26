@@ -4,6 +4,7 @@ All new runs/audits/figures must pass before publish() replaces the pilot or
 unlinks old generated files. Original Git history and historical audit records
 retain their original meaning; no Phase 0 output is edited.
 """
+from .result_paths import resolve as resolve_result_path
 import json
 import os
 from pathlib import Path
@@ -52,11 +53,11 @@ def review_references(output):
         '-g','!results/**','-g','!reports/server_smoke_cleanup_20261113/**'],cwd=ROOT,text=True).splitlines()
     references=[]
     for name in files:
-        text=(ROOT/name).read_text(errors='replace')
+        text=(resolve_result_path(ROOT/name)).read_text(errors='replace')
         pattern=r'(?:Deeplearning/)?results/(phase1(?:_extended|_terminal_baselines|_validation_20261031|_issue13_20261107|_constant_020s)?)/([^\s\]\)\}\"\x27`<>;,]+)'
         for match in re.finditer(pattern,text):
             relative='results/'+match[1]+'/'+match[2].rstrip('.')
-            target=ROOT/relative
+            target=resolve_result_path(ROOT/relative)
             references.append(dict(source=name,line=text.count('\n',0,match.start())+1,
                 path=relative,exists=target.exists(),is_file=target.is_file()))
     write_json(Path(output)/'reference_review.json',dict(references=references))
@@ -73,7 +74,7 @@ def plan_cleanup(output,*,refresh=False):
     keep={};rows=[]
     metadata={'manifest.json','config.json','summary.json','execution.json','execution_summary.json'}
     for name,item in inventory.items():
-        path=ROOT/name;relative=Path(name);experiment=relative.parts[1]
+        path=resolve_result_path(ROOT/name);relative=Path(name);experiment=relative.parts[1]
         within=relative.relative_to(Path('results')/experiment)
         is_pilot=experiment=='phase1_constant_020s'
         if is_pilot:
@@ -96,7 +97,7 @@ def plan_cleanup(output,*,refresh=False):
         if retain:keep[name]=destination
     history=output/'history';history.mkdir(exist_ok=True)
     for name,destination in keep.items():
-        source=checked_file(ROOT/name,ROOT/'results'/Path(name).parts[1])
+        source=checked_file(resolve_result_path(ROOT/name),ROOT/'results'/Path(name).parts[1])
         if digest(source)!=inventory[name]['sha256']:raise RuntimeError(f'Old data changed: {source}')
         target=output/destination;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
 
@@ -108,16 +109,16 @@ def plan_cleanup(output,*,refresh=False):
             bang,label,url=match.groups()
             if '://' in url or url.startswith(('#','mailto:')):return match.group(0)
             part,sep,anchor=url.partition('#')
-            target=(ROOT/old_source).parent/part
+            target=(resolve_result_path(ROOT/old_source)).parent/part
             target=Path(os.path.normpath(target))
             if not target.is_relative_to(ROOT):return match.group(0)
             relative=str(target.relative_to(ROOT))
-            if not old_source.startswith('results/') and relative=='results/phase1_constant_020s/REPORT.md':
-                link=os.path.relpath(DEST/'REPORT.md',(ROOT/new_source).parent)
+            if not old_source.startswith('results/') and relative=='results/Phase1/CaseA/parameter_dimension/REPORT.md':
+                link=os.path.relpath(DEST/'REPORT.md',(resolve_result_path(ROOT/new_source)).parent)
             elif relative in inventory:
                 if relative in keep:
                     final=DEST/keep[relative]
-                    link=os.path.relpath(final,(ROOT/new_source).parent)
+                    link=os.path.relpath(final,(resolve_result_path(ROOT/new_source)).parent)
                 else:
                     link=old_link(relative)
                     if bang:
@@ -125,11 +126,11 @@ def plan_cleanup(output,*,refresh=False):
             elif target.is_dir() and any(name.startswith(relative+'/') for name in keep):
                 experiment=Path(relative).parts[1]
                 final=DEST/'history'/experiment/Path(relative).relative_to(Path('results')/experiment)
-                link=os.path.relpath(final,(ROOT/new_source).parent)
+                link=os.path.relpath(final,(resolve_result_path(ROOT/new_source)).parent)
             elif target.is_dir() and any(relative.startswith('results/'+name) for name in OLD_PHASE1):
                 link=GITHUB+'/tree/'+git_head+'/Deeplearning/'+relative
             elif target.exists():
-                link=os.path.relpath(target,(ROOT/new_source).parent)
+                link=os.path.relpath(target,(resolve_result_path(ROOT/new_source)).parent)
             else:return match.group(0)
             return f'{bang}[{label}]({link}{sep}{anchor})'
         return re.sub(r'(!?)\[([^\]]*)\]\(([^)]+)\)',substitute,text)
@@ -138,7 +139,7 @@ def plan_cleanup(output,*,refresh=False):
     # links are migrated, with a visible archival notice and original checksum.
     for name,destination in keep.items():
         if destination.suffix=='.md':
-            original=(ROOT/name).read_text()
+            original=(resolve_result_path(ROOT/name)).read_text()
             new_source=str((DEST/destination).relative_to(ROOT))
             text=rewrite_markdown(original,name,new_source)
             notice=('> 歴史資料（4096回の正本ではない）。元の実行条件・数値を保持。'
@@ -150,7 +151,7 @@ def plan_cleanup(output,*,refresh=False):
                          'phase1_validation_audit.py','run.py'))
     for name in sorted(source_files):
         if name.startswith('issue17') or name.startswith('results/'):continue
-        path=ROOT/name
+        path=resolve_result_path(ROOT/name)
         old=path.read_text();new=old
         if path.suffix=='.md':new=rewrite_markdown(new,name,name)
         else:
@@ -165,8 +166,8 @@ def plan_cleanup(output,*,refresh=False):
         for index in range(0,len(pieces),2):
             for experiment in OLD_PHASE1:
                 if experiment=='phase1_constant_020s':continue
-                pieces[index]=pieces[index].replace('results/'+experiment+'/', 'results/phase1_constant_020s/history/'+experiment+'/')
-                pieces[index]=pieces[index].replace('results/'+experiment+'"','results/phase1_constant_020s/history/'+experiment+'"')
+                pieces[index]=pieces[index].replace('results/'+experiment+'/', 'results/Phase1/CaseA/parameter_dimension/history/'+experiment+'/')
+                pieces[index]=pieces[index].replace('results/'+experiment+'"','results/Phase1/CaseA/parameter_dimension/history/'+experiment+'"')
         new=''.join(pieces)
         if name in ('issue13_audit.py','phase1_validation_audit.py'):
             new=new.replace('    output = args.output.resolve()\n',
@@ -175,7 +176,7 @@ def plan_cleanup(output,*,refresh=False):
         if name=='run.py':
             new=new.replace('    config = json.loads(config_path.read_text())',
                 '    if args.phase == "phase1":\n'
-                '        canonical = root / "results/phase1_constant_020s"\n'
+                '        canonical = root / "results/Phase1/CaseA/parameter_dimension"\n'
                 '        if args.output is None:\n'
                 '            parser.error("Use python -m Deeplearning.issue17 for current Phase 1; historical tasks require an explicit new --output below phase1_constant_020s/reproductions")\n'
                 '        if not output.resolve().is_relative_to((canonical / "reproductions").resolve()) or output.exists():\n'
@@ -183,9 +184,9 @@ def plan_cleanup(output,*,refresh=False):
                 '    config = json.loads(config_path.read_text())')
         if name=='README.md':
             new=new.replace('4手法各3 seed×256候補','TD3/SACはλ=1/.5、DE/Randomはλ=1、各3 seed×4096候補（計54 run）')
-            new=new.replace('γ=1・全区間報酬を使う。','γ=1・全区間報酬を使う。最初は [正本の索引](results/phase1_constant_020s/README.md) を読む。')
+            new=new.replace('γ=1・全区間報酬を使う。','γ=1・全区間報酬を使う。最初は [正本の索引](results/Phase1/CaseA/parameter_dimension/README.md) を読む。')
             new=new.replace('Deeplearning/.venv-rl/bin/python -m Deeplearning.issue16 audit\n','')
-            new+='\n旧Phase1は正本内の [history](results/phase1_constant_020s/history/README.md) に必要な歴史情報を集約した。旧監査のprotected_beforeは当時の記録で、現行の保存検証はIssue17の新監査に切り替える。Phase0の保存済み監査ログは改変しない。\n'
+            new+='\n旧Phase1は正本内の [history](results/Phase1/CaseA/parameter_dimension/history/README.md) に必要な歴史情報を集約した。旧監査のprotected_beforeは当時の記録で、現行の保存検証はIssue17の新監査に切り替える。Phase0の保存済み監査ログは改変しない。\n'
         if new!=old:
             updates.append(dict(path=name,original_sha256=digest(path),text=new))
     write_json(output/'documentation_updates.json',updates)
@@ -245,7 +246,7 @@ def publish(output,destination):
     updates=json.loads((output/'documentation_updates.json').read_text())
     verify_protected(output)
     for update in updates:
-        if digest(ROOT/update['path'])!=update['original_sha256']:
+        if digest(resolve_result_path(ROOT/update['path']))!=update['original_sha256']:
             raise RuntimeError(f'Documentation changed concurrently: {update["path"]}')
     inventory={r['path']:r for r in plan['entries']}
     for experiment in OLD_PHASE1:
@@ -258,7 +259,7 @@ def publish(output,destination):
     # Validate every deletion before unlinking anything, including retained files
     # whose exact bytes have already been copied into the audited new hierarchy.
     for name,row in inventory.items():
-        path=checked_file(ROOT/name,ROOT/'results'/Path(name).parts[1])
+        path=checked_file(resolve_result_path(ROOT/name),ROOT/'results'/Path(name).parts[1])
         if digest(path)!=row['sha256']:raise RuntimeError(f'Changed after inventory: {path}')
         if row['destination'] and digest(output/row['destination'])!=row['retained_sha256']:
             raise RuntimeError(f'Historical copy failed verification: {row["destination"]}')
@@ -269,7 +270,7 @@ def publish(output,destination):
     except BaseException:
         retired.rename(destination)
         raise
-    for update in updates:(ROOT/update['path']).write_text(update['text'])
+    for update in updates:(resolve_result_path(ROOT/update['path'])).write_text(update['text'])
     removed=0
     for name,row in inventory.items():
         relative=Path(name);experiment=relative.parts[1]
@@ -283,7 +284,7 @@ def publish(output,destination):
         '検証してから置換/削除する','検証後に置換・削除を完了した'))
     verified=verify_protected(destination)
     write_json(destination/'reference_updates.json',[dict(path=u['path'],original_sha256=u['original_sha256'],
-        current_sha256=digest(ROOT/u['path'])) for u in updates])
+        current_sha256=digest(resolve_result_path(ROOT/u['path']))) for u in updates])
     (destination/'documentation_updates.json').unlink()
     (destination/'phase1_inventory_before.json').unlink()
     after_bytes=sum(p.stat().st_size for p in destination.rglob('*') if p.is_file())

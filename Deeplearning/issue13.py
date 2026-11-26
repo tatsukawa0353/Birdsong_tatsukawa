@@ -4,6 +4,7 @@ Reuse the original physics, objective, policy settings and pre-update evaluation
 timing. Only the evaluation density and diagnostic retention change in 1D.
 The 2D condition adds pressure while retaining one decision per 0.35 s episode.
 """
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime, timezone
@@ -28,7 +29,7 @@ from .phase1_validation_env import DURATION, RATE, TARGET_CONTROLS
 
 
 CONFIG = ROOT / "configs/issue13_reproduction.json"
-DEFAULT_OUTPUT = ROOT / "results/phase1_constant_020s/history/phase1_issue13_20261107"
+DEFAULT_OUTPUT = ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107"
 WORKFLOW = "issue13_constant_control_reproduction"
 INDICES = {"constant_1d": (0,), "constant_2d": (0, 2)}
 
@@ -45,7 +46,7 @@ def source_hashes():
     names = ("issue13.py", "issue13_env.py", "configs/issue13_reproduction.json",
              "phase1_validation.py", "phase1_validation_env.py", "model.py", "model_env.py",
              "acoustics.py", "objectives.py", "native/model.cpp", "requirements-lock.txt")
-    return {name: digest(ROOT / name) for name in names}
+    return {name: digest(resolve_result_path(ROOT / name)) for name in names}
 
 
 def protected_files(output):
@@ -79,7 +80,7 @@ def verify_protected(output):
 
 def load_ready(output):
     manifest = json.loads((output / "manifest.json").read_text())
-    if manifest.get("workflow") != WORKFLOW or manifest["source_hashes"] != source_hashes():
+    if manifest.get("workflow") != WORKFLOW or not source_hashes_match(manifest["source_hashes"], source_hashes()):
         raise RuntimeError("Computation source/settings changed; use a new experiment directory")
     if not json.loads((output / "diagnostics/oracle_gate.json").read_text())["passed"]:
         raise RuntimeError("Oracle gate did not pass")
@@ -137,7 +138,7 @@ def prepare(output, settings):
     for name in manifest["source_hashes"]:
         destination = output / "source_snapshot" / name
         destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(ROOT / name, destination)
+        shutil.copy2(resolve_result_path(ROOT / name), destination)
     oracles = []
     for name, indices in INDICES.items():
         for dtype in (np.float64, np.float32):

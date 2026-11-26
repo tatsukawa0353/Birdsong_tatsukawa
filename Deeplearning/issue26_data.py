@@ -1,4 +1,5 @@
 """Wide-domain candidate-generation experiment; legacy outputs remain read only."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import json
 from pathlib import Path
 
@@ -11,7 +12,7 @@ from .issue24_data import sb3_hashes
 from .issue16 import digest
 from .issue17_artifacts import read_record
 
-OUT=ROOT/'results/phase1_caseA_wide_local_exploration'
+OUT=ROOT/'results/Phase1/CaseA/exploration_strategy'
 CONDITIONS=('A','B','C','D')
 NEW=('B','C','D')
 PREFIX=256
@@ -51,13 +52,13 @@ def curve_for(condition,seed,output=OUT):return read_record(folder_for(condition
 def half_width(condition):return np.array([12500000.,750000.,375500. if condition=='A' else 4975500.])
 
 
-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
+def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
 
 
 def ready(output=OUT):
     from .model import LIBRARY
     output=Path(output);m=json.loads((output/'manifest.json').read_text())
-    assert m['source_sha256']==source_hashes(),'Frozen numerical implementation changed'
+    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen numerical implementation changed'
     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
     assert m['baseline_manifest_sha256']==digest(BASE/'manifest.json') and m['sb3_implementation_sha256']==sb3_hashes()
     assert m['plan_sha256']==digest(output/'PLAN.md')

@@ -1,0 +1,2904 @@
+diff --git a/Deeplearning/diagnostics.py b/Deeplearning/diagnostics.py
+index 62dff18..147bd4d 100644
+--- a/Deeplearning/diagnostics.py
++++ b/Deeplearning/diagnostics.py
+@@ -13,7 +13,7 @@ from .plotting import plt, control_trajectories
+ 
+ 
+ def main():
+-    output = ROOT/"results/diagnostics"
++    output = ROOT/"results/reference/implementation_diagnostics"
+     output.mkdir(parents=True, exist_ok=True)
+     features = []
+     for path in sorted((ROOT/"results").rglob("*.npz")):
+@@ -46,7 +46,7 @@ def main():
+     write_json(output/"descriptors.json", features)
+     # Evaluate one existing policy at several clocks/penalty weights. No retraining;
+     # these quantify deployment sensitivity only, not training-hyperparameter sensitivity.
+-    agent = SAC.load(ROOT/"results/phase1_constant_020s/history/phase1_extended/SAC_0/agent.zip", device="cpu")
++    agent = SAC.load(ROOT/"results/Phase1/CaseA/parameter_dimension/history/phase1_extended/SAC_0/agent.zip", device="cpu")
+     sensitivity = []
+     for control_s in (.005, .01, .0175):
+         for weight in (0, .01, .1):
+diff --git a/Deeplearning/issue10.py b/Deeplearning/issue10.py
+index 897cb0d..462d22d 100644
+--- a/Deeplearning/issue10.py
++++ b/Deeplearning/issue10.py
+@@ -18,7 +18,7 @@ from .objectives import BalancedConfig, BalancedObjective
+ from .plotting import comparison, control_trajectories, learning_curves, plt
+ from .voice_diagnostics import replay, summarize, band_audio, rms
+ 
+-OUTPUT = ROOT/"results/issue10"
++OUTPUT = ROOT/"results/Phase1/CaseA/reward_diagnostics"
+ PROFILES = ("baseline", "balanced_context", "balanced_aligned")
+ 
+ 
+diff --git a/Deeplearning/issue10_report.py b/Deeplearning/issue10_report.py
+index 0a26e80..20a7d00 100644
+--- a/Deeplearning/issue10_report.py
++++ b/Deeplearning/issue10_report.py
+@@ -1,4 +1,5 @@
+ """Build a public report using only Issue 10 synthetic experiment artifacts."""
++from .result_paths import resolve as resolve_result_path
+ import csv
+ import hashlib
+ import json
+@@ -12,7 +13,7 @@ from .model import ROOT
+ from .objectives import BalancedObjective
+ from .plotting import plt
+ 
+-OUTPUT = ROOT/"results/issue10"
++OUTPUT = ROOT/"results/Phase1/CaseA/reward_diagnostics"
+ PROFILES = ("baseline", "balanced_context", "balanced_aligned")
+ 
+ 
+@@ -115,11 +116,11 @@ def provenance():
+     paths = ["issue10.py", "issue10_report.py", "objectives.py", "model_env.py", "experiments.py",
+              "acoustics.py", "model.py", "native/model.cpp", "native/reference.cpp", "plotting.py", "configs/issue10.json",
+              "requirements-lock.txt", "tests/test_issue10.py"]
+-    hashes = {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in paths if (ROOT/p).is_file()}
++    hashes = {p: hashlib.sha256((resolve_result_path(ROOT/p)).read_bytes()).hexdigest() for p in paths if (resolve_result_path(ROOT/p)).is_file()}
+     base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+     unchanged = {}
+     for path in ("acoustics.py", "model.py", "plotting.py", "native/model.cpp", "native/reference.cpp"):
+-        file = ROOT/path
++        file = resolve_result_path(ROOT/path)
+         if not file.is_file():
+             continue
+         old = subprocess.check_output(["git", "show", f"HEAD:Deeplearning/{path}"], cwd=ROOT)
+@@ -172,16 +173,16 @@ def main():
+         lines.append(f"| {r['case']} | {m['log_spectral']:.5f} | {m['envelope']:.5f} | {m['total']:.5f} | {r['mean_cost']:.5f} | {r['discounted_cost']:.5f} | {r['balanced']['total']:.5f} |")
+     lines += ["", "costは小さいほど良く、報酬はその負値。割引costは `-Σ γ^(t−1) r_t / 35`、γ=0.99。異なる損失の数値の大小を直接比較しない。", "",
+               "無音の従来全体誤差0.64620は、wrong_voicedの0.26479、far_voicedの0.57005より大きい。対数PSDは全帯域・全フレームの等重み平均なので、目標のエネルギーが少ないビンが多いと無音のスペクトル罰は薄まり得る。しかし今回の共有ゲインでは包絡の欠落も加わり、無音有利とはならなかった。極端な10倍音量は無音より悪いが、それだけで無音の抜け道とは判定しない。Issue #9の実録音・外力可変条件への一般化はできない。", "",
+-              "![固定波形の報酬順序](../results/issue10/audit/reward_order.png)", "",
+-              "![周波数ずれ有声音](../results/issue10/audit/wrong_voiced.png)", "",
+-              "全固定波形は [audit/](../results/issue10/audit/) のNPZ、全項目は [scores.json](../results/issue10/audit/scores.json)、35区間別は [step_metrics.json](../results/issue10/audit/step_metrics.json)。", "",
++              "![固定波形の報酬順序](../results/Phase1/CaseA/reward_diagnostics/audit/reward_order.png)", "",
++              "![周波数ずれ有声音](../results/Phase1/CaseA/reward_diagnostics/audit/wrong_voiced.png)", "",
++              "全固定波形は [audit/](../results/Phase1/CaseA/reward_diagnostics/audit/) のNPZ、全項目は [scores.json](../results/Phase1/CaseA/reward_diagnostics/audit/scores.json)、35区間別は [step_metrics.json](../results/Phase1/CaseA/reward_diagnostics/audit/step_metrics.json)。", "",
+               "### 目標の有声・無音・雑音様区間", "",
+               "目標のみから帯域包絡を求め、最大値の1%（振幅比−40 dB）以上を活動フレームとする。全体最大1e−8以下なら全て非活動。生成音はマスクへ影響しない。帯域フィルタと包絡の遅れ・減衰を含む操作的マスクであり、手動の真の音節境界や周期性の検出ではない。", "",
+               "| 目標・生成の組合せ | 目標活動frame率 | 従来全体 | 新全体 |", "|---|---:|---:|---:|"]
+     for r in activity:
+         lines.append(f"| {r['case']} | {r['voiced_frame_fraction']:.3f} | {r['baseline']['total']:.5f} | {r['balanced']['total']:.5f} |")
+     lines += ["", "gatedは0.10–0.25秒だけ鳴る目標。正しい無音は誤差0、無音目標への誤発声・gatedに対する常時発声は正の誤差となる。雑音目標も活動として保持し、完全再現は0、欠落は正の誤差。常時発声ボーナスは加えていない。", "",
+-              "![音節タイミングの診断](../results/issue10/audit/gated_timing.png)", "",
++              "![音節タイミングの診断](../results/Phase1/CaseA/reward_diagnostics/audit/gated_timing.png)", "",
+               "### 旧報酬の感度と時間集計", "",
+               "一度に1設定だけ変えた合成診断。包絡の5 ms幅は維持し、表のenvelope_weightはその係数。shared_scaleは目標・生成に同じ倍率を適用する。主設定・初期12波形・候補の重み・窓等の感度条件は学習前に固定した。far_matched_rmsは音量と周波数差の混同を調べる追加診断であり、学習後に追加したが、学習設定・損失重み・予算や移行基準の変更には使用していない。", "",
+               "| 変更 | wrong voiced | far voiced | far RMS一致 | 無音 | DC | half gain | 20 ms遅延 |", "|---|---:|---:|---:|---:|---:|---:|---:|"]
+@@ -189,7 +190,7 @@ def main():
+     for setting in dict.fromkeys(r["setting"] for r in sensitivity if "metrics" in r):
+         values = {r["case"]: r["metrics"]["total"] for r in sensitivity if r["setting"] == setting}
+         lines.append("| "+setting+" | "+" | ".join(f"{values[n]:.5f}" for n in ("wrong_voiced", "far_voiced", "far_matched_rms", "silence", "dc_only", "half_gain", "delayed"))+" |")
+-    lines += ["", "フロアはPSDへ加算してから対数化し、その絶対dB値で割るため、単なる表示下限ではない。STFTの窓・周波数帯域・共通ゲイン・包絡重みは物理的な区別の相対重みと順位を変え得る。窓49.152 msでは無音約0.5368がfar_voiced約0.6205より良くなる。窓を長くすると帯域ビンへの成分の広がりと対数誤差が変わるためで、全設定で無音優遇が否定されたわけではない。ただし同じfar波形をRMS一致にすると約0.3152で無音より良くなり、音量差が順位逆転に寄与していたことが分かる。純粋な周波数差だけの効果とは断定しない。表示の[-50,-20] dBはこの計算へ渡していない。感度の全成分と欠落重み0/1/2/4の診断は [sensitivity.json](../results/issue10/audit/sensitivity.json)。", "",
++    lines += ["", "フロアはPSDへ加算してから対数化し、その絶対dB値で割るため、単なる表示下限ではない。STFTの窓・周波数帯域・共通ゲイン・包絡重みは物理的な区別の相対重みと順位を変え得る。窓49.152 msでは無音約0.5368がfar_voiced約0.6205より良くなる。窓を長くすると帯域ビンへの成分の広がりと対数誤差が変わるためで、全設定で無音優遇が否定されたわけではない。ただし同じfar波形をRMS一致にすると約0.3152で無音より良くなり、音量差が順位逆転に寄与していたことが分かる。純粋な周波数差だけの効果とは断定しない。表示の[-50,-20] dBはこの計算へ渡していない。感度の全成分と欠落重み0/1/2/4の診断は [sensitivity.json](../results/Phase1/CaseA/reward_diagnostics/audit/sensitivity.json)。", "",
+               f"旧法は10 msごとに最大30 msを切り出し、24.576 ms窓でゼロ埋めする。最初の2区間は全frameがパディングを含み、以降は{temporal['baseline_context_frames'][2]['padded_frames']}/{temporal['baseline_context_frames'][2]['frames']}frameが含む。隣接区間では過去音声を再び評価し、切り出し端と包絡も毎回変わる。全0.35秒の旧誤差と同じ集計ではない。", "",
+               f"固定群で全体と割引即時costの順位が逆転した組は `{temporal['baseline_rank_reversals']}`。wrong_voicedとhalf_gainでは全体はhalf_gainが良く、即時報酬はwrong_voicedが良い。新法は物理的な窓の重複を残すが、{temporal['balanced_unique_frames']}個のframeをそれぞれ1回だけ割り当て、重み合計を1とする。開始前の既知のゼロは左だけに補い、未生成の未来を右ゼロ埋めしない。末尾1 sample分のframeを通常frameと等重みにはせず、1/17500で重み付けする。", "",
+               "## 2. 差し替え可能な候補の定義", "",
+@@ -213,7 +214,7 @@ def main():
+               "```", "",
+               "Cは周波数累積分布の距離で、無出力にはゼロ分布を拡張使用する。Hz単位の周波数誤差ではない。Cの形状正規化は音量を消すが、絶対包絡A、目標有声時の欠落M、DC差が残る。大音量は包絡差が増え、無音目標への誤発声もAで罰する。極小出力と厳密な0のCには閾値の不連続があり得るが、欠落Mは残る。重みは今回の設計値で、知覚評価に合わせた校正値ではない。", "",
+               "alignedではstep tで新規frameのΔL_tを計算し、r_t=−35 ΔL_t / γ^(t−1)。したがって `−Σ γ^(t−1)r_t/35=L` が恒等的に成立する（今回の平滑化罰は0）。γ=0.99を変更せず、最大の割引補償は約1.41。単純な未割引報酬平均はLとは一致しないため両方保存する。報酬尺度も変わるためSACのエントロピー係数適応等との相互作用は分離していない。", "",
+-              f"目標frame情報は [target_frames.json](../results/issue10/audit/target_frames.json)。共通スケールS={frames['shared_scale']:.6g}、E_ref={frames['energy_reference']:.6g}。実装は [objectives.py](../objectives.py)、[model_env.py](../model_env.py)。", "",
++              f"目標frame情報は [target_frames.json](../results/Phase1/CaseA/reward_diagnostics/audit/target_frames.json)。共通スケールS={frames['shared_scale']:.6g}、E_ref={frames['energy_reference']:.6g}。実装は [objectives.py](../objectives.py)、[model_env.py](../model_env.py)。", "",
+               "## 3. 同一予算・seedの学習比較", "",
+               "Case A・ε_lと共通p_sの2行動・35step/episode・0.35秒、同一の目標配列と共通ゲイン。ε_rと左右外力は従来の既定値。SAC/TD3、seed 0/1/2、32×32 MLP、CPU1スレッド、lr=0.0003、batch64、学習開始256、毎step更新、γ=0.99。TD3探索ノイズ0.1、SACの温度係数はSB3の既定適応。評価は探索なしで0stepと350stepごと、最終評価を別に保存する。RLのstep予算に評価呼出は含めない。", "",
+               "1050stepを先に実施。alignedが新しい全体損失を初期値から2/3 seed以上で改善し、同予算baselineの新損失平均も下回った手法だけを追加対象とする基準と4200step予算を、初回学習前に [issue10.json](../configs/issue10.json) へ固定した。選ばれた手法は全3profile・全seedを4200stepで最初から学習する。良いseedだけの継ぎ足しではないが、初回結果による手法選択を含む探索的実験である。", "",
+@@ -238,7 +239,7 @@ def main():
+                 group = [r for r in cohort if r["algorithm"] == algorithm and r["profile"] == profile]
+                 results, voices = [r["result"] for r in group], [r["voice"] for r in group]
+                 lines.append(f"| {algorithm} | {profile} | {fmt([r['error'] for r in results])} | {fmt([r['objective_error'] for r in results])} | {sum(r['error'] <= config['threshold'] for r in results)}/{len(group)} | {sum(v['sustained_acoustic'] for v in voices)}/{len(group)} | {fmt([v['active_20ms_fraction'] for v in voices],3)} | {fmt([v['motion']['std'][1] for v in voices],2)} | {fmt([v['motion']['std'][3] for v in voices],2)} | {sum(r['training_numerical_failures'] for r in results)} | {results[0]['evaluation_steps']} |")
+-        lines += ["", f"![{budget}stepの全seedと平均](../results/issue10/{directory}/comparison_curves.png)", "",
++        lines += ["", f"![{budget}stepの全seedと平均](../results/Phase1/CaseA/reward_diagnostics/{directory}/comparison_curves.png)", "",
+                   "細線が各seed、太線が平均。上段は旧指標、下段は新指標。学習で最適化した指標に加え、共通の評価指標を全条件で計算している。", ""]
+     if len(cohorts) == 2:
+         def mean_metric(algorithm, profile, budget, metric):
+@@ -254,8 +255,8 @@ def main():
+             steps = group[0].get("search_steps", 0)
+             lines.append(f"| {profile} | {method} | {fmt([r['error'] for r in group],6)} | {fmt([r['objective_error'] for r in group],6)} | {steps} |")
+     lines += ["", "oracle/constant/randomは各35stepの評価だけで、探索予算0。constantは正規化行動0、randomは各stepで独立一様。oracleの約1e−7は制御encodeのfloat32丸めを含むが、同一配列の固定診断は厳密0。", "",
+-              "DEは2個の定数をpopsize3×2次元=6候補、初期＋4世代=30episode・1050環境stepで探索し、各profileの実際の割引報酬costを最小化する。新全体を直接最適化するのはalignedだけである。RLは35×2の時変出力が可能で探索次元が異なる。4200stepのRLに対してDEも4200stepへ延長した対照ではない。評価回数や計算秒数も揃えた計算量比較ではない。全候補の曲線と選択制御は [constant_baselines/](../results/issue10/constant_baselines/)。", "",
+-              f"全学習で最小の旧誤差は {best['result']['error']:.5f}（{best['algorithm']} / {best['profile']} / seed {best['seed']} / {best['budget']}step）。これは最良例の記述であり、手法の一貫した優位性ではない。全seedの値・左右速度std・行動変化MSE・実適用制御の平均/標準偏差は [per_seed.csv](../results/issue10/per_seed.csv)。最終評価の35区間別損失、音声、5系列の制御図、重みは各runディレクトリに保存した。", "",
++              "DEは2個の定数をpopsize3×2次元=6候補、初期＋4世代=30episode・1050環境stepで探索し、各profileの実際の割引報酬costを最小化する。新全体を直接最適化するのはalignedだけである。RLは35×2の時変出力が可能で探索次元が異なる。4200stepのRLに対してDEも4200stepへ延長した対照ではない。評価回数や計算秒数も揃えた計算量比較ではない。全候補の曲線と選択制御は [constant_baselines/](../results/Phase1/CaseA/reward_diagnostics/constant_baselines/)。", "",
++              f"全学習で最小の旧誤差は {best['result']['error']:.5f}（{best['algorithm']} / {best['profile']} / seed {best['seed']} / {best['budget']}step）。これは最良例の記述であり、手法の一貫した優位性ではない。全seedの値・左右速度std・行動変化MSE・実適用制御の平均/標準偏差は [per_seed.csv](../results/Phase1/CaseA/reward_diagnostics/per_seed.csv)。最終評価の35区間別損失、音声、5系列の制御図、重みは各runディレクトリに保存した。", "",
+               "発声はIssue #9の操作的指標（後半0.1–0.35秒、基準帯域RMS比−60 dB以上の20 ms区間が80%以上）。速度stdは全10 MHz積分点の区間統計を平均差も含めて合成する。位置オフセット、源の運動、出力音声、可視性、模倣誤差を区別し、周期性だけで雑音様の音を除外しない。右速度があってもCase Aの音響出力へ右源が寄与するとは限らない。", "",
+               "評価用NPZは元の振幅を保持する。`generated.wav` は聴取用にrunごとのpeakを最大1へ収めたfloat32で、波形ごとの音量調整を含む。このWAVの再生音量で条件間の振幅を比較しない。学習・評価・保存誤差にはこの聴取用調整を使用していない。", "",
+               "## 4. glideへの移行と観測の限界", "",
+@@ -263,14 +264,14 @@ def main():
+     if not glide["selected_algorithms"]:
+         oracle = read("glide_oracle/summary.json")
+         lines += [f"条件を満たす手法はなかったためglideのRLは実施しなかった。ε_l=3e7→4.6e7の0.35秒目標を生成し、既知制御のみ旧誤差{oracle['error']:.3g}で再現できることを確認した。このoracleをRL成績には含めない。", "",
+-                  "![glide既知制御](../results/issue10/glide_oracle/spectrogram.png)", ""]
++                  "![glide既知制御](../results/Phase1/CaseA/reward_diagnostics/glide_oracle/spectrogram.png)", ""]
+     else:
+         lines += [f"glide学習の対象は {', '.join(glide['selected_algorithms'])}。結果は対応する `glide_*` ディレクトリ。", ""]
+     lines += ["現行観測は正規化時刻、前行動2値、現在のx_l,y_l,x_r,y_rの計7次元。遅延線の全履歴、音声フィルタ状態、目標音声の特徴は観測されず、Markov状態を完全には与えていない。固定の一目標で時刻から軌道を覚える設定であり、未知の目標に合わせる目標条件付き模倣とはいえない。今回の比較では観測を変えていない。複数目標では目標特徴と履歴を別条件として検証する必要がある。", "",
+               "## 5. 検証・再現・成果物", "",
+               "[issue10_validation.txt](issue10_validation.txt) の36テストが成功。旧C++との回帰、RK4・遅延・分割積分、異常終了に加え、oracle/無音/DC/誤周波数の順序、正しい無音・雑音、ゲイン・過大音量・音節時刻、目標マスクの不変性、因果prefix、frameの一度だけの割当て、末尾重み、奇数長窓のpadding診断、割引報酬と全体の一致、baselineの波形と報酬不変、表示設定からの独立性を確認した。", "",
+-              f"保存成果物も再計算した。{verification['runs']}本、訓練合計{verification['training_steps']:,}step、評価合計{verification['evaluation_steps']:,}step。旧誤差の再計算との差最大{verification['max_legacy_recalculation_difference']:.3g}、alignedの割引returnと全体損失との差最大{verification['max_aligned_return_difference']:.3g}。目標ハッシュ・2自由度・予算・評価回数の一致を [verification.json](../results/issue10/verification.json) に記録。DEの探索9450stepと固定方策の評価等はこの訓練合計へ含めない。", "",
+-              "物理方程式・RK4・dt=1e−7・遅延、`acoustics.py` と表示関数は基準コミットから変更していない。[provenance.json](../results/issue10/provenance.json) にコードと設定のSHA256・基準commitを保存した。図はε_l, ε_r, p_s, f_e,l, f_e,rを使用。表示は10 MHzへリサンプル、Blackman–Harris、245760/184320、gray_r、[-50,-20] dB、0–10 kHz、端を除いた0.012288–0.331776秒を維持する。解析窓・因果報酬と表示窓は別用途として区別する。", "",
++              f"保存成果物も再計算した。{verification['runs']}本、訓練合計{verification['training_steps']:,}step、評価合計{verification['evaluation_steps']:,}step。旧誤差の再計算との差最大{verification['max_legacy_recalculation_difference']:.3g}、alignedの割引returnと全体損失との差最大{verification['max_aligned_return_difference']:.3g}。目標ハッシュ・2自由度・予算・評価回数の一致を [verification.json](../results/Phase1/CaseA/reward_diagnostics/verification.json) に記録。DEの探索9450stepと固定方策の評価等はこの訓練合計へ含めない。", "",
++              "物理方程式・RK4・dt=1e−7・遅延、`acoustics.py` と表示関数は基準コミットから変更していない。[provenance.json](../results/Phase1/CaseA/reward_diagnostics/provenance.json) にコードと設定のSHA256・基準commitを保存した。図はε_l, ε_r, p_s, f_e,l, f_e,rを使用。表示は10 MHzへリサンプル、Blackman–Harris、245760/184320、gray_r、[-50,-20] dB、0–10 kHz、端を除いた0.012288–0.331776秒を維持する。解析窓・因果報酬と表示窓は別用途として区別する。", "",
+               "```bash", "export MPLCONFIGDIR=/tmp/birdsong-mpl",
+               "Deeplearning/.venv/bin/python -m Deeplearning.issue10 all",
+               "Deeplearning/.venv/bin/python -m unittest discover -s Deeplearning/tests -v",
+diff --git a/Deeplearning/issue11.py b/Deeplearning/issue11.py
+index 319e58d..b1ce6b1 100644
+--- a/Deeplearning/issue11.py
++++ b/Deeplearning/issue11.py
+@@ -1,4 +1,5 @@
+ """Local-only, matched Phase 2 comparison; never publish this runner's output."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor
+ from dataclasses import asdict
+@@ -59,7 +60,7 @@ def prepare(config, target_path, output, *, permission_confirmed):
+     reference = replay(np.tile(DEFAULT_CONTROLS, (35, 1)), "A")["audio"]
+     gain = rms(reference)/rms(target)
+     band_reference = rms(band_audio(reference/gain)[5000:])
+-    model_hashes = {p: sha((ROOT/p).read_bytes()) for p in CORE_FILES}
++    model_hashes = {p: sha((resolve_result_path(ROOT/p)).read_bytes()) for p in CORE_FILES}
+     expected = dict(experiment=config, preprocessing=metadata, target_sha256=sha(target.tobytes()),
+                     source_sha256=sha(Path(target_path).read_bytes()), output_gain=gain,
+                     reference_band_rms=band_reference, shared_loss_scale=max(float(abs(target).max()), 1e-8),
+@@ -202,7 +203,7 @@ def train(output):
+     protocol = json_read(output/"protocol.json")
+     config = protocol["experiment"]
+     validate_protocol(config)
+-    current_hashes = {p: sha((ROOT/p).read_bytes()) for p in CORE_FILES}
++    current_hashes = {p: sha((resolve_result_path(ROOT/p)).read_bytes()) for p in CORE_FILES}
+     if current_hashes != protocol["core_sha256"]:
+         raise ValueError("Core source changed since preparation; use a new private experiment directory")
+     with np.load(output/"target.npz", allow_pickle=False) as data:
+diff --git a/Deeplearning/issue11_report.py b/Deeplearning/issue11_report.py
+index 4fb6bc8..068753b 100644
+--- a/Deeplearning/issue11_report.py
++++ b/Deeplearning/issue11_report.py
+@@ -1,4 +1,5 @@
+ """Private-only Phase 2 report and paired figures; no public result export."""
++from .result_paths import resolve as resolve_result_path
+ import csv
+ from dataclasses import asdict
+ import hashlib
+@@ -52,7 +53,7 @@ def activity_at_ratio(frames, ratio=.1):
+ 
+ def collect(output):
+     protocol = json_read(output/"protocol.json")
+-    current_hashes = {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in CORE_FILES}
++    current_hashes = {p: hashlib.sha256((resolve_result_path(ROOT/p)).read_bytes()).hexdigest() for p in CORE_FILES}
+     if current_hashes != protocol["core_sha256"]:
+         raise ValueError("Core source no longer matches this recording experiment")
+     config = protocol["experiment"]
+@@ -154,7 +155,7 @@ def collect(output):
+     unchanged = {}
+     for name in ("model.py", "native/model.cpp", "native/reference.cpp", "model_env.py", "acoustics.py", "objectives.py", "plotting.py"):
+         original = subprocess.check_output(["git", "show", f"{protocol['base_commit']}:Deeplearning/{name}"], cwd=ROOT)
+-        unchanged[name] = original == (ROOT/name).read_bytes()
++        unchanged[name] = original == (resolve_result_path(ROOT/name)).read_bytes()
+     assert all(unchanged.values())
+     write_csv(output/"per_seed.csv", csv_rows)
+     write_csv(output/"paired_differences.csv", pairs)
+diff --git a/Deeplearning/issue12.py b/Deeplearning/issue12.py
+index 4a15c57..c09707e 100644
+--- a/Deeplearning/issue12.py
++++ b/Deeplearning/issue12.py
+@@ -1,4 +1,5 @@
+ """Read-only offline diagnosis of Issue 11; recording results stay private."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ from dataclasses import asdict
+@@ -82,7 +83,7 @@ def prepare(source, output, config):
+     if original.exists() and read(original) != before:
+         raise ValueError("Issue 11 source differs from the original offline snapshot")
+     write(original, before)
+-    core = {name: sha_file(ROOT/name) for name in CORE}
++    core = {name: sha_file(resolve_result_path(ROOT/name)) for name in CORE}
+     if (output/"config.json").exists() and read(output/"config.json") != config:
+         raise ValueError("Diagnostic settings changed; use a fresh private output")
+     write(output/"config.json", config)
+@@ -101,7 +102,7 @@ def verify_unchanged(source, output):
+     after = manifest(source)
+     if before != after:
+         raise AssertionError("Issue 11 input files changed during offline diagnosis")
+-    core = {name: sha_file(ROOT/name) for name in CORE}
++    core = {name: sha_file(resolve_result_path(ROOT/name)) for name in CORE}
+     if core != read(output/"core_before.json"):
+         raise AssertionError("Original model/reward/display code changed")
+     write(output/"source_integrity.json", dict(content_unchanged=True, files=len(after), core_unchanged=True,
+@@ -452,7 +453,7 @@ def synthetic_fixtures():
+ def synthetic_audit(config):
+     # This public export has no user-supplied waveform argument and creates all
+     # inputs mathematically. Recording data cannot flow into this branch.
+-    out = ROOT/"results/issue12_synthetic"
++    out = ROOT/"results/reference/activity_mask"
+     out.mkdir(parents=True, exist_ok=True)
+     scores, families = [], {}
+     for name, (target, generated) in synthetic_fixtures().items():
+diff --git a/Deeplearning/issue12_report.py b/Deeplearning/issue12_report.py
+index 918a03b..5c84092 100644
+--- a/Deeplearning/issue12_report.py
++++ b/Deeplearning/issue12_report.py
+@@ -197,7 +197,7 @@ def main(source, output):
+     lines += ["左右x/yの端点、全積分点のmotion_mean/std、発声持続の診断は元の保存値を保持した。Case Bの強制外力値から厳密な振動停止や生体の閉鎖を確定しない。Phase 1は既知制御でモデル自身の音声を作る2制御課題、Phase 2は未知の実録音・3/4/5制御・フィルタとゲインの差を含む。時刻/前行動/現在状態しか観測せず、遅延履歴と目標特徴は未観測。Phase 1の未収束は学習上の問題を残すが、Phase 2のモデル表現限界を確定する証拠ではない。", "",
+               "## 検証と再現", "",
+               "[score_verification.json](score_verification.json) で旧全体誤差・既定balanced・保存frame_partsを照合。各領域の時間重み付き成分を合計すると既定全体損失へ戻る。元Issue #11の全ファイル集合とSHA256、元の物理・報酬・表示コードの前後一致は [source_integrity.json](source_integrity.json)。既存の学習重みや音声も含め、元フォルダへ書き込んでいない。", "",
+-              "録音を使わないゼロ・有声・雑音・弱音・誤発声・タイミング・マスク差のテストと既存回帰56件が成功した。既存回帰には合成入力の短い学習API異常終了テストがあり、本Issueの追加RL実験とは区別する。公開可能な合成固定波形と診断表は `Deeplearning/results/issue12_synthetic/`、合成テストログは `Deeplearning/reports/issue12_validation.txt`。高い閾値・エネルギー重みで弱い実発声の欠落が軽く採点され得ることも説明に含める。", "",
++              "録音を使わないゼロ・有声・雑音・弱音・誤発声・タイミング・マスク差のテストと既存回帰56件が成功した。既存回帰には合成入力の短い学習API異常終了テストがあり、本Issueの追加RL実験とは区別する。公開可能な合成固定波形と診断表は `Deeplearning/results/reference/activity_mask/`、合成テストログは `Deeplearning/reports/issue12_validation.txt`。高い閾値・エネルギー重みで弱い実発声の欠落が軽く採点され得ることも説明に含める。", "",
+               "```bash", "export MPLCONFIGDIR=/tmp/birdsong-mpl", "export OPENBLAS_NUM_THREADS=1", "export OMP_NUM_THREADS=1",
+               "Deeplearning/.venv/bin/python -m Deeplearning.issue12 ab",
+               "Deeplearning/.venv/bin/python -m Deeplearning.issue12 controls",
+diff --git a/Deeplearning/issue13.py b/Deeplearning/issue13.py
+index 0ed661b..74b9568 100644
+--- a/Deeplearning/issue13.py
++++ b/Deeplearning/issue13.py
+@@ -4,6 +4,7 @@ Reuse the original physics, objective, policy settings and pre-update evaluation
+ timing. Only the evaluation density and diagnostic retention change in 1D.
+ The 2D condition adds pressure while retaining one decision per 0.35 s episode.
+ """
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor
+ from datetime import datetime, timezone
+@@ -28,7 +29,7 @@ from .phase1_validation_env import DURATION, RATE, TARGET_CONTROLS
+ 
+ 
+ CONFIG = ROOT / "configs/issue13_reproduction.json"
+-DEFAULT_OUTPUT = ROOT / "results/phase1_constant_020s/history/phase1_issue13_20261107"
++DEFAULT_OUTPUT = ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_issue13_20261107"
+ WORKFLOW = "issue13_constant_control_reproduction"
+ INDICES = {"constant_1d": (0,), "constant_2d": (0, 2)}
+ 
+@@ -45,7 +46,7 @@ def source_hashes():
+     names = ("issue13.py", "issue13_env.py", "configs/issue13_reproduction.json",
+              "phase1_validation.py", "phase1_validation_env.py", "model.py", "model_env.py",
+              "acoustics.py", "objectives.py", "native/model.cpp", "requirements-lock.txt")
+-    return {name: digest(ROOT / name) for name in names}
++    return {name: digest(resolve_result_path(ROOT / name)) for name in names}
+ 
+ 
+ def protected_files(output):
+@@ -79,7 +80,7 @@ def verify_protected(output):
+ 
+ def load_ready(output):
+     manifest = json.loads((output / "manifest.json").read_text())
+-    if manifest.get("workflow") != WORKFLOW or manifest["source_hashes"] != source_hashes():
++    if manifest.get("workflow") != WORKFLOW or not source_hashes_match(manifest["source_hashes"], source_hashes()):
+         raise RuntimeError("Computation source/settings changed; use a new experiment directory")
+     if not json.loads((output / "diagnostics/oracle_gate.json").read_text())["passed"]:
+         raise RuntimeError("Oracle gate did not pass")
+@@ -137,7 +138,7 @@ def prepare(output, settings):
+     for name in manifest["source_hashes"]:
+         destination = output / "source_snapshot" / name
+         destination.parent.mkdir(parents=True, exist_ok=True)
+-        shutil.copy2(ROOT / name, destination)
++        shutil.copy2(resolve_result_path(ROOT / name), destination)
+     oracles = []
+     for name, indices in INDICES.items():
+         for dtype in (np.float64, np.float32):
+diff --git a/Deeplearning/issue13_audit.py b/Deeplearning/issue13_audit.py
+index 0fb4ab7..81b84b7 100644
+--- a/Deeplearning/issue13_audit.py
++++ b/Deeplearning/issue13_audit.py
+@@ -233,7 +233,7 @@ class Auditor:
+                    "frozen_settings", manifest_path, "identical frozen source configuration", settings)
+         self.check(settings == self.read_json(self.output / "config.json"),
+                    "copied_settings", self.output / "config.json", settings, None)
+-        historical_manifest = self.read_json(ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json")
++        historical_manifest = self.read_json(ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json")
+         unchanged = ("warmup_episodes", "learning_rate", "batch_size", "net_arch", "gamma",
+                      "sac_ent_coef", "td3_noise_std", "de_population", "de_mutation", "de_recombination")
+         for key in unchanged:
+@@ -254,7 +254,7 @@ class Auditor:
+         self.array(controls, np.tile(TARGET_CONTROLS, (35, 1)), target_path / "controls")
+         self.scalar(rate, 50000, target_path / "rate")
+         self.objective = BalancedObjective(target, rate, scale=max(float(abs(target).max()), 1e-8))
+-        historical_target = ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/target.npz"
++        historical_target = ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/target.npz"
+         self.check(_digest(target_path) == _digest(historical_target), "historical_target_hash", target_path,
+                    _digest(historical_target), _digest(target_path))
+         before_path = self.output / "protected_before.json"
+@@ -390,7 +390,7 @@ class Auditor:
+             self.policy_prediction(path.parent / "agent.zip", curve[-1], condition, method)
+             self.policy_prediction(path.parent / "best_observed/agent.zip", best_point, condition, method)
+         if condition == "constant_1d":
+-            reference_path = ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031/runs/A" / method / f"seed_{seed}" / "curve.json"
++            reference_path = ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A" / method / f"seed_{seed}" / "curve.json"
+             reference = self.read_json(reference_path)
+             lookup = {point["episodes"]: point for point in curve}
+             if isinstance(reference, list) and reference:
+diff --git a/Deeplearning/issue14.py b/Deeplearning/issue14.py
+index 798bbd4..ac07740 100644
+--- a/Deeplearning/issue14.py
++++ b/Deeplearning/issue14.py
+@@ -4,6 +4,7 @@ Only training-goal randomization changes. Keep callback evaluations at their
+ legacy pre-update timing, and publish a separate post-final-update endpoint.
+ Never reuse or overwrite an existing experiment directory.
+ """
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from dataclasses import asdict
+ from datetime import datetime, timezone
+@@ -34,7 +35,7 @@ from .sine_env import SineConfig, SineEnv, oscillate
+ 
+ ROOT = Path(__file__).resolve().parent
+ CONFIG = ROOT / "configs/issue14_fixed_target.json"
+-DEFAULT_OUTPUT = ROOT / "results/phase0_fixed_target_20261108"
++DEFAULT_OUTPUT = ROOT / "results/Phase0/synthetic"
+ WORKFLOW = "issue14_phase0_fixed_target"
+ 
+ 
+@@ -423,7 +424,7 @@ def run(output, settings, workers=1):
+     write_json(output/"config.json", settings)
+     sources = ("issue14.py", "sine_env.py", "experiments.py", "acoustics.py", "plotting.py",
+                "configs/phase0.json", "configs/issue14_fixed_target.json", "requirements-lock.txt")
+-    source_hashes = {name: digest(ROOT/name) for name in sources}
++    source_hashes = {name: digest(resolve_result_path(ROOT/name)) for name in sources}
+     (output/"source_changes.patch").write_text(subprocess.check_output(["git", "diff", "HEAD", "--", *sources], cwd=ROOT, text=True))
+     oracle = diagnostics(output, settings)
+     manifest = dict(workflow=WORKFLOW, issue_url="https://github.com/tatsukawa0353/Birdsong_tatsukawa/issues/14",
+diff --git a/Deeplearning/issue14_audit.py b/Deeplearning/issue14_audit.py
+index 9f053ec..f3d2b6e 100644
+--- a/Deeplearning/issue14_audit.py
++++ b/Deeplearning/issue14_audit.py
+@@ -23,7 +23,7 @@ from .sine_env import SineConfig, SineEnv
+ 
+ 
+ ROOT = Path(__file__).resolve().parent
+-DEFAULT_OUTPUT = ROOT / "results/phase0_fixed_target_20261108"
++DEFAULT_OUTPUT = ROOT / "results/Phase0/synthetic"
+ ALGORITHMS = ("PPO", "TD3", "SAC")
+ SEEDS = (0, 1, 2)
+ 
+diff --git a/Deeplearning/issue14_transaction.py b/Deeplearning/issue14_transaction.py
+index f5235ac..4842c78 100644
+--- a/Deeplearning/issue14_transaction.py
++++ b/Deeplearning/issue14_transaction.py
+@@ -1,4 +1,5 @@
+ """Stage Issue 14, validate old Git recovery, and publish only audited results."""
++from .result_paths import resolve as resolve_result_path
+ from datetime import datetime, timezone
+ import hashlib
+ import json
+@@ -42,7 +43,7 @@ def replace_results(settings, workers):
+     target = DEFAULT_OUTPUT.resolve()
+     if (target/"reward_ablation").exists() or (target/"legacy_random_target").exists():
+         raise RuntimeError("Integrated Phase 0 contains unique Issue 15/legacy data; do not replace it through Issue 14")
+-    if target != ROOT/"results/phase0_fixed_target_20261108" or target.is_symlink():
++    if target != ROOT/"results/Phase0/synthetic" or target.is_symlink():
+         raise ValueError("Only the canonical Issue 14 directory may be replaced")
+     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+     completed_path = target/"completion_verification.json"
+@@ -65,7 +66,7 @@ def replace_results(settings, workers):
+         inventory = old_inventory(commit, target)
+         recovery = dict(commit_sha=commit, path=str(target.relative_to(ROOT.parent)), tracked_files=inventory,
+                         untracked_files=[], verified_git_contents=True,
+-                        restore_command=f"git restore --source={commit} --worktree -- Deeplearning/results/phase0_fixed_target_20261108",
++                        restore_command=f"git restore --source={commit} --worktree -- Deeplearning/results/Phase0/synthetic",
+                         note="Restores tracked old files; remove only extra new files if fully reverting. No Git history is rewritten.")
+         legacy = []
+         for name in ("PPO", "TD3", "SAC"):
+@@ -101,7 +102,7 @@ def replace_results(settings, workers):
+     from .issue14_report import generate_report
+     manifest = json.loads((stage/"manifest.json").read_text())
+     for filename in ("issue14_transaction.py", "issue14_audit.py", "issue14_report.py", "tests/test_issue14.py"):
+-        manifest["source_hashes"][filename] = digest(ROOT/filename)
++        manifest["source_hashes"][filename] = digest(resolve_result_path(ROOT/filename))
+     manifest["final_output"] = str(target.relative_to(ROOT.parent))
+     manifest["previous_results_commit"] = recovery["commit_sha"]
+     write_json(stage/"manifest.json", manifest)
+diff --git a/Deeplearning/issue15.py b/Deeplearning/issue15.py
+index 7b59f08..16eac53 100644
+--- a/Deeplearning/issue15.py
++++ b/Deeplearning/issue15.py
+@@ -1,4 +1,5 @@
+ """Issue 15: analyze saved A, train B/C, audit, then integrate Phase 0."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor, as_completed
+ from datetime import datetime
+@@ -18,7 +19,7 @@ from zoneinfo import ZoneInfo
+ from .issue15_analysis import analyze, write_json
+ 
+ ROOT = Path(__file__).resolve().parent
+-PARENT = ROOT/"results/phase0_fixed_target_20261108"
++PARENT = ROOT/"results/Phase0/synthetic"
+ LEGACY = ROOT/"results/phase0"
+ CONDITIONS = ("spectral_only", "envelope_only")
+ 
+@@ -65,7 +66,7 @@ def execute(workers=6):
+     protected = {}
+     for filename in subprocess.check_output(["git","ls-files","-z"],cwd=ROOT,text=True).split("\0"):
+         if not filename: continue
+-        p = ROOT/filename
++        p = resolve_result_path(ROOT/filename)
+         if filename.startswith("results/") and not p.is_relative_to(PARENT) and not p.is_relative_to(LEGACY):
+             if p.is_file(): protected[filename] = sha(p)
+     write_json(output/"control_before.json",control)
+@@ -93,7 +94,7 @@ def execute(workers=6):
+     provenance=dict(workflow="issue15_reward_ablation",branch=branch,control_commit=commit,
+         started_at=datetime.now(ZoneInfo("Asia/Tokyo")).isoformat(),workers=workers,
+         base_config=base,package_versions=packages,package_differences_from_control=differences,
+-        training_source_sha256={p:sha(ROOT/p) for p in sources},control_retrained=False,
++        training_source_sha256={p:sha(resolve_result_path(ROOT/p)) for p in sources},control_retrained=False,
+         common_evaluation="combined full 0.35 s distance and f/A MAE; deterministic separate env",
+         source_code_difference="SineConfig reward selector and info fields; baseline branch retains original total exactly",
+         weight_tuning_preregistered=False,reproducible_command="PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15 --workers 6")
+diff --git a/Deeplearning/issue15_integration.py b/Deeplearning/issue15_integration.py
+index 035f0a0..a14af27 100644
+--- a/Deeplearning/issue15_integration.py
++++ b/Deeplearning/issue15_integration.py
+@@ -1,4 +1,5 @@
+ """Publish audited B/C and relocate every legacy byte before removing old path."""
++from .result_paths import resolve as resolve_result_path
+ from datetime import datetime
+ import hashlib
+ import json
+@@ -14,7 +15,7 @@ from .issue15_analysis import write_json
+ 
+ def integrate(output,parent,legacy):
+     output,parent,legacy=map(lambda p:Path(p).resolve(),(output,parent,legacy))
+-    expected_parent=ROOT/"results/phase0_fixed_target_20261108"
++    expected_parent=ROOT/"results/Phase0/synthetic"
+     if parent!=expected_parent or legacy!=ROOT/"results/phase0":
+         raise ValueError("Integration is limited to the two declared Phase 0 directories")
+     if output.parent.parent!=ROOT/"results/.issue15-work" or output.name!="artifacts":
+@@ -31,7 +32,7 @@ def integrate(output,parent,legacy):
+     source_names=("issue15.py","issue15_analysis.py","issue15_audit.py","issue15_report.py","issue15_integration.py",
+         "issue14.py","issue14_audit.py","issue14_report.py","issue14_transaction.py","sine_env.py","experiments.py",
+         "legacy_paths.py","redraw.py","run.py","make_report.py","tests/test_issue15.py","tests/test_phase0_paths.py")
+-    manifest["published_source_sha256"]={name:sha(ROOT/name) for name in source_names}
++    manifest["published_source_sha256"]={name:sha(resolve_result_path(ROOT/name)) for name in source_names}
+     manifest["diagnostic_logging_difference"]="B/C record per-step reward components; no new RNG operations or learner hyperparameters"
+     manifest["path_maintenance_difference"]="experiments.py CLI default relocated; imported learning-source prefix exactly unchanged"
+     patch=subprocess.check_output(["git","diff",manifest["control_commit"],"--",*source_names],cwd=ROOT,text=True)
+@@ -44,7 +45,7 @@ def integrate(output,parent,legacy):
+     write_json(output/"manifest.json",manifest)
+     (output/"source_changes.patch").write_text(patch)
+     for name,value in json.loads((output/"protected_before.json").read_text()).items():
+-        if not (ROOT/name).is_file() or sha(ROOT/name)!=value:
++        if not (resolve_result_path(ROOT/name)).is_file() or sha(resolve_result_path(ROOT/name))!=value:
+             raise RuntimeError(f"An unrelated result changed: {name}")
+     destination=parent/"legacy_random_target"
+     ablation=parent/"reward_ablation"
+@@ -90,7 +91,7 @@ def integrate(output,parent,legacy):
+             if sha(path)!=value["sha256"]:
+                 raise RuntimeError(f"A changed during integration: {name}")
+         for name,value in json.loads((ablation/"protected_before.json").read_text()).items():
+-            if sha(ROOT/name)!=value:
++            if sha(resolve_result_path(ROOT/name))!=value:
+                 raise RuntimeError(f"Unrelated result changed: {name}")
+         if inventory(legacy)!=migration["files"]:
+             raise RuntimeError("Old directory gained unknown files; preserve it")
+diff --git a/Deeplearning/issue15_report.py b/Deeplearning/issue15_report.py
+index b4d0cee..38cb445 100644
+--- a/Deeplearning/issue15_report.py
++++ b/Deeplearning/issue15_report.py
+@@ -15,7 +15,7 @@ from .issue15_analysis import write_json, write_csv
+ from .issue14_report import _spectrogram, _control_plot, COLORS as ALGORITHM_COLORS
+ 
+ ROOT=Path(__file__).resolve().parent
+-PARENT=ROOT/"results/phase0_fixed_target_20261108"
++PARENT=ROOT/"results/Phase0/synthetic"
+ CONDITIONS=("combined","spectral_only","envelope_only")
+ ALGORITHMS=("PPO","TD3","SAC")
+ COLORS={"combined":"#0072B2","spectral_only":"#009E73","envelope_only":"#D55E00"}
+diff --git a/Deeplearning/issue15_weighted.py b/Deeplearning/issue15_weighted.py
+index b6fb45a..bc7e528 100644
+--- a/Deeplearning/issue15_weighted.py
++++ b/Deeplearning/issue15_weighted.py
+@@ -1,4 +1,5 @@
+ """Issue #15 follow-up: preregistered lambda=0.5 ablation, no overwrite of A/B/C."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ import hashlib
+@@ -20,7 +21,7 @@ from .issue15_analysis import write_json
+ from .issue15_report import _spectrogram, controls_with_clear_legend
+ 
+ ROOT = Path(__file__).resolve().parent
+-PARENT = ROOT / "results" / "phase0_fixed_target_20261108"
++PARENT = ROOT / "results/Phase0/synthetic"
+ ABLATION = PARENT / "reward_ablation"
+ DESTINATION = ABLATION / "weighted_lambda_0p5"
+ WEIGHT = 0.5
+@@ -242,7 +243,7 @@ def run(workers=6):
+         "parent_baseline_comparison_sha256": original_hash,
+         "training_reward": "negative local E_spec plus 0.5 * local E_env",
+         "shared_evaluation": "0.35 s combined E_spec + E_env and frequency/amplitude MAE",
+-        "source_sha256": {name: digest(ROOT / name) for name in SOURCES},
++        "source_sha256": {name: digest(resolve_result_path(ROOT / name)) for name in SOURCES},
+         "versions": {key: importlib.metadata.version(key)
+                      for key in ("numpy", "scipy", "torch", "stable-baselines3", "gymnasium")},
+         "baseline_retrained": False,
+diff --git a/Deeplearning/issue16.py b/Deeplearning/issue16.py
+index 64d74ab..4e7ae6c 100644
+--- a/Deeplearning/issue16.py
++++ b/Deeplearning/issue16.py
+@@ -3,6 +3,7 @@
+ Only the six 1e-4 runs are trained. The 3e-4 cohort is read, never redrawn.
+ Use --prepare, --train, --finish separately to retain reviewable gates/artifacts.
+ """
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor, as_completed
+ from copy import deepcopy
+@@ -22,7 +23,7 @@ from .issue14_audit import Auditor
+ from .issue15_analysis import write_json, write_csv
+ 
+ ROOT = Path(__file__).resolve().parent
+-BASE = ROOT / 'results/phase0_fixed_target_20261108/reward_ablation/weighted_lambda_0p5'
++BASE = ROOT / 'results/Phase0/synthetic/reward_ablation/weighted_lambda_0p5'
+ DEST = BASE.parent / 'learning_rate_comparison'
+ WORK = ROOT / '.issue16-work/artifacts'
+ ALGORITHMS, SEEDS = ('TD3', 'SAC'), (0, 1, 2)
+@@ -40,7 +41,7 @@ def protected_snapshot():
+ 
+ def verify_protected(output):
+     entries = json.loads((output/'protected_before.json').read_text())
+-    changed = [name for name, sha in entries.items() if not (ROOT/name).is_file() or digest(ROOT/name) != sha]
++    changed = [name for name, sha in entries.items() if not (resolve_result_path(ROOT/name)).is_file() or digest(resolve_result_path(ROOT/name)) != sha]
+     if changed:
+         raise RuntimeError(f'Existing results changed: {changed}')
+     return len(entries)
+@@ -53,7 +54,7 @@ def prepare():
+     old = json.loads((BASE/'manifest.json').read_text())
+     assert base['learning_rate'] == .0003 and base['steps'] == 102400
+     assert base['eval_interval'] == 2048 and base['reward_envelope_weight'] == .5
+-    hashes = {name: digest(ROOT/name) for name in SCIENCE}
++    hashes = {name: digest(resolve_result_path(ROOT/name)) for name in SCIENCE}
+     assert hashes == {name: old['source_sha256'][name] for name in SCIENCE}
+     versions = {name: importlib.metadata.version(name) for name in old['versions']}
+     assert versions == old['versions']
+@@ -93,7 +94,7 @@ def prepare():
+ def train(workers):
+     settings = json.loads((WORK/'config.json').read_text())
+     manifest = json.loads((WORK/'manifest.json').read_text())
+-    assert manifest['source_sha256'] == {name:digest(ROOT/name) for name in SCIENCE}
++    assert manifest['source_sha256'] == {name:digest(resolve_result_path(ROOT/name)) for name in SCIENCE}
+     assert json.loads((WORK/'smoke.json').read_text())['passed']
+     started = time.perf_counter()
+     summaries = []
+diff --git a/Deeplearning/issue17.py b/Deeplearning/issue17.py
+index 4c6a2fb..a548602 100644
+--- a/Deeplearning/issue17.py
++++ b/Deeplearning/issue17.py
+@@ -3,6 +3,7 @@
+ Staged preparation (including a physical gate), 1D/2D then gated 3D, independent
+ audit/report, and atomic publication. No legacy experiment file is modified.
+ """
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor, as_completed
+ from datetime import datetime, timezone
+@@ -27,7 +28,7 @@ from .model import LIBRARY, LOW, HIGH
+ ROOT = Path(__file__).resolve().parent
+ CONFIG = ROOT/'configs/issue17_constant020.json'
+ WORK = ROOT/'.issue17-work/artifacts4096'
+-DEST = ROOT/'results/phase1_constant_020s'
++DEST = ROOT/'results/Phase1/CaseA/parameter_dimension'
+ SOURCES = ('constant020_env.py','issue17.py','issue17_diagnostics.py','model.py','model_env.py',
+            'native/model.cpp','acoustics.py','configs/issue17_constant020.json','issue14.py','fixed_budget_de.py')
+ OLD_PHASE1 = ('phase1','phase1_extended','phase1_terminal_baselines',
+@@ -45,7 +46,7 @@ def run_specs(config):
+ 
+ 
+ def source_hashes():
+-    return {name:digest(ROOT/name) for name in SOURCES}
++    return {name:digest(resolve_result_path(ROOT/name)) for name in SOURCES}
+ 
+ 
+ def save_snapshot(folder, values, target, controls):
+@@ -75,7 +76,7 @@ def prepare():
+     inventory=protected_snapshot()
+     replaceable=lambda n:any(n.startswith('results/'+p+'/') for p in OLD_PHASE1)
+     write_json(WORK/'protected_before.json',{n:h for n,h in inventory.items() if not replaceable(n)})
+-    write_json(WORK/'phase1_inventory_before.json',{n:dict(sha256=h,bytes=(ROOT/n).stat().st_size)
++    write_json(WORK/'phase1_inventory_before.json',{n:dict(sha256=h,bytes=(resolve_result_path(ROOT/n)).stat().st_size)
+                for n,h in inventory.items() if replaceable(n)})
+     from .issue17_diagnostics import prepare_diagnostics
+     review=prepare_diagnostics(WORK/'diagnostics')
+@@ -106,7 +107,7 @@ def prepare():
+ 
+ def load_ready(output):
+     manifest=json.loads((output/'manifest.json').read_text())
+-    if manifest['source_sha256'] != source_hashes() or manifest['native_library_sha256'] != digest(LIBRARY):
++    if not source_hashes_match(manifest['source_sha256'], source_hashes()) or manifest['native_library_sha256'] != digest(LIBRARY):
+         raise RuntimeError('Frozen experiment sources or native library changed')
+     review=json.loads((output/'diagnostics/review.json').read_text())
+     if not review['passed']:
+diff --git a/Deeplearning/issue17_cleanup.py b/Deeplearning/issue17_cleanup.py
+index a566c7a..e3b076b 100644
+--- a/Deeplearning/issue17_cleanup.py
++++ b/Deeplearning/issue17_cleanup.py
+@@ -4,6 +4,7 @@ All new runs/audits/figures must pass before publish() replaces the pilot or
+ unlinks old generated files. Original Git history and historical audit records
+ retain their original meaning; no Phase 0 output is edited.
+ """
++from .result_paths import resolve as resolve_result_path
+ import json
+ import os
+ from pathlib import Path
+@@ -52,11 +53,11 @@ def review_references(output):
+         '-g','!results/**','-g','!reports/server_smoke_cleanup_20261113/**'],cwd=ROOT,text=True).splitlines()
+     references=[]
+     for name in files:
+-        text=(ROOT/name).read_text(errors='replace')
++        text=(resolve_result_path(ROOT/name)).read_text(errors='replace')
+         pattern=r'(?:Deeplearning/)?results/(phase1(?:_extended|_terminal_baselines|_validation_20261031|_issue13_20261107|_constant_020s)?)/([^\s\]\)\}\"\x27`<>;,]+)'
+         for match in re.finditer(pattern,text):
+             relative='results/'+match[1]+'/'+match[2].rstrip('.')
+-            target=ROOT/relative
++            target=resolve_result_path(ROOT/relative)
+             references.append(dict(source=name,line=text.count('\n',0,match.start())+1,
+                 path=relative,exists=target.exists(),is_file=target.is_file()))
+     write_json(Path(output)/'reference_review.json',dict(references=references))
+@@ -73,7 +74,7 @@ def plan_cleanup(output,*,refresh=False):
+     keep={};rows=[]
+     metadata={'manifest.json','config.json','summary.json','execution.json','execution_summary.json'}
+     for name,item in inventory.items():
+-        path=ROOT/name;relative=Path(name);experiment=relative.parts[1]
++        path=resolve_result_path(ROOT/name);relative=Path(name);experiment=relative.parts[1]
+         within=relative.relative_to(Path('results')/experiment)
+         is_pilot=experiment=='phase1_constant_020s'
+         if is_pilot:
+@@ -96,7 +97,7 @@ def plan_cleanup(output,*,refresh=False):
+         if retain:keep[name]=destination
+     history=output/'history';history.mkdir(exist_ok=True)
+     for name,destination in keep.items():
+-        source=checked_file(ROOT/name,ROOT/'results'/Path(name).parts[1])
++        source=checked_file(resolve_result_path(ROOT/name),ROOT/'results'/Path(name).parts[1])
+         if digest(source)!=inventory[name]['sha256']:raise RuntimeError(f'Old data changed: {source}')
+         target=output/destination;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
+ 
+@@ -108,16 +109,16 @@ def plan_cleanup(output,*,refresh=False):
+             bang,label,url=match.groups()
+             if '://' in url or url.startswith(('#','mailto:')):return match.group(0)
+             part,sep,anchor=url.partition('#')
+-            target=(ROOT/old_source).parent/part
++            target=(resolve_result_path(ROOT/old_source)).parent/part
+             target=Path(os.path.normpath(target))
+             if not target.is_relative_to(ROOT):return match.group(0)
+             relative=str(target.relative_to(ROOT))
+-            if not old_source.startswith('results/') and relative=='results/phase1_constant_020s/REPORT.md':
+-                link=os.path.relpath(DEST/'REPORT.md',(ROOT/new_source).parent)
++            if not old_source.startswith('results/') and relative=='results/Phase1/CaseA/parameter_dimension/REPORT.md':
++                link=os.path.relpath(DEST/'REPORT.md',(resolve_result_path(ROOT/new_source)).parent)
+             elif relative in inventory:
+                 if relative in keep:
+                     final=DEST/keep[relative]
+-                    link=os.path.relpath(final,(ROOT/new_source).parent)
++                    link=os.path.relpath(final,(resolve_result_path(ROOT/new_source)).parent)
+                 else:
+                     link=old_link(relative)
+                     if bang:
+@@ -125,11 +126,11 @@ def plan_cleanup(output,*,refresh=False):
+             elif target.is_dir() and any(name.startswith(relative+'/') for name in keep):
+                 experiment=Path(relative).parts[1]
+                 final=DEST/'history'/experiment/Path(relative).relative_to(Path('results')/experiment)
+-                link=os.path.relpath(final,(ROOT/new_source).parent)
++                link=os.path.relpath(final,(resolve_result_path(ROOT/new_source)).parent)
+             elif target.is_dir() and any(relative.startswith('results/'+name) for name in OLD_PHASE1):
+                 link=GITHUB+'/tree/'+git_head+'/Deeplearning/'+relative
+             elif target.exists():
+-                link=os.path.relpath(target,(ROOT/new_source).parent)
++                link=os.path.relpath(target,(resolve_result_path(ROOT/new_source)).parent)
+             else:return match.group(0)
+             return f'{bang}[{label}]({link}{sep}{anchor})'
+         return re.sub(r'(!?)\[([^\]]*)\]\(([^)]+)\)',substitute,text)
+@@ -138,7 +139,7 @@ def plan_cleanup(output,*,refresh=False):
+     # links are migrated, with a visible archival notice and original checksum.
+     for name,destination in keep.items():
+         if destination.suffix=='.md':
+-            original=(ROOT/name).read_text()
++            original=(resolve_result_path(ROOT/name)).read_text()
+             new_source=str((DEST/destination).relative_to(ROOT))
+             text=rewrite_markdown(original,name,new_source)
+             notice=('> 歴史資料（4096回の正本ではない）。元の実行条件・数値を保持。'
+@@ -150,7 +151,7 @@ def plan_cleanup(output,*,refresh=False):
+                          'phase1_validation_audit.py','run.py'))
+     for name in sorted(source_files):
+         if name.startswith('issue17') or name.startswith('results/'):continue
+-        path=ROOT/name
++        path=resolve_result_path(ROOT/name)
+         old=path.read_text();new=old
+         if path.suffix=='.md':new=rewrite_markdown(new,name,name)
+         else:
+@@ -165,8 +166,8 @@ def plan_cleanup(output,*,refresh=False):
+         for index in range(0,len(pieces),2):
+             for experiment in OLD_PHASE1:
+                 if experiment=='phase1_constant_020s':continue
+-                pieces[index]=pieces[index].replace('results/'+experiment+'/', 'results/phase1_constant_020s/history/'+experiment+'/')
+-                pieces[index]=pieces[index].replace('results/'+experiment+'"','results/phase1_constant_020s/history/'+experiment+'"')
++                pieces[index]=pieces[index].replace('results/'+experiment+'/', 'results/Phase1/CaseA/parameter_dimension/history/'+experiment+'/')
++                pieces[index]=pieces[index].replace('results/'+experiment+'"','results/Phase1/CaseA/parameter_dimension/history/'+experiment+'"')
+         new=''.join(pieces)
+         if name in ('issue13_audit.py','phase1_validation_audit.py'):
+             new=new.replace('    output = args.output.resolve()\n',
+@@ -175,7 +176,7 @@ def plan_cleanup(output,*,refresh=False):
+         if name=='run.py':
+             new=new.replace('    config = json.loads(config_path.read_text())',
+                 '    if args.phase == "phase1":\n'
+-                '        canonical = root / "results/phase1_constant_020s"\n'
++                '        canonical = root / "results/Phase1/CaseA/parameter_dimension"\n'
+                 '        if args.output is None:\n'
+                 '            parser.error("Use python -m Deeplearning.issue17 for current Phase 1; historical tasks require an explicit new --output below phase1_constant_020s/reproductions")\n'
+                 '        if not output.resolve().is_relative_to((canonical / "reproductions").resolve()) or output.exists():\n'
+@@ -183,9 +184,9 @@ def plan_cleanup(output,*,refresh=False):
+                 '    config = json.loads(config_path.read_text())')
+         if name=='README.md':
+             new=new.replace('4手法各3 seed×256候補','TD3/SACはλ=1/.5、DE/Randomはλ=1、各3 seed×4096候補（計54 run）')
+-            new=new.replace('γ=1・全区間報酬を使う。','γ=1・全区間報酬を使う。最初は [正本の索引](results/phase1_constant_020s/README.md) を読む。')
++            new=new.replace('γ=1・全区間報酬を使う。','γ=1・全区間報酬を使う。最初は [正本の索引](results/Phase1/CaseA/parameter_dimension/README.md) を読む。')
+             new=new.replace('Deeplearning/.venv-rl/bin/python -m Deeplearning.issue16 audit\n','')
+-            new+='\n旧Phase1は正本内の [history](results/phase1_constant_020s/history/README.md) に必要な歴史情報を集約した。旧監査のprotected_beforeは当時の記録で、現行の保存検証はIssue17の新監査に切り替える。Phase0の保存済み監査ログは改変しない。\n'
++            new+='\n旧Phase1は正本内の [history](results/Phase1/CaseA/parameter_dimension/history/README.md) に必要な歴史情報を集約した。旧監査のprotected_beforeは当時の記録で、現行の保存検証はIssue17の新監査に切り替える。Phase0の保存済み監査ログは改変しない。\n'
+         if new!=old:
+             updates.append(dict(path=name,original_sha256=digest(path),text=new))
+     write_json(output/'documentation_updates.json',updates)
+@@ -245,7 +246,7 @@ def publish(output,destination):
+     updates=json.loads((output/'documentation_updates.json').read_text())
+     verify_protected(output)
+     for update in updates:
+-        if digest(ROOT/update['path'])!=update['original_sha256']:
++        if digest(resolve_result_path(ROOT/update['path']))!=update['original_sha256']:
+             raise RuntimeError(f'Documentation changed concurrently: {update["path"]}')
+     inventory={r['path']:r for r in plan['entries']}
+     for experiment in OLD_PHASE1:
+@@ -258,7 +259,7 @@ def publish(output,destination):
+     # Validate every deletion before unlinking anything, including retained files
+     # whose exact bytes have already been copied into the audited new hierarchy.
+     for name,row in inventory.items():
+-        path=checked_file(ROOT/name,ROOT/'results'/Path(name).parts[1])
++        path=checked_file(resolve_result_path(ROOT/name),ROOT/'results'/Path(name).parts[1])
+         if digest(path)!=row['sha256']:raise RuntimeError(f'Changed after inventory: {path}')
+         if row['destination'] and digest(output/row['destination'])!=row['retained_sha256']:
+             raise RuntimeError(f'Historical copy failed verification: {row["destination"]}')
+@@ -269,7 +270,7 @@ def publish(output,destination):
+     except BaseException:
+         retired.rename(destination)
+         raise
+-    for update in updates:(ROOT/update['path']).write_text(update['text'])
++    for update in updates:(resolve_result_path(ROOT/update['path'])).write_text(update['text'])
+     removed=0
+     for name,row in inventory.items():
+         relative=Path(name);experiment=relative.parts[1]
+@@ -283,7 +284,7 @@ def publish(output,destination):
+         '検証してから置換/削除する','検証後に置換・削除を完了した'))
+     verified=verify_protected(destination)
+     write_json(destination/'reference_updates.json',[dict(path=u['path'],original_sha256=u['original_sha256'],
+-        current_sha256=digest(ROOT/u['path'])) for u in updates])
++        current_sha256=digest(resolve_result_path(ROOT/u['path']))) for u in updates])
+     (destination/'documentation_updates.json').unlink()
+     (destination/'phase1_inventory_before.json').unlink()
+     after_bytes=sum(p.stat().st_size for p in destination.rglob('*') if p.is_file())
+diff --git a/Deeplearning/issue17_comparison_figures.py b/Deeplearning/issue17_comparison_figures.py
+index 7faa5ea..7d43d01 100644
+--- a/Deeplearning/issue17_comparison_figures.py
++++ b/Deeplearning/issue17_comparison_figures.py
+@@ -19,8 +19,7 @@ LABELS={'TD3':'TD3','SAC':'SAC','DE':'DE','random_search':'Random Search'}
+ COLORS={'TD3':'#0072B2','SAC':'#D55E00','DE':'#009E73','random_search':'#CC79A7'}
+ STYLES={method:'-' for method in METHODS}
+ LINEWIDTH=4.0
+-STYLE={'path.simplify':False,'agg.path.chunksize':0,'axes.grid':False,
+-       'axes.labelsize':46,'xtick.labelsize':30,'ytick.labelsize':30}
++from .plot_style import STYLE, context
+ 
+ 
+ def array_hash(values):
+@@ -29,7 +28,7 @@ def array_hash(values):
+ 
+ def comparison_curve(trajectories,path,*,limits,average=False):
+     if set(trajectories)!=set(METHODS):raise ValueError('Exactly four methods required')
+-    with plt.style.context(['science','ieee','no-latex']),plt.rc_context(STYLE):
++    with context():
+         fig,ax=plt.subplots(figsize=(15,10))
+         lines={};metadata={};bands=[]
+         # Draw dense candidate trajectories first so deterministic policy
+diff --git a/Deeplearning/issue17_direct_weights.py b/Deeplearning/issue17_direct_weights.py
+index aac7d4c..6a8cecd 100644
+--- a/Deeplearning/issue17_direct_weights.py
++++ b/Deeplearning/issue17_direct_weights.py
+@@ -1,4 +1,5 @@
+ """Add only DE lambda=.5; rescore the saved Random pool. Never construct an RL agent."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ from datetime import datetime,timezone
+@@ -29,7 +30,7 @@ MUTABLE=('README.md','REPORT.md','comparison_aggregate.csv','comparison_per_seed
+ 
+ 
+ def current_sources():
+-    return {name:digest(ROOT/name) for name in NUMERICAL}
++    return {name:digest(resolve_result_path(ROOT/name)) for name in NUMERICAL}
+ 
+ 
+ def write_curve(path,records):
+@@ -70,7 +71,7 @@ def prepare():
+ 
+ def ready():
+     manifest=json.loads((WORK/'manifest.json').read_text())
+-    if manifest['numerical_sources']!=current_sources():raise RuntimeError('Extension numerical sources changed')
++    if not source_hashes_match(manifest['numerical_sources'], current_sources()):raise RuntimeError('Extension numerical sources changed')
+     base,target,controls=load_ready(DEST)
+     if digest(DEST/'manifest.json')!=manifest['base_manifest_sha256']:raise RuntimeError('Base manifest changed')
+     return base,target,controls
+diff --git a/Deeplearning/issue17_extension.py b/Deeplearning/issue17_extension.py
+index de876bf..ac114f9 100644
+--- a/Deeplearning/issue17_extension.py
++++ b/Deeplearning/issue17_extension.py
+@@ -95,7 +95,7 @@ def update_root_index():
+     position=text.find(marker)
+     if position>=0:
+         end=text.find('\n\n',position)
+-        text=text[:position]+('Issue #17は [4手法×2λの正本索引](results/phase1_constant_020s/README.md) を最初に確認する。\n'
++        text=text[:position]+('Issue #17は [4手法×2λの正本索引](results/Phase1/CaseA/parameter_dimension/README.md) を最初に確認する。\n'
+             '0.20秒・一定1D/2D/3D・4096候補。TD3/SACを再学習せずDE λ=.5を追加し、Random λ=.5は全保存候補を再評価した。\n'
+             '誤差図は同一次元・同一λの4手法をまとめた24枚へ統一。旧単独手法図は削除済み。')+text[end:]
+         p.write_text(text)
+diff --git a/Deeplearning/issue17_extension_audit.py b/Deeplearning/issue17_extension_audit.py
+index 935f309..9a56fc0 100644
+--- a/Deeplearning/issue17_extension_audit.py
++++ b/Deeplearning/issue17_extension_audit.py
+@@ -1,4 +1,5 @@
+ """Independent selection/reuse/new-DE audit; original54 runs remain immutable."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ import time
+@@ -16,7 +17,7 @@ from .issue17_extension_data import load_runs
+ 
+ def verify_preserved(evidence):
+     mapping=json.loads((evidence/'protected_before.json').read_text())
+-    changed=[p for p,h in mapping.items() if not (ROOT/p).is_file() or digest(ROOT/p)!=h]
++    changed=[p for p,h in mapping.items() if not (resolve_result_path(ROOT/p)).is_file() or digest(resolve_result_path(ROOT/p))!=h]
+     if changed:raise RuntimeError(f'Protected preexisting artifacts changed:{changed[:4]}')
+     return len(mapping)
+ 
+@@ -31,7 +32,7 @@ def audit(stage=WORK):
+     stage=Path(stage);evidence=stage if (stage/'manifest.json').exists() and stage!=DEST else EXTENSION
+     start=time.perf_counter();checks=0;errors=[];replays=[];accounts=[]
+     manifest=json.loads((evidence/'manifest.json').read_text())
+-    if manifest['numerical_sources']!=current_sources():raise RuntimeError('Extension numerical source changed')
++    if not source_hashes_match(manifest['numerical_sources'], current_sources()):raise RuntimeError('Extension numerical source changed')
+     base,target,controls=load_ready(DEST);runs=load_runs(stage)
+     def check(value,code,path):
+         nonlocal checks
+diff --git a/Deeplearning/issue17_visualization.py b/Deeplearning/issue17_visualization.py
+index a96157c..41358f1 100644
+--- a/Deeplearning/issue17_visualization.py
++++ b/Deeplearning/issue17_visualization.py
+@@ -1,4 +1,5 @@
+ """Issue17 display-only revision; reuse all Final/Selected waveforms and numbers."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from datetime import datetime,timezone
+ import json
+@@ -119,7 +120,7 @@ def publish():
+     for r in old:safe_unlink(DEST/r['path'],DEST,r['sha256'])
+     prior=json.loads((DEST/'figure_sources.json').read_text())
+     prior['images']=[r for r in prior['images'] if 'field' in r]+metadata
+-    prior['audio_view_renderer_sha256']={p:digest(ROOT/p) for p in ('acoustic_views.py','issue17_visualization.py')}
++    prior['audio_view_renderer_sha256']={p:digest(resolve_result_path(ROOT/p)) for p in ('acoustic_views.py','issue17_visualization.py')}
+     write_json(DEST/'figure_sources.json',prior)
+     for name in ('README.md','REPORT.md'):(WORK/name).replace(DEST/name)
+     (WORK/'deleted_images.txt').write_text('\n'.join(r['path'] for r in old)+'\n')
+diff --git a/Deeplearning/issue18_audit.py b/Deeplearning/issue18_audit.py
+index bdb4cee..af50263 100644
+--- a/Deeplearning/issue18_audit.py
++++ b/Deeplearning/issue18_audit.py
+@@ -1,4 +1,5 @@
+ """Independent budget/domain checks and saved-model reloads for Issue18."""
++from .result_paths import source_hashes_match
+ import argparse
+ import csv
+ from concurrent.futures import ProcessPoolExecutor
+@@ -59,7 +60,7 @@ def audit():
+     assert len(voiced)==702
+     assert min(1e7,float(np.ceil(1.5*maximum/1e5)*1e5))==manifest['settings']['domain_restriction']['restricted_f0_high']
+     checks+=4
+-    assert hashes()==manifest['range_adapter_source_sha256']
++    assert source_hashes_match(hashes(), manifest['range_adapter_source_sha256'])
+     assert digest(OUT/'domain_decision.json')==manifest['domain_decision_sha256']
+     oracle_env=DomainEnv((0,2,3),target,controls,f0_high=manifest['settings']['domain_restriction']['restricted_f0_high'])
+     oracles=[]
+diff --git a/Deeplearning/issue18_diagnostics.py b/Deeplearning/issue18_diagnostics.py
+index 1449259..f593986 100644
+--- a/Deeplearning/issue18_diagnostics.py
++++ b/Deeplearning/issue18_diagnostics.py
+@@ -17,7 +17,7 @@ from .issue15_analysis import write_json
+ from .issue16 import digest
+ from .model import LOW,HIGH
+ 
+-OUT=ROOT/'results/phase1_3d_domain_diagnostics'
++OUT=ROOT/'results/Phase1/CaseA/domain_diagnostics'
+ _ENV=None
+ 
+ 
+diff --git a/Deeplearning/issue18_report.py b/Deeplearning/issue18_report.py
+index ef665fb..214466d 100644
+--- a/Deeplearning/issue18_report.py
++++ b/Deeplearning/issue18_report.py
+@@ -282,7 +282,7 @@ Deeplearning/.venv-rl/bin/python -m Deeplearning.issue18_report
+         '- [Final/Selectedの各seed](comparison_per_seed.csv) / [平均±標本SD](comparison_aggregate.csv) / [制御値と目標差](parameter_errors.csv)\n'
+         '- [元の学習サンプルと方策評価](diagnostics/existing_history_summary.csv) / [発声・誤差地形](diagnostics/domain_grid.csv)\n'
+         '- [時間と回数](execution.json) / [独立再読み込み監査](audit.json) / [描画条件と出所](figure_sources.json)\n'
+-        '- [元の全域3Dを含むIssue17](../phase1_constant_020s/README.md)\n')
++        '- [元の全域3Dを含むIssue17](../parameter_dimension/README.md)\n')
+     write_json(OUT/'report_timing.json',dict(wall_s=time.perf_counter()-start,images=len(metadata)))
+     print('Issue18 report and figures complete',flush=True)
+ 
+diff --git a/Deeplearning/issue18_training.py b/Deeplearning/issue18_training.py
+index 8fad356..7912cd0 100644
+--- a/Deeplearning/issue18_training.py
++++ b/Deeplearning/issue18_training.py
+@@ -1,4 +1,5 @@
+ """Reuse the unmodified Issue17 learner in isolated child processes, new domain."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ from datetime import datetime,timezone
+@@ -41,7 +42,7 @@ def prepare():
+ 
+ def run_one(method,seed):
+     manifest=json.loads((OUT/'manifest.json').read_text())
+-    if hashes()!=manifest['range_adapter_source_sha256']:raise RuntimeError('Frozen range adapter changed')
++    if not source_hashes_match(hashes(), manifest['range_adapter_source_sha256']):raise RuntimeError('Frozen range adapter changed')
+     if digest(OUT/'domain_decision.json')!=manifest['domain_decision_sha256']:raise RuntimeError('Domain changed after preregistration')
+     # The substitution is confined to this spawned process. Original files and
+     # the base experiment are never mutated, and the learner code is identical.
+diff --git a/Deeplearning/issue19_audit.py b/Deeplearning/issue19_audit.py
+index dd169bd..fe42356 100644
+--- a/Deeplearning/issue19_audit.py
++++ b/Deeplearning/issue19_audit.py
+@@ -1,4 +1,5 @@
+ """Independent model reload, candidate accounting and original-data verification."""
++from .result_paths import resolve as resolve_result_path
+ import csv
+ import json
+ from pathlib import Path
+@@ -28,7 +29,7 @@ def audit():
+     previous = json.loads((BASE/'manifest.json').read_text())
+     for name, expected in previous['source_sha256'].items():
+         # Only the known stored-x0 revision is allowed in historical physics.
+-        if name != 'native/model.cpp': assert digest(ROOT/name) == expected, name
++        if name != 'native/model.cpp': assert digest(resolve_result_path(ROOT/name)) == expected, name
+     for weight in WEIGHTS:
+         for method in METHODS:
+             for seed in (0, 1, 2):
+@@ -140,7 +141,7 @@ def finalize():
+     failures = []; checked = 0
+     with (OUT/'protected_before.csv').open() as stream:
+         for row in csv.DictReader(stream):
+-            path = ROOT/row['path']
++            path = resolve_result_path(ROOT/row['path'])
+             if not path.is_file() or digest(path) != row['sha256']: failures.append(row['path'])
+             checked += 1
+     assert not failures, failures[:10]
+@@ -159,8 +160,8 @@ def finalize():
+         assert len(figures)==len(images)==8
+         for r in figures:assert digest(OUT/r['path'])==r['sha256']
+     for r in json.loads((OUT/'endpoint_sources.json').read_text()) if (OUT/'endpoint_sources.json').exists() else []:
+-        assert digest(ROOT/r['audio_path'])==r['audio_sha256']
+-        if r['model_path']:assert digest(ROOT/r['model_path'])==r['model_sha256']
++        assert digest(resolve_result_path(ROOT/r['audio_path']))==r['audio_sha256']
++        if r['model_path']:assert digest(resolve_result_path(ROOT/r['model_path']))==r['model_sha256']
+     csv_rows=0
+     if (OUT/'new_candidate_metrics.csv.gz').exists():
+         trials={}
+diff --git a/Deeplearning/issue19_data.py b/Deeplearning/issue19_data.py
+index bc96ce4..7cc2587 100644
+--- a/Deeplearning/issue19_data.py
++++ b/Deeplearning/issue19_data.py
+@@ -1,4 +1,5 @@
+ """Immutable inputs and compact records for the restricted-3D weight study."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import gzip
+ import json
+ from pathlib import Path
+@@ -13,8 +14,8 @@ from .issue17_selection import selection_curve
+ from .issue15_analysis import write_json
+ from .issue18_domain_env import DomainEnv
+ 
+-BASE = ROOT / 'results/phase1_3d_domain_diagnostics'
+-OUT = ROOT / 'results/phase1_restricted3d_weights'
++BASE = ROOT / 'results/Phase1/CaseA/domain_diagnostics'
++OUT = ROOT / 'results/Phase1/CaseA/reward_weights/restricted_domain'
+ METHODS = ('TD3', 'SAC', 'DE', 'random_search')
+ WEIGHTS = (1., .5)
+ INDICES = (0, 2, 3)
+@@ -24,7 +25,7 @@ SOURCES = ('issue19_data.py', 'issue19_training.py', 'constant020_env.py',
+ 
+ 
+ def source_hashes():
+-    return {name: digest(ROOT/name) for name in SOURCES}
++    return {name: digest(resolve_result_path(ROOT/name)) for name in SOURCES}
+ 
+ 
+ def target_data():
+@@ -73,7 +74,7 @@ def save_audio(path, values):
+ def ready():
+     from .model import LIBRARY
+     m = json.loads((OUT/'manifest.json').read_text())
+-    if m['source_sha256'] != source_hashes() or m['native_library_sha256'] != digest(LIBRARY):
++    if not source_hashes_match(m['source_sha256'], source_hashes()) or m['native_library_sha256'] != digest(LIBRARY):
+         raise RuntimeError('Frozen study sources or native library changed')
+     if digest(BASE/'diagnostics/target.npz') != m['target_sha256']:
+         raise RuntimeError('Original target changed')
+diff --git a/Deeplearning/issue19_figures.py b/Deeplearning/issue19_figures.py
+index 1b57735..7ee3efd 100644
+--- a/Deeplearning/issue19_figures.py
++++ b/Deeplearning/issue19_figures.py
+@@ -1,4 +1,5 @@
+ """Eight registered summary figures; no per-run image explosion."""
++from .result_paths import resolve as resolve_result_path
+ import csv
+ import gzip
+ import json
+@@ -115,7 +116,7 @@ def render_figures(rows, deltas):
+     # separately for a successful result. It contains the baseline TD3 failure.
+     for entry in registry:
+         if entry['seed']==1:
+-            with np.load(ROOT/entry['audio_path']) as z:sounds[(entry['method'],entry['weight'],entry['role'])]=z['audio'].copy()
++            with np.load(resolve_result_path(ROOT/entry['audio_path'])) as z:sounds[(entry['method'],entry['weight'],entry['role'])]=z['audio'].copy()
+     f,t,p,reference=display_psd(target);target_db=relative_db(p,reference);peak=abs(target).max()
+     target_env=rms_envelope(target,peak)
+     views={key:(relative_db(display_psd(audio)[2],reference),rms_envelope(audio,peak)) for key,audio in sounds.items()}
+@@ -123,7 +124,7 @@ def render_figures(rows, deltas):
+     all_rms_max=max(float(target_env.max()),max(float(x[1].max()) for x in views.values()))
+     for entry in registry:
+         if entry['seed']==1:continue
+-        with np.load(ROOT/entry['audio_path']) as z:audio=z['audio'].copy()
++        with np.load(resolve_result_path(ROOT/entry['audio_path'])) as z:audio=z['audio'].copy()
+         all_db_max=max(all_db_max,float(relative_db(display_psd(audio)[2],reference).max()))
+         all_rms_max=max(all_rms_max,float(rms_envelope(audio,peak).max()))
+     db_limits=(-70.,max(10.,float(10*np.ceil(all_db_max/10))))
+diff --git a/Deeplearning/issue19_protection.py b/Deeplearning/issue19_protection.py
+index 8c4ec5d..5f4020b 100644
+--- a/Deeplearning/issue19_protection.py
++++ b/Deeplearning/issue19_protection.py
+@@ -1,4 +1,5 @@
+ """Inventory first; verify physics and preserve all pre-existing research files."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from collections import defaultdict
+ import ctypes
+@@ -45,7 +46,7 @@ def workspace_inventory():
+ 
+ def protected_files():
+     for prefix in ('results', 'reports'):
+-        for path in sorted((ROOT/prefix).rglob('*')):
++        for path in sorted((resolve_result_path(ROOT/prefix)).rglob('*')):
+             if path.is_file() and not path.is_symlink() and not path.is_relative_to(OUT):
+                 yield path
+ 
+diff --git a/Deeplearning/issue19_storage.py b/Deeplearning/issue19_storage.py
+index 69631a3..92826bc 100644
+--- a/Deeplearning/issue19_storage.py
++++ b/Deeplearning/issue19_storage.py
+@@ -1,4 +1,5 @@
+ """Explicit retention review, lossless temporary-log consolidation and size audit."""
++from .result_paths import resolve as resolve_result_path
+ from collections import defaultdict
+ import csv
+ import gzip
+@@ -28,14 +29,14 @@ def review():
+                 same_content_paths=json.dumps([x['path'] for x in group if x!=r])))
+     write_csv(OUT/'duplicate_png_review.csv',duplicates)
+     plan=[]
+-    for prefix in ('results/phase1_constant_020s','results/phase1_3d_domain_diagnostics'):
++    for prefix in ('results/Phase1/CaseA/parameter_dimension','results/Phase1/CaseA/domain_diagnostics'):
+         for r in rows:
+             if r['path'].startswith(prefix) and r['path'].endswith('.png'):
+                 plan.append(dict(**r,decision='retain',
+                     regeneration='python -m Deeplearning.issue17_visualization render (historical staged workflow; fresh output required)' if 'constant_020s' in prefix else 'python -m Deeplearning.issue18_report (historical source/build required)',
+                     reason='Raw arrays and renderer exist, but report/figure registry/audit retain exact paths and hashes'))
+-    for prefix in ('.issue16-work','.issue17-work','results/phase1_3d_domain_diagnostics/interrupted_attempt_1'):
+-        for p in sorted((ROOT/prefix).rglob('*')):
++    for prefix in ('.issue16-work','.issue17-work','results/Phase1/CaseA/domain_diagnostics/interrupted_attempt_1'):
++        for p in sorted((resolve_result_path(ROOT/prefix)).rglob('*')):
+             if not p.is_file() or p.is_symlink():continue
+             plan.append(dict(path=str(p.relative_to(ROOT)),bytes=p.stat().st_size,sha256=digest(p),decision='retain',
+                 regeneration='',reason='Existing trained weights, history, or past working script; no demonstrated redundancy'))
+@@ -48,7 +49,7 @@ def review():
+         decoded=json.loads(gzip.decompress(archive.read_bytes()))
+         # No current tracked source or research document references these paths.
+         tracked=subprocess.check_output(['git','ls-files','--','*.py','*.md'],cwd=ROOT,text=True).splitlines()
+-        documents=[(ROOT/n).read_text(errors='replace') for n in tracked if (ROOT/n).is_file()]
++        documents=[(resolve_result_path(ROOT/n)).read_text(errors='replace') for n in tracked if (resolve_result_path(ROOT/n)).is_file()]
+         for p in logs:
+             rel=str(p.relative_to(ROOT))
+             if rel not in payload:continue
+@@ -73,8 +74,8 @@ def review():
+         duplicate_png_extra_bytes=sum(sum(int(r['bytes']) for r in g[1:]) for g in groups.values()),
+         original_research_files_removed=0, temporary_logs_consolidated=len(changes),
+         temporary_log_bytes=sum(r['bytes'] for r in changes),archive_bytes=archive.stat().st_size,
+-        issue17_pngs=sum(r['path'].startswith('results/phase1_constant_020s/') and r['path'].endswith('.png') for r in rows),
+-        issue18_pngs=sum(r['path'].startswith('results/phase1_3d_domain_diagnostics/') and r['path'].endswith('.png') for r in rows),
++        issue17_pngs=sum(r['path'].startswith('results/Phase1/CaseA/parameter_dimension/') and r['path'].endswith('.png') for r in rows),
++        issue18_pngs=sum(r['path'].startswith('results/Phase1/CaseA/domain_diagnostics/') and r['path'].endswith('.png') for r in rows),
+         policy='Keep referenced historical PNG and all scientific files; future outputs use eight summary images, no per-seed plots or checkpoint dumps. No symlinks or history rewriting.')
+     write_json(OUT/'cleanup_summary.json',summary)
+     return summary
+@@ -85,7 +86,7 @@ def after():
+     status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],cwd=ROOT,text=True).splitlines()
+     untracked=subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines()
+     # git ls-files is relative to cwd; status is relative to the repository root.
+-    new=[ROOT/p for p in untracked if (ROOT/p).is_file()]
++    new=[resolve_result_path(ROOT/p) for p in untracked if (resolve_result_path(ROOT/p)).is_file()]
+     result=dict(workspace=workspace_inventory(),new_git_candidate_files=len(new),
+         new_git_candidate_bytes=sum(p.stat().st_size for p in new),
+         modified_tracked_files=sum(r[:2].strip() not in ('??','D') for r in status),
+diff --git a/Deeplearning/issue19_training.py b/Deeplearning/issue19_training.py
+index fecc2af..3835729 100644
+--- a/Deeplearning/issue19_training.py
++++ b/Deeplearning/issue19_training.py
+@@ -1,4 +1,5 @@
+ """Nine runs, unchanged learners / candidate streams, lambda=.5 only."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor, as_completed
+ import json
+@@ -26,7 +27,7 @@ def run_one(method, seed):
+     folder = folder_for(method, seed, .5)
+     if (folder/'summary.json').exists():
+         s = json.loads((folder/'summary.json').read_text())
+-        if s['source_sha256'] != source_hashes():
++        if not source_hashes_match(s['source_sha256'], source_hashes()):
+             raise RuntimeError('Completed run has different sources')
+         return s
+     folder.mkdir(parents=True, exist_ok=False)
+diff --git a/Deeplearning/issue21_audit.py b/Deeplearning/issue21_audit.py
+index a1bb645..ab999d7 100644
+--- a/Deeplearning/issue21_audit.py
++++ b/Deeplearning/issue21_audit.py
+@@ -1,4 +1,5 @@
+ """Independent reloads, fixed-budget checks and protected-original verification."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ import gzip
+@@ -118,7 +119,7 @@ def integrity():
+     ready();checked=0
+     with (OUT/'protected_before.csv').open() as stream:
+         for r in csv.DictReader(stream):
+-            assert digest(ROOT/r['path'])==r['sha256'],r['path'];checked+=1
++            assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path'];checked+=1
+     broken=[];links=0
+     for doc in OUT.glob('*.md'):
+         for m in re.finditer(r'\]\(([^)]+)\)',doc.read_text()):
+@@ -128,8 +129,8 @@ def integrity():
+             if not (doc.parent/ref).exists():broken.append(dict(document=doc.name,path=ref))
+     assert not broken,broken
+     for r in json.loads((OUT/'endpoint_sources.json').read_text()) if (OUT/'endpoint_sources.json').exists() else []:
+-        assert digest(ROOT/r['audio_path'])==r['audio_sha256']
+-        assert digest(ROOT/r['model_path'])==r['model_sha256']
++        assert digest(resolve_result_path(ROOT/r['audio_path']))==r['audio_sha256']
++        assert digest(resolve_result_path(ROOT/r['model_path']))==r['model_sha256']
+     images=list((OUT/'figures').glob('*.png'));assert len(images)<=10
+     if (OUT/'figure_sources.json').exists():
+         figure_sources=json.loads((OUT/'figure_sources.json').read_text())['images']
+diff --git a/Deeplearning/issue21_data.py b/Deeplearning/issue21_data.py
+index aa2373a..fc78580 100644
+--- a/Deeplearning/issue21_data.py
++++ b/Deeplearning/issue21_data.py
+@@ -1,4 +1,5 @@
+ """Read-only baselines and fixed conditions for the Case A network-width study."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ 
+@@ -10,9 +11,9 @@ from .issue19_data import pack, metric_row, save_audio
+ from .issue18_domain_env import DomainEnv
+ from .issue16 import digest
+ 
+-BASE = ROOT/'results/phase1_3d_domain_diagnostics'
+-PRIOR = ROOT/'results/phase1_restricted3d_weights'
+-OUT = ROOT/'results/phase1_caseA_3d_network_width'
++BASE = ROOT/'results/Phase1/CaseA/domain_diagnostics'
++PRIOR = ROOT/'results/Phase1/CaseA/reward_weights/restricted_domain'
++OUT = ROOT/'results/Phase1/CaseA/network_width'
+ METHODS = ('TD3', 'SAC')
+ WIDTHS = (32, 64, 128, 256)
+ SEEDS = (0, 1, 2)
+@@ -22,7 +23,7 @@ SOURCES = ('issue21_data.py', 'issue21_training.py', 'constant020_env.py',
+ 
+ 
+ def source_hashes():
+-    return {p:digest(ROOT/p) for p in SOURCES}
++    return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
+ 
+ 
+ def target_data():
+@@ -57,7 +58,7 @@ def endpoints(method, width, seed, output=OUT):
+ def ready(output=OUT):
+     from .model import LIBRARY
+     m = json.loads((Path(output)/'manifest.json').read_text())
+-    if m['source_sha256'] != source_hashes() or m['native_library_sha256'] != digest(LIBRARY):
++    if not source_hashes_match(m['source_sha256'], source_hashes()) or m['native_library_sha256'] != digest(LIBRARY):
+         raise RuntimeError('Frozen numerical implementation or native library changed')
+     if m['target_sha256'] != digest(BASE/'diagnostics/target.npz'):
+         raise RuntimeError('Original target changed')
+diff --git a/Deeplearning/issue21_figures.py b/Deeplearning/issue21_figures.py
+index f6baf21..b68c26e 100644
+--- a/Deeplearning/issue21_figures.py
++++ b/Deeplearning/issue21_figures.py
+@@ -1,4 +1,5 @@
+ """Eight integrated TD3/SAC-only figures from saved observations and raw audio."""
++from .result_paths import resolve as resolve_result_path
+ import csv
+ import gzip
+ import json
+@@ -117,7 +118,7 @@ def render(rows,deltas):
+     peak=abs(target).max();target_db=relative_db(psd,reference);target_env=rms_envelope(target,peak)
+     sounds={};views={};max_db=0.;max_rms=float(target_env.max())
+     for r in sources:
+-        with np.load(ROOT/r['audio_path']) as z:audio=z['audio'].copy()
++        with np.load(resolve_result_path(ROOT/r['audio_path'])) as z:audio=z['audio'].copy()
+         db=relative_db(display_psd(audio)[2],reference);env=rms_envelope(audio,peak)
+         max_db=max(max_db,float(db.max()));max_rms=max(max_rms,float(env.max()))
+         if r['seed']==1:
+diff --git a/Deeplearning/issue21_prepare.py b/Deeplearning/issue21_prepare.py
+index 10bdc81..6ed0e15 100644
+--- a/Deeplearning/issue21_prepare.py
++++ b/Deeplearning/issue21_prepare.py
+@@ -1,4 +1,5 @@
+ """Freeze the single-factor protocol and verify original physics before learning."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import ctypes
+ from datetime import datetime,timezone
+@@ -30,7 +31,7 @@ def prepare(before_path=Path('/tmp/birdsong-issue21-before.json'),output=OUT,res
+             and not (output/'runs').exists()):raise FileExistsError('Existing study preserved')
+     before=json.loads(Path(before_path).read_text())
+     for r in before['files']:
+-        if digest(ROOT/r['path'])!=r['sha256']:raise RuntimeError(f'Original file changed: {r["path"]}')
++        if digest(resolve_result_path(ROOT/r['path']))!=r['sha256']:raise RuntimeError(f'Original file changed: {r["path"]}')
+     output.mkdir(parents=True,exist_ok=resume)
+     files=before.pop('files')
+     if not (output/'protected_before.csv').exists():
+@@ -39,9 +40,9 @@ def prepare(before_path=Path('/tmp/birdsong-issue21-before.json'),output=OUT,res
+     tick=time.perf_counter();original=json.loads((BASE/'manifest.json').read_text())
+     prior=json.loads((PRIOR/'manifest.json').read_text())
+     for name,h in original['source_sha256'].items():
+-        if name!='native/model.cpp':assert digest(ROOT/name)==h,name
++        if name!='native/model.cpp':assert digest(resolve_result_path(ROOT/name))==h,name
+     for name in ('native/model.cpp','model.py','model_env.py','constant020_env.py','issue18_domain_env.py','acoustics.py'):
+-        assert digest(ROOT/name)==prior['source_sha256'][name],name
++        assert digest(resolve_result_path(ROOT/name))==prior['source_sha256'][name],name
+     assert digest(model.LIBRARY)==prior['native_library_sha256'],'Actual library differs from numerically verified Issue19 build'
+     assert digest(BASE/'diagnostics/target.npz')==prior['target_sha256']
+     target,controls=target_data();assert controls.tolist()==[4.1e7,3.5e7,3.4e6,3e5,4.9e4]
+diff --git a/Deeplearning/issue21_report.py b/Deeplearning/issue21_report.py
+index bff63b9..3634954 100644
+--- a/Deeplearning/issue21_report.py
++++ b/Deeplearning/issue21_report.py
+@@ -1,4 +1,5 @@
+ """Report the width experiment without retraining or changing any old artifact."""
++from .result_paths import resolve as resolve_result_path
+ import csv
+ import gzip
+ import io
+@@ -46,7 +47,7 @@ def listening_archive():
+     with zipfile.ZipFile(OUT/'new_listening_audio.zip','w',compression=zipfile.ZIP_DEFLATED) as archive:
+         for r in registry:
+             if r['width']==32:continue
+-            with np.load(ROOT/r['audio_path']) as z:audio=z['audio'].copy()
++            with np.load(resolve_result_path(ROOT/r['audio_path'])) as z:audio=z['audio'].copy()
+             data=io.BytesIO();wavfile.write(data,50000,(audio*gain).astype(np.float32));payload=data.getvalue()
+             import hashlib
+             h=hashlib.sha256(payload).hexdigest();name=f'{r["method"]}_w{r["width"]}_seed{r["seed"]}_{r["role"]}.wav'
+@@ -66,7 +67,7 @@ def freeze():
+     for name in ('artifact_checksums.json','storage_after.json'):
+         if not (OUT/name).exists():(OUT/name).write_text('{}\n')
+     integrity()
+-    new=[ROOT/p for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines() if (ROOT/p).is_file()]
++    new=[resolve_result_path(ROOT/p) for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines() if (resolve_result_path(ROOT/p)).is_file()]
+     status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],cwd=ROOT,text=True).splitlines()
+     before=json.loads((OUT/'storage_before.json').read_text())['workspace']['total']
+     for _ in range(4):
+@@ -129,7 +130,7 @@ def report():
+     for dimension in (1,2):
+         for method in METHODS:
+             for seed in SEEDS:
+-                p=ROOT/f'results/phase1_constant_020s/runs/constant_{dimension}d/{method}/lambda1/seed_{seed}/summary.json'
++                p=ROOT/f'results/Phase1/CaseA/parameter_dimension/runs/constant_{dimension}d/{method}/lambda1/seed_{seed}/summary.json'
+                 s=json.loads(p.read_text());lower.append(dict(dimension=dimension,method=method,seed=seed,E_total=s['final']['acoustic_error'],source=str(p.relative_to(ROOT)),source_sha256=digest(p)))
+     write_csv(OUT/'lower_dimensional_reference.csv',lower)
+     listening_archive()
+diff --git a/Deeplearning/issue21_training.py b/Deeplearning/issue21_training.py
+index d51c0c1..cb8a6c7 100644
+--- a/Deeplearning/issue21_training.py
++++ b/Deeplearning/issue21_training.py
+@@ -1,4 +1,5 @@
+ """Change Actor and twin Critic hidden widths only; preserve the original learner."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor, as_completed
+ import json
+@@ -62,7 +63,7 @@ def run_one(method, width, seed, output=OUT):
+     folder=folder_for(method,width,seed,output)
+     if (folder/'summary.json').exists():
+         summary=json.loads((folder/'summary.json').read_text())
+-        assert summary['source_sha256']==source_hashes()
++        assert source_hashes_match(summary['source_sha256'], source_hashes())
+         for name,h in summary['artifact_sha256'].items():assert digest(folder/name)==h,name
+         return summary
+     folder.mkdir(parents=True,exist_ok=False)
+diff --git a/Deeplearning/issue22_analysis.py b/Deeplearning/issue22_analysis.py
+index 2adebe2..c5ad55e 100644
+--- a/Deeplearning/issue22_analysis.py
++++ b/Deeplearning/issue22_analysis.py
+@@ -1,4 +1,5 @@
+ """Reward-aware endpoint audits and offline Q diagnostics; no old-file writes."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ import gzip
+@@ -154,7 +155,7 @@ def diagnose():
+ def integrity():
+     ready();checked=0
+     with (OUT/'protected_before.csv').open() as stream:
+-        for r in csv.DictReader(stream):assert digest(ROOT/r['path'])==r['sha256'],r['path'];checked+=1
++        for r in csv.DictReader(stream):assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path'];checked+=1
+     links=0;broken=[]
+     for doc in OUT.glob('*.md'):
+         for match in re.finditer(r'\]\(([^)]+)\)',doc.read_text()):
+@@ -165,7 +166,7 @@ def integrity():
+     assert not broken,broken
+     for r in json.loads((OUT/'endpoint_sources.json').read_text()) if (OUT/'endpoint_sources.json').exists() else []:
+         for kind in ('model','audio'):
+-            if r[kind+'_path']:assert digest(ROOT/r[kind+'_path'])==r[kind+'_sha256']
++            if r[kind+'_path']:assert digest(resolve_result_path(ROOT/r[kind+'_path']))==r[kind+'_sha256']
+     images=list((OUT/'figures').glob('*.png'));assert len(images)<=10
+     if (OUT/'figure_sources.json').exists():
+         registry=json.loads((OUT/'figure_sources.json').read_text())['images'];assert len(registry)==len(images)==8
+diff --git a/Deeplearning/issue22_data.py b/Deeplearning/issue22_data.py
+index 9eaaa25..afc247e 100644
+--- a/Deeplearning/issue22_data.py
++++ b/Deeplearning/issue22_data.py
+@@ -1,4 +1,5 @@
+ """Coefficient-sum-one rewards; immutable SAC128 baseline and shared diagnostics."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ 
+@@ -11,10 +12,10 @@ from .issue19_data import pack,metric_row,save_audio
+ from .issue21_data import target_data
+ from .issue16 import digest
+ 
+-BASE=ROOT/'results/phase1_caseA_3d_network_width'
+-TARGET=ROOT/'results/phase1_3d_domain_diagnostics/diagnostics/target.npz'
+-POOL=ROOT/'results/phase1_restricted3d_weights/critic_pool.csv'
+-OUT=ROOT/'results/phase1_caseA_sac128_reward_weights'
++BASE=ROOT/'results/Phase1/CaseA/network_width'
++TARGET=ROOT/'results/Phase1/CaseA/domain_diagnostics/diagnostics/target.npz'
++POOL=ROOT/'results/Phase1/CaseA/reward_weights/restricted_domain/critic_pool.csv'
++OUT=ROOT/'results/Phase1/CaseA/reward_weights/sac128'
+ WEIGHTS=(.5,.75,.9)
+ CONDITIONS=('legacy_sum',*WEIGHTS)
+ SEEDS=(0,1,2)
+@@ -25,7 +26,7 @@ ENTROPY_SAMPLES=4096
+ ENTROPY_SEED=220026
+ 
+ 
+-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
++def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
+ 
+ 
+ def coefficients(weight):
+@@ -108,7 +109,7 @@ def policy_statistics(agent):
+ def ready(output=OUT):
+     from .model import LIBRARY
+     m=json.loads((Path(output)/'manifest.json').read_text())
+-    assert m['source_sha256']==source_hashes(),'Frozen training implementation changed'
++    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen training implementation changed'
+     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
+     assert m['critic_pool_sha256']==digest(POOL)
+     return m
+diff --git a/Deeplearning/issue22_figures.py b/Deeplearning/issue22_figures.py
+index a960f99..35b8bf4 100644
+--- a/Deeplearning/issue22_figures.py
++++ b/Deeplearning/issue22_figures.py
+@@ -1,4 +1,5 @@
+ """Eight compact figures, keeping common error, own objectives and policy state apart."""
++from .result_paths import resolve as resolve_result_path
+ import json
+ 
+ import matplotlib
+@@ -110,7 +111,7 @@ def render(rows,stability):
+     sources=json.loads((OUT/'endpoint_sources.json').read_text());sounds={};views={};max_db=0.;max_env=float(target_env.max())
+     for p in sources:
+         if p['role']=='posthoc':continue
+-        with np.load(ROOT/p['audio_path']) as z:audio=z['audio'].copy()
++        with np.load(resolve_result_path(ROOT/p['audio_path'])) as z:audio=z['audio'].copy()
+         db=relative_db(display_psd(audio)[2],reference);env=rms_envelope(audio,peak);max_db=max(max_db,float(db.max()));max_env=max(max_env,float(env.max()))
+         if p['seed']==1:sounds[p['condition'],p['role']]=audio/peak;views[p['condition'],p['role']]=(db,env)
+     limits=(-70.,max(10.,float(10*np.ceil(max_db/10))));rms_limits=(0.,max_env*1.15);time=np.arange(len(target))/50000;crop=(time>=.04)&(time<=.06)
+diff --git a/Deeplearning/issue22_prepare.py b/Deeplearning/issue22_prepare.py
+index 50b5f6f..59e4573 100644
+--- a/Deeplearning/issue22_prepare.py
++++ b/Deeplearning/issue22_prepare.py
+@@ -1,4 +1,5 @@
+ """Validate coefficient sums, actual library and reward-only comparison before fitting."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import ctypes
+ from datetime import datetime,timezone
+@@ -27,10 +28,10 @@ def prepare(before_path=Path('/tmp/birdsong-issue22-before.json'),output=OUT):
+     torch.set_num_threads(1);output=Path(output)
+     if output.exists():raise FileExistsError('Existing results preserved')
+     before=json.loads(Path(before_path).read_text())
+-    for r in before['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
++    for r in before['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
+     output.mkdir(parents=True);write_csv(output/'protected_before.csv',before.pop('files'));write_json(output/'storage_before.json',before)
+     tick=time.perf_counter();previous=json.loads((BASE/'manifest.json').read_text())
+-    for name,h in previous['source_sha256'].items():assert digest(ROOT/name)==h,name
++    for name,h in previous['source_sha256'].items():assert digest(resolve_result_path(ROOT/name))==h,name
+     assert digest(LIBRARY)==previous['native_library_sha256'] and digest(TARGET)==previous['target_sha256']
+     versions={p:importlib.metadata.version(p) for p in previous['versions']};assert versions==previous['versions']
+     config=dict(previous['settings']);config.update(experiment_id='issue22_sac128_sum_one_reward',methods=['SAC'],net_arch=[128,128],
+diff --git a/Deeplearning/issue22_report.py b/Deeplearning/issue22_report.py
+index 84baf19..fef438c 100644
+--- a/Deeplearning/issue22_report.py
++++ b/Deeplearning/issue22_report.py
+@@ -1,4 +1,5 @@
+ """Report sum-one objectives, common error, stability and entropy without refitting."""
++from .result_paths import resolve as resolve_result_path
+ import csv
+ import gzip
+ import hashlib
+@@ -44,7 +45,7 @@ def listening():
+     with zipfile.ZipFile(OUT/'new_listening_audio.zip','w',compression=zipfile.ZIP_DEFLATED) as archive:
+         for r in json.loads((OUT/'endpoint_sources.json').read_text()):
+             if r['condition']=='legacy_sum' or r['role']=='posthoc':continue
+-            with np.load(ROOT/r['audio_path']) as z:audio=z['audio'].copy()
++            with np.load(resolve_result_path(ROOT/r['audio_path'])) as z:audio=z['audio'].copy()
+             stream=io.BytesIO();wavfile.write(stream,50000,(audio*gain).astype(np.float32));data=stream.getvalue();h=hashlib.sha256(data).hexdigest()
+             name=f'{r["condition"]}_seed{r["seed"]}_{r["role"]}.wav'
+             if h not in members:
+@@ -60,7 +61,7 @@ def freeze():
+     for name in ('artifact_checksums.json','storage_after.json'):
+         if not (OUT/name).exists():(OUT/name).write_text('{}\n')
+     integrity()
+-    new=[ROOT/p for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines() if (ROOT/p).is_file()]
++    new=[resolve_result_path(ROOT/p) for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines() if (resolve_result_path(ROOT/p)).is_file()]
+     status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],cwd=ROOT,text=True).splitlines()
+     before=json.loads((OUT/'storage_before.json').read_text())['workspace']['total']
+     for _ in range(4):
+diff --git a/Deeplearning/issue22_training.py b/Deeplearning/issue22_training.py
+index 164966b..c4cc6fe 100644
+--- a/Deeplearning/issue22_training.py
++++ b/Deeplearning/issue22_training.py
+@@ -1,4 +1,5 @@
+ """Nine SAC128 runs; change the specified sum-one terminal objective only."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import json
+@@ -25,7 +26,7 @@ def run_one(weight,seed,output=OUT):
+     if weight not in WEIGHTS:raise ValueError('Only the registered sum-one weights may be trained')
+     folder=folder_for(weight,seed,output)
+     if (folder/'summary.json').exists():
+-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
++        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
+         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h
+         return s
+     folder.mkdir(parents=True,exist_ok=False);train=environment(weight);evaluation=environment(weight)
+diff --git a/Deeplearning/issue23_analysis.py b/Deeplearning/issue23_analysis.py
+index eac116d..5887dcc 100644
+--- a/Deeplearning/issue23_analysis.py
++++ b/Deeplearning/issue23_analysis.py
+@@ -1,4 +1,5 @@
+ """Audit retained policies, fixed-candidate Q history and bounded local sensitivity."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ import importlib.metadata
+@@ -213,7 +214,7 @@ def integrity():
+     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
+     with (OUT/'protected_before.csv').open() as f:protected=list(csv.DictReader(f))
+     for r in protected:
+-        path=ROOT/r['path']
++        path=resolve_result_path(ROOT/r['path'])
+         if not path.exists():deleted.append(r['path'])
+         elif digest(path)!=r['sha256']:changed.append(r['path'])
+     broken=[];links=0
+@@ -229,7 +230,7 @@ def integrity():
+     if (OUT/'artifact_checksums.json').exists():
+         for p,h in json.loads((OUT/'artifact_checksums.json').read_text()).items():assert digest(OUT/p)==h,p
+     if (OUT/'implementation_checksums.json').exists():
+-        for p,h in json.loads((OUT/'implementation_checksums.json').read_text()).items():assert digest(ROOT/p)==h,p
++        for p,h in json.loads((OUT/'implementation_checksums.json').read_text()).items():assert digest(resolve_result_path(ROOT/p))==h,p
+     if (OUT/'listening.zip').exists():
+         import hashlib
+         import io
+diff --git a/Deeplearning/issue23_data.py b/Deeplearning/issue23_data.py
+index 7d53d0a..4fb7a2d 100644
+--- a/Deeplearning/issue23_data.py
++++ b/Deeplearning/issue23_data.py
+@@ -1,4 +1,5 @@
+ """Fixed inputs and non-mutating diagnostics for the Issue23 reproduction."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ 
+@@ -9,7 +10,7 @@ from .issue22_data import (ROOT,OUT as BASE,TARGET,SEEDS,environment,policy_stat
+     pack,metric_row,save_audio,target_data)
+ from .issue16 import digest
+ 
+-OUT=ROOT/'results/phase1_caseA_sac128_stability_diagnostics'
++OUT=ROOT/'results/Phase1/CaseA/stability_diagnostics'
+ NAMES=('epsilon_l','ps','f0_l')
+ HALF_WIDTH=np.array([12500000.,750000.,375500.])
+ SOURCES=('issue23_data.py','issue23_training.py',*prior_hashes())
+@@ -17,7 +18,7 @@ LOCAL_STEPS=(.002,.01)
+ LOCAL_ANCHORS=(2944,3840,4096)
+ 
+ 
+-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
++def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
+ 
+ 
+ def folder_for(seed,output=OUT):
+@@ -38,7 +39,7 @@ def chosen(points):
+ def ready(output=OUT):
+     from .model import LIBRARY
+     m=json.loads((Path(output)/'manifest.json').read_text())
+-    assert m['source_sha256']==source_hashes(),'Frozen reproduction implementation changed'
++    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen reproduction implementation changed'
+     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
+     assert m['stage_a_sha256']==digest(Path(output)/'STAGE_A.md')
+     assert m['candidates_sha256']==digest(Path(output)/'fixed_candidates.json')
+diff --git a/Deeplearning/issue23_stage_a.py b/Deeplearning/issue23_stage_a.py
+index 3481e18..b5659e4 100644
+--- a/Deeplearning/issue23_stage_a.py
++++ b/Deeplearning/issue23_stage_a.py
+@@ -1,4 +1,5 @@
+ """Existing-artifact analysis and explicit decision before any research retraining."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ from datetime import datetime,timezone
+@@ -36,9 +37,9 @@ def prepare(before=Path('/tmp/birdsong-issue23-before.json'),output=OUT):
+     torch.set_num_threads(1);output=Path(output);tick=time.perf_counter()
+     if output.exists():raise FileExistsError('Existing study preserved')
+     inventory=json.loads(Path(before).read_text())
+-    for r in inventory['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
++    for r in inventory['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
+     prior=json.loads((BASE/'manifest.json').read_text())
+-    for p,h in prior['source_sha256'].items():assert digest(ROOT/p)==h,p
++    for p,h in prior['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
+     assert digest(LIBRARY)==prior['native_library_sha256'] and digest(TARGET)==prior['target_sha256']
+     assert prior['versions']=={p:importlib.metadata.version(p) for p in prior['versions']}
+     output.mkdir(parents=True);write_csv(output/'protected_before.csv',inventory.pop('files'))
+@@ -102,7 +103,7 @@ def prepare(before=Path('/tmp/birdsong-issue23-before.json'),output=OUT):
+                     model_sha256=digest(model_path),waveform_exact=True,controls_exact=True,metrics_exact=True,learner_unchanged=True))
+         finally:accounts.append(account(env,time.perf_counter()-t));env.close()
+     for method,seed in (('TD3',0),('SAC',1)):
+-        p=ROOT/f'results/phase1_caseA_3d_network_width/runs/{method}/width_128/seed_{seed}/summary.json'
++        p=ROOT/f'results/Phase1/CaseA/network_width/runs/{method}/width_128/seed_{seed}/summary.json'
+         s=json.loads(p.read_text());supplement.append(dict(method=method,seed=seed,source=str(p.relative_to(ROOT)),
+             final=s['final']['acoustic_error'],selected=s['selected']['acoustic_error'],trial=s['selected']['episodes']))
+     write_csv(output/'stage_a_evaluations.csv',evaluations);write_csv(output/'stage_a_correlations.csv',correlations)
+diff --git a/Deeplearning/issue23_training.py b/Deeplearning/issue23_training.py
+index add0452..6ab46f6 100644
+--- a/Deeplearning/issue23_training.py
++++ b/Deeplearning/issue23_training.py
+@@ -1,4 +1,5 @@
+ """Three unchanged SAC128 runs with read-only diagnostics and separate retention."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import json
+@@ -26,7 +27,7 @@ def run_one(seed,output=OUT):
+     torch.set_num_threads(1);output=Path(output);manifest=ready(output);config=manifest['settings'];budget=config['episodes']
+     folder=folder_for(seed,output)
+     if (folder/'summary.json').exists():
+-        summary=json.loads((folder/'summary.json').read_text());assert summary['source_sha256']==source_hashes()
++        summary=json.loads((folder/'summary.json').read_text());assert source_hashes_match(summary['source_sha256'], source_hashes())
+         for p,h in summary['artifact_sha256'].items():assert digest(folder/p)==h,p
+         return summary
+     folder.mkdir(parents=True,exist_ok=False);train=environment(.75);evaluation=environment(.75)
+diff --git a/Deeplearning/issue24_analysis.py b/Deeplearning/issue24_analysis.py
+index 0d05897..ac92e4c 100644
+--- a/Deeplearning/issue24_analysis.py
++++ b/Deeplearning/issue24_analysis.py
+@@ -1,4 +1,5 @@
+ """Independent LR/replay audits, paired summaries and Final fixed-pool Critic scores."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ import hashlib
+@@ -220,7 +221,7 @@ def integrity():
+     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
+     protected=csv_rows(OUT/'protected_before.csv')
+     for r in protected:
+-        p=ROOT/r['path']
++        p=resolve_result_path(ROOT/r['path'])
+         if not p.exists():deleted.append(r['path'])
+         elif digest(p)!=r['sha256']:changed.append(r['path'])
+     links=0;broken=[]
+@@ -238,7 +239,7 @@ def integrity():
+             for row in csv_rows(OUT/'listening_index.csv'):
+                 rate,wave=wavfile.read(io.BytesIO(archive.read(row['archive_entry'])))
+                 assert rate==50000 and wave.shape==(10000,) and wave.dtype==np.float32
+-                with np.load(ROOT/row['raw_audio_path']) as raw:np.testing.assert_array_equal(wave,(raw[row['raw_audio_key']]*float(row['shared_gain'])).astype(np.float32))
++                with np.load(resolve_result_path(ROOT/row['raw_audio_path'])) as raw:np.testing.assert_array_equal(wave,(raw[row['raw_audio_key']]*float(row['shared_gain'])).astype(np.float32))
+                 assert hashlib.sha256(wave.tobytes()).hexdigest()==row['sample_sha256']
+     assert json.loads((OUT/'audit.json').read_text())['passed']
+     result=dict(passed=not changed and not deleted and not broken,original_files_checked=len(protected),original_files_changed=changed,
+diff --git a/Deeplearning/issue24_data.py b/Deeplearning/issue24_data.py
+index 0abcdbf..9aefd5a 100644
+--- a/Deeplearning/issue24_data.py
++++ b/Deeplearning/issue24_data.py
+@@ -1,4 +1,5 @@
+ """Immutable baseline, local-sensitivity references and fixed Actor LR cohorts."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ import hashlib
+ import inspect
+@@ -11,12 +12,12 @@ from .issue24_agent import BASE_LR,ACTOR_RATES
+ from .issue16 import digest
+ from .issue17_artifacts import read_record
+ 
+-OUT=ROOT/'results/phase1_caseA_sac128_actor_lr'
++OUT=ROOT/'results/Phase1/CaseA/learning_rate/actor'
+ RATES=(BASE_LR,*ACTOR_RATES)
+ SOURCES=('issue24_agent.py','issue24_data.py','issue24_training.py',*baseline_hashes())
+ 
+ 
+-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
++def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
+ 
+ 
+ def sb3_hashes():
+@@ -40,7 +41,7 @@ def curve_for(rate,seed,output=OUT):return read_record(folder_for(rate,seed,outp
+ def ready(output=OUT):
+     from .model import LIBRARY
+     m=json.loads((Path(output)/'manifest.json').read_text())
+-    assert m['source_sha256']==source_hashes(),'Frozen experiment implementation changed'
++    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen experiment implementation changed'
+     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
+     assert m['baseline_manifest_sha256']==digest(BASE/'manifest.json')
+     if 'sb3_implementation_sha256' in m:assert m['sb3_implementation_sha256']==sb3_hashes()
+diff --git a/Deeplearning/issue24_prepare.py b/Deeplearning/issue24_prepare.py
+index d068527..6178a44 100644
+--- a/Deeplearning/issue24_prepare.py
++++ b/Deeplearning/issue24_prepare.py
+@@ -1,4 +1,5 @@
+ """Verify reuse, installed SB3 scheduler behavior and initial Actor-only intervention."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from datetime import datetime,timezone
+ import importlib.metadata
+@@ -27,9 +28,9 @@ def prepare(before_path=Path('/tmp/birdsong-issue24-before.json'),output=OUT):
+     torch.set_num_threads(1);output=Path(output);tick=time.perf_counter()
+     if output.exists():raise FileExistsError('Existing study preserved')
+     before=json.loads(Path(before_path).read_text())
+-    for r in before['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
++    for r in before['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
+     previous=json.loads((BASE/'manifest.json').read_text())
+-    for p,h in previous['source_sha256'].items():assert digest(ROOT/p)==h,p
++    for p,h in previous['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
+     assert digest(TARGET)==previous['target_sha256'] and digest(LIBRARY)==previous['native_library_sha256']
+     assert json.loads((BASE/'audit.json').read_text())['passed']
+     versions={p:importlib.metadata.version(p) for p in previous['versions']};assert versions==previous['versions']
+diff --git a/Deeplearning/issue24_training.py b/Deeplearning/issue24_training.py
+index 573df2e..2879387 100644
+--- a/Deeplearning/issue24_training.py
++++ b/Deeplearning/issue24_training.py
+@@ -1,4 +1,5 @@
+ """Six Actor-only LR interventions with per-update LR and state diagnostics."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import json
+@@ -28,7 +29,7 @@ def run_one(rate,seed,output=OUT):
+     if rate not in ACTOR_RATES:raise ValueError('The baseline must never be retrained')
+     folder=folder_for(rate,seed,output)
+     if (folder/'summary.json').exists():
+-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
++        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
+         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h,p
+         return s
+     folder.mkdir(parents=True,exist_ok=False);train=environment(.75);evaluation=environment(.75)
+diff --git a/Deeplearning/issue25_analysis.py b/Deeplearning/issue25_analysis.py
+index 4780683..f17b269 100644
+--- a/Deeplearning/issue25_analysis.py
++++ b/Deeplearning/issue25_analysis.py
+@@ -1,4 +1,5 @@
+ """Independent LR/replay audits, paired summaries and Final fixed-pool Critic scores."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ import hashlib
+@@ -327,7 +328,7 @@ def integrity():
+     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
+     protected=csv_rows(OUT/'protected_before.csv')
+     for r in protected:
+-        p=ROOT/r['path']
++        p=resolve_result_path(ROOT/r['path'])
+         if not p.exists():deleted.append(r['path'])
+         elif digest(p)!=r['sha256']:changed.append(r['path'])
+     links=0;broken=[]
+@@ -345,7 +346,7 @@ def integrity():
+             for row in csv_rows(OUT/'listening_index.csv'):
+                 rate,wave=wavfile.read(io.BytesIO(archive.read(row['archive_entry'])))
+                 assert rate==50000 and wave.shape==(10000,) and wave.dtype==np.float32
+-                with np.load(ROOT/row['raw_audio_path']) as raw:np.testing.assert_array_equal(wave,(raw[row['raw_audio_key']]*float(row['shared_gain'])).astype(np.float32))
++                with np.load(resolve_result_path(ROOT/row['raw_audio_path'])) as raw:np.testing.assert_array_equal(wave,(raw[row['raw_audio_key']]*float(row['shared_gain'])).astype(np.float32))
+                 assert hashlib.sha256(wave.tobytes()).hexdigest()==row['sample_sha256']
+     assert json.loads((OUT/'audit.json').read_text())['passed']
+     assert json.loads((OUT/'offline_audit.json').read_text())['passed']
+diff --git a/Deeplearning/issue25_data.py b/Deeplearning/issue25_data.py
+index 90fac1d..e7ad753 100644
+--- a/Deeplearning/issue25_data.py
++++ b/Deeplearning/issue25_data.py
+@@ -1,4 +1,5 @@
+ """Frozen online/offline cohorts and existing model-generated data only."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ 
+@@ -12,7 +13,7 @@ from .issue25_agent import BASE_LR,CRITIC_RATES
+ from .issue17_artifacts import read_record
+ from .issue16 import digest
+ 
+-OUT=ROOT/'results/phase1_caseA_sac128_critic_lr'
++OUT=ROOT/'results/Phase1/CaseA/learning_rate/critic'
+ RATES=(BASE_LR,*CRITIC_RATES)
+ OFFLINE_UPDATES=4080
+ OFFLINE_EVALS=tuple([0,*range(128,OFFLINE_UPDATES,128),OFFLINE_UPDATES])
+@@ -20,7 +21,7 @@ SOURCES=('issue25_agent.py','issue25_data.py','issue25_training.py','issue25_off
+     'issue24_agent.py','issue24_data.py',*baseline_hashes())
+ 
+ 
+-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
++def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
+ 
+ 
+ def label(rate):return {BASE_LR:'critic_lr_3e-4',1e-4:'critic_lr_1e-4',1e-3:'critic_lr_1e-3'}[rate]
+@@ -40,7 +41,7 @@ def curve_for(rate,seed,output=OUT):return read_record(folder_for(rate,seed,outp
+ def ready(output=OUT):
+     from .model import LIBRARY
+     output=Path(output);m=json.loads((output/'manifest.json').read_text())
+-    assert m['source_sha256']==source_hashes(),'Frozen numerical implementation changed'
++    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen numerical implementation changed'
+     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
+     assert m['baseline_manifest_sha256']==digest(BASE/'manifest.json')
+     assert m['previous_manifest_sha256']==digest(PREVIOUS/'manifest.json')
+diff --git a/Deeplearning/issue25_offline.py b/Deeplearning/issue25_offline.py
+index f176dd6..d203fd9 100644
+--- a/Deeplearning/issue25_offline.py
++++ b/Deeplearning/issue25_offline.py
+@@ -1,4 +1,5 @@
+ """Fixed-data terminal-reward regression; never SAC learning or native rendering."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import hashlib
+@@ -46,7 +47,7 @@ def offline_fit(rate,seed,output=OUT):
+     import torch
+     torch.set_num_threads(1);output=Path(output);m=ready(output);settings=m['offline'];budget=settings['updates'];folder=offline_folder(rate,seed,output)
+     if (folder/'summary.json').exists():
+-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
++        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
+         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h,p
+         return s
+     folder.mkdir(parents=True,exist_ok=False);tick=time.perf_counter();history=[];trace=[];maxima={};completed=0
+diff --git a/Deeplearning/issue25_prepare.py b/Deeplearning/issue25_prepare.py
+index 3b3385d..f1a3b5a 100644
+--- a/Deeplearning/issue25_prepare.py
++++ b/Deeplearning/issue25_prepare.py
+@@ -1,4 +1,5 @@
+ """Stage A: audit immutable data, independent LRs and budgets before any full run."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ from datetime import datetime,timezone
+@@ -96,11 +97,11 @@ def prepare(before_path=Path('/tmp/birdsong-issue25-before.json'),output=OUT):
+     torch.set_num_threads(1);output=Path(output);tick=time.perf_counter()
+     if output.exists():raise FileExistsError('Existing study preserved')
+     before=json.loads(Path(before_path).read_text())
+-    for p in before['files']:assert digest(ROOT/p['path'])==p['sha256'],p['path']
++    for p in before['files']:assert digest(resolve_result_path(ROOT/p['path']))==p['sha256'],p['path']
+     old=json.loads((BASE/'manifest.json').read_text());previous=json.loads((PREVIOUS/'manifest.json').read_text())
+     assert previous['baseline_manifest_sha256']==digest(BASE/'manifest.json')
+-    for p,h in old['source_sha256'].items():assert digest(ROOT/p)==h,p
+-    for p,h in previous['source_sha256'].items():assert digest(ROOT/p)==h,p
++    for p,h in old['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
++    for p,h in previous['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
+     assert digest(LIBRARY)==old['native_library_sha256'] and digest(TARGET)==old['target_sha256']
+     versions={p:importlib.metadata.version(p) for p in old['versions']};assert versions==old['versions']==previous['versions']
+     test_record=json.loads(Path('/tmp/birdsong-issue25-preflight-tests.json').read_text());assert test_record['passed']
+diff --git a/Deeplearning/issue25_training.py b/Deeplearning/issue25_training.py
+index 9a5d5d9..5fee145 100644
+--- a/Deeplearning/issue25_training.py
++++ b/Deeplearning/issue25_training.py
+@@ -1,4 +1,5 @@
+ """Six Critic-only LR interventions with per-update LR and state diagnostics."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import json
+@@ -28,7 +29,7 @@ def run_one(rate,seed,output=OUT):
+     if rate not in CRITIC_RATES:raise ValueError('The baseline must never be retrained')
+     folder=folder_for(rate,seed,output)
+     if (folder/'summary.json').exists():
+-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
++        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
+         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h,p
+         return s
+     folder.mkdir(parents=True,exist_ok=False);train=environment(.75);evaluation=environment(.75)
+diff --git a/Deeplearning/issue26_analysis.py b/Deeplearning/issue26_analysis.py
+index 0bd6afd..f30f6fd 100644
+--- a/Deeplearning/issue26_analysis.py
++++ b/Deeplearning/issue26_analysis.py
+@@ -1,4 +1,5 @@
+ """Replay, sampler reconstruction and descriptive statistics for Issue26 only."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ import gzip
+@@ -295,7 +296,7 @@ def listening():
+             items.append(dict(wav=name,source=raw,raw_key='target' if name=='Target.wav' else 'audio',gain=gain,peak=float(abs(wave).max()),samples=10000,sample_rate=50000,clipped_samples=0))
+         add('Target.wav',target,str(TARGET.relative_to(ROOT)))
+         for r in rows:
+-            raw=ROOT/r['raw_npz']
++            raw=resolve_result_path(ROOT/r['raw_npz'])
+             with np.load(raw) as a:add(f"{r['condition']}_seed{r['seed']}_{r['role']}.wav",a['audio'],r['raw_npz'])
+     write_csv(OUT/'wav_index.csv',items);return items
+ 
+diff --git a/Deeplearning/issue26_data.py b/Deeplearning/issue26_data.py
+index 7e9aa31..66ddf86 100644
+--- a/Deeplearning/issue26_data.py
++++ b/Deeplearning/issue26_data.py
+@@ -1,4 +1,5 @@
+ """Wide-domain candidate-generation experiment; legacy outputs remain read only."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ 
+@@ -11,7 +12,7 @@ from .issue24_data import sb3_hashes
+ from .issue16 import digest
+ from .issue17_artifacts import read_record
+ 
+-OUT=ROOT/'results/phase1_caseA_wide_local_exploration'
++OUT=ROOT/'results/Phase1/CaseA/exploration_strategy'
+ CONDITIONS=('A','B','C','D')
+ NEW=('B','C','D')
+ PREFIX=256
+@@ -51,13 +52,13 @@ def curve_for(condition,seed,output=OUT):return read_record(folder_for(condition
+ def half_width(condition):return np.array([12500000.,750000.,375500. if condition=='A' else 4975500.])
+ 
+ 
+-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
++def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
+ 
+ 
+ def ready(output=OUT):
+     from .model import LIBRARY
+     output=Path(output);m=json.loads((output/'manifest.json').read_text())
+-    assert m['source_sha256']==source_hashes(),'Frozen numerical implementation changed'
++    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen numerical implementation changed'
+     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
+     assert m['baseline_manifest_sha256']==digest(BASE/'manifest.json') and m['sb3_implementation_sha256']==sb3_hashes()
+     assert m['plan_sha256']==digest(output/'PLAN.md')
+diff --git a/Deeplearning/issue26_figures.py b/Deeplearning/issue26_figures.py
+index 574069d..feac917 100644
+--- a/Deeplearning/issue26_figures.py
++++ b/Deeplearning/issue26_figures.py
+@@ -1,4 +1,5 @@
+ """Ten aggregate figures; common Target-derived audio/display scales."""
++from .result_paths import resolve as resolve_result_path
+ import gzip
+ import csv
+ import io
+@@ -132,7 +133,7 @@ def audio_figures(save):
+     target,_=target_data();peak=float(abs(target).max());f,t,power,reference=display_psd(target)
+     sounds=csv_rows('sound_index.csv');displays={'Target':(target,power)};maximum=float(relative_db(power,reference).max());max_wave=float(abs(target/peak).max());max_rms=float(rms_envelope(target,peak).max())
+     for r in sounds:
+-        with np.load(ROOT/r['raw_npz']) as z:audio=z['audio']
++        with np.load(resolve_result_path(ROOT/r['raw_npz'])) as z:audio=z['audio']
+         _,_,p,_=display_psd(audio);key=(r['condition'],int(r['seed']),r['role']);displays[key]=(audio,p)
+         maximum=max(maximum,float(relative_db(p,reference).max()));max_wave=max(max_wave,float(abs(audio/peak).max()));max_rms=max(max_rms,float(rms_envelope(audio,peak).max()))
+     color_limits=(-80.,max(0.,float(np.ceil(maximum/5)*5)));seed=1
+diff --git a/Deeplearning/issue26_inventory.py b/Deeplearning/issue26_inventory.py
+index 7b4f40b..e6541b5 100644
+--- a/Deeplearning/issue26_inventory.py
++++ b/Deeplearning/issue26_inventory.py
+@@ -1,4 +1,5 @@
+ """Create the read-only starting snapshot needed by Issue26 prepare."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from pathlib import Path
+ import subprocess
+@@ -13,8 +14,8 @@ def inventory(destination):
+     destination=Path(destination)
+     if destination.exists() or OUT.exists():raise FileExistsError('Starting snapshot and study output must both be new')
+     git=lambda *args:subprocess.check_output(['git',*args],cwd=ROOT,text=True)
+-    paths={ROOT/p for p in git('ls-files','-z').split('\0') if p and p not in ('README.md','.gitignore')}
+-    paths.update(p for name in ('results','reports') for p in (ROOT/name).rglob('*') if p.is_file())
++    paths={resolve_result_path(ROOT/p) for p in git('ls-files','-z').split('\0') if p and p not in ('README.md','.gitignore')}
++    paths.update(p for name in ('results','reports') for p in (resolve_result_path(ROOT/name)).rglob('*') if p.is_file())
+     records=[dict(path=str(p.relative_to(ROOT)),bytes=p.stat().st_size,sha256=digest(p)) for p in sorted(paths) if p.is_file() and not p.is_symlink()]
+     write_json(destination,dict(workspace=workspace_inventory(),git_status=git('status','--porcelain=v1','--untracked-files=all'),
+         git_head=git('rev-parse','HEAD').strip(),unpushed=git('log','--oneline','@{upstream}..HEAD'),files=records))
+diff --git a/Deeplearning/issue26_prepare.py b/Deeplearning/issue26_prepare.py
+index 58618e9..eea90ee 100644
+--- a/Deeplearning/issue26_prepare.py
++++ b/Deeplearning/issue26_prepare.py
+@@ -1,4 +1,5 @@
+ """Freeze wide-domain behavior protocol and reference provenance before research runs."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from datetime import datetime,timezone
+ import importlib.metadata
+@@ -25,17 +26,17 @@ def prepare(before_path=Path('/tmp/birdsong-issue26-before.json'),output=OUT):
+     torch.set_num_threads(1);output=Path(output);tick=time.perf_counter()
+     if output.exists():raise FileExistsError('Existing study preserved')
+     before=json.loads(Path(before_path).read_text())
+-    for r in before['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
++    for r in before['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
+     references={};names={18:'phase1_3d_domain_diagnostics',22:'phase1_caseA_sac128_reward_weights',
+         23:'phase1_caseA_sac128_stability_diagnostics',25:'phase1_caseA_sac128_critic_lr'}
+     for issue,name in names.items():
+-        path=ROOT/'results'/name/'manifest.json';m=json.loads(path.read_text());assert m['target_sha256']==digest(TARGET)
++        path=resolve_result_path(ROOT/'results'/name/'manifest.json');m=json.loads(path.read_text());assert m['target_sha256']==digest(TARGET)
+         if issue!=18:
+             assert m['native_library_sha256']==digest(LIBRARY)
+-            for p,h in m['source_sha256'].items():assert digest(ROOT/p)==h,p
++            for p,h in m['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
+         references[issue]=dict(manifest=str(path.relative_to(ROOT)),sha256=digest(path),target_sha256=m['target_sha256'],
+             historical_library_sha256=m['native_library_sha256'],library_matches_current=m['native_library_sha256']==digest(LIBRARY))
+-    gate_path=ROOT/'results/phase1_restricted3d_weights/model_gate.json';gate=json.loads(gate_path.read_text())
++    gate_path=ROOT/'results/Phase1/CaseA/reward_weights/restricted_domain/model_gate.json';gate=json.loads(gate_path.read_text())
+     assert gate['passed'] and gate['x0_storage_only'] and all(p['exact_equal'] for p in gate['comparisons'])
+     assert len(re.findall(r'\bx0\b',(ROOT/'native/model.cpp').read_text()))==1
+     old=json.loads((BASE/'manifest.json').read_text());versions={p:importlib.metadata.version(p) for p in old['versions']};assert versions==old['versions']
+diff --git a/Deeplearning/issue26_report.py b/Deeplearning/issue26_report.py
+index dee2aed..1b6833a 100644
+--- a/Deeplearning/issue26_report.py
++++ b/Deeplearning/issue26_report.py
+@@ -1,4 +1,5 @@
+ """Render Issue26 and freeze local provenance, protected files and storage."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import io
+ import json
+@@ -29,7 +30,7 @@ def integrity():
+     if not path.exists():write_json(path,dict(status='running'))
+     protected=csv_rows('protected_before.csv');changed=[];deleted=[];broken=[];links=0
+     for r in protected:
+-        p=ROOT/r['path']
++        p=resolve_result_path(ROOT/r['path'])
+         if not p.exists():deleted.append(r['path'])
+         elif digest(p)!=r['sha256']:changed.append(r['path'])
+     for p in (OUT/'README.md',OUT/'REPORT.md',OUT/'PLAN.md',OUT/'STAGE_B.md',OUT/'REPRODUCE.md'):
+@@ -52,7 +53,7 @@ def integrity():
+             for r in csv_rows('wav_index.csv'):
+                 rate,wave=wavfile.read(io.BytesIO(archive.read(r['wav'])))
+                 assert rate==50000 and wave.dtype==np.float32 and wave.shape==(10000,) and float(r['gain'])==gain
+-                with np.load(ROOT/r['source']) as z:np.testing.assert_array_equal(wave,(z[r['raw_key']]*gain).astype(np.float32))
++                with np.load(resolve_result_path(ROOT/r['source'])) as z:np.testing.assert_array_equal(wave,(z[r['raw_key']]*gain).astype(np.float32))
+                 wavs+=1
+     assert json.loads((OUT/'audit.json').read_text())['passed']
+     assert json.loads((OUT/'aggregate_execution.json').read_text())['source_sha256']==digest(ROOT/'issue26_analysis.py')
+diff --git a/Deeplearning/issue26_training.py b/Deeplearning/issue26_training.py
+index 82e6363..e39f087 100644
+--- a/Deeplearning/issue26_training.py
++++ b/Deeplearning/issue26_training.py
+@@ -1,4 +1,5 @@
+ """Stage B wide SAC, followed by both frozen behavior-mixture interventions."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import json
+@@ -32,7 +33,7 @@ def run_one(condition,seed,output=OUT):
+     if condition not in NEW:raise ValueError('A is read-only')
+     folder=folder_for(condition,seed,output)
+     if (folder/'summary.json').exists():
+-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
++        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
+         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h,p
+         return s
+     folder.mkdir(parents=True,exist_ok=False);train=environment(condition);evaluation=environment(condition)
+diff --git a/Deeplearning/issue27_data.py b/Deeplearning/issue27_data.py
+index b39950c..a41c1ac 100644
+--- a/Deeplearning/issue27_data.py
++++ b/Deeplearning/issue27_data.py
+@@ -1,4 +1,5 @@
+ """Case B self-Target experiment; all legacy Case A outputs stay read only."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ import numpy as np
+@@ -9,8 +10,8 @@ from .issue19_data import pack,metric_row
+ from .issue17_artifacts import read_record
+ 
+ ROOT=Path(__file__).resolve().parent
+-OUT=ROOT/'results/phase1_caseB_self_target_020s_sac128'
+-BASE=ROOT/'results/phase1_caseA_sac128_stability_diagnostics'
++OUT=ROOT/'results/Phase1/CaseB/target_diagnostics/initial_stop'
++BASE=ROOT/'results/Phase1/CaseA/stability_diagnostics'
+ SEEDS=(0,1,2)
+ CONTROLS=np.array([4.1e7,3.5e7,3.4e6,3e5,1e7])
+ INDICES=[0,2,3]
+@@ -20,7 +21,7 @@ SOURCES=('issue27_data.py','issue27_native.py','issue27_probe.cpp','issue27_env.
+     'issue21_training.py','issue22_data.py','issue23_data.py','issue25_agent.py','issue24_agent.py','issue24_data.py',
+     'issue19_data.py','issue18_domain_env.py','issue14.py','model.py','model_env.py','native/model.cpp','constant020_env.py','acoustics.py')
+ 
+-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
++def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
+ def target_data():
+     with np.load(TARGET) as z:return z['audio'].copy(),z['controls'].copy()
+ def folder_for(seed,output=OUT):
+@@ -33,7 +34,7 @@ def ready(output=OUT):
+     from .issue27_native import PROBE
+     p=Path(output);m=json.loads((p/'manifest.json').read_text())
+     if not m['preflight_passed']:raise RuntimeError('Case B Target failed the physical gate; no training is authorized under this protocol')
+-    assert m['source_sha256']==source_hashes() and m['native_library_sha256']==digest(LIBRARY)
++    assert source_hashes_match(m['source_sha256'], source_hashes()) and m['native_library_sha256']==digest(LIBRARY)
+     assert m['target_sha256']==digest(TARGET) and m['probe_sha256']==digest(PROBE)
+     assert m['plan_sha256']==digest(p/'PLAN.md') and m['preflight_passed']
+     return m
+diff --git a/Deeplearning/issue27_diagnostics.py b/Deeplearning/issue27_diagnostics.py
+index 3fad1ce..b0d0ad1 100644
+--- a/Deeplearning/issue27_diagnostics.py
++++ b/Deeplearning/issue27_diagnostics.py
+@@ -1,4 +1,5 @@
+ """Audit the three saved physical sounds; no new integration or learning."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import ast
+ import csv
+ import json
+@@ -24,10 +25,10 @@ def rows(name):
+ 
+ def audit():
+     m=json.loads((OUT/'manifest.json').read_text());assert m['status']=='stopped_preflight' and not m['preflight_passed']
+-    assert m['source_sha256']==source_hashes() and m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET) and m['probe_sha256']==digest(PROBE)
++    assert source_hashes_match(m['source_sha256'], source_hashes()) and m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET) and m['probe_sha256']==digest(PROBE)
+     executed=json.loads((OUT/'executed_source_checksums.json').read_text())
+     for name,h in executed.items():assert digest(OUT/'executed_sources'/name)==h
+-    for name in ('issue27_native.py','issue27_probe.cpp'):assert digest(ROOT/name)==executed[name]
++    for name in ('issue27_native.py','issue27_probe.cpp'):assert digest(resolve_result_path(ROOT/name))==executed[name]
+     def function(path,name):
+         return ast.dump(next(n for n in ast.parse(path.read_text()).body if isinstance(n,ast.FunctionDef) and n.name==name),include_attributes=False)
+     assert function(ROOT/'issue27_prepare.py','physics')==function(OUT/'executed_sources/issue27_prepare.py','physics')
+diff --git a/Deeplearning/issue27_prepare.py b/Deeplearning/issue27_prepare.py
+index 65777fc..a6496cb 100644
+--- a/Deeplearning/issue27_prepare.py
++++ b/Deeplearning/issue27_prepare.py
+@@ -1,4 +1,5 @@
+ """Case B physical gate; preserve a diagnostic study if its Target fails."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from datetime import datetime,timezone
+ import importlib.metadata
+@@ -20,7 +21,7 @@ from .issue16 import digest
+ def physics(before=Path('/tmp/birdsong-issue27-before.json')):
+     if OUT.exists():raise FileExistsError('Existing study preserved')
+     before=json.loads(Path(before).read_text())
+-    for r in before['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
++    for r in before['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
+     OUT.mkdir(parents=True);(OUT/'preflight').mkdir();write_csv(OUT/'protected_before.csv',before.pop('files'));write_json(OUT/'storage_before.json',before)
+     (OUT/'PLAN.md').write_text('''# Issue27 — 計算前の計画
+ 
+@@ -54,7 +55,7 @@ Final/Selected/posthoc/training_bestをCase Bで独立再生し、左右末尾
+         np.testing.assert_array_equal(target['audio'],oracle['audio']);np.testing.assert_array_equal(target['state_end_blocks'],oracle['state_end_blocks'])
+         assert max(error[k] for k in ('log_spectral','envelope','total'))<=1e-12
+         assert not np.array_equal(target['audio'],contrast['audio'])
+-        assert digest(TARGET)!=digest(ROOT/'results/phase1_3d_domain_diagnostics/diagnostics/target.npz')
++        assert digest(TARGET)!=digest(ROOT/'results/Phase1/CaseA/domain_diagnostics/diagnostics/target.npz')
+         if not build['unchanged_source_build_binary_exact']:
+             reference,_=generate('source_reference','B',False,PROBE.parent/'libsource_reference.so')
+             for k in ('audio','state_end_blocks','motion_mean','motion_std'):np.testing.assert_array_equal(target[k],reference[k])
+diff --git a/Deeplearning/issue27_report.py b/Deeplearning/issue27_report.py
+index 0e48677..fa9a148 100644
+--- a/Deeplearning/issue27_report.py
++++ b/Deeplearning/issue27_report.py
+@@ -1,4 +1,5 @@
+ """Scientific diagnostic report after the mandatory Case B Target gate stops SAC."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ import ast
+ import json
+@@ -76,13 +77,13 @@ def figures():
+ 
+ 
+ def integrity():
+-    manifest=json.loads((OUT/'manifest.json').read_text());assert manifest['source_sha256']==source_hashes()
++    manifest=json.loads((OUT/'manifest.json').read_text());assert source_hashes_match(manifest['source_sha256'], source_hashes())
+     assert manifest['native_library_sha256']==digest(LIBRARY) and manifest['target_sha256']==digest(TARGET) and manifest['probe_sha256']==digest(PROBE)
+     assert manifest['status']=='stopped_preflight' and not manifest['preflight_passed'] and manifest['plan_sha256']==digest(OUT/'PLAN.md')
+     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
+     old=rows('protected_before.csv');changed=[];deleted=[];broken=[];links=0
+     for row in old:
+-        p=ROOT/row['path']
++        p=resolve_result_path(ROOT/row['path'])
+         if not p.exists():deleted.append(row['path'])
+         elif digest(p)!=row['sha256']:changed.append(row['path'])
+     for name in ('README.md','REPORT.md','REPRODUCE.md','PLAN.md'):
+diff --git a/Deeplearning/issue27f_data.py b/Deeplearning/issue27f_data.py
+index cd2defb..2a38c14 100644
+--- a/Deeplearning/issue27f_data.py
++++ b/Deeplearning/issue27f_data.py
+@@ -1,4 +1,5 @@
+ """Case B self-Target49000; all previous experiments are immutable references."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ import numpy as np
+@@ -8,9 +9,9 @@ from .issue17_artifacts import read_record
+ from .issue23_data import chosen
+ 
+ ROOT=Path(__file__).resolve().parent
+-OUT=ROOT/'results/phase1_caseB_self_target_020s_methods_f0lr_scan'
+-OLD=ROOT/'results/phase1_caseB_self_target_020s_methods'
+-BASE=ROOT/'results/phase1_caseA_sac128_stability_diagnostics'
++OUT=ROOT/'results/Phase1/CaseB/target_diagnostics/low_forces'
++OLD=ROOT/'results/Phase1/CaseB/target_diagnostics/high_left_force'
++BASE=ROOT/'results/Phase1/CaseA/stability_diagnostics'
+ TARGET=OUT/'preflight/target.npz'
+ METHODS=('SAC','TD3','PPO');SEEDS=(0,1,2)
+ GRID_E=(3e7,3.5e7,4.1e7);GRID_P=(3e6,3.4e6,3.8e6)
+@@ -19,7 +20,7 @@ HALF_WIDTH=np.array([12500000.,750000.,375500.])
+ CORE=('issue27f_data.py','issue27f_native.py','issue27f_prepare.py','issue27f_env.py','issue27f_agent.py','issue27f_training.py',
+     'issue27_probe.cpp','model.py','native/model.cpp','model_env.py','acoustics.py','constant020_env.py','issue18_domain_env.py',
+     'issue14.py','issue19_data.py','issue23_data.py','issue22_data.py','issue25_agent.py')
+-def hashes():return {name:digest(ROOT/name) for name in CORE}
++def hashes():return {name:digest(resolve_result_path(ROOT/name)) for name in CORE}
+ def target_data():
+     with np.load(TARGET) as z:return z['audio'].copy(),z['controls'].copy()
+ def folder(method,seed,output=OUT):
+@@ -30,7 +31,7 @@ def save_values(path,values):np.savez_compressed(path,**values,sample_rate=50000
+ def ready(output=OUT):
+     from .model import LIBRARY
+     from .issue27f_native import PROBE
+-    m=json.loads((Path(output)/'manifest.json').read_text());assert m['preflight_passed'] and m['source_sha256']==hashes()
++    m=json.loads((Path(output)/'manifest.json').read_text());assert m['preflight_passed'] and source_hashes_match(m['source_sha256'], hashes())
+     assert m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE)
+     assert m['target_sha256']==digest(TARGET) and m['plan_sha256']==digest(OUT/'PLAN.md')
+     return m
+diff --git a/Deeplearning/issue27f_prepare.py b/Deeplearning/issue27f_prepare.py
+index 6872a12..6d42a06 100644
+--- a/Deeplearning/issue27f_prepare.py
++++ b/Deeplearning/issue27f_prepare.py
+@@ -1,4 +1,5 @@
+ """Eighteen fixed physical candidates; select before algorithm smoke/full runs."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ from datetime import datetime,timezone
+ import importlib.metadata
+@@ -36,7 +37,7 @@ def features(values):
+ def scan(before=Path('/tmp/birdsong-issue27f-before.json')):
+     if OUT.exists():raise FileExistsError('Existing experiment preserved')
+     r=json.loads(Path(before).read_text())
+-    for x in r['files']:assert digest(ROOT/x['path'])==x['sha256'],x['path']
++    for x in r['files']:assert digest(resolve_result_path(ROOT/x['path']))==x['sha256'],x['path']
+     OUT.mkdir(parents=True);(OUT/'preflight/candidates').mkdir(parents=True)
+     write_csv(OUT/'protected_before.csv',r.pop('files'));write_json(OUT/'storage_before.json',r)
+     (OUT/'PLAN.md').write_text('''# Issue27再改訂 — 左右外力18点と3手法の事前計画
+@@ -103,7 +104,7 @@ def select(candidate,reason):
+ 
+ def freeze():
+     from .issue24_data import sb3_hashes
+-    gate=json.loads((OUT/'preflight/gate.json').read_text());tests=json.loads((OUT/'preflight/tests.json').read_text());assert gate['passed'] and tests['passed'] and tests['source_sha256']==hashes()
++    gate=json.loads((OUT/'preflight/gate.json').read_text());tests=json.loads((OUT/'preflight/tests.json').read_text());assert gate['passed'] and tests['passed'] and source_hashes_match(tests['source_sha256'], hashes())
+     if (OUT/'manifest.json').exists():raise FileExistsError('Existing official manifest preserved')
+     old=json.loads((BASE/'manifest.json').read_text());versions={p:importlib.metadata.version(p) for p in old['versions']};assert versions==old['versions']
+     write_json(OUT/'manifest.json',dict(issue=27,revision='2026-11-26_18points',created_utc=datetime.now(timezone.utc).isoformat(),settings=CONFIG,
+diff --git a/Deeplearning/issue27f_report.py b/Deeplearning/issue27f_report.py
+index cfc7c66..cf58871 100644
+--- a/Deeplearning/issue27f_report.py
++++ b/Deeplearning/issue27f_report.py
+@@ -1,4 +1,5 @@
+ """Report and final preservation audit from completed saved results; native0."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ import csv
+ import json
+@@ -75,7 +76,7 @@ Targetは **b3_c00、[ε_l, ε_r, p_s, f0_l, f0_r]=[3.0e7,3.5e7,3.0e6,49000,4900
+ 
+ {choice['reason']} 持続proxy={f['late_ac_ratio']:.10f}、直線除去後={f['detrended_ac_ratio']:.10f}。entropy={f['spectral_entropy']:.6f}、peak数={f['spectral_peak_count']}。entropyは末尾0.10sのWelch PSD（100–10000Hz）における正規化Shannon entropy、peak数はコード記載のprominence/強度閾値による記述量で、生理学的複雑性指標とは区別する。候補間の物理表示を確認後、方法別smokeと正式学習の前に選定した。選定後の差し替えはない。
+ 
+-元native/model.cppとmodel.py、既存libbirdsong.soは変更していない。[同一ソース再ビルドのbyte/hash一致](native/build.json)。Case B native condition=1、左右α=1.2e6/β=1500、右ε=3.5e7、x0=.02cm/D=.01、dt=1e-7を実メモリで検査した。元BirdModel('B')のPython制御処理は右f0を1e7へ固定するため、独立ConfiguredCaseB subclassの_controlsのみでIssue指定の右固定値を設定した。元Bのコンストラクタ・native reset/式/固定係数はそのままで、Aへの置換や右αβのゼロ化はない。[初回REPORT](../phase1_caseB_self_target_020s_sac128/REPORT.md)と[前回9点REPORT](../phase1_caseB_self_target_020s_methods/REPORT.md)の停止理由と次案を確認して着手した。
++元native/model.cppとmodel.py、既存libbirdsong.soは変更していない。[同一ソース再ビルドのbyte/hash一致](native/build.json)。Case B native condition=1、左右α=1.2e6/β=1500、右ε=3.5e7、x0=.02cm/D=.01、dt=1e-7を実メモリで検査した。元BirdModel('B')のPython制御処理は右f0を1e7へ固定するため、独立ConfiguredCaseB subclassの_controlsのみでIssue指定の右固定値を設定した。元Bのコンストラクタ・native reset/式/固定係数はそのままで、Aへの置換や右αβのゼロ化はない。[初回REPORT](../initial_stop/REPORT.md)と[前回9点REPORT](../high_left_force/REPORT.md)の停止理由と次案を確認して着手した。
+ 
+ 各音0.20s、2,000,000 native step、50kHz/10000sample。初期4状態、遅延履歴、16次15kHz lowpass状態を0にし、200分の1にデシメートする。左右f0は外力係数であり音響基本周波数Hzではない。学習では右f0=49000を全run固定する一方、左f0は[49000,800000]を探索させた。
+ 
+@@ -233,7 +234,7 @@ manifestのcore hashesは学習前に凍結。implementation_checksumsは終了
+     sources=OUT/'executed_sources';sources.mkdir(exist_ok=True)
+     copied={}
+     for rel in sorted(set(CORE)|{str(p.relative_to(ROOT)) for p in ROOT.glob('issue27f*.py')}|{'tests/test_issue27f.py'}):
+-        dest=sources/rel;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/rel,dest);copied[rel]=digest(dest)
++        dest=sources/rel;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(resolve_result_path(ROOT/rel),dest);copied[rel]=digest(dest)
+     write_json(OUT/'executed_source_checksums.json',copied)
+     # Explicit full-block statistics for candidates and all independently audited endpoints.
+     blocks=[]
+@@ -247,11 +248,11 @@ manifestのcore hashesは学習前に凍結。implementation_checksumsは終了
+         old_sounds_regenerated=0,research_runs=9,failed_runs=0,retries=0,additional_grid=0))
+ 
+ def audit():
+-    manifest=ready();assert read(OUT/'preflight/tests.json')['source_sha256']==hashes()
++    manifest=ready();assert source_hashes_match(read(OUT/'preflight/tests.json')['source_sha256'], hashes())
+     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
+     protected=rows('protected_before.csv');changed=[];deleted=[];broken=[];links=0
+     for r in protected:
+-        p=ROOT/r['path']
++        p=resolve_result_path(ROOT/r['path'])
+         if not p.exists():deleted.append(r['path'])
+         elif digest(p)!=r['sha256']:changed.append(r['path'])
+     for path in (OUT/'REPORT.md',OUT/'README.md',OUT/'PLAN.md',OUT/'REPRODUCE.md'):
+@@ -263,14 +264,14 @@ def audit():
+     for name,root in (('implementation_checksums.json',ROOT),('artifact_checksums.json',OUT)):
+         if (OUT/name).exists():
+             for path,h in read(OUT/name).items():assert digest(root/path)==h,path
+-    for path,h in read(OUT/'executed_source_checksums.json').items():assert digest(OUT/'executed_sources'/path)==h and digest(ROOT/path)==h
++    for path,h in read(OUT/'executed_source_checksums.json').items():assert digest(OUT/'executed_sources'/path)==h and digest(resolve_result_path(ROOT/path))==h
+     for r in rows('audio_index.csv'):
+         rate,wave=wavfile.read(OUT/r['wav']);assert rate==50000 and wave.shape==(10000,) and wave.dtype==np.float32
+         np.testing.assert_array_equal(wave,(load(OUT/r['raw_npz'])['audio']*float(r['gain'])).astype(np.float32))
+     assert read(OUT/'audit/endpoints.json')['passed'] and read(OUT/'physics_audit.json')['passed']
+     assert read(OUT/'execution.json')['training_candidates']==36864 and read(OUT/'execution.json')['independent_policy_evaluations']==297
+     for s in summaries():
+-        assert s['status']=='complete' and s['source_sha256']==hashes()
++        assert s['status']=='complete' and source_hashes_match(s['source_sha256'], hashes())
+         for name,h in s['artifact_sha256'].items():assert digest(folder(s['method'],s['seed'])/name)==h
+     result=dict(passed=not changed and not deleted and not broken,original_files_checked=len(protected),original_files_changed=changed,original_files_deleted=deleted,
+         local_links_checked=links,broken_links=broken,wavs_checked=len(rows('audio_index.csv')),native_sounds_generated=0,stageA_candidates=18,research_runs=9,
+diff --git a/Deeplearning/issue27f_training.py b/Deeplearning/issue27f_training.py
+index be35ac1..42e57f3 100644
+--- a/Deeplearning/issue27f_training.py
++++ b/Deeplearning/issue27f_training.py
+@@ -1,4 +1,5 @@
+ """Exact4096-step Case B learning; evaluation happens after completed updates."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import json
+@@ -20,7 +21,7 @@ from .issue16 import digest
+ def run_one(method,seed,output=OUT):
+     torch.set_num_threads(1);output=Path(output);manifest=ready(output);config=manifest['settings'];budget=config['episodes'];path=folder(method,seed,output)
+     if (path/'summary.json').exists():
+-        s=json.loads((path/'summary.json').read_text());assert s['source_sha256']==hashes()
++        s=json.loads((path/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], hashes())
+         for name,h in s['artifact_sha256'].items():assert digest(path/name)==h
+         return s
+     path.mkdir(parents=True,exist_ok=False);train=CaseBEnv();evaluation=CaseBEnv(record_moments=True)
+diff --git a/Deeplearning/issue27g_data.py b/Deeplearning/issue27g_data.py
+index b15970f..196b416 100644
+--- a/Deeplearning/issue27g_data.py
++++ b/Deeplearning/issue27g_data.py
+@@ -1,4 +1,5 @@
+ """Preregistered three Targets, paired3D/4D Case B experiment."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ import numpy as np
+@@ -6,8 +7,8 @@ from .issue16 import digest
+ from .issue19_data import pack,metric_row
+ from .issue23_data import chosen
+ ROOT=Path(__file__).resolve().parent
+-OUT=ROOT/'results/phase1_caseB_self_target_020s_3targets_3d4d'
+-OLD=ROOT/'results/phase1_caseB_self_target_020s_methods_f0lr_scan'
++OUT=ROOT/'results/Phase1/CaseB/3targets_3d4d'
++OLD=ROOT/'results/Phase1/CaseB/target_diagnostics/low_forces'
+ METHODS=('SAC','TD3','PPO');SEEDS=(0,1,2);DIMS=(3,4)
+ CONTROLS={'T1':np.array([3.5e7,3.5e7,3e6,49000.,1e7]),'T2':np.array([3.5e7,3.5e7,3e6,49000.,49000.]),'T3':np.array([3.5e7,2.1e7,3e6,49000.,49000.])}
+ LOW=np.array([2.5e7,2e7,2.5e6,49000.,49000.]);HIGH=np.array([5e7,5e7,4e6,800000.,1e7])
+@@ -16,7 +17,7 @@ CONFIG=dict(episodes=4096,eval_every_episodes=128,learning_rate=3e-4,gamma=1.,ba
+ CORE=('issue27g_data.py','issue27g_native.py','issue27g_env.py','issue27g_agent.py','issue27g_training.py','issue27g_prepare.py',
+     'issue27f_agent.py','issue27f_prepare.py','issue27f_native.py','issue27f_data.py','issue27_probe.cpp','model.py','native/model.cpp','model_env.py','acoustics.py',
+     'constant020_env.py','issue18_domain_env.py','issue14.py','issue19_data.py','issue23_data.py','issue22_data.py','issue25_agent.py')
+-def hashes():return {n:digest(ROOT/n) for n in CORE}
++def hashes():return {n:digest(resolve_result_path(ROOT/n)) for n in CORE}
+ def target_path(target):
+     if target not in CONTROLS:raise ValueError(target)
+     return OUT/f'preflight/{target}/target.npz'
+@@ -32,7 +33,7 @@ def folder(target,dim,method,seed,output=OUT):
+ def ready(output=OUT):
+     from .model import LIBRARY
+     from .issue27g_native import PROBE
+-    m=json.loads((Path(output)/'manifest.json').read_text());assert m['preflight_passed'] and m['source_sha256']==hashes()
++    m=json.loads((Path(output)/'manifest.json').read_text());assert m['preflight_passed'] and source_hashes_match(m['source_sha256'], hashes())
+     assert m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE) and m['plan_sha256']==digest(OUT/'PLAN.md')
+     assert all(digest(target_path(t))==h for t,h in m['target_sha256'].items());return m
+ def save_values(path,values):np.savez_compressed(path,**values,sample_rate=50000,duration_s=.2,model_condition='B')
+diff --git a/Deeplearning/issue27g_prepare.py b/Deeplearning/issue27g_prepare.py
+index c5f3e01..b3231a9 100644
+--- a/Deeplearning/issue27g_prepare.py
++++ b/Deeplearning/issue27g_prepare.py
+@@ -1,4 +1,5 @@
+ """Only T3 new generation;3 independent oracles, no parameter search."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ from datetime import datetime,timezone
+ import importlib.metadata
+@@ -37,7 +38,7 @@ SAC/TD3/PPO×seed0/1/2×最大6組＝54run、各厳密4096環境step、最大221
+ def stage_a():
+     if OUT.exists():raise FileExistsError('Preserve previous output')
+     before=json.loads(Path('/tmp/birdsong-issue27g-before.json').read_text())
+-    assert all(digest(ROOT/r['path'])==r['sha256'] for r in before['files'])
++    assert all(digest(resolve_result_path(ROOT/r['path']))==r['sha256'] for r in before['files'])
+     OUT.mkdir(parents=True);write_csv(OUT/'protected_before.csv',before.pop('files'));write_json(OUT/'storage_before.json',before);(OUT/'PLAN.md').write_text(PLAN)
+     build=build_probe();assert build['unchanged_source_build_binary_exact'];ledger=[];gates={}
+     for t,c in CONTROLS.items():
+@@ -62,7 +63,7 @@ def stage_a():
+ 
+ def freeze():
+     from .issue24_data import sb3_hashes
+-    tests=json.loads((OUT/'preflight/tests.json').read_text());assert tests['passed'] and tests['source_sha256']==hashes()
++    tests=json.loads((OUT/'preflight/tests.json').read_text());assert tests['passed'] and source_hashes_match(tests['source_sha256'], hashes())
+     gates=json.loads((OUT/'preflight/gate.json').read_text());cases=[(t,d) for t,g in gates.items() if g['passed'] for d in (3,4)]
+     assert len(tests['smoke_runs'])==len(cases)*3
+     if (OUT/'manifest.json').exists():raise FileExistsError('Frozen protocol preserved')
+diff --git a/Deeplearning/issue27g_report.py b/Deeplearning/issue27g_report.py
+index e980815..8b04d44 100644
+--- a/Deeplearning/issue27g_report.py
++++ b/Deeplearning/issue27g_report.py
+@@ -1,4 +1,5 @@
+ """Integrated report, exact completed-run accounting and preservation audit."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ import csv
+ import json
+@@ -87,7 +88,7 @@ def report():
+ 
+ T1/T2は前回保存b2_c10/b3_c10のNPZをbyte同一で参照し、T3のみ新規1点を生成した。3音とも別Bインスタンスoracleを再計算し、波形、全20block状態、native運動mean/stdが完全一致、E_spec/E_env/E_total/J=0。右source/outputは非ゼロ。旧18点/9点の再探索やTarget差し替えはない。[発声ゲートと出典hash](preflight/gate.json) / [事前計画](PLAN.md) / [manifest](manifest.json)。
+ 
+-[初回停止REPORT](../phase1_caseB_self_target_020s_sac128/REPORT.md)、[旧9点REPORT](../phase1_caseB_self_target_020s_methods/REPORT.md)、[前回18点・9run REPORT](../phase1_caseB_self_target_020s_methods_f0lr_scan/REPORT.md)を参照し、今回を別実験として保存している。
++[初回停止REPORT](../target_diagnostics/initial_stop/REPORT.md)、[旧9点REPORT](../target_diagnostics/high_left_force/REPORT.md)、[前回18点・9run REPORT](../target_diagnostics/low_forces/REPORT.md)を参照し、今回を別実験として保存している。
+ 
+ 発声ゲートは末尾1000sample（20ms）のAC std/自身の全期間peak>.05、線形傾向除去後ratio>.05、finite、generated_silent=False。左右変動proxyは同じ末尾traceでde-trended std/元std>.5かつde-trended std/全期間state幅>.001をx/y双方に適用した記述量。T1は左、T2/T3は左右の条件を確認した。音声そのものをde-trendしたり、周期性の数学的証明と呼んだりはしない。学習・独立方策評価の持続proxyは従来どおりTarget peak基準で、Stage Aの自身peak基準と区別する。
+ 
+@@ -236,15 +237,15 @@ Deeplearning/.venv-rl/bin/python -m Deeplearning.issue27g_report audit
+         if p.exists():shutil.copyfile(p,logs/p.name)
+     files=set(CORE)|{str(p.relative_to(ROOT)) for p in ROOT.glob('issue27g*.py')}|{'tests/test_issue27g.py'};copied={}
+     for name in sorted(files):
+-        dest=OUT/'executed_sources'/name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/name,dest);copied[name]=digest(dest)
++        dest=OUT/'executed_sources'/name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(resolve_result_path(ROOT/name),dest);copied[name]=digest(dest)
+     write_json(OUT/'executed_source_checksums.json',copied)
+ 
+ def audit():
+-    ready();assert read(OUT/'preflight/tests.json')['source_sha256']==hashes();assert read(OUT/'recovery_manifest.json')['source_sha256']==digest(ROOT/'issue27g_recovery.py')
++    ready();assert source_hashes_match(read(OUT/'preflight/tests.json')['source_sha256'], hashes());assert read(OUT/'recovery_manifest.json')['source_sha256']==digest(ROOT/'issue27g_recovery.py')
+     protected=rows('protected_before.csv');changed=[];deleted=[];broken=[];links=0
+     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
+     for r in protected:
+-        p=ROOT/r['path']
++        p=resolve_result_path(ROOT/r['path'])
+         if not p.exists():deleted.append(r['path'])
+         elif digest(p)!=r['sha256']:changed.append(r['path'])
+     for p in (OUT/'REPORT.md',OUT/'README.md',OUT/'AUDIO.md',OUT/'PLAN.md',OUT/'RECOVERY.md',OUT/'REPRODUCE.md'):
+@@ -255,12 +256,12 @@ def audit():
+     for name,base in (('implementation_checksums.json',ROOT),('artifact_checksums.json',OUT)):
+         if (OUT/name).exists():
+             for p,h in read(OUT/name).items():assert digest(base/p)==h,p
+-    for p,h in read(OUT/'executed_source_checksums.json').items():assert digest(ROOT/p)==h and digest(OUT/'executed_sources'/p)==h
++    for p,h in read(OUT/'executed_source_checksums.json').items():assert digest(resolve_result_path(ROOT/p))==h and digest(OUT/'executed_sources'/p)==h
+     for r in rows('audio_index.csv'):
+         rate,wave=wavfile.read(OUT/r['wav']);assert rate==50000 and wave.shape==(10000,) and wave.dtype==np.float32
+         np.testing.assert_array_equal(wave,(load(OUT/r['raw_npz'])['audio']*float(r['gain'])).astype(np.float32))
+     for s in summaries():
+-        assert s['status']=='complete' and s['source_sha256']==hashes()
++        assert s['status']=='complete' and source_hashes_match(s['source_sha256'], hashes())
+         for p,h in s['artifact_sha256'].items():assert digest(folder(s['target'],s['dim'],s['method'],s['seed'])/p)==h
+         for kind,num in (('training',4096),('evaluation',33)):
+             counter=read(OUT/f"progress/{s['target']}_{s['dim']}D_{s['method']}_s{s['seed']}/{kind}.json")
+diff --git a/Deeplearning/issue27g_style.py b/Deeplearning/issue27g_style.py
+index 354f05e..6d295b0 100644
+--- a/Deeplearning/issue27g_style.py
++++ b/Deeplearning/issue27g_style.py
+@@ -1,5 +1,4 @@
+ """One effective SciencePlots configuration, inherited from Issue17 code."""
+-from contextlib import contextmanager
+ from pathlib import Path
+ import hashlib
+ import matplotlib
+@@ -7,28 +6,17 @@ matplotlib.use('Agg')
+ import matplotlib.pyplot as plt
+ import matplotlib.font_manager as fm
+ import numpy as np
+-import scienceplots
+-from cycler import cycler
+ from .issue27g_data import OUT
+ from .issue16 import digest
+ from .issue15_analysis import write_json
+ 
+-COLORS={'TD3':'#0072B2','SAC':'#D55E00','PPO':'#009E73','Target':'#222222'}
+-STYLE={'font.size':30,'axes.labelsize':46,'xtick.labelsize':30,'ytick.labelsize':30,'legend.fontsize':29,
+-    'lines.linewidth':4.,'lines.linestyle':'-','axes.grid':False,'axes.titlesize':30,'path.simplify':False,'agg.path.chunksize':0,
+-    'axes.spines.top':False,'axes.spines.right':False,'figure.constrained_layout.use':True,
+-    'xtick.top':False,'ytick.right':False,'xtick.minor.top':False,'ytick.minor.right':False,
+-    'axes.prop_cycle':cycler(color=['#0072B2','#D55E00','#009E73','#CC79A7','#222222'])}
+-ITEMS=[]
+-@contextmanager
+-def context():
+-    with plt.style.context(['science','ieee','no-latex']),plt.rc_context(STYLE):yield
++from .plot_style import COLORS, STYLE, context, colorbar
+ 
++ITEMS=[]
+ def identify(ax,label):
+     ax.text(.025,.965,label,transform=ax.transAxes,ha='left',va='top',fontsize=29,bbox=dict(facecolor='white',alpha=.88,edgecolor='none',pad=3))
+ def bar(fig,mesh,axes):
+-    b=fig.colorbar(mesh,ax=np.asarray(axes).ravel().tolist(),pad=.025,shrink=.95)
+-    b.set_label('Relative PSD [dB]',fontsize=46);b.ax.tick_params(labelsize=30);return b
++    return colorbar(fig,mesh,axes)
+ def save(fig,name,description):
+     # Assert effective properties on actual artists, not only rcParams.
+     fig.canvas.draw();fonts=set();line_widths=set();legends=[];vertices=[]
+diff --git a/Deeplearning/issue27g_training.py b/Deeplearning/issue27g_training.py
+index 9ab7131..a6de4e7 100644
+--- a/Deeplearning/issue27g_training.py
++++ b/Deeplearning/issue27g_training.py
+@@ -1,4 +1,5 @@
+ """Exact4096-step Case B learning; evaluation happens after completed updates."""
++from .result_paths import source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import json
+@@ -20,7 +21,7 @@ from .issue16 import digest
+ def run_one(target,dim,method,seed,output=OUT):
+     torch.set_num_threads(1);output=Path(output);manifest=ready(output);config=manifest['settings'];budget=config['episodes'];path=folder(target,dim,method,seed,output)
+     if (path/'summary.json').exists():
+-        s=json.loads((path/'summary.json').read_text());assert s['source_sha256']==hashes()
++        s=json.loads((path/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], hashes())
+         for name,h in s['artifact_sha256'].items():assert digest(path/name)==h
+         return s
+     path.mkdir(parents=True,exist_ok=False);train=CaseBEnv(target,dim);evaluation=CaseBEnv(target,dim,record_moments=True)
+diff --git a/Deeplearning/issue27r_data.py b/Deeplearning/issue27r_data.py
+index 1980981..fba61c9 100644
+--- a/Deeplearning/issue27r_data.py
++++ b/Deeplearning/issue27r_data.py
+@@ -1,13 +1,14 @@
+ """Revised Issue27, independent of the preserved failed-Target experiment."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import json
+ from pathlib import Path
+ import numpy as np
+ from .issue16 import digest
+ 
+ ROOT=Path(__file__).resolve().parent
+-OUT=ROOT/'results/phase1_caseB_self_target_020s_methods'
+-BASE=ROOT/'results/phase1_caseA_sac128_stability_diagnostics'
+-OLD=ROOT/'results/phase1_caseB_self_target_020s_sac128'
++OUT=ROOT/'results/Phase1/CaseB/target_diagnostics/high_left_force'
++BASE=ROOT/'results/Phase1/CaseA/stability_diagnostics'
++OLD=ROOT/'results/Phase1/CaseB/target_diagnostics/initial_stop'
+ TARGET=OUT/'preflight/target.npz'
+ METHODS=('SAC','TD3','PPO');SEEDS=(0,1,2)
+ GRID_E=(3e7,3.5e7,4.1e7);GRID_P=(3e6,3.4e6,3.8e6)
+@@ -15,7 +16,7 @@ HALF_WIDTH=np.array([12500000.,750000.,375500.])
+ CORE=('issue27r_data.py','issue27r_native.py','issue27r_prepare.py',
+     'issue27_probe.cpp','model.py','native/model.cpp','model_env.py','acoustics.py','constant020_env.py','issue18_domain_env.py',
+     'issue14.py','issue19_data.py','issue23_data.py','issue22_data.py','issue25_agent.py')
+-def hashes():return {name:digest(ROOT/name) for name in CORE}
++def hashes():return {name:digest(resolve_result_path(ROOT/name)) for name in CORE}
+ def target_data():
+     require_target()
+     with np.load(TARGET) as z:return z['audio'].copy(),z['controls'].copy()
+@@ -28,7 +29,7 @@ def ready(output=OUT):
+     from .model import LIBRARY
+     from .issue27r_native import PROBE
+     p=Path(output);m=json.loads((p/'manifest.json').read_text())
+-    assert m['preflight_passed'] and m['source_sha256']==hashes()
++    assert m['preflight_passed'] and source_hashes_match(m['source_sha256'], hashes())
+     assert m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE)
+     assert m['target_sha256']==digest(TARGET) and m['plan_sha256']==digest(OUT/'PLAN.md')
+     return m
+diff --git a/Deeplearning/issue27r_diagnostics.py b/Deeplearning/issue27r_diagnostics.py
+index aafb98e..def8bdf 100644
+--- a/Deeplearning/issue27r_diagnostics.py
++++ b/Deeplearning/issue27r_diagnostics.py
+@@ -1,4 +1,5 @@
+ """Saved-data audit for the nine failed-to-voice Stage A points; native0."""
++from .result_paths import source_hashes_match
+ import ast
+ import csv
+ import json
+@@ -22,7 +23,7 @@ def rows(name):
+ 
+ def audit():
+     m=json.loads((OUT/'manifest.json').read_text());assert m['status']=='stopped_stageA_no_voiced_Target' and not m['preflight_passed']
+-    assert m['source_sha256']==hashes() and m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE)
++    assert source_hashes_match(m['source_sha256'], hashes()) and m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE)
+     assert m['target_sha256'] is None and not TARGET.exists() and not (OUT/'runs').exists()
+     executed=json.loads((OUT/'executed_source_checksums.json').read_text())
+     for name,h in executed.items():assert digest(OUT/'executed_sources'/name)==h
+diff --git a/Deeplearning/issue27r_prepare.py b/Deeplearning/issue27r_prepare.py
+index dc0ea8e..6ea8f8d 100644
+--- a/Deeplearning/issue27r_prepare.py
++++ b/Deeplearning/issue27r_prepare.py
+@@ -1,4 +1,5 @@
+ """Nine predefined Case B sounds, physical Target selection, then protocol freeze."""
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ from datetime import datetime,timezone
+ import importlib.metadata
+@@ -18,7 +19,7 @@ from .issue16 import digest
+ def scan(before=Path('/tmp/birdsong-issue27r-before.json')):
+     if OUT.exists():raise FileExistsError('Existing revised study preserved')
+     r=json.loads(Path(before).read_text())
+-    for item in r['files']:assert digest(ROOT/item['path'])==item['sha256'],item['path']
++    for item in r['files']:assert digest(resolve_result_path(ROOT/item['path']))==item['sha256'],item['path']
+     OUT.mkdir(parents=True);(OUT/'preflight/candidates').mkdir(parents=True)
+     write_csv(OUT/'protected_before.csv',r.pop('files'));write_json(OUT/'storage_before.json',r)
+     (OUT/'PLAN.md').write_text('''# Issue27改訂 — 計算前の凍結計画
+diff --git a/Deeplearning/issue27r_report.py b/Deeplearning/issue27r_report.py
+index e826e86..f6bb509 100644
+--- a/Deeplearning/issue27r_report.py
++++ b/Deeplearning/issue27r_report.py
+@@ -1,4 +1,5 @@
+ """Report revised Issue27 Stage A; all9 candidates failed to voice, learning0."""
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ import csv
+ import json
+@@ -70,14 +71,14 @@ def figures():
+     return items
+ 
+ def integrity():
+-    m=json.loads((OUT/'manifest.json').read_text());assert m['source_sha256']==hashes() and not m['preflight_passed']
++    m=json.loads((OUT/'manifest.json').read_text());assert source_hashes_match(m['source_sha256'], hashes()) and not m['preflight_passed']
+     assert m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE) and m['plan_sha256']==digest(OUT/'PLAN.md')
+     assert not TARGET.exists() and not (OUT/'runs').exists() and m['actual_training_runs']==0
+     for p,h in m['candidate_sha256'].items():assert digest(OUT/'preflight/candidates'/p)==h
+     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
+     protected=rows('protected_before.csv');changed=[];deleted=[];broken=[];nlinks=0
+     for row in protected:
+-        path=ROOT/row['path']
++        path=resolve_result_path(ROOT/row['path'])
+         if not path.exists():deleted.append(row['path'])
+         elif digest(path)!=row['sha256']:changed.append(row['path'])
+     for name in ('README.md','REPORT.md','PLAN.md','REPRODUCE.md'):
+@@ -180,7 +181,7 @@ R=α_r(x_r−τ_r y_r)+β_r y_r は共通π̃への右source項。O_r=R−β_rτ
+ 
+ 実ロードlibbirdsong.soと、変更していないnative/model.cppを同じcompiler/flagsで別にビルドした.soのbyte/hashが完全一致した。読み取りprobeも前回と同じ保護対象のC++ソースから新成果フォルダへビルドした。積分は実libraryのbird_advance関数ポインタを使い、元運動方程式・圧力結合・遅延・音響式・固定係数を変更していない。[ビルド監査](native/build.json)。
+ 
+-c21（ε_l4.1e7、p_s3.4e6）は前回停止条件と同じ。今回の波形・物理制御・20block状態・native運動mean/std・全内部trace/統計は、**保存済みの前回B oracleと完全一致**した。これは既存ファイルの読み取り照合であり、比較のための追加生成はしていない。前回の3音・停止レポート・未実行記録は変更せず保持した。[診断監査](diagnostic_audit.json) / [前回の停止記録](../phase1_caseB_self_target_020s_sac128/REPORT.md)。
++c21（ε_l4.1e7、p_s3.4e6）は前回停止条件と同じ。今回の波形・物理制御・20block状態・native運動mean/std・全内部trace/統計は、**保存済みの前回B oracleと完全一致**した。これは既存ファイルの読み取り照合であり、比較のための追加生成はしていない。前回の3音・停止レポート・未実行記録は変更せず保持した。[診断監査](diagnostic_audit.json) / [前回の停止記録](../initial_stop/REPORT.md)。
+ 
+ 選定候補がないため、「選定Targetの独立oracle」は未実施である。c21の過去データ一致を、今回の新Target選定やSAC等の学習成功と混同しない。
+ 
+diff --git a/Deeplearning/issue9.py b/Deeplearning/issue9.py
+index 277c0d8..639916f 100644
+--- a/Deeplearning/issue9.py
++++ b/Deeplearning/issue9.py
+@@ -23,7 +23,7 @@ from .phase2 import CONTROL_INDICES, FIXED_INDICES
+ from .plotting import control_trajectories, comparison, learning_curves, plt
+ from .voice_diagnostics import replay, summarize, band_audio, rms
+ 
+-PUBLIC = ROOT/"results/issue9"
++PUBLIC = ROOT/"results/reference/phonation_domain"
+ PRIVATE = ROOT/"private_runs/issue9"
+ 
+ 
+diff --git a/Deeplearning/issue9_report.py b/Deeplearning/issue9_report.py
+index e0fd973..d81f347 100644
+--- a/Deeplearning/issue9_report.py
++++ b/Deeplearning/issue9_report.py
+@@ -20,7 +20,7 @@ def average(values):
+ 
+ 
+ def main():
+-    public = ROOT/"results/issue9"
++    public = ROOT/"results/reference/phonation_domain"
+     private = ROOT/"private_runs/issue9"
+     config = read(ROOT/"configs/issue9.json")
+     mapping = read(public/"phonation_map.json")
+@@ -69,16 +69,16 @@ def main():
+             counts.append(f"{sum(r['sustained_acoustic'] for r in subset)}/{len(subset)}")
+         lines.append(f"| {case} | {' | '.join(counts)} |")
+     lines += ["", "Case Bでは低い左外力でも全epsilon・p_s条件で持続するとは限らない。マップは既存の可動範囲内の粗い標本であり、発声可能域の完全な境界ではない。", "",
+-              "![Case A 発声マップ](../results/issue9/phonation_map_A.png)", "", "![Case B 発声マップ](../results/issue9/phonation_map_B.png)", "", "![Case C 発声マップ](../results/issue9/phonation_map_C.png)", "",
+-              "全数値は [phonation_map.json](../results/issue9/phonation_map.json)、判定定義は [map_config.json](../results/issue9/map_config.json)。", "",
++              "![Case A 発声マップ](../results/reference/phonation_domain/phonation_map_A.png)", "", "![Case B 発声マップ](../results/reference/phonation_domain/phonation_map_B.png)", "", "![Case C 発声マップ](../results/reference/phonation_domain/phonation_map_C.png)", "",
++              "全数値は [phonation_map.json](../results/reference/phonation_domain/phonation_map.json)、判定定義は [map_config.json](../results/reference/phonation_domain/map_config.json)。", "",
+               "### 写像の再設計", "",
+               "上限1e7を残し、発声停止側へも到達できる写像を用意した。", "", "```text",
+               "u = (action + 1)/2",
+               "linear: f_e = 49000 + (10000000-49000)*u",
+               "power8: f_e = 49000 + (10000000-49000)*u^8", "```", "",
+               "power8の行動0は87,871.09375。マップで調べた88,000に近く、行動中心を発声しやすい側へ移すために選んだ。指数8は生理学的な定数ではなく今回の数値的な設計値。旧範囲の端点は維持し、epsilon・p_sの範囲、RK4・遅延、報酬は変えていない。", "",
+-              "![外力の写像](../results/issue9/force_mapping.png)", "",
+-              "実際の行動0の一定制御ではfixedとpower8がA/B/Cとも持続発声となり、linearはA/B/Cとも成立しなかった。詳細は [neutral_controls.json](../results/issue9/neutral_controls.json)。初期行動が必ずゼロになるようにSACを書き換えたわけではなく、学習前方策と探索ノイズの影響は比較実験に含めた。", "",
++              "![外力の写像](../results/reference/phonation_domain/force_mapping.png)", "",
++              "実際の行動0の一定制御ではfixedとpower8がA/B/Cとも持続発声となり、linearはA/B/Cとも成立しなかった。詳細は [neutral_controls.json](../results/reference/phonation_domain/neutral_controls.json)。初期行動が必ずゼロになるようにSACを書き換えたわけではなく、学習前方策と探索ノイズの影響は比較実験に含めた。", "",
+               "### 同一予算の対照実験", "",
+               "fixed・linear・power8 × A/B/C × seed 0/1/2の27本を、SAC各1050環境step、同じ0.35秒目標・報酬・共通ゲイン・評価方法で実行した。評価時の探索ノイズは全て無効。fixedでは発声側の外力49,000を固定し、Bの右1e7は維持する。", "",
+               "自由度はfixedがA/B/C=2/3/3、linear・power8が3/4/5。固定対可変は自由度・観測次元も異なるため、外力の影響だけを単独で分離した因果推論ではない。linear対power8は各Caseで同じ自由度・seedの比較。長時間学習で問題を覆うことを避け、予算は旧実験と同じにした。", "",
+@@ -93,7 +93,7 @@ def main():
+               "```bash", "export MPLCONFIGDIR=/tmp/birdsong-mpl",
+               "Deeplearning/.venv/bin/python -m Deeplearning.issue9 all --local-permission-confirmed",
+               "Deeplearning/.venv/bin/python -m unittest discover -s Deeplearning/tests -v", "```", "",
+-              "部分実行は `map`, `neutral`, `history`, `train`, `report`。設定は [issue9.json](../configs/issue9.json)、コードと設定のハッシュは [provenance.json](../results/issue9/provenance.json)。完了済み学習は同じ設定なら再利用し、異なる設定の上書きを拒否する。履歴修復は既存NPZの制御値・診断メタデータを更新するので、旧要求値を残す。", "",
++              "部分実行は `map`, `neutral`, `history`, `train`, `report`。設定は [issue9.json](../configs/issue9.json)、コードと設定のハッシュは [provenance.json](../results/reference/phonation_domain/provenance.json)。完了済み学習は同じ設定なら再利用し、異なる設定の上書きを拒否する。履歴修復は既存NPZの制御値・診断メタデータを更新するので、旧要求値を残す。", "",
+               "Phase 2にも `force_variant` を追加し、[phase2_fixed.json](../configs/phase2_fixed.json) と [phase2_power8.json](../configs/phase2_power8.json) から選べるようにした。旧phase2.jsonの既定動作は再現用に残した。診断の固定条件を研究全体へ強制していない。", "",
+               "## 完了条件と限界", "",
+               "1. 保存済み実験の区間統計・全積分点の運動・表示可視性を分離し、既知制御で同じ出力経路を検証した。", "2. 式の符号、216条件のマップ、行動0の検証、固定/可変の同予算比較を残した。", "3. 実適用値を保存・描画し、Bの右固定値と5つの研究表記を回帰テストした。", "4. 公開可能なコード・合成診断と、非公開の録音由来結果を分離した。", "",
+diff --git a/Deeplearning/legacy_paths.py b/Deeplearning/legacy_paths.py
+index 68919f2..1c501c8 100644
+--- a/Deeplearning/legacy_paths.py
++++ b/Deeplearning/legacy_paths.py
+@@ -1,10 +1,11 @@
+ """Physical model locations and stable historical protection-record paths."""
+ from pathlib import Path
++from .result_paths import resolve as resolve_result_path
+ 
+ 
+ REPO = Path(__file__).resolve().parent.parent
+ LEGACY_SRC = REPO / "legacy" / "src"
+-PHASE0_ROOT = REPO / "Deeplearning/results/phase0_fixed_target_20261108"
++PHASE0_ROOT = REPO / "Deeplearning/results/Phase0/synthetic"
+ 
+ 
+ def legacy_phase0_root():
+@@ -30,4 +31,4 @@ def protected_path(relative):
+         return legacy_phase0_root() / path.relative_to(previous)
+     if len(path.parts) == 1 and path.name.startswith("BirdsongModel") and path.suffix in (".cpp", ".h"):
+         return LEGACY_SRC / path.name
+-    return REPO / path
++    return resolve_result_path(REPO / path)
+diff --git a/Deeplearning/make_report.py b/Deeplearning/make_report.py
+index d019662..38e7ada 100644
+--- a/Deeplearning/make_report.py
++++ b/Deeplearning/make_report.py
+@@ -1,4 +1,5 @@
+ """Build the shareable report from synthetic results; never read private metrics."""
++from .result_paths import resolve as resolve_result_path
+ import csv
+ import json
+ from pathlib import Path
+@@ -10,7 +11,7 @@ from .legacy_paths import legacy_phase0_root
+ 
+ 
+ def read(path):
+-    return json.loads((ROOT/path).read_text())
++    return json.loads((resolve_result_path(ROOT/path)).read_text())
+ 
+ 
+ def fmt(values):
+@@ -20,9 +21,9 @@ def fmt(values):
+ 
+ def main():
+     p0 = json.loads((legacy_phase0_root()/"summary.json").read_text())
+-    p1 = read("results/phase1_constant_020s/history/phase1/summary.json")
+-    extended = read("results/phase1_constant_020s/history/phase1_extended/summary.json")
+-    baselines = read("results/phase1_constant_020s/history/phase1/baselines.json")
++    p1 = read("results/Phase1/CaseA/parameter_dimension/history/phase1/summary.json")
++    extended = read("results/Phase1/CaseA/parameter_dimension/history/phase1_extended/summary.json")
++    baselines = read("results/Phase1/CaseA/parameter_dimension/history/phase1/baselines.json")
+     regression = read("results/reference/regression.json")
+     benchmark = read("results/reference/benchmark.json")
+     lines = ["# Issue対応レポート", "", "2026-10-30（JST）。作業場所: `Deeplearning/`。", "",
+@@ -61,8 +62,8 @@ def main():
+     for name in ("SAC", "TD3", "PPO"):
+         items = [x for x in p0 if x["algorithm"] == name]
+         lines.append(f"| {name} | {fmt([x['error'] for x in items])} | {sum(x['first_threshold_step'] is not None for x in items)}/3 | {np.mean([x['training_and_eval_seconds'] for x in items]):.2f} | {items[0]['evaluation_steps']} |")
+-    lines += ["", "![Phase 0学習曲線](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)", "",
+-              "この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。", ""]
++    lines += ["", "![Phase 0学習曲線](results/Phase0/synthetic/legacy_random_target/learning_curves.png)", "",
++              "この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/Phase0/synthetic/legacy_random_target/summary.json)。", ""]
+     tracking = []
+     for item in p0:
+         with np.load(legacy_phase0_root()/f"{item['algorithm']}_{item['seed']}/rollout.npz") as data:
+@@ -77,7 +78,7 @@ def main():
+         writer = csv.DictWriter(stream, fieldnames=list(tracking[0]))
+         writer.writeheader()
+         writer.writerows(tracking)
+-    lines += ["周波数と振幅の追従誤差は [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。", "",
++    lines += ["周波数と振幅の追従誤差は [tracking.csv](results/Phase0/synthetic/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。", "",
+               "## 3. Phase 1：モデル内生成音", "",
+               "条件A。目標は左epsilon=4.1e7、共通ps=3.4e6、左右f0=4.9e4で生成した0.35秒。左右の状態・遅延履歴はゼロから開始し、初期過渡も含める。学習の可動値は左epsilonと共通psの2個。", "",
+               "| 学習法 | 予算step/seed | 最終誤差（平均±seed標準偏差） | 0.08以下へ到達 |",
+@@ -95,13 +96,13 @@ def main():
+         steps = items[0].get("search_env_steps", items[0].get("env_steps"))
+         lines.append(f"| {name} | {fmt([x['error'] for x in items])} | {steps} |")
+     lines += ["", "主比較のランダム探索・差分進化は、RLと同じ即時報酬の平均を最小化し、30候補×35step=1050step。最終表には選ばれた方策の終端全体誤差を示す。直接探索は2個の**定数**を探索し、RLは時変制御を出力できるため探索次元は異なる。oracleは生成パラメータ既知の検証であり、学習成績ではない。", "",
+-              "初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/phase1_constant_020s/history/phase1_terminal_baselines/` に目的関数の注記とともに残した。", "",
++              "初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/Phase1/CaseA/parameter_dimension/history/phase1_terminal_baselines/` に目的関数の注記とともに残した。", "",
+               "ランダム行動よりは小さい誤差を得たが、定数制御や直接探索に対するRL固有の優位性は示せていない。既知制御でほぼゼロにできるため、この目標をモデルが表現できないという説明は当てはまらない。最適化・観測・報酬設計を見直す余地がある。", "",
+-              "時間変化目標は生成と既知制御による追従まで確認したが、RL学習は未実施。制御周期5/10/17.5 ms、変化ペナルティ0/0.01/0.1の診断は [evaluation_sensitivity.json](results/diagnostics/evaluation_sensitivity.json)。これは同じ学習済み方策の**評価時**の感度で、条件ごとの再学習実験とは区別する。", "",
++              "時間変化目標は生成と既知制御による追従まで確認したが、RL学習は未実施。制御周期5/10/17.5 ms、変化ペナルティ0/0.01/0.1の診断は [evaluation_sensitivity.json](results/reference/implementation_diagnostics/evaluation_sensitivity.json)。これは同じ学習済み方策の**評価時**の感度で、条件ごとの再学習実験とは区別する。", "",
+               "## 4. 音響評価", "",
+               "Blackman–Harris窓24.576 ms、75%重複。短区間はゼロパディングし、目標と生成音を同じフレームへ置く。音量の比較には共有スケールだけを使い、各音声の独立最大値正規化を避けた。包絡は5 msの二乗平均平方根。即時報酬はPhase 0では10 ms区間、鳴管では最大30 msの直近文脈、終端指標は全0.35秒。", "",
+               "同一音で誤差ゼロ、周波数・音量・タイミングのずれで正の誤差となること、無音/雑音/非有限値/長さ不一致、サンプルレート変更に対する秒単位窓、アンチエイリアスをテストした。", "",
+-              "SE、既存SCI定義に対応するf_MSF/f_AFF、ACI、自己相関HNR診断は学習後に別途計算した。SCIはSAPとの照合済み値ではなく、HNR・ACIも学習報酬として有効性を確認したものではない。雑音様の目標を自動除外しない。単一の値を複雑さ全体の尺度にせず、時間変動・スペクトル図と併記する。合成音の記述量は [descriptors.json](results/diagnostics/descriptors.json)。", "",
++              "SE、既存SCI定義に対応するf_MSF/f_AFF、ACI、自己相関HNR診断は学習後に別途計算した。SCIはSAPとの照合済み値ではなく、HNR・ACIも学習報酬として有効性を確認したものではない。雑音様の目標を自動除外しない。単一の値を複雑さ全体の尺度にせず、時間変動・スペクトル図と併記する。合成音の記述量は [descriptors.json](results/reference/implementation_diagnostics/descriptors.json)。", "",
+               "## 5. 実録音0.35秒", "",
+               "ローカル利用許諾はユーザーが確認済み。ユーザーの追加指定に従い0.35秒版のみを使用した。原音を上書きせず、同一の正確な0.35秒区間でA/B/Cを各3 seed、SAC・1050stepで実行した。左右が同時に更新される制御であり、A/B/Cの自由度は3/4/5と異なる。", "",
+               "詳細な評価表・学習曲線・スペクトログラム・生成音・制御値・全積分ステップで再測定した左右速度RMSは [非公開レポート](private_runs/phase2/REPORT.md) にまとめた。Git管理対象外なので、公開コミットやIssueへ添付しない。", "",
+diff --git a/Deeplearning/phase1_validation.py b/Deeplearning/phase1_validation.py
+index b3fbb4e..acb4ff3 100644
+--- a/Deeplearning/phase1_validation.py
++++ b/Deeplearning/phase1_validation.py
+@@ -4,6 +4,7 @@ Run prepare, inspect diagnostics_review.json, then run A, B, C in that order.
+ Each optimizer searches the same physical trajectory space as its RL comparator.
+ No module in this workflow loads recordings or private_runs.
+ """
++from .result_paths import resolve as resolve_result_path, source_hashes_match
+ import argparse
+ from concurrent.futures import ProcessPoolExecutor
+ import csv
+@@ -27,7 +28,7 @@ from .objectives import BalancedObjective
+ 
+ 
+ CONFIG = ROOT / "configs/phase1_validation.json"
+-DEFAULT_OUTPUT = ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031"
++DEFAULT_OUTPUT = ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031"
+ TARGET = np.array([4.1e7, 3.5e7, 3.4e6, 4.9e4, 4.9e4])
+ RATE, DURATION, CONTROL_S = 50000, .35, .01
+ 
+@@ -44,7 +45,7 @@ def protected_files(output):
+     """Record every preexisting synthetic result and unchanged physical/loss code."""
+     paths = [p for p in (ROOT / "results").rglob("*")
+              if p.is_file() and output not in p.parents]
+-    paths += [ROOT / name for name in ("model.py", "model_env.py", "acoustics.py",
++    paths += [resolve_result_path(ROOT / name) for name in ("model.py", "model_env.py", "acoustics.py",
+                                       "objectives.py", "plotting.py")]
+     paths += list((ROOT / "native").glob("*.cpp"))
+     hashes = {str(p.relative_to(ROOT.parent)): digest(p) for p in paths if p.is_file()}
+@@ -55,7 +56,7 @@ def protected_files(output):
+ def source_hashes():
+     names = ("phase1_validation.py", "phase1_validation_env.py",
+              "phase1_validation_report.py", "configs/phase1_validation.json")
+-    return {name: digest(ROOT / name) for name in names}
++    return {name: digest(resolve_result_path(ROOT / name)) for name in names}
+ 
+ 
+ def render(model, controls):
+@@ -108,7 +109,7 @@ def account(env, wall_s):
+ 
+ def load_ready(output):
+     manifest = json.loads((output / "manifest.json").read_text())
+-    if manifest["source_hashes"] != source_hashes():
++    if not source_hashes_match(manifest["source_hashes"], source_hashes()):
+         raise RuntimeError("Experiment source/config changed: use a new output directory")
+     gate = json.loads((output / "diagnostics_review.json").read_text())
+     if not gate["passed"]:
+diff --git a/Deeplearning/phase1_validation_audit.py b/Deeplearning/phase1_validation_audit.py
+index 4fc601e..8cea3bd 100644
+--- a/Deeplearning/phase1_validation_audit.py
++++ b/Deeplearning/phase1_validation_audit.py
+@@ -7,6 +7,7 @@ files are read. Historical results are not rescanned: their preservation is
+ checked using the preservation_check.json produced by the experiment runner.
+ No simulation, training, recording access or existing artifact rewrite occurs.
+ """
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import csv
+ from datetime import datetime, timezone
+@@ -232,7 +233,7 @@ class Auditor:
+         self.check(set(settings["tasks"]) == set(TASKS), "three_tasks", self.output / "manifest.json", TASKS, list(settings["tasks"]))
+         self.scalar(settings.get("gamma"), 1, self.output / "manifest.json" / "gamma")
+         for name in SOURCE_NAMES:
+-            source = ROOT / name
++            source = resolve_result_path(ROOT / name)
+             actual = hashlib.sha256(source.read_bytes()).hexdigest()
+             self.check(actual == manifest["source_hashes"][name], "source_hash_changed", source, manifest["source_hashes"][name], actual)
+             self.counts["source_hashes_checked"] += 1
+diff --git a/Deeplearning/run.py b/Deeplearning/run.py
+index b3f2137..0b0d5d1 100644
+--- a/Deeplearning/run.py
++++ b/Deeplearning/run.py
+@@ -16,15 +16,15 @@ def main():
+     config_path = args.config or root/"configs"/f"{args.phase}.json"
+     output = args.output or (legacy_phase0_root() if args.phase=="phase0" else root/"results"/args.phase)
+     if args.phase=="phase0" and not output.resolve().is_relative_to(PHASE0_ROOT):
+-        parser.error("New Phase 0 experiments must remain under phase0_fixed_target_20261108")
++        parser.error("New Phase 0 experiments must remain under results/Phase0/synthetic")
+     if args.phase=="phase0" and output.exists():
+         parser.error("Historical Phase 0 is preserved; specify a new output under the unified Phase 0 parent, or use issue15")
+     if args.phase == "phase1":
+-        canonical = root / "results/phase1_constant_020s"
++        canonical = root / "results/Phase1/CaseA/parameter_dimension"
+         if args.output is None:
+-            parser.error("Use python -m Deeplearning.issue17 for current Phase 1; historical tasks require an explicit new --output below phase1_constant_020s/reproductions")
++            parser.error("Use python -m Deeplearning.issue17 for current Phase 1; historical tasks require an explicit new --output below results/Phase1/CaseA/parameter_dimension/reproductions")
+         if not output.resolve().is_relative_to((canonical / "reproductions").resolve()) or output.exists():
+-            parser.error("Historical Phase 1 requires a new output below phase1_constant_020s/reproductions")
++            parser.error("Historical Phase 1 requires a new output below results/Phase1/CaseA/parameter_dimension/reproductions")
+     config = json.loads(config_path.read_text())
+     {"phase0": run_phase0, "phase1": run_phase1}[args.phase](config, output)
+ 
+diff --git a/Deeplearning/server_smoke.py b/Deeplearning/server_smoke.py
+index 793e271..db43385 100644
+--- a/Deeplearning/server_smoke.py
++++ b/Deeplearning/server_smoke.py
+@@ -3,6 +3,7 @@
+ Uses the existing make_agent, SineEnv and acoustic reward without changes.
+ Run from the repository root with ``python -m Deeplearning.server_smoke``.
+ """
++from .result_paths import resolve as resolve_result_path
+ import argparse
+ import ctypes
+ from dataclasses import asdict
+@@ -270,7 +271,7 @@ def main():
+                      "acoustics.py", "plotting.py", "configs/phase0.json"):
+         dest = snapshot / filename
+         dest.parent.mkdir(parents=True, exist_ok=True)
+-        shutil.copyfile(ROOT / filename, dest)
++        shutil.copyfile(resolve_result_path(ROOT / filename), dest)
+     source_hashes = {str(p.relative_to(snapshot)): digest(p)
+                      for p in snapshot.rglob("*") if p.is_file()}
+     write_json(out / "source_sha256.json", source_hashes)
+diff --git a/Deeplearning/tests/test_issue27.py b/Deeplearning/tests/test_issue27.py
+index c9f7b53..ab07864 100644
+--- a/Deeplearning/tests/test_issue27.py
++++ b/Deeplearning/tests/test_issue27.py
+@@ -59,7 +59,7 @@ class CaseBPreflightTests(unittest.TestCase):
+             self.assertEqual(t['audio'].dtype,np.float64);self.assertEqual(t['audio'].shape,(10000,))
+             np.testing.assert_array_equal(t['controls'],CONTROLS)
+             ratio=float(t['audio'][-1000:].std()/abs(t['audio']).max());self.assertLess(ratio,.05)
+-        self.assertNotEqual(digest(TARGET),digest(ROOT/'results/phase1_3d_domain_diagnostics/diagnostics/target.npz'))
++        self.assertNotEqual(digest(TARGET),digest(ROOT/'results/Phase1/CaseA/domain_diagnostics/diagnostics/target.npz'))
+ 
+     def test_saved_right_contribution_not_removed_or_forced_static(self):
+         with np.load(OUT/'preflight/oracle.npz') as b,np.load(OUT/'preflight/same_controls_caseA.npz') as a:
+diff --git a/Deeplearning/tests/test_issue27g.py b/Deeplearning/tests/test_issue27g.py
+index c554c70..6d2af33 100644
+--- a/Deeplearning/tests/test_issue27g.py
++++ b/Deeplearning/tests/test_issue27g.py
+@@ -1,4 +1,5 @@
+ """Paired-dimension mapping, stock algorithm parity and18 native smoke runs."""
++from Deeplearning.result_paths import source_hashes_match
+ import json
+ from concurrent.futures import ProcessPoolExecutor,as_completed
+ import multiprocessing
+@@ -102,7 +103,7 @@ class Preflight(unittest.TestCase):
+     def test_04_native_smoke_six_cases_three_methods(self):
+         smoke=OUT/'preflight/smoke'
+         if smoke.exists():
+-            assert json.loads((smoke/'manifest.json').read_text())['source_sha256']==hashes()
++            assert source_hashes_match(json.loads((smoke/'manifest.json').read_text())['source_sha256'], hashes())
+             for t in CONTROLS:
+                 for d in (3,4):
+                     for m in ('SAC','TD3','PPO'):assert json.loads((folder(t,d,m,0,smoke)/'summary.json').read_text())['status']=='complete'
+diff --git a/Deeplearning/tests/test_phase0_paths.py b/Deeplearning/tests/test_phase0_paths.py
+index 5ef5f07..d339811 100644
+--- a/Deeplearning/tests/test_phase0_paths.py
++++ b/Deeplearning/tests/test_phase0_paths.py
+@@ -11,9 +11,9 @@ from Deeplearning import legacy_paths
+ class Phase0PathTests(unittest.TestCase):
+     def test_old_protection_path_resolves_identical_bytes_after_real_move(self):
+         with TemporaryDirectory(prefix="birdsong-phase0-path-") as temporary:
+-            repo=Path(temporary); parent=repo/"Deeplearning/results/phase0_fixed_target_20261108"
++            repo=Path(temporary); parent=repo/"Deeplearning/results/Phase0/synthetic"
+             old=repo/"Deeplearning/results/phase0"
+-            old.mkdir(parents=True); parent.mkdir()
++            old.mkdir(parents=True); parent.mkdir(parents=True)
+             (old/"unique_glide.npz").write_bytes(b"unique legacy payload")
+             expected=hashlib.sha256((old/"unique_glide.npz").read_bytes()).hexdigest()
+             with patch.object(legacy_paths,"REPO",repo),patch.object(legacy_paths,"PHASE0_ROOT",parent):
+@@ -29,7 +29,7 @@ class Phase0PathTests(unittest.TestCase):
+         from Deeplearning.issue14_report import generate_report
+         with TemporaryDirectory(prefix="birdsong-phase0-guard-") as temporary:
+             root=Path(temporary)/"Deeplearning"
+-            parent=root/"results/phase0_fixed_target_20261108"
++            parent=root/"results/Phase0/synthetic"
+             (parent/"reward_ablation").mkdir(parents=True)
+             marker=parent/"reward_ablation/valuable.txt";marker.write_text("preserve")
+             with patch.object(issue14_transaction,"ROOT",root),patch.object(issue14_transaction,"DEFAULT_OUTPUT",parent):

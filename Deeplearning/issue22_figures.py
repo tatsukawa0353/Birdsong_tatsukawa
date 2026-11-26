@@ -1,4 +1,5 @@
 """Eight compact figures, keeping common error, own objectives and policy state apart."""
+from .result_paths import resolve as resolve_result_path
 import json
 
 import matplotlib
@@ -110,7 +111,7 @@ def render(rows,stability):
     sources=json.loads((OUT/'endpoint_sources.json').read_text());sounds={};views={};max_db=0.;max_env=float(target_env.max())
     for p in sources:
         if p['role']=='posthoc':continue
-        with np.load(ROOT/p['audio_path']) as z:audio=z['audio'].copy()
+        with np.load(resolve_result_path(ROOT/p['audio_path'])) as z:audio=z['audio'].copy()
         db=relative_db(display_psd(audio)[2],reference);env=rms_envelope(audio,peak);max_db=max(max_db,float(db.max()));max_env=max(max_env,float(env.max()))
         if p['seed']==1:sounds[p['condition'],p['role']]=audio/peak;views[p['condition'],p['role']]=(db,env)
     limits=(-70.,max(10.,float(10*np.ceil(max_db/10))));rms_limits=(0.,max_env*1.15);time=np.arange(len(target))/50000;crop=(time>=.04)&(time<=.06)

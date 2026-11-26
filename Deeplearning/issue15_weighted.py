@@ -1,4 +1,5 @@
 """Issue #15 follow-up: preregistered lambda=0.5 ablation, no overwrite of A/B/C."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 import hashlib
@@ -20,7 +21,7 @@ from .issue15_analysis import write_json
 from .issue15_report import _spectrogram, controls_with_clear_legend
 
 ROOT = Path(__file__).resolve().parent
-PARENT = ROOT / "results" / "phase0_fixed_target_20261108"
+PARENT = ROOT / "results/Phase0/synthetic"
 ABLATION = PARENT / "reward_ablation"
 DESTINATION = ABLATION / "weighted_lambda_0p5"
 WEIGHT = 0.5
@@ -242,7 +243,7 @@ def run(workers=6):
         "parent_baseline_comparison_sha256": original_hash,
         "training_reward": "negative local E_spec plus 0.5 * local E_env",
         "shared_evaluation": "0.35 s combined E_spec + E_env and frequency/amplitude MAE",
-        "source_sha256": {name: digest(ROOT / name) for name in SOURCES},
+        "source_sha256": {name: digest(resolve_result_path(ROOT / name)) for name in SOURCES},
         "versions": {key: importlib.metadata.version(key)
                      for key in ("numpy", "scipy", "torch", "stable-baselines3", "gymnasium")},
         "baseline_retrained": False,

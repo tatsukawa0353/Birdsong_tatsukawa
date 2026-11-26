@@ -1,4 +1,5 @@
 """Stage A: audit immutable data, independent LRs and budgets before any full run."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 from datetime import datetime,timezone
@@ -96,11 +97,11 @@ def prepare(before_path=Path('/tmp/birdsong-issue25-before.json'),output=OUT):
     torch.set_num_threads(1);output=Path(output);tick=time.perf_counter()
     if output.exists():raise FileExistsError('Existing study preserved')
     before=json.loads(Path(before_path).read_text())
-    for p in before['files']:assert digest(ROOT/p['path'])==p['sha256'],p['path']
+    for p in before['files']:assert digest(resolve_result_path(ROOT/p['path']))==p['sha256'],p['path']
     old=json.loads((BASE/'manifest.json').read_text());previous=json.loads((PREVIOUS/'manifest.json').read_text())
     assert previous['baseline_manifest_sha256']==digest(BASE/'manifest.json')
-    for p,h in old['source_sha256'].items():assert digest(ROOT/p)==h,p
-    for p,h in previous['source_sha256'].items():assert digest(ROOT/p)==h,p
+    for p,h in old['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
+    for p,h in previous['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
     assert digest(LIBRARY)==old['native_library_sha256'] and digest(TARGET)==old['target_sha256']
     versions={p:importlib.metadata.version(p) for p in old['versions']};assert versions==old['versions']==previous['versions']
     test_record=json.loads(Path('/tmp/birdsong-issue25-preflight-tests.json').read_text());assert test_record['passed']

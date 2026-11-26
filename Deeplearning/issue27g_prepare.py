@@ -1,4 +1,5 @@
 """Only T3 new generation;3 independent oracles, no parameter search."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 from datetime import datetime,timezone
 import importlib.metadata
@@ -37,7 +38,7 @@ SAC/TD3/PPO×seed0/1/2×最大6組＝54run、各厳密4096環境step、最大221
 def stage_a():
     if OUT.exists():raise FileExistsError('Preserve previous output')
     before=json.loads(Path('/tmp/birdsong-issue27g-before.json').read_text())
-    assert all(digest(ROOT/r['path'])==r['sha256'] for r in before['files'])
+    assert all(digest(resolve_result_path(ROOT/r['path']))==r['sha256'] for r in before['files'])
     OUT.mkdir(parents=True);write_csv(OUT/'protected_before.csv',before.pop('files'));write_json(OUT/'storage_before.json',before);(OUT/'PLAN.md').write_text(PLAN)
     build=build_probe();assert build['unchanged_source_build_binary_exact'];ledger=[];gates={}
     for t,c in CONTROLS.items():
@@ -62,7 +63,7 @@ def stage_a():
 
 def freeze():
     from .issue24_data import sb3_hashes
-    tests=json.loads((OUT/'preflight/tests.json').read_text());assert tests['passed'] and tests['source_sha256']==hashes()
+    tests=json.loads((OUT/'preflight/tests.json').read_text());assert tests['passed'] and source_hashes_match(tests['source_sha256'], hashes())
     gates=json.loads((OUT/'preflight/gate.json').read_text());cases=[(t,d) for t,g in gates.items() if g['passed'] for d in (3,4)]
     assert len(tests['smoke_runs'])==len(cases)*3
     if (OUT/'manifest.json').exists():raise FileExistsError('Frozen protocol preserved')

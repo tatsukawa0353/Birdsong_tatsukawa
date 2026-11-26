@@ -23,7 +23,7 @@ from .sine_env import SineConfig, SineEnv
 
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_OUTPUT = ROOT / "results/phase0_fixed_target_20261108"
+DEFAULT_OUTPUT = ROOT / "results/Phase0/synthetic"
 ALGORITHMS = ("PPO", "TD3", "SAC")
 SEEDS = (0, 1, 2)
 

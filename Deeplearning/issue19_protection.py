@@ -1,4 +1,5 @@
 """Inventory first; verify physics and preserve all pre-existing research files."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 from collections import defaultdict
 import ctypes
@@ -45,7 +46,7 @@ def workspace_inventory():
 
 def protected_files():
     for prefix in ('results', 'reports'):
-        for path in sorted((ROOT/prefix).rglob('*')):
+        for path in sorted((resolve_result_path(ROOT/prefix)).rglob('*')):
             if path.is_file() and not path.is_symlink() and not path.is_relative_to(OUT):
                 yield path
 

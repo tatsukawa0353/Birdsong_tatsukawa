@@ -1,4 +1,5 @@
 """Change Actor and twin Critic hidden widths only; preserve the original learner."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import json
@@ -62,7 +63,7 @@ def run_one(method, width, seed, output=OUT):
     folder=folder_for(method,width,seed,output)
     if (folder/'summary.json').exists():
         summary=json.loads((folder/'summary.json').read_text())
-        assert summary['source_sha256']==source_hashes()
+        assert source_hashes_match(summary['source_sha256'], source_hashes())
         for name,h in summary['artifact_sha256'].items():assert digest(folder/name)==h,name
         return summary
     folder.mkdir(parents=True,exist_ok=False)

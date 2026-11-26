@@ -1,4 +1,5 @@
 """Local-only, matched Phase 2 comparison; never publish this runner's output."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict
@@ -59,7 +60,7 @@ def prepare(config, target_path, output, *, permission_confirmed):
     reference = replay(np.tile(DEFAULT_CONTROLS, (35, 1)), "A")["audio"]
     gain = rms(reference)/rms(target)
     band_reference = rms(band_audio(reference/gain)[5000:])
-    model_hashes = {p: sha((ROOT/p).read_bytes()) for p in CORE_FILES}
+    model_hashes = {p: sha((resolve_result_path(ROOT/p)).read_bytes()) for p in CORE_FILES}
     expected = dict(experiment=config, preprocessing=metadata, target_sha256=sha(target.tobytes()),
                     source_sha256=sha(Path(target_path).read_bytes()), output_gain=gain,
                     reference_band_rms=band_reference, shared_loss_scale=max(float(abs(target).max()), 1e-8),
@@ -202,7 +203,7 @@ def train(output):
     protocol = json_read(output/"protocol.json")
     config = protocol["experiment"]
     validate_protocol(config)
-    current_hashes = {p: sha((ROOT/p).read_bytes()) for p in CORE_FILES}
+    current_hashes = {p: sha((resolve_result_path(ROOT/p)).read_bytes()) for p in CORE_FILES}
     if current_hashes != protocol["core_sha256"]:
         raise ValueError("Core source changed since preparation; use a new private experiment directory")
     with np.load(output/"target.npz", allow_pickle=False) as data:

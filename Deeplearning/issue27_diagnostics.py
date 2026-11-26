@@ -1,4 +1,5 @@
 """Audit the three saved physical sounds; no new integration or learning."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import ast
 import csv
 import json
@@ -24,10 +25,10 @@ def rows(name):
 
 def audit():
     m=json.loads((OUT/'manifest.json').read_text());assert m['status']=='stopped_preflight' and not m['preflight_passed']
-    assert m['source_sha256']==source_hashes() and m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET) and m['probe_sha256']==digest(PROBE)
+    assert source_hashes_match(m['source_sha256'], source_hashes()) and m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET) and m['probe_sha256']==digest(PROBE)
     executed=json.loads((OUT/'executed_source_checksums.json').read_text())
     for name,h in executed.items():assert digest(OUT/'executed_sources'/name)==h
-    for name in ('issue27_native.py','issue27_probe.cpp'):assert digest(ROOT/name)==executed[name]
+    for name in ('issue27_native.py','issue27_probe.cpp'):assert digest(resolve_result_path(ROOT/name))==executed[name]
     def function(path,name):
         return ast.dump(next(n for n in ast.parse(path.read_text()).body if isinstance(n,ast.FunctionDef) and n.name==name),include_attributes=False)
     assert function(ROOT/'issue27_prepare.py','physics')==function(OUT/'executed_sources/issue27_prepare.py','physics')

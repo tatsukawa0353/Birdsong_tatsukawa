@@ -1,4 +1,5 @@
 """Eighteen fixed physical candidates; select before algorithm smoke/full runs."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 from datetime import datetime,timezone
 import importlib.metadata
@@ -36,7 +37,7 @@ def features(values):
 def scan(before=Path('/tmp/birdsong-issue27f-before.json')):
     if OUT.exists():raise FileExistsError('Existing experiment preserved')
     r=json.loads(Path(before).read_text())
-    for x in r['files']:assert digest(ROOT/x['path'])==x['sha256'],x['path']
+    for x in r['files']:assert digest(resolve_result_path(ROOT/x['path']))==x['sha256'],x['path']
     OUT.mkdir(parents=True);(OUT/'preflight/candidates').mkdir(parents=True)
     write_csv(OUT/'protected_before.csv',r.pop('files'));write_json(OUT/'storage_before.json',r)
     (OUT/'PLAN.md').write_text('''# Issue27再改訂 — 左右外力18点と3手法の事前計画
@@ -103,7 +104,7 @@ def select(candidate,reason):
 
 def freeze():
     from .issue24_data import sb3_hashes
-    gate=json.loads((OUT/'preflight/gate.json').read_text());tests=json.loads((OUT/'preflight/tests.json').read_text());assert gate['passed'] and tests['passed'] and tests['source_sha256']==hashes()
+    gate=json.loads((OUT/'preflight/gate.json').read_text());tests=json.loads((OUT/'preflight/tests.json').read_text());assert gate['passed'] and tests['passed'] and source_hashes_match(tests['source_sha256'], hashes())
     if (OUT/'manifest.json').exists():raise FileExistsError('Existing official manifest preserved')
     old=json.loads((BASE/'manifest.json').read_text());versions={p:importlib.metadata.version(p) for p in old['versions']};assert versions==old['versions']
     write_json(OUT/'manifest.json',dict(issue=27,revision='2026-11-26_18points',created_utc=datetime.now(timezone.utc).isoformat(),settings=CONFIG,

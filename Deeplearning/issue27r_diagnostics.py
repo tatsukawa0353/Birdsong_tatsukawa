@@ -1,4 +1,5 @@
 """Saved-data audit for the nine failed-to-voice Stage A points; native0."""
+from .result_paths import source_hashes_match
 import ast
 import csv
 import json
@@ -22,7 +23,7 @@ def rows(name):
 
 def audit():
     m=json.loads((OUT/'manifest.json').read_text());assert m['status']=='stopped_stageA_no_voiced_Target' and not m['preflight_passed']
-    assert m['source_sha256']==hashes() and m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE)
+    assert source_hashes_match(m['source_sha256'], hashes()) and m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE)
     assert m['target_sha256'] is None and not TARGET.exists() and not (OUT/'runs').exists()
     executed=json.loads((OUT/'executed_source_checksums.json').read_text())
     for name,h in executed.items():assert digest(OUT/'executed_sources'/name)==h

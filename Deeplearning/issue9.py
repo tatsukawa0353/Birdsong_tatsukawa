@@ -23,7 +23,7 @@ from .phase2 import CONTROL_INDICES, FIXED_INDICES
 from .plotting import control_trajectories, comparison, learning_curves, plt
 from .voice_diagnostics import replay, summarize, band_audio, rms
 
-PUBLIC = ROOT/"results/issue9"
+PUBLIC = ROOT/"results/reference/phonation_domain"
 PRIVATE = ROOT/"private_runs/issue9"
 
 

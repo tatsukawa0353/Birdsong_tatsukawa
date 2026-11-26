@@ -1,4 +1,5 @@
 """Eight integrated TD3/SAC-only figures from saved observations and raw audio."""
+from .result_paths import resolve as resolve_result_path
 import csv
 import gzip
 import json
@@ -117,7 +118,7 @@ def render(rows,deltas):
     peak=abs(target).max();target_db=relative_db(psd,reference);target_env=rms_envelope(target,peak)
     sounds={};views={};max_db=0.;max_rms=float(target_env.max())
     for r in sources:
-        with np.load(ROOT/r['audio_path']) as z:audio=z['audio'].copy()
+        with np.load(resolve_result_path(ROOT/r['audio_path'])) as z:audio=z['audio'].copy()
         db=relative_db(display_psd(audio)[2],reference);env=rms_envelope(audio,peak)
         max_db=max(max_db,float(db.max()));max_rms=max(max_rms,float(env.max()))
         if r['seed']==1:

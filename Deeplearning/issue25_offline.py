@@ -1,4 +1,5 @@
 """Fixed-data terminal-reward regression; never SAC learning or native rendering."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor,as_completed
 import hashlib
@@ -46,7 +47,7 @@ def offline_fit(rate,seed,output=OUT):
     import torch
     torch.set_num_threads(1);output=Path(output);m=ready(output);settings=m['offline'];budget=settings['updates'];folder=offline_folder(rate,seed,output)
     if (folder/'summary.json').exists():
-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
+        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h,p
         return s
     folder.mkdir(parents=True,exist_ok=False);tick=time.perf_counter();history=[];trace=[];maxima={};completed=0

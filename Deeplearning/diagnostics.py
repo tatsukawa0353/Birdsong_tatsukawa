@@ -13,7 +13,7 @@ from .plotting import plt, control_trajectories
 
 
 def main():
-    output = ROOT/"results/diagnostics"
+    output = ROOT/"results/reference/implementation_diagnostics"
     output.mkdir(parents=True, exist_ok=True)
     features = []
     for path in sorted((ROOT/"results").rglob("*.npz")):
@@ -46,7 +46,7 @@ def main():
     write_json(output/"descriptors.json", features)
     # Evaluate one existing policy at several clocks/penalty weights. No retraining;
     # these quantify deployment sensitivity only, not training-hyperparameter sensitivity.
-    agent = SAC.load(ROOT/"results/phase1_constant_020s/history/phase1_extended/SAC_0/agent.zip", device="cpu")
+    agent = SAC.load(ROOT/"results/Phase1/CaseA/parameter_dimension/history/phase1_extended/SAC_0/agent.zip", device="cpu")
     sensitivity = []
     for control_s in (.005, .01, .0175):
         for weight in (0, .01, .1):

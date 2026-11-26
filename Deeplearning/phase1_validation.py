@@ -4,6 +4,7 @@ Run prepare, inspect diagnostics_review.json, then run A, B, C in that order.
 Each optimizer searches the same physical trajectory space as its RL comparator.
 No module in this workflow loads recordings or private_runs.
 """
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 import csv
@@ -27,7 +28,7 @@ from .objectives import BalancedObjective
 
 
 CONFIG = ROOT / "configs/phase1_validation.json"
-DEFAULT_OUTPUT = ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031"
+DEFAULT_OUTPUT = ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031"
 TARGET = np.array([4.1e7, 3.5e7, 3.4e6, 4.9e4, 4.9e4])
 RATE, DURATION, CONTROL_S = 50000, .35, .01
 
@@ -44,7 +45,7 @@ def protected_files(output):
     """Record every preexisting synthetic result and unchanged physical/loss code."""
     paths = [p for p in (ROOT / "results").rglob("*")
              if p.is_file() and output not in p.parents]
-    paths += [ROOT / name for name in ("model.py", "model_env.py", "acoustics.py",
+    paths += [resolve_result_path(ROOT / name) for name in ("model.py", "model_env.py", "acoustics.py",
                                       "objectives.py", "plotting.py")]
     paths += list((ROOT / "native").glob("*.cpp"))
     hashes = {str(p.relative_to(ROOT.parent)): digest(p) for p in paths if p.is_file()}
@@ -55,7 +56,7 @@ def protected_files(output):
 def source_hashes():
     names = ("phase1_validation.py", "phase1_validation_env.py",
              "phase1_validation_report.py", "configs/phase1_validation.json")
-    return {name: digest(ROOT / name) for name in names}
+    return {name: digest(resolve_result_path(ROOT / name)) for name in names}
 
 
 def render(model, controls):
@@ -108,7 +109,7 @@ def account(env, wall_s):
 
 def load_ready(output):
     manifest = json.loads((output / "manifest.json").read_text())
-    if manifest["source_hashes"] != source_hashes():
+    if not source_hashes_match(manifest["source_hashes"], source_hashes()):
         raise RuntimeError("Experiment source/config changed: use a new output directory")
     gate = json.loads((output / "diagnostics_review.json").read_text())
     if not gate["passed"]:

@@ -1,4 +1,5 @@
 """Independent selection/reuse/new-DE audit; original54 runs remain immutable."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import json
 from pathlib import Path
 import time
@@ -16,7 +17,7 @@ from .issue17_extension_data import load_runs
 
 def verify_preserved(evidence):
     mapping=json.loads((evidence/'protected_before.json').read_text())
-    changed=[p for p,h in mapping.items() if not (ROOT/p).is_file() or digest(ROOT/p)!=h]
+    changed=[p for p,h in mapping.items() if not (resolve_result_path(ROOT/p)).is_file() or digest(resolve_result_path(ROOT/p))!=h]
     if changed:raise RuntimeError(f'Protected preexisting artifacts changed:{changed[:4]}')
     return len(mapping)
 
@@ -31,7 +32,7 @@ def audit(stage=WORK):
     stage=Path(stage);evidence=stage if (stage/'manifest.json').exists() and stage!=DEST else EXTENSION
     start=time.perf_counter();checks=0;errors=[];replays=[];accounts=[]
     manifest=json.loads((evidence/'manifest.json').read_text())
-    if manifest['numerical_sources']!=current_sources():raise RuntimeError('Extension numerical source changed')
+    if not source_hashes_match(manifest['numerical_sources'], current_sources()):raise RuntimeError('Extension numerical source changed')
     base,target,controls=load_ready(DEST);runs=load_runs(stage)
     def check(value,code,path):
         nonlocal checks

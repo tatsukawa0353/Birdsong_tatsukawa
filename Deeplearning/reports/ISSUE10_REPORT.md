@@ -32,11 +32,11 @@ costは小さいほど良く、報酬はその負値。割引costは `-Σ γ^(t�
 
 無音の従来全体誤差0.64620は、wrong_voicedの0.26479、far_voicedの0.57005より大きい。対数PSDは全帯域・全フレームの等重み平均なので、目標のエネルギーが少ないビンが多いと無音のスペクトル罰は薄まり得る。しかし今回の共有ゲインでは包絡の欠落も加わり、無音有利とはならなかった。極端な10倍音量は無音より悪いが、それだけで無音の抜け道とは判定しない。Issue #9の実録音・外力可変条件への一般化はできない。
 
-![固定波形の報酬順序](../results/issue10/audit/reward_order.png)
+![固定波形の報酬順序](../results/Phase1/CaseA/reward_diagnostics/audit/reward_order.png)
 
-![周波数ずれ有声音](../results/issue10/audit/wrong_voiced.png)
+![周波数ずれ有声音](../results/Phase1/CaseA/reward_diagnostics/audit/wrong_voiced.png)
 
-全固定波形は [audit/](../results/issue10/audit/) のNPZ、全項目は [scores.json](../results/issue10/audit/scores.json)、35区間別は [step_metrics.json](../results/issue10/audit/step_metrics.json)。
+全固定波形は [audit/](../results/Phase1/CaseA/reward_diagnostics/audit) のNPZ、全項目は [scores.json](../results/Phase1/CaseA/reward_diagnostics/audit/scores.json)、35区間別は [step_metrics.json](../results/Phase1/CaseA/reward_diagnostics/audit/step_metrics.json)。
 
 ### 目標の有声・無音・雑音様区間
 
@@ -54,7 +54,7 @@ costは小さいほど良く、報酬はその負値。割引costは `-Σ γ^(t�
 
 gatedは0.10–0.25秒だけ鳴る目標。正しい無音は誤差0、無音目標への誤発声・gatedに対する常時発声は正の誤差となる。雑音目標も活動として保持し、完全再現は0、欠落は正の誤差。常時発声ボーナスは加えていない。
 
-![音節タイミングの診断](../results/issue10/audit/gated_timing.png)
+![音節タイミングの診断](../results/Phase1/CaseA/reward_diagnostics/audit/gated_timing.png)
 
 ### 旧報酬の感度と時間集計
 
@@ -73,7 +73,7 @@ gatedは0.10–0.25秒だけ鳴る目標。正しい無音は誤差0、無音目
 | shared_scale_0.5 | 0.30880 | 0.87268 | 0.30995 | 1.07967 | 1.06919 | 0.43347 | 0.08323 |
 | shared_scale_2 | 0.22866 | 0.40437 | 0.23657 | 0.40700 | 0.40287 | 0.14018 | 0.03777 |
 
-フロアはPSDへ加算してから対数化し、その絶対dB値で割るため、単なる表示下限ではない。STFTの窓・周波数帯域・共通ゲイン・包絡重みは物理的な区別の相対重みと順位を変え得る。窓49.152 msでは無音約0.5368がfar_voiced約0.6205より良くなる。窓を長くすると帯域ビンへの成分の広がりと対数誤差が変わるためで、全設定で無音優遇が否定されたわけではない。ただし同じfar波形をRMS一致にすると約0.3152で無音より良くなり、音量差が順位逆転に寄与していたことが分かる。純粋な周波数差だけの効果とは断定しない。表示の[-50,-20] dBはこの計算へ渡していない。感度の全成分と欠落重み0/1/2/4の診断は [sensitivity.json](../results/issue10/audit/sensitivity.json)。
+フロアはPSDへ加算してから対数化し、その絶対dB値で割るため、単なる表示下限ではない。STFTの窓・周波数帯域・共通ゲイン・包絡重みは物理的な区別の相対重みと順位を変え得る。窓49.152 msでは無音約0.5368がfar_voiced約0.6205より良くなる。窓を長くすると帯域ビンへの成分の広がりと対数誤差が変わるためで、全設定で無音優遇が否定されたわけではない。ただし同じfar波形をRMS一致にすると約0.3152で無音より良くなり、音量差が順位逆転に寄与していたことが分かる。純粋な周波数差だけの効果とは断定しない。表示の[-50,-20] dBはこの計算へ渡していない。感度の全成分と欠落重み0/1/2/4の診断は [sensitivity.json](../results/Phase1/CaseA/reward_diagnostics/audit/sensitivity.json)。
 
 旧法は10 msごとに最大30 msを切り出し、24.576 ms窓でゼロ埋めする。最初の2区間は全frameがパディングを含み、以降は6/7frameが含む。隣接区間では過去音声を再び評価し、切り出し端と包絡も毎回変わる。全0.35秒の旧誤差と同じ集計ではない。
 
@@ -111,7 +111,7 @@ Cは周波数累積分布の距離で、無出力にはゼロ分布を拡張使�
 
 alignedではstep tで新規frameのΔL_tを計算し、r_t=−35 ΔL_t / γ^(t−1)。したがって `−Σ γ^(t−1)r_t/35=L` が恒等的に成立する（今回の平滑化罰は0）。γ=0.99を変更せず、最大の割引補償は約1.41。単純な未割引報酬平均はLとは一致しないため両方保存する。報酬尺度も変わるためSACのエントロピー係数適応等との相互作用は分離していない。
 
-目標frame情報は [target_frames.json](../results/issue10/audit/target_frames.json)。共通スケールS=1.27829e+06、E_ref=0.355224。実装は [objectives.py](../objectives.py)、[model_env.py](../model_env.py)。
+目標frame情報は [target_frames.json](../results/Phase1/CaseA/reward_diagnostics/audit/target_frames.json)。共通スケールS=1.27829e+06、E_ref=0.355224。実装は [objectives.py](../objectives.py)、[model_env.py](../model_env.py)。
 
 ## 3. 同一予算・seedの学習比較
 
@@ -137,7 +137,7 @@ Case A・ε_lと共通p_sの2行動・35step/episode・0.35秒、同一の目標
 | TD3 | balanced_context | 0.2608 ± 0.0080 | 0.1246 ± 0.0185 | 0/3 | 3/3 | 1.000 ± 0.000 | 88.06 ± 2.80 | 83.65 ± 0.22 | 0 | 175 |
 | TD3 | balanced_aligned | 0.2615 ± 0.0241 | 0.1192 ± 0.0317 | 0/3 | 3/3 | 1.000 ± 0.000 | 90.05 ± 0.83 | 81.54 ± 1.34 | 0 | 175 |
 
-![1050stepの全seedと平均](../results/issue10/constant_1050/comparison_curves.png)
+![1050stepの全seedと平均](../results/Phase1/CaseA/reward_diagnostics/constant_1050/comparison_curves.png)
 
 細線が各seed、太線が平均。上段は旧指標、下段は新指標。学習で最適化した指標に加え、共通の評価指標を全条件で計算している。
 
@@ -152,7 +152,7 @@ Case A・ε_lと共通p_sの2行動・35step/episode・0.35秒、同一の目標
 | TD3 | balanced_context | 0.2323 ± 0.0120 | 0.0904 ± 0.0051 | 0/3 | 3/3 | 1.000 ± 0.000 | 88.26 ± 1.73 | 82.61 ± 0.82 | 0 | 490 |
 | TD3 | balanced_aligned | 0.1858 ± 0.0063 | 0.0626 ± 0.0104 | 0/3 | 3/3 | 1.000 ± 0.000 | 89.18 ± 0.89 | 83.01 ± 0.26 | 0 | 490 |
 
-![4200stepの全seedと平均](../results/issue10/constant_4200/comparison_curves.png)
+![4200stepの全seedと平均](../results/Phase1/CaseA/reward_diagnostics/constant_4200/comparison_curves.png)
 
 細線が各seed、太線が平均。上段は旧指標、下段は新指標。学習で最適化した指標に加え、共通の評価指標を全条件で計算している。
 
@@ -177,9 +177,9 @@ TD3 alignedは追加予算で旧誤差平均0.2615→0.1858、新損失0.1192→
 
 oracle/constant/randomは各35stepの評価だけで、探索予算0。constantは正規化行動0、randomは各stepで独立一様。oracleの約1e−7は制御encodeのfloat32丸めを含むが、同一配列の固定診断は厳密0。
 
-DEは2個の定数をpopsize3×2次元=6候補、初期＋4世代=30episode・1050環境stepで探索し、各profileの実際の割引報酬costを最小化する。新全体を直接最適化するのはalignedだけである。RLは35×2の時変出力が可能で探索次元が異なる。4200stepのRLに対してDEも4200stepへ延長した対照ではない。評価回数や計算秒数も揃えた計算量比較ではない。全候補の曲線と選択制御は [constant_baselines/](../results/issue10/constant_baselines/)。
+DEは2個の定数をpopsize3×2次元=6候補、初期＋4世代=30episode・1050環境stepで探索し、各profileの実際の割引報酬costを最小化する。新全体を直接最適化するのはalignedだけである。RLは35×2の時変出力が可能で探索次元が異なる。4200stepのRLに対してDEも4200stepへ延長した対照ではない。評価回数や計算秒数も揃えた計算量比較ではない。全候補の曲線と選択制御は [constant_baselines/](../results/Phase1/CaseA/reward_diagnostics/constant_baselines)。
 
-全学習で最小の旧誤差は 0.14407（TD3 / baseline / seed 1 / 4200step）。これは最良例の記述であり、手法の一貫した優位性ではない。全seedの値・左右速度std・行動変化MSE・実適用制御の平均/標準偏差は [per_seed.csv](../results/issue10/per_seed.csv)。最終評価の35区間別損失、音声、5系列の制御図、重みは各runディレクトリに保存した。
+全学習で最小の旧誤差は 0.14407（TD3 / baseline / seed 1 / 4200step）。これは最良例の記述であり、手法の一貫した優位性ではない。全seedの値・左右速度std・行動変化MSE・実適用制御の平均/標準偏差は [per_seed.csv](../results/Phase1/CaseA/reward_diagnostics/per_seed.csv)。最終評価の35区間別損失、音声、5系列の制御図、重みは各runディレクトリに保存した。
 
 発声はIssue #9の操作的指標（後半0.1–0.35秒、基準帯域RMS比−60 dB以上の20 ms区間が80%以上）。速度stdは全10 MHz積分点の区間統計を平均差も含めて合成する。位置オフセット、源の運動、出力音声、可視性、模倣誤差を区別し、周期性だけで雑音様の音を除外しない。右速度があってもCase Aの音響出力へ右源が寄与するとは限らない。
 
@@ -191,7 +191,7 @@ DEは2個の定数をpopsize3×2次元=6候補、初期＋4世代=30episode・10
 
 条件を満たす手法はなかったためglideのRLは実施しなかった。ε_l=3e7→4.6e7の0.35秒目標を生成し、既知制御のみ旧誤差5.8e-05で再現できることを確認した。このoracleをRL成績には含めない。
 
-![glide既知制御](../results/issue10/glide_oracle/spectrogram.png)
+![glide既知制御](../results/Phase1/CaseA/reward_diagnostics/glide_oracle/spectrogram.png)
 
 現行観測は正規化時刻、前行動2値、現在のx_l,y_l,x_r,y_rの計7次元。遅延線の全履歴、音声フィルタ状態、目標音声の特徴は観測されず、Markov状態を完全には与えていない。固定の一目標で時刻から軌道を覚える設定であり、未知の目標に合わせる目標条件付き模倣とはいえない。今回の比較では観測を変えていない。複数目標では目標特徴と履歴を別条件として検証する必要がある。
 
@@ -199,9 +199,9 @@ DEは2個の定数をpopsize3×2次元=6候補、初期＋4世代=30episode・10
 
 [issue10_validation.txt](issue10_validation.txt) の36テストが成功。旧C++との回帰、RK4・遅延・分割積分、異常終了に加え、oracle/無音/DC/誤周波数の順序、正しい無音・雑音、ゲイン・過大音量・音節時刻、目標マスクの不変性、因果prefix、frameの一度だけの割当て、末尾重み、奇数長窓のpadding診断、割引報酬と全体の一致、baselineの波形と報酬不変、表示設定からの独立性を確認した。
 
-保存成果物も再計算した。36本、訓練合計94,500step、評価合計11,970step。旧誤差の再計算との差最大0、alignedの割引returnと全体損失との差最大5.55e-17。目標ハッシュ・2自由度・予算・評価回数の一致を [verification.json](../results/issue10/verification.json) に記録。DEの探索9450stepと固定方策の評価等はこの訓練合計へ含めない。
+保存成果物も再計算した。36本、訓練合計94,500step、評価合計11,970step。旧誤差の再計算との差最大0、alignedの割引returnと全体損失との差最大5.55e-17。目標ハッシュ・2自由度・予算・評価回数の一致を [verification.json](../results/Phase1/CaseA/reward_diagnostics/verification.json) に記録。DEの探索9450stepと固定方策の評価等はこの訓練合計へ含めない。
 
-物理方程式・RK4・dt=1e−7・遅延、`acoustics.py` と表示関数は基準コミットから変更していない。[provenance.json](../results/issue10/provenance.json) にコードと設定のSHA256・基準commitを保存した。図はε_l, ε_r, p_s, f_e,l, f_e,rを使用。表示は10 MHzへリサンプル、Blackman–Harris、245760/184320、gray_r、[-50,-20] dB、0–10 kHz、端を除いた0.012288–0.331776秒を維持する。解析窓・因果報酬と表示窓は別用途として区別する。
+物理方程式・RK4・dt=1e−7・遅延、`acoustics.py` と表示関数は基準コミットから変更していない。[provenance.json](../results/Phase1/CaseA/reward_diagnostics/provenance.json) にコードと設定のSHA256・基準commitを保存した。図はε_l, ε_r, p_s, f_e,l, f_e,rを使用。表示は10 MHzへリサンプル、Blackman–Harris、245760/184320、gray_r、[-50,-20] dB、0–10 kHz、端を除いた0.012288–0.331776秒を維持する。解析窓・因果報酬と表示窓は別用途として区別する。
 
 ```bash
 export MPLCONFIGDIR=/tmp/birdsong-mpl

@@ -1,4 +1,5 @@
 """Frozen online/offline cohorts and existing model-generated data only."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import json
 from pathlib import Path
 
@@ -12,7 +13,7 @@ from .issue25_agent import BASE_LR,CRITIC_RATES
 from .issue17_artifacts import read_record
 from .issue16 import digest
 
-OUT=ROOT/'results/phase1_caseA_sac128_critic_lr'
+OUT=ROOT/'results/Phase1/CaseA/learning_rate/critic'
 RATES=(BASE_LR,*CRITIC_RATES)
 OFFLINE_UPDATES=4080
 OFFLINE_EVALS=tuple([0,*range(128,OFFLINE_UPDATES,128),OFFLINE_UPDATES])
@@ -20,7 +21,7 @@ SOURCES=('issue25_agent.py','issue25_data.py','issue25_training.py','issue25_off
     'issue24_agent.py','issue24_data.py',*baseline_hashes())
 
 
-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
+def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
 
 
 def label(rate):return {BASE_LR:'critic_lr_3e-4',1e-4:'critic_lr_1e-4',1e-3:'critic_lr_1e-3'}[rate]
@@ -40,7 +41,7 @@ def curve_for(rate,seed,output=OUT):return read_record(folder_for(rate,seed,outp
 def ready(output=OUT):
     from .model import LIBRARY
     output=Path(output);m=json.loads((output/'manifest.json').read_text())
-    assert m['source_sha256']==source_hashes(),'Frozen numerical implementation changed'
+    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen numerical implementation changed'
     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
     assert m['baseline_manifest_sha256']==digest(BASE/'manifest.json')
     assert m['previous_manifest_sha256']==digest(PREVIOUS/'manifest.json')

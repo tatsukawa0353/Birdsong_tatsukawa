@@ -1,4 +1,5 @@
 """Paired-dimension mapping, stock algorithm parity and18 native smoke runs."""
+from Deeplearning.result_paths import source_hashes_match
 import json
 from concurrent.futures import ProcessPoolExecutor,as_completed
 import multiprocessing
@@ -102,7 +103,7 @@ class Preflight(unittest.TestCase):
     def test_04_native_smoke_six_cases_three_methods(self):
         smoke=OUT/'preflight/smoke'
         if smoke.exists():
-            assert json.loads((smoke/'manifest.json').read_text())['source_sha256']==hashes()
+            assert source_hashes_match(json.loads((smoke/'manifest.json').read_text())['source_sha256'], hashes())
             for t in CONTROLS:
                 for d in (3,4):
                     for m in ('SAC','TD3','PPO'):assert json.loads((folder(t,d,m,0,smoke)/'summary.json').read_text())['status']=='complete'

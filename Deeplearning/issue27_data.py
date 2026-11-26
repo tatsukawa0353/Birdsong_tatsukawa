@@ -1,4 +1,5 @@
 """Case B self-Target experiment; all legacy Case A outputs stay read only."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import json
 from pathlib import Path
 import numpy as np
@@ -9,8 +10,8 @@ from .issue19_data import pack,metric_row
 from .issue17_artifacts import read_record
 
 ROOT=Path(__file__).resolve().parent
-OUT=ROOT/'results/phase1_caseB_self_target_020s_sac128'
-BASE=ROOT/'results/phase1_caseA_sac128_stability_diagnostics'
+OUT=ROOT/'results/Phase1/CaseB/target_diagnostics/initial_stop'
+BASE=ROOT/'results/Phase1/CaseA/stability_diagnostics'
 SEEDS=(0,1,2)
 CONTROLS=np.array([4.1e7,3.5e7,3.4e6,3e5,1e7])
 INDICES=[0,2,3]
@@ -20,7 +21,7 @@ SOURCES=('issue27_data.py','issue27_native.py','issue27_probe.cpp','issue27_env.
     'issue21_training.py','issue22_data.py','issue23_data.py','issue25_agent.py','issue24_agent.py','issue24_data.py',
     'issue19_data.py','issue18_domain_env.py','issue14.py','model.py','model_env.py','native/model.cpp','constant020_env.py','acoustics.py')
 
-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
+def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
 def target_data():
     with np.load(TARGET) as z:return z['audio'].copy(),z['controls'].copy()
 def folder_for(seed,output=OUT):
@@ -33,7 +34,7 @@ def ready(output=OUT):
     from .issue27_native import PROBE
     p=Path(output);m=json.loads((p/'manifest.json').read_text())
     if not m['preflight_passed']:raise RuntimeError('Case B Target failed the physical gate; no training is authorized under this protocol')
-    assert m['source_sha256']==source_hashes() and m['native_library_sha256']==digest(LIBRARY)
+    assert source_hashes_match(m['source_sha256'], source_hashes()) and m['native_library_sha256']==digest(LIBRARY)
     assert m['target_sha256']==digest(TARGET) and m['probe_sha256']==digest(PROBE)
     assert m['plan_sha256']==digest(p/'PLAN.md') and m['preflight_passed']
     return m

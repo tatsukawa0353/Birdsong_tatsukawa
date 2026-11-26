@@ -1,4 +1,5 @@
 """Integrated report, exact completed-run accounting and preservation audit."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 import csv
 import json
@@ -87,7 +88,7 @@ def report():
 
 T1/T2は前回保存b2_c10/b3_c10のNPZをbyte同一で参照し、T3のみ新規1点を生成した。3音とも別Bインスタンスoracleを再計算し、波形、全20block状態、native運動mean/stdが完全一致、E_spec/E_env/E_total/J=0。右source/outputは非ゼロ。旧18点/9点の再探索やTarget差し替えはない。[発声ゲートと出典hash](preflight/gate.json) / [事前計画](PLAN.md) / [manifest](manifest.json)。
 
-[初回停止REPORT](../phase1_caseB_self_target_020s_sac128/REPORT.md)、[旧9点REPORT](../phase1_caseB_self_target_020s_methods/REPORT.md)、[前回18点・9run REPORT](../phase1_caseB_self_target_020s_methods_f0lr_scan/REPORT.md)を参照し、今回を別実験として保存している。
+[初回停止REPORT](../target_diagnostics/initial_stop/REPORT.md)、[旧9点REPORT](../target_diagnostics/high_left_force/REPORT.md)、[前回18点・9run REPORT](../target_diagnostics/low_forces/REPORT.md)を参照し、今回を別実験として保存している。
 
 発声ゲートは末尾1000sample（20ms）のAC std/自身の全期間peak>.05、線形傾向除去後ratio>.05、finite、generated_silent=False。左右変動proxyは同じ末尾traceでde-trended std/元std>.5かつde-trended std/全期間state幅>.001をx/y双方に適用した記述量。T1は左、T2/T3は左右の条件を確認した。音声そのものをde-trendしたり、周期性の数学的証明と呼んだりはしない。学習・独立方策評価の持続proxyは従来どおりTarget peak基準で、Stage Aの自身peak基準と区別する。
 
@@ -236,15 +237,15 @@ Deeplearning/.venv-rl/bin/python -m Deeplearning.issue27g_report audit
         if p.exists():shutil.copyfile(p,logs/p.name)
     files=set(CORE)|{str(p.relative_to(ROOT)) for p in ROOT.glob('issue27g*.py')}|{'tests/test_issue27g.py'};copied={}
     for name in sorted(files):
-        dest=OUT/'executed_sources'/name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/name,dest);copied[name]=digest(dest)
+        dest=OUT/'executed_sources'/name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(resolve_result_path(ROOT/name),dest);copied[name]=digest(dest)
     write_json(OUT/'executed_source_checksums.json',copied)
 
 def audit():
-    ready();assert read(OUT/'preflight/tests.json')['source_sha256']==hashes();assert read(OUT/'recovery_manifest.json')['source_sha256']==digest(ROOT/'issue27g_recovery.py')
+    ready();assert source_hashes_match(read(OUT/'preflight/tests.json')['source_sha256'], hashes());assert read(OUT/'recovery_manifest.json')['source_sha256']==digest(ROOT/'issue27g_recovery.py')
     protected=rows('protected_before.csv');changed=[];deleted=[];broken=[];links=0
     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
     for r in protected:
-        p=ROOT/r['path']
+        p=resolve_result_path(ROOT/r['path'])
         if not p.exists():deleted.append(r['path'])
         elif digest(p)!=r['sha256']:changed.append(r['path'])
     for p in (OUT/'REPORT.md',OUT/'README.md',OUT/'AUDIO.md',OUT/'PLAN.md',OUT/'RECOVERY.md',OUT/'REPRODUCE.md'):
@@ -255,12 +256,12 @@ def audit():
     for name,base in (('implementation_checksums.json',ROOT),('artifact_checksums.json',OUT)):
         if (OUT/name).exists():
             for p,h in read(OUT/name).items():assert digest(base/p)==h,p
-    for p,h in read(OUT/'executed_source_checksums.json').items():assert digest(ROOT/p)==h and digest(OUT/'executed_sources'/p)==h
+    for p,h in read(OUT/'executed_source_checksums.json').items():assert digest(resolve_result_path(ROOT/p))==h and digest(OUT/'executed_sources'/p)==h
     for r in rows('audio_index.csv'):
         rate,wave=wavfile.read(OUT/r['wav']);assert rate==50000 and wave.shape==(10000,) and wave.dtype==np.float32
         np.testing.assert_array_equal(wave,(load(OUT/r['raw_npz'])['audio']*float(r['gain'])).astype(np.float32))
     for s in summaries():
-        assert s['status']=='complete' and s['source_sha256']==hashes()
+        assert s['status']=='complete' and source_hashes_match(s['source_sha256'], hashes())
         for p,h in s['artifact_sha256'].items():assert digest(folder(s['target'],s['dim'],s['method'],s['seed'])/p)==h
         for kind,num in (('training',4096),('evaluation',33)):
             counter=read(OUT/f"progress/{s['target']}_{s['dim']}D_{s['method']}_s{s['seed']}/{kind}.json")

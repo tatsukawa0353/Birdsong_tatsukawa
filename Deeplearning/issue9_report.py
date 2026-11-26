@@ -20,7 +20,7 @@ def average(values):
 
 
 def main():
-    public = ROOT/"results/issue9"
+    public = ROOT/"results/reference/phonation_domain"
     private = ROOT/"private_runs/issue9"
     config = read(ROOT/"configs/issue9.json")
     mapping = read(public/"phonation_map.json")
@@ -69,16 +69,16 @@ def main():
             counts.append(f"{sum(r['sustained_acoustic'] for r in subset)}/{len(subset)}")
         lines.append(f"| {case} | {' | '.join(counts)} |")
     lines += ["", "Case Bでは低い左外力でも全epsilon・p_s条件で持続するとは限らない。マップは既存の可動範囲内の粗い標本であり、発声可能域の完全な境界ではない。", "",
-              "![Case A 発声マップ](../results/issue9/phonation_map_A.png)", "", "![Case B 発声マップ](../results/issue9/phonation_map_B.png)", "", "![Case C 発声マップ](../results/issue9/phonation_map_C.png)", "",
-              "全数値は [phonation_map.json](../results/issue9/phonation_map.json)、判定定義は [map_config.json](../results/issue9/map_config.json)。", "",
+              "![Case A 発声マップ](../results/reference/phonation_domain/phonation_map_A.png)", "", "![Case B 発声マップ](../results/reference/phonation_domain/phonation_map_B.png)", "", "![Case C 発声マップ](../results/reference/phonation_domain/phonation_map_C.png)", "",
+              "全数値は [phonation_map.json](../results/reference/phonation_domain/phonation_map.json)、判定定義は [map_config.json](../results/reference/phonation_domain/map_config.json)。", "",
               "### 写像の再設計", "",
               "上限1e7を残し、発声停止側へも到達できる写像を用意した。", "", "```text",
               "u = (action + 1)/2",
               "linear: f_e = 49000 + (10000000-49000)*u",
               "power8: f_e = 49000 + (10000000-49000)*u^8", "```", "",
               "power8の行動0は87,871.09375。マップで調べた88,000に近く、行動中心を発声しやすい側へ移すために選んだ。指数8は生理学的な定数ではなく今回の数値的な設計値。旧範囲の端点は維持し、epsilon・p_sの範囲、RK4・遅延、報酬は変えていない。", "",
-              "![外力の写像](../results/issue9/force_mapping.png)", "",
-              "実際の行動0の一定制御ではfixedとpower8がA/B/Cとも持続発声となり、linearはA/B/Cとも成立しなかった。詳細は [neutral_controls.json](../results/issue9/neutral_controls.json)。初期行動が必ずゼロになるようにSACを書き換えたわけではなく、学習前方策と探索ノイズの影響は比較実験に含めた。", "",
+              "![外力の写像](../results/reference/phonation_domain/force_mapping.png)", "",
+              "実際の行動0の一定制御ではfixedとpower8がA/B/Cとも持続発声となり、linearはA/B/Cとも成立しなかった。詳細は [neutral_controls.json](../results/reference/phonation_domain/neutral_controls.json)。初期行動が必ずゼロになるようにSACを書き換えたわけではなく、学習前方策と探索ノイズの影響は比較実験に含めた。", "",
               "### 同一予算の対照実験", "",
               "fixed・linear・power8 × A/B/C × seed 0/1/2の27本を、SAC各1050環境step、同じ0.35秒目標・報酬・共通ゲイン・評価方法で実行した。評価時の探索ノイズは全て無効。fixedでは発声側の外力49,000を固定し、Bの右1e7は維持する。", "",
               "自由度はfixedがA/B/C=2/3/3、linear・power8が3/4/5。固定対可変は自由度・観測次元も異なるため、外力の影響だけを単独で分離した因果推論ではない。linear対power8は各Caseで同じ自由度・seedの比較。長時間学習で問題を覆うことを避け、予算は旧実験と同じにした。", "",
@@ -93,7 +93,7 @@ def main():
               "```bash", "export MPLCONFIGDIR=/tmp/birdsong-mpl",
               "Deeplearning/.venv/bin/python -m Deeplearning.issue9 all --local-permission-confirmed",
               "Deeplearning/.venv/bin/python -m unittest discover -s Deeplearning/tests -v", "```", "",
-              "部分実行は `map`, `neutral`, `history`, `train`, `report`。設定は [issue9.json](../configs/issue9.json)、コードと設定のハッシュは [provenance.json](../results/issue9/provenance.json)。完了済み学習は同じ設定なら再利用し、異なる設定の上書きを拒否する。履歴修復は既存NPZの制御値・診断メタデータを更新するので、旧要求値を残す。", "",
+              "部分実行は `map`, `neutral`, `history`, `train`, `report`。設定は [issue9.json](../configs/issue9.json)、コードと設定のハッシュは [provenance.json](../results/reference/phonation_domain/provenance.json)。完了済み学習は同じ設定なら再利用し、異なる設定の上書きを拒否する。履歴修復は既存NPZの制御値・診断メタデータを更新するので、旧要求値を残す。", "",
               "Phase 2にも `force_variant` を追加し、[phase2_fixed.json](../configs/phase2_fixed.json) と [phase2_power8.json](../configs/phase2_power8.json) から選べるようにした。旧phase2.jsonの既定動作は再現用に残した。診断の固定条件を研究全体へ強制していない。", "",
               "## 完了条件と限界", "",
               "1. 保存済み実験の区間統計・全積分点の運動・表示可視性を分離し、既知制御で同じ出力経路を検証した。", "2. 式の符号、216条件のマップ、行動0の検証、固定/可変の同予算比較を残した。", "3. 実適用値を保存・描画し、Bの右固定値と5つの研究表記を回帰テストした。", "4. 公開可能なコード・合成診断と、非公開の録音由来結果を分離した。", "",

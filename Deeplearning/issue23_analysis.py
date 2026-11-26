@@ -1,4 +1,5 @@
 """Audit retained policies, fixed-candidate Q history and bounded local sensitivity."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 import importlib.metadata
@@ -213,7 +214,7 @@ def integrity():
     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
     with (OUT/'protected_before.csv').open() as f:protected=list(csv.DictReader(f))
     for r in protected:
-        path=ROOT/r['path']
+        path=resolve_result_path(ROOT/r['path'])
         if not path.exists():deleted.append(r['path'])
         elif digest(path)!=r['sha256']:changed.append(r['path'])
     broken=[];links=0
@@ -229,7 +230,7 @@ def integrity():
     if (OUT/'artifact_checksums.json').exists():
         for p,h in json.loads((OUT/'artifact_checksums.json').read_text()).items():assert digest(OUT/p)==h,p
     if (OUT/'implementation_checksums.json').exists():
-        for p,h in json.loads((OUT/'implementation_checksums.json').read_text()).items():assert digest(ROOT/p)==h,p
+        for p,h in json.loads((OUT/'implementation_checksums.json').read_text()).items():assert digest(resolve_result_path(ROOT/p))==h,p
     if (OUT/'listening.zip').exists():
         import hashlib
         import io

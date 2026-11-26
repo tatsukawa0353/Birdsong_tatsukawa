@@ -1,4 +1,5 @@
 """Report revised Issue27 Stage A; all9 candidates failed to voice, learning0."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 import csv
 import json
@@ -70,14 +71,14 @@ def figures():
     return items
 
 def integrity():
-    m=json.loads((OUT/'manifest.json').read_text());assert m['source_sha256']==hashes() and not m['preflight_passed']
+    m=json.loads((OUT/'manifest.json').read_text());assert source_hashes_match(m['source_sha256'], hashes()) and not m['preflight_passed']
     assert m['native_library_sha256']==digest(LIBRARY) and m['probe_sha256']==digest(PROBE) and m['plan_sha256']==digest(OUT/'PLAN.md')
     assert not TARGET.exists() and not (OUT/'runs').exists() and m['actual_training_runs']==0
     for p,h in m['candidate_sha256'].items():assert digest(OUT/'preflight/candidates'/p)==h
     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
     protected=rows('protected_before.csv');changed=[];deleted=[];broken=[];nlinks=0
     for row in protected:
-        path=ROOT/row['path']
+        path=resolve_result_path(ROOT/row['path'])
         if not path.exists():deleted.append(row['path'])
         elif digest(path)!=row['sha256']:changed.append(row['path'])
     for name in ('README.md','REPORT.md','PLAN.md','REPRODUCE.md'):
@@ -180,7 +181,7 @@ R=α_r(x_r−τ_r y_r)+β_r y_r は共通π̃への右source項。O_r=R−β_rτ
 
 実ロードlibbirdsong.soと、変更していないnative/model.cppを同じcompiler/flagsで別にビルドした.soのbyte/hashが完全一致した。読み取りprobeも前回と同じ保護対象のC++ソースから新成果フォルダへビルドした。積分は実libraryのbird_advance関数ポインタを使い、元運動方程式・圧力結合・遅延・音響式・固定係数を変更していない。[ビルド監査](native/build.json)。
 
-c21（ε_l4.1e7、p_s3.4e6）は前回停止条件と同じ。今回の波形・物理制御・20block状態・native運動mean/std・全内部trace/統計は、**保存済みの前回B oracleと完全一致**した。これは既存ファイルの読み取り照合であり、比較のための追加生成はしていない。前回の3音・停止レポート・未実行記録は変更せず保持した。[診断監査](diagnostic_audit.json) / [前回の停止記録](../phase1_caseB_self_target_020s_sac128/REPORT.md)。
+c21（ε_l4.1e7、p_s3.4e6）は前回停止条件と同じ。今回の波形・物理制御・20block状態・native運動mean/std・全内部trace/統計は、**保存済みの前回B oracleと完全一致**した。これは既存ファイルの読み取り照合であり、比較のための追加生成はしていない。前回の3音・停止レポート・未実行記録は変更せず保持した。[診断監査](diagnostic_audit.json) / [前回の停止記録](../initial_stop/REPORT.md)。
 
 選定候補がないため、「選定Targetの独立oracle」は未実施である。c21の過去データ一致を、今回の新Target選定やSAC等の学習成功と混同しない。
 

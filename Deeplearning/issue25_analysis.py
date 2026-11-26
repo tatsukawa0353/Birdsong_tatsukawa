@@ -1,4 +1,5 @@
 """Independent LR/replay audits, paired summaries and Final fixed-pool Critic scores."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 import hashlib
@@ -327,7 +328,7 @@ def integrity():
     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
     protected=csv_rows(OUT/'protected_before.csv')
     for r in protected:
-        p=ROOT/r['path']
+        p=resolve_result_path(ROOT/r['path'])
         if not p.exists():deleted.append(r['path'])
         elif digest(p)!=r['sha256']:changed.append(r['path'])
     links=0;broken=[]
@@ -345,7 +346,7 @@ def integrity():
             for row in csv_rows(OUT/'listening_index.csv'):
                 rate,wave=wavfile.read(io.BytesIO(archive.read(row['archive_entry'])))
                 assert rate==50000 and wave.shape==(10000,) and wave.dtype==np.float32
-                with np.load(ROOT/row['raw_audio_path']) as raw:np.testing.assert_array_equal(wave,(raw[row['raw_audio_key']]*float(row['shared_gain'])).astype(np.float32))
+                with np.load(resolve_result_path(ROOT/row['raw_audio_path'])) as raw:np.testing.assert_array_equal(wave,(raw[row['raw_audio_key']]*float(row['shared_gain'])).astype(np.float32))
                 assert hashlib.sha256(wave.tobytes()).hexdigest()==row['sample_sha256']
     assert json.loads((OUT/'audit.json').read_text())['passed']
     assert json.loads((OUT/'offline_audit.json').read_text())['passed']

@@ -1,4 +1,5 @@
 """Report sum-one objectives, common error, stability and entropy without refitting."""
+from .result_paths import resolve as resolve_result_path
 import csv
 import gzip
 import hashlib
@@ -44,7 +45,7 @@ def listening():
     with zipfile.ZipFile(OUT/'new_listening_audio.zip','w',compression=zipfile.ZIP_DEFLATED) as archive:
         for r in json.loads((OUT/'endpoint_sources.json').read_text()):
             if r['condition']=='legacy_sum' or r['role']=='posthoc':continue
-            with np.load(ROOT/r['audio_path']) as z:audio=z['audio'].copy()
+            with np.load(resolve_result_path(ROOT/r['audio_path'])) as z:audio=z['audio'].copy()
             stream=io.BytesIO();wavfile.write(stream,50000,(audio*gain).astype(np.float32));data=stream.getvalue();h=hashlib.sha256(data).hexdigest()
             name=f'{r["condition"]}_seed{r["seed"]}_{r["role"]}.wav'
             if h not in members:
@@ -60,7 +61,7 @@ def freeze():
     for name in ('artifact_checksums.json','storage_after.json'):
         if not (OUT/name).exists():(OUT/name).write_text('{}\n')
     integrity()
-    new=[ROOT/p for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines() if (ROOT/p).is_file()]
+    new=[resolve_result_path(ROOT/p) for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines() if (resolve_result_path(ROOT/p)).is_file()]
     status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],cwd=ROOT,text=True).splitlines()
     before=json.loads((OUT/'storage_before.json').read_text())['workspace']['total']
     for _ in range(4):

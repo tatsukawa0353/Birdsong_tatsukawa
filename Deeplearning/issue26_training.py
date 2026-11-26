@@ -1,4 +1,5 @@
 """Stage B wide SAC, followed by both frozen behavior-mixture interventions."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor,as_completed
 import json
@@ -32,7 +33,7 @@ def run_one(condition,seed,output=OUT):
     if condition not in NEW:raise ValueError('A is read-only')
     folder=folder_for(condition,seed,output)
     if (folder/'summary.json').exists():
-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
+        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h,p
         return s
     folder.mkdir(parents=True,exist_ok=False);train=environment(condition);evaluation=environment(condition)

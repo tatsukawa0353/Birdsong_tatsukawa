@@ -1,4 +1,5 @@
 """Publish audited B/C and relocate every legacy byte before removing old path."""
+from .result_paths import resolve as resolve_result_path
 from datetime import datetime
 import hashlib
 import json
@@ -14,7 +15,7 @@ from .issue15_analysis import write_json
 
 def integrate(output,parent,legacy):
     output,parent,legacy=map(lambda p:Path(p).resolve(),(output,parent,legacy))
-    expected_parent=ROOT/"results/phase0_fixed_target_20261108"
+    expected_parent=ROOT/"results/Phase0/synthetic"
     if parent!=expected_parent or legacy!=ROOT/"results/phase0":
         raise ValueError("Integration is limited to the two declared Phase 0 directories")
     if output.parent.parent!=ROOT/"results/.issue15-work" or output.name!="artifacts":
@@ -31,7 +32,7 @@ def integrate(output,parent,legacy):
     source_names=("issue15.py","issue15_analysis.py","issue15_audit.py","issue15_report.py","issue15_integration.py",
         "issue14.py","issue14_audit.py","issue14_report.py","issue14_transaction.py","sine_env.py","experiments.py",
         "legacy_paths.py","redraw.py","run.py","make_report.py","tests/test_issue15.py","tests/test_phase0_paths.py")
-    manifest["published_source_sha256"]={name:sha(ROOT/name) for name in source_names}
+    manifest["published_source_sha256"]={name:sha(resolve_result_path(ROOT/name)) for name in source_names}
     manifest["diagnostic_logging_difference"]="B/C record per-step reward components; no new RNG operations or learner hyperparameters"
     manifest["path_maintenance_difference"]="experiments.py CLI default relocated; imported learning-source prefix exactly unchanged"
     patch=subprocess.check_output(["git","diff",manifest["control_commit"],"--",*source_names],cwd=ROOT,text=True)
@@ -44,7 +45,7 @@ def integrate(output,parent,legacy):
     write_json(output/"manifest.json",manifest)
     (output/"source_changes.patch").write_text(patch)
     for name,value in json.loads((output/"protected_before.json").read_text()).items():
-        if not (ROOT/name).is_file() or sha(ROOT/name)!=value:
+        if not (resolve_result_path(ROOT/name)).is_file() or sha(resolve_result_path(ROOT/name))!=value:
             raise RuntimeError(f"An unrelated result changed: {name}")
     destination=parent/"legacy_random_target"
     ablation=parent/"reward_ablation"
@@ -90,7 +91,7 @@ def integrate(output,parent,legacy):
             if sha(path)!=value["sha256"]:
                 raise RuntimeError(f"A changed during integration: {name}")
         for name,value in json.loads((ablation/"protected_before.json").read_text()).items():
-            if sha(ROOT/name)!=value:
+            if sha(resolve_result_path(ROOT/name))!=value:
                 raise RuntimeError(f"Unrelated result changed: {name}")
         if inventory(legacy)!=migration["files"]:
             raise RuntimeError("Old directory gained unknown files; preserve it")

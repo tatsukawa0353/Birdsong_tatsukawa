@@ -59,7 +59,7 @@ class CaseBPreflightTests(unittest.TestCase):
             self.assertEqual(t['audio'].dtype,np.float64);self.assertEqual(t['audio'].shape,(10000,))
             np.testing.assert_array_equal(t['controls'],CONTROLS)
             ratio=float(t['audio'][-1000:].std()/abs(t['audio']).max());self.assertLess(ratio,.05)
-        self.assertNotEqual(digest(TARGET),digest(ROOT/'results/phase1_3d_domain_diagnostics/diagnostics/target.npz'))
+        self.assertNotEqual(digest(TARGET),digest(ROOT/'results/Phase1/CaseA/domain_diagnostics/diagnostics/target.npz'))
 
     def test_saved_right_contribution_not_removed_or_forced_static(self):
         with np.load(OUT/'preflight/oracle.npz') as b,np.load(OUT/'preflight/same_controls_caseA.npz') as a:

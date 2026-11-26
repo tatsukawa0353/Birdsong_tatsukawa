@@ -1,4 +1,5 @@
 """Independent model reload, candidate accounting and original-data verification."""
+from .result_paths import resolve as resolve_result_path
 import csv
 import json
 from pathlib import Path
@@ -28,7 +29,7 @@ def audit():
     previous = json.loads((BASE/'manifest.json').read_text())
     for name, expected in previous['source_sha256'].items():
         # Only the known stored-x0 revision is allowed in historical physics.
-        if name != 'native/model.cpp': assert digest(ROOT/name) == expected, name
+        if name != 'native/model.cpp': assert digest(resolve_result_path(ROOT/name)) == expected, name
     for weight in WEIGHTS:
         for method in METHODS:
             for seed in (0, 1, 2):
@@ -140,7 +141,7 @@ def finalize():
     failures = []; checked = 0
     with (OUT/'protected_before.csv').open() as stream:
         for row in csv.DictReader(stream):
-            path = ROOT/row['path']
+            path = resolve_result_path(ROOT/row['path'])
             if not path.is_file() or digest(path) != row['sha256']: failures.append(row['path'])
             checked += 1
     assert not failures, failures[:10]
@@ -159,8 +160,8 @@ def finalize():
         assert len(figures)==len(images)==8
         for r in figures:assert digest(OUT/r['path'])==r['sha256']
     for r in json.loads((OUT/'endpoint_sources.json').read_text()) if (OUT/'endpoint_sources.json').exists() else []:
-        assert digest(ROOT/r['audio_path'])==r['audio_sha256']
-        if r['model_path']:assert digest(ROOT/r['model_path'])==r['model_sha256']
+        assert digest(resolve_result_path(ROOT/r['audio_path']))==r['audio_sha256']
+        if r['model_path']:assert digest(resolve_result_path(ROOT/r['model_path']))==r['model_sha256']
     csv_rows=0
     if (OUT/'new_candidate_metrics.csv.gz').exists():
         trials={}

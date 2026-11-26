@@ -1,4 +1,5 @@
 """Existing-artifact analysis and explicit decision before any research retraining."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 from datetime import datetime,timezone
@@ -36,9 +37,9 @@ def prepare(before=Path('/tmp/birdsong-issue23-before.json'),output=OUT):
     torch.set_num_threads(1);output=Path(output);tick=time.perf_counter()
     if output.exists():raise FileExistsError('Existing study preserved')
     inventory=json.loads(Path(before).read_text())
-    for r in inventory['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
+    for r in inventory['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
     prior=json.loads((BASE/'manifest.json').read_text())
-    for p,h in prior['source_sha256'].items():assert digest(ROOT/p)==h,p
+    for p,h in prior['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
     assert digest(LIBRARY)==prior['native_library_sha256'] and digest(TARGET)==prior['target_sha256']
     assert prior['versions']=={p:importlib.metadata.version(p) for p in prior['versions']}
     output.mkdir(parents=True);write_csv(output/'protected_before.csv',inventory.pop('files'))
@@ -102,7 +103,7 @@ def prepare(before=Path('/tmp/birdsong-issue23-before.json'),output=OUT):
                     model_sha256=digest(model_path),waveform_exact=True,controls_exact=True,metrics_exact=True,learner_unchanged=True))
         finally:accounts.append(account(env,time.perf_counter()-t));env.close()
     for method,seed in (('TD3',0),('SAC',1)):
-        p=ROOT/f'results/phase1_caseA_3d_network_width/runs/{method}/width_128/seed_{seed}/summary.json'
+        p=ROOT/f'results/Phase1/CaseA/network_width/runs/{method}/width_128/seed_{seed}/summary.json'
         s=json.loads(p.read_text());supplement.append(dict(method=method,seed=seed,source=str(p.relative_to(ROOT)),
             final=s['final']['acoustic_error'],selected=s['selected']['acoustic_error'],trial=s['selected']['episodes']))
     write_csv(output/'stage_a_evaluations.csv',evaluations);write_csv(output/'stage_a_correlations.csv',correlations)

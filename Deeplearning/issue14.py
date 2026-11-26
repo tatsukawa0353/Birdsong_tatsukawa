@@ -4,6 +4,7 @@ Only training-goal randomization changes. Keep callback evaluations at their
 legacy pre-update timing, and publish a separate post-final-update endpoint.
 Never reuse or overwrite an existing experiment directory.
 """
+from .result_paths import resolve as resolve_result_path
 import argparse
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -34,7 +35,7 @@ from .sine_env import SineConfig, SineEnv, oscillate
 
 ROOT = Path(__file__).resolve().parent
 CONFIG = ROOT / "configs/issue14_fixed_target.json"
-DEFAULT_OUTPUT = ROOT / "results/phase0_fixed_target_20261108"
+DEFAULT_OUTPUT = ROOT / "results/Phase0/synthetic"
 WORKFLOW = "issue14_phase0_fixed_target"
 
 
@@ -423,7 +424,7 @@ def run(output, settings, workers=1):
     write_json(output/"config.json", settings)
     sources = ("issue14.py", "sine_env.py", "experiments.py", "acoustics.py", "plotting.py",
                "configs/phase0.json", "configs/issue14_fixed_target.json", "requirements-lock.txt")
-    source_hashes = {name: digest(ROOT/name) for name in sources}
+    source_hashes = {name: digest(resolve_result_path(ROOT/name)) for name in sources}
     (output/"source_changes.patch").write_text(subprocess.check_output(["git", "diff", "HEAD", "--", *sources], cwd=ROOT, text=True))
     oracle = diagnostics(output, settings)
     manifest = dict(workflow=WORKFLOW, issue_url="https://github.com/tatsukawa0353/Birdsong_tatsukawa/issues/14",

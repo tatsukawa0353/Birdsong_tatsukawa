@@ -3,6 +3,7 @@
 Staged preparation (including a physical gate), 1D/2D then gated 3D, independent
 audit/report, and atomic publication. No legacy experiment file is modified.
 """
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime, timezone
@@ -27,7 +28,7 @@ from .model import LIBRARY, LOW, HIGH
 ROOT = Path(__file__).resolve().parent
 CONFIG = ROOT/'configs/issue17_constant020.json'
 WORK = ROOT/'.issue17-work/artifacts4096'
-DEST = ROOT/'results/phase1_constant_020s'
+DEST = ROOT/'results/Phase1/CaseA/parameter_dimension'
 SOURCES = ('constant020_env.py','issue17.py','issue17_diagnostics.py','model.py','model_env.py',
            'native/model.cpp','acoustics.py','configs/issue17_constant020.json','issue14.py','fixed_budget_de.py')
 OLD_PHASE1 = ('phase1','phase1_extended','phase1_terminal_baselines',
@@ -45,7 +46,7 @@ def run_specs(config):
 
 
 def source_hashes():
-    return {name:digest(ROOT/name) for name in SOURCES}
+    return {name:digest(resolve_result_path(ROOT/name)) for name in SOURCES}
 
 
 def save_snapshot(folder, values, target, controls):
@@ -75,7 +76,7 @@ def prepare():
     inventory=protected_snapshot()
     replaceable=lambda n:any(n.startswith('results/'+p+'/') for p in OLD_PHASE1)
     write_json(WORK/'protected_before.json',{n:h for n,h in inventory.items() if not replaceable(n)})
-    write_json(WORK/'phase1_inventory_before.json',{n:dict(sha256=h,bytes=(ROOT/n).stat().st_size)
+    write_json(WORK/'phase1_inventory_before.json',{n:dict(sha256=h,bytes=(resolve_result_path(ROOT/n)).stat().st_size)
                for n,h in inventory.items() if replaceable(n)})
     from .issue17_diagnostics import prepare_diagnostics
     review=prepare_diagnostics(WORK/'diagnostics')
@@ -106,7 +107,7 @@ def prepare():
 
 def load_ready(output):
     manifest=json.loads((output/'manifest.json').read_text())
-    if manifest['source_sha256'] != source_hashes() or manifest['native_library_sha256'] != digest(LIBRARY):
+    if not source_hashes_match(manifest['source_sha256'], source_hashes()) or manifest['native_library_sha256'] != digest(LIBRARY):
         raise RuntimeError('Frozen experiment sources or native library changed')
     review=json.loads((output/'diagnostics/review.json').read_text())
     if not review['passed']:

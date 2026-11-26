@@ -18,7 +18,7 @@ from .objectives import BalancedConfig, BalancedObjective
 from .plotting import comparison, control_trajectories, learning_curves, plt
 from .voice_diagnostics import replay, summarize, band_audio, rms
 
-OUTPUT = ROOT/"results/issue10"
+OUTPUT = ROOT/"results/Phase1/CaseA/reward_diagnostics"
 PROFILES = ("baseline", "balanced_context", "balanced_aligned")
 
 

@@ -1,4 +1,5 @@
 """Issue17 display-only revision; reuse all Final/Selected waveforms and numbers."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 from datetime import datetime,timezone
 import json
@@ -119,7 +120,7 @@ def publish():
     for r in old:safe_unlink(DEST/r['path'],DEST,r['sha256'])
     prior=json.loads((DEST/'figure_sources.json').read_text())
     prior['images']=[r for r in prior['images'] if 'field' in r]+metadata
-    prior['audio_view_renderer_sha256']={p:digest(ROOT/p) for p in ('acoustic_views.py','issue17_visualization.py')}
+    prior['audio_view_renderer_sha256']={p:digest(resolve_result_path(ROOT/p)) for p in ('acoustic_views.py','issue17_visualization.py')}
     write_json(DEST/'figure_sources.json',prior)
     for name in ('README.md','REPORT.md'):(WORK/name).replace(DEST/name)
     (WORK/'deleted_images.txt').write_text('\n'.join(r['path'] for r in old)+'\n')

@@ -1,4 +1,5 @@
 """Stage Issue 14, validate old Git recovery, and publish only audited results."""
+from .result_paths import resolve as resolve_result_path
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -42,7 +43,7 @@ def replace_results(settings, workers):
     target = DEFAULT_OUTPUT.resolve()
     if (target/"reward_ablation").exists() or (target/"legacy_random_target").exists():
         raise RuntimeError("Integrated Phase 0 contains unique Issue 15/legacy data; do not replace it through Issue 14")
-    if target != ROOT/"results/phase0_fixed_target_20261108" or target.is_symlink():
+    if target != ROOT/"results/Phase0/synthetic" or target.is_symlink():
         raise ValueError("Only the canonical Issue 14 directory may be replaced")
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     completed_path = target/"completion_verification.json"
@@ -65,7 +66,7 @@ def replace_results(settings, workers):
         inventory = old_inventory(commit, target)
         recovery = dict(commit_sha=commit, path=str(target.relative_to(ROOT.parent)), tracked_files=inventory,
                         untracked_files=[], verified_git_contents=True,
-                        restore_command=f"git restore --source={commit} --worktree -- Deeplearning/results/phase0_fixed_target_20261108",
+                        restore_command=f"git restore --source={commit} --worktree -- Deeplearning/results/Phase0/synthetic",
                         note="Restores tracked old files; remove only extra new files if fully reverting. No Git history is rewritten.")
         legacy = []
         for name in ("PPO", "TD3", "SAC"):
@@ -101,7 +102,7 @@ def replace_results(settings, workers):
     from .issue14_report import generate_report
     manifest = json.loads((stage/"manifest.json").read_text())
     for filename in ("issue14_transaction.py", "issue14_audit.py", "issue14_report.py", "tests/test_issue14.py"):
-        manifest["source_hashes"][filename] = digest(ROOT/filename)
+        manifest["source_hashes"][filename] = digest(resolve_result_path(ROOT/filename))
     manifest["final_output"] = str(target.relative_to(ROOT.parent))
     manifest["previous_results_commit"] = recovery["commit_sha"]
     write_json(stage/"manifest.json", manifest)

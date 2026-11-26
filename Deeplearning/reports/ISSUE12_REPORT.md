@@ -51,7 +51,7 @@ Deeplearning/.venv/bin/python -m Deeplearning.issue12 report
 
 `ab` がA/Bの短縮メモを先に生成する。全段階は `all`、録音を使わない合成だけは `synthetic`。設定は [issue12.json](../configs/issue12.json)。既定の入力は `private_runs/issue11`、出力は `private_runs/issue12`。異なる診断設定や入力を使う場合は新しいprivate出力先を指定する。
 
-録音非依存の合成出力は `results/issue12_synthetic/`。この書出し経路は数学的に波形を生成する専用関数で、任意の入力音声を受け取らない。異なる合成目標同士を混ぜず、tonal/quiet/noiseの同一目標ごとに順位を比較する。
+録音非依存の合成出力は `results/reference/activity_mask/`。この書出し経路は数学的に波形を生成する専用関数で、任意の入力音声を受け取らない。異なる合成目標同士を混ぜず、tonal/quiet/noiseの同一目標ごとに順位を比較する。
 
 ## 検証
 

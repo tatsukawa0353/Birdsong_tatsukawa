@@ -1,4 +1,5 @@
 """Read-only offline diagnosis of Issue 11; recording results stay private."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 from dataclasses import asdict
@@ -82,7 +83,7 @@ def prepare(source, output, config):
     if original.exists() and read(original) != before:
         raise ValueError("Issue 11 source differs from the original offline snapshot")
     write(original, before)
-    core = {name: sha_file(ROOT/name) for name in CORE}
+    core = {name: sha_file(resolve_result_path(ROOT/name)) for name in CORE}
     if (output/"config.json").exists() and read(output/"config.json") != config:
         raise ValueError("Diagnostic settings changed; use a fresh private output")
     write(output/"config.json", config)
@@ -101,7 +102,7 @@ def verify_unchanged(source, output):
     after = manifest(source)
     if before != after:
         raise AssertionError("Issue 11 input files changed during offline diagnosis")
-    core = {name: sha_file(ROOT/name) for name in CORE}
+    core = {name: sha_file(resolve_result_path(ROOT/name)) for name in CORE}
     if core != read(output/"core_before.json"):
         raise AssertionError("Original model/reward/display code changed")
     write(output/"source_integrity.json", dict(content_unchanged=True, files=len(after), core_unchanged=True,
@@ -452,7 +453,7 @@ def synthetic_fixtures():
 def synthetic_audit(config):
     # This public export has no user-supplied waveform argument and creates all
     # inputs mathematically. Recording data cannot flow into this branch.
-    out = ROOT/"results/issue12_synthetic"
+    out = ROOT/"results/reference/activity_mask"
     out.mkdir(parents=True, exist_ok=True)
     scores, families = [], {}
     for name, (target, generated) in synthetic_fixtures().items():

@@ -1,4 +1,5 @@
 """Independent reloads, fixed-budget checks and protected-original verification."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import csv
 import gzip
@@ -118,7 +119,7 @@ def integrity():
     ready();checked=0
     with (OUT/'protected_before.csv').open() as stream:
         for r in csv.DictReader(stream):
-            assert digest(ROOT/r['path'])==r['sha256'],r['path'];checked+=1
+            assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path'];checked+=1
     broken=[];links=0
     for doc in OUT.glob('*.md'):
         for m in re.finditer(r'\]\(([^)]+)\)',doc.read_text()):
@@ -128,8 +129,8 @@ def integrity():
             if not (doc.parent/ref).exists():broken.append(dict(document=doc.name,path=ref))
     assert not broken,broken
     for r in json.loads((OUT/'endpoint_sources.json').read_text()) if (OUT/'endpoint_sources.json').exists() else []:
-        assert digest(ROOT/r['audio_path'])==r['audio_sha256']
-        assert digest(ROOT/r['model_path'])==r['model_sha256']
+        assert digest(resolve_result_path(ROOT/r['audio_path']))==r['audio_sha256']
+        assert digest(resolve_result_path(ROOT/r['model_path']))==r['model_sha256']
     images=list((OUT/'figures').glob('*.png'));assert len(images)<=10
     if (OUT/'figure_sources.json').exists():
         figure_sources=json.loads((OUT/'figure_sources.json').read_text())['images']

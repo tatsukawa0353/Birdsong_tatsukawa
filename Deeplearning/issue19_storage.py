@@ -1,4 +1,5 @@
 """Explicit retention review, lossless temporary-log consolidation and size audit."""
+from .result_paths import resolve as resolve_result_path
 from collections import defaultdict
 import csv
 import gzip
@@ -28,14 +29,14 @@ def review():
                 same_content_paths=json.dumps([x['path'] for x in group if x!=r])))
     write_csv(OUT/'duplicate_png_review.csv',duplicates)
     plan=[]
-    for prefix in ('results/phase1_constant_020s','results/phase1_3d_domain_diagnostics'):
+    for prefix in ('results/Phase1/CaseA/parameter_dimension','results/Phase1/CaseA/domain_diagnostics'):
         for r in rows:
             if r['path'].startswith(prefix) and r['path'].endswith('.png'):
                 plan.append(dict(**r,decision='retain',
                     regeneration='python -m Deeplearning.issue17_visualization render (historical staged workflow; fresh output required)' if 'constant_020s' in prefix else 'python -m Deeplearning.issue18_report (historical source/build required)',
                     reason='Raw arrays and renderer exist, but report/figure registry/audit retain exact paths and hashes'))
-    for prefix in ('.issue16-work','.issue17-work','results/phase1_3d_domain_diagnostics/interrupted_attempt_1'):
-        for p in sorted((ROOT/prefix).rglob('*')):
+    for prefix in ('.issue16-work','.issue17-work','results/Phase1/CaseA/domain_diagnostics/interrupted_attempt_1'):
+        for p in sorted((resolve_result_path(ROOT/prefix)).rglob('*')):
             if not p.is_file() or p.is_symlink():continue
             plan.append(dict(path=str(p.relative_to(ROOT)),bytes=p.stat().st_size,sha256=digest(p),decision='retain',
                 regeneration='',reason='Existing trained weights, history, or past working script; no demonstrated redundancy'))
@@ -48,7 +49,7 @@ def review():
         decoded=json.loads(gzip.decompress(archive.read_bytes()))
         # No current tracked source or research document references these paths.
         tracked=subprocess.check_output(['git','ls-files','--','*.py','*.md'],cwd=ROOT,text=True).splitlines()
-        documents=[(ROOT/n).read_text(errors='replace') for n in tracked if (ROOT/n).is_file()]
+        documents=[(resolve_result_path(ROOT/n)).read_text(errors='replace') for n in tracked if (resolve_result_path(ROOT/n)).is_file()]
         for p in logs:
             rel=str(p.relative_to(ROOT))
             if rel not in payload:continue
@@ -73,8 +74,8 @@ def review():
         duplicate_png_extra_bytes=sum(sum(int(r['bytes']) for r in g[1:]) for g in groups.values()),
         original_research_files_removed=0, temporary_logs_consolidated=len(changes),
         temporary_log_bytes=sum(r['bytes'] for r in changes),archive_bytes=archive.stat().st_size,
-        issue17_pngs=sum(r['path'].startswith('results/phase1_constant_020s/') and r['path'].endswith('.png') for r in rows),
-        issue18_pngs=sum(r['path'].startswith('results/phase1_3d_domain_diagnostics/') and r['path'].endswith('.png') for r in rows),
+        issue17_pngs=sum(r['path'].startswith('results/Phase1/CaseA/parameter_dimension/') and r['path'].endswith('.png') for r in rows),
+        issue18_pngs=sum(r['path'].startswith('results/Phase1/CaseA/domain_diagnostics/') and r['path'].endswith('.png') for r in rows),
         policy='Keep referenced historical PNG and all scientific files; future outputs use eight summary images, no per-seed plots or checkpoint dumps. No symlinks or history rewriting.')
     write_json(OUT/'cleanup_summary.json',summary)
     return summary
@@ -85,7 +86,7 @@ def after():
     status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],cwd=ROOT,text=True).splitlines()
     untracked=subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines()
     # git ls-files is relative to cwd; status is relative to the repository root.
-    new=[ROOT/p for p in untracked if (ROOT/p).is_file()]
+    new=[resolve_result_path(ROOT/p) for p in untracked if (resolve_result_path(ROOT/p)).is_file()]
     result=dict(workspace=workspace_inventory(),new_git_candidate_files=len(new),
         new_git_candidate_bytes=sum(p.stat().st_size for p in new),
         modified_tracked_files=sum(r[:2].strip() not in ('??','D') for r in status),

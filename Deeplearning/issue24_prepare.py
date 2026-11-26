@@ -1,4 +1,5 @@
 """Verify reuse, installed SB3 scheduler behavior and initial Actor-only intervention."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 from datetime import datetime,timezone
 import importlib.metadata
@@ -27,9 +28,9 @@ def prepare(before_path=Path('/tmp/birdsong-issue24-before.json'),output=OUT):
     torch.set_num_threads(1);output=Path(output);tick=time.perf_counter()
     if output.exists():raise FileExistsError('Existing study preserved')
     before=json.loads(Path(before_path).read_text())
-    for r in before['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
+    for r in before['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
     previous=json.loads((BASE/'manifest.json').read_text())
-    for p,h in previous['source_sha256'].items():assert digest(ROOT/p)==h,p
+    for p,h in previous['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
     assert digest(TARGET)==previous['target_sha256'] and digest(LIBRARY)==previous['native_library_sha256']
     assert json.loads((BASE/'audit.json').read_text())['passed']
     versions={p:importlib.metadata.version(p) for p in previous['versions']};assert versions==previous['versions']

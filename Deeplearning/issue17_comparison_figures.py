@@ -19,8 +19,7 @@ LABELS={'TD3':'TD3','SAC':'SAC','DE':'DE','random_search':'Random Search'}
 COLORS={'TD3':'#0072B2','SAC':'#D55E00','DE':'#009E73','random_search':'#CC79A7'}
 STYLES={method:'-' for method in METHODS}
 LINEWIDTH=4.0
-STYLE={'path.simplify':False,'agg.path.chunksize':0,'axes.grid':False,
-       'axes.labelsize':46,'xtick.labelsize':30,'ytick.labelsize':30}
+from .plot_style import STYLE, context
 
 
 def array_hash(values):
@@ -29,7 +28,7 @@ def array_hash(values):
 
 def comparison_curve(trajectories,path,*,limits,average=False):
     if set(trajectories)!=set(METHODS):raise ValueError('Exactly four methods required')
-    with plt.style.context(['science','ieee','no-latex']),plt.rc_context(STYLE):
+    with context():
         fig,ax=plt.subplots(figsize=(15,10))
         lines={};metadata={};bands=[]
         # Draw dense candidate trajectories first so deterministic policy

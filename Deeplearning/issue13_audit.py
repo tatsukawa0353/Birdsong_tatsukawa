@@ -233,7 +233,7 @@ class Auditor:
                    "frozen_settings", manifest_path, "identical frozen source configuration", settings)
         self.check(settings == self.read_json(self.output / "config.json"),
                    "copied_settings", self.output / "config.json", settings, None)
-        historical_manifest = self.read_json(ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031/manifest.json")
+        historical_manifest = self.read_json(ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/manifest.json")
         unchanged = ("warmup_episodes", "learning_rate", "batch_size", "net_arch", "gamma",
                      "sac_ent_coef", "td3_noise_std", "de_population", "de_mutation", "de_recombination")
         for key in unchanged:
@@ -254,7 +254,7 @@ class Auditor:
         self.array(controls, np.tile(TARGET_CONTROLS, (35, 1)), target_path / "controls")
         self.scalar(rate, 50000, target_path / "rate")
         self.objective = BalancedObjective(target, rate, scale=max(float(abs(target).max()), 1e-8))
-        historical_target = ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031/diagnostics/target.npz"
+        historical_target = ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/diagnostics/target.npz"
         self.check(_digest(target_path) == _digest(historical_target), "historical_target_hash", target_path,
                    _digest(historical_target), _digest(target_path))
         before_path = self.output / "protected_before.json"
@@ -390,7 +390,7 @@ class Auditor:
             self.policy_prediction(path.parent / "agent.zip", curve[-1], condition, method)
             self.policy_prediction(path.parent / "best_observed/agent.zip", best_point, condition, method)
         if condition == "constant_1d":
-            reference_path = ROOT / "results/phase1_constant_020s/history/phase1_validation_20261031/runs/A" / method / f"seed_{seed}" / "curve.json"
+            reference_path = ROOT / "results/Phase1/CaseA/parameter_dimension/history/phase1_validation_20261031/runs/A" / method / f"seed_{seed}" / "curve.json"
             reference = self.read_json(reference_path)
             lookup = {point["episodes"]: point for point in curve}
             if isinstance(reference, list) and reference:

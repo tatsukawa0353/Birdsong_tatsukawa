@@ -1,4 +1,5 @@
 """Exact4096-step Case B learning; evaluation happens after completed updates."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor,as_completed
 import json
@@ -20,7 +21,7 @@ from .issue16 import digest
 def run_one(method,seed,output=OUT):
     torch.set_num_threads(1);output=Path(output);manifest=ready(output);config=manifest['settings'];budget=config['episodes'];path=folder(method,seed,output)
     if (path/'summary.json').exists():
-        s=json.loads((path/'summary.json').read_text());assert s['source_sha256']==hashes()
+        s=json.loads((path/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], hashes())
         for name,h in s['artifact_sha256'].items():assert digest(path/name)==h
         return s
     path.mkdir(parents=True,exist_ok=False);train=CaseBEnv();evaluation=CaseBEnv(record_moments=True)

@@ -1,10 +1,11 @@
 """Physical model locations and stable historical protection-record paths."""
 from pathlib import Path
+from .result_paths import resolve as resolve_result_path
 
 
 REPO = Path(__file__).resolve().parent.parent
 LEGACY_SRC = REPO / "legacy" / "src"
-PHASE0_ROOT = REPO / "Deeplearning/results/phase0_fixed_target_20261108"
+PHASE0_ROOT = REPO / "Deeplearning/results/Phase0/synthetic"
 
 
 def legacy_phase0_root():
@@ -30,4 +31,4 @@ def protected_path(relative):
         return legacy_phase0_root() / path.relative_to(previous)
     if len(path.parts) == 1 and path.name.startswith("BirdsongModel") and path.suffix in (".cpp", ".h"):
         return LEGACY_SRC / path.name
-    return REPO / path
+    return resolve_result_path(REPO / path)

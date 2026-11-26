@@ -1,4 +1,5 @@
 """Six Critic-only LR interventions with per-update LR and state diagnostics."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor,as_completed
 import json
@@ -28,7 +29,7 @@ def run_one(rate,seed,output=OUT):
     if rate not in CRITIC_RATES:raise ValueError('The baseline must never be retrained')
     folder=folder_for(rate,seed,output)
     if (folder/'summary.json').exists():
-        s=json.loads((folder/'summary.json').read_text());assert s['source_sha256']==source_hashes()
+        s=json.loads((folder/'summary.json').read_text());assert source_hashes_match(s['source_sha256'], source_hashes())
         for p,h in s['artifact_sha256'].items():assert digest(folder/p)==h,p
         return s
     folder.mkdir(parents=True,exist_ok=False);train=environment(.75);evaluation=environment(.75)

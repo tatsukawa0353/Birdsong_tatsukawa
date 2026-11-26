@@ -15,7 +15,7 @@ from .issue15_analysis import write_json, write_csv
 from .issue14_report import _spectrogram, _control_plot, COLORS as ALGORITHM_COLORS
 
 ROOT=Path(__file__).resolve().parent
-PARENT=ROOT/"results/phase0_fixed_target_20261108"
+PARENT=ROOT/"results/Phase0/synthetic"
 CONDITIONS=("combined","spectral_only","envelope_only")
 ALGORITHMS=("PPO","TD3","SAC")
 COLORS={"combined":"#0072B2","spectral_only":"#009E73","envelope_only":"#D55E00"}

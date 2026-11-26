@@ -1,4 +1,5 @@
 """Eight registered summary figures; no per-run image explosion."""
+from .result_paths import resolve as resolve_result_path
 import csv
 import gzip
 import json
@@ -115,7 +116,7 @@ def render_figures(rows, deltas):
     # separately for a successful result. It contains the baseline TD3 failure.
     for entry in registry:
         if entry['seed']==1:
-            with np.load(ROOT/entry['audio_path']) as z:sounds[(entry['method'],entry['weight'],entry['role'])]=z['audio'].copy()
+            with np.load(resolve_result_path(ROOT/entry['audio_path'])) as z:sounds[(entry['method'],entry['weight'],entry['role'])]=z['audio'].copy()
     f,t,p,reference=display_psd(target);target_db=relative_db(p,reference);peak=abs(target).max()
     target_env=rms_envelope(target,peak)
     views={key:(relative_db(display_psd(audio)[2],reference),rms_envelope(audio,peak)) for key,audio in sounds.items()}
@@ -123,7 +124,7 @@ def render_figures(rows, deltas):
     all_rms_max=max(float(target_env.max()),max(float(x[1].max()) for x in views.values()))
     for entry in registry:
         if entry['seed']==1:continue
-        with np.load(ROOT/entry['audio_path']) as z:audio=z['audio'].copy()
+        with np.load(resolve_result_path(ROOT/entry['audio_path'])) as z:audio=z['audio'].copy()
         all_db_max=max(all_db_max,float(relative_db(display_psd(audio)[2],reference).max()))
         all_rms_max=max(all_rms_max,float(rms_envelope(audio,peak).max()))
     db_limits=(-70.,max(10.,float(10*np.ceil(all_db_max/10))))

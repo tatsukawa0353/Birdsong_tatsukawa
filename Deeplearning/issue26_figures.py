@@ -1,4 +1,5 @@
 """Ten aggregate figures; common Target-derived audio/display scales."""
+from .result_paths import resolve as resolve_result_path
 import gzip
 import csv
 import io
@@ -132,7 +133,7 @@ def audio_figures(save):
     target,_=target_data();peak=float(abs(target).max());f,t,power,reference=display_psd(target)
     sounds=csv_rows('sound_index.csv');displays={'Target':(target,power)};maximum=float(relative_db(power,reference).max());max_wave=float(abs(target/peak).max());max_rms=float(rms_envelope(target,peak).max())
     for r in sounds:
-        with np.load(ROOT/r['raw_npz']) as z:audio=z['audio']
+        with np.load(resolve_result_path(ROOT/r['raw_npz'])) as z:audio=z['audio']
         _,_,p,_=display_psd(audio);key=(r['condition'],int(r['seed']),r['role']);displays[key]=(audio,p)
         maximum=max(maximum,float(relative_db(p,reference).max()));max_wave=max(max_wave,float(abs(audio/peak).max()));max_rms=max(max_rms,float(rms_envelope(audio,peak).max()))
     color_limits=(-80.,max(0.,float(np.ceil(maximum/5)*5)));seed=1

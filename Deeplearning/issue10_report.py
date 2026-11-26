@@ -1,4 +1,5 @@
 """Build a public report using only Issue 10 synthetic experiment artifacts."""
+from .result_paths import resolve as resolve_result_path
 import csv
 import hashlib
 import json
@@ -12,7 +13,7 @@ from .model import ROOT
 from .objectives import BalancedObjective
 from .plotting import plt
 
-OUTPUT = ROOT/"results/issue10"
+OUTPUT = ROOT/"results/Phase1/CaseA/reward_diagnostics"
 PROFILES = ("baseline", "balanced_context", "balanced_aligned")
 
 
@@ -115,11 +116,11 @@ def provenance():
     paths = ["issue10.py", "issue10_report.py", "objectives.py", "model_env.py", "experiments.py",
              "acoustics.py", "model.py", "native/model.cpp", "native/reference.cpp", "plotting.py", "configs/issue10.json",
              "requirements-lock.txt", "tests/test_issue10.py"]
-    hashes = {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in paths if (ROOT/p).is_file()}
+    hashes = {p: hashlib.sha256((resolve_result_path(ROOT/p)).read_bytes()).hexdigest() for p in paths if (resolve_result_path(ROOT/p)).is_file()}
     base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     unchanged = {}
     for path in ("acoustics.py", "model.py", "plotting.py", "native/model.cpp", "native/reference.cpp"):
-        file = ROOT/path
+        file = resolve_result_path(ROOT/path)
         if not file.is_file():
             continue
         old = subprocess.check_output(["git", "show", f"HEAD:Deeplearning/{path}"], cwd=ROOT)
@@ -172,16 +173,16 @@ def main():
         lines.append(f"| {r['case']} | {m['log_spectral']:.5f} | {m['envelope']:.5f} | {m['total']:.5f} | {r['mean_cost']:.5f} | {r['discounted_cost']:.5f} | {r['balanced']['total']:.5f} |")
     lines += ["", "costは小さいほど良く、報酬はその負値。割引costは `-Σ γ^(t−1) r_t / 35`、γ=0.99。異なる損失の数値の大小を直接比較しない。", "",
               "無音の従来全体誤差0.64620は、wrong_voicedの0.26479、far_voicedの0.57005より大きい。対数PSDは全帯域・全フレームの等重み平均なので、目標のエネルギーが少ないビンが多いと無音のスペクトル罰は薄まり得る。しかし今回の共有ゲインでは包絡の欠落も加わり、無音有利とはならなかった。極端な10倍音量は無音より悪いが、それだけで無音の抜け道とは判定しない。Issue #9の実録音・外力可変条件への一般化はできない。", "",
-              "![固定波形の報酬順序](../results/issue10/audit/reward_order.png)", "",
-              "![周波数ずれ有声音](../results/issue10/audit/wrong_voiced.png)", "",
-              "全固定波形は [audit/](../results/issue10/audit/) のNPZ、全項目は [scores.json](../results/issue10/audit/scores.json)、35区間別は [step_metrics.json](../results/issue10/audit/step_metrics.json)。", "",
+              "![固定波形の報酬順序](../results/Phase1/CaseA/reward_diagnostics/audit/reward_order.png)", "",
+              "![周波数ずれ有声音](../results/Phase1/CaseA/reward_diagnostics/audit/wrong_voiced.png)", "",
+              "全固定波形は [audit/](../results/Phase1/CaseA/reward_diagnostics/audit/) のNPZ、全項目は [scores.json](../results/Phase1/CaseA/reward_diagnostics/audit/scores.json)、35区間別は [step_metrics.json](../results/Phase1/CaseA/reward_diagnostics/audit/step_metrics.json)。", "",
               "### 目標の有声・無音・雑音様区間", "",
               "目標のみから帯域包絡を求め、最大値の1%（振幅比−40 dB）以上を活動フレームとする。全体最大1e−8以下なら全て非活動。生成音はマスクへ影響しない。帯域フィルタと包絡の遅れ・減衰を含む操作的マスクであり、手動の真の音節境界や周期性の検出ではない。", "",
               "| 目標・生成の組合せ | 目標活動frame率 | 従来全体 | 新全体 |", "|---|---:|---:|---:|"]
     for r in activity:
         lines.append(f"| {r['case']} | {r['voiced_frame_fraction']:.3f} | {r['baseline']['total']:.5f} | {r['balanced']['total']:.5f} |")
     lines += ["", "gatedは0.10–0.25秒だけ鳴る目標。正しい無音は誤差0、無音目標への誤発声・gatedに対する常時発声は正の誤差となる。雑音目標も活動として保持し、完全再現は0、欠落は正の誤差。常時発声ボーナスは加えていない。", "",
-              "![音節タイミングの診断](../results/issue10/audit/gated_timing.png)", "",
+              "![音節タイミングの診断](../results/Phase1/CaseA/reward_diagnostics/audit/gated_timing.png)", "",
               "### 旧報酬の感度と時間集計", "",
               "一度に1設定だけ変えた合成診断。包絡の5 ms幅は維持し、表のenvelope_weightはその係数。shared_scaleは目標・生成に同じ倍率を適用する。主設定・初期12波形・候補の重み・窓等の感度条件は学習前に固定した。far_matched_rmsは音量と周波数差の混同を調べる追加診断であり、学習後に追加したが、学習設定・損失重み・予算や移行基準の変更には使用していない。", "",
               "| 変更 | wrong voiced | far voiced | far RMS一致 | 無音 | DC | half gain | 20 ms遅延 |", "|---|---:|---:|---:|---:|---:|---:|---:|"]
@@ -189,7 +190,7 @@ def main():
     for setting in dict.fromkeys(r["setting"] for r in sensitivity if "metrics" in r):
         values = {r["case"]: r["metrics"]["total"] for r in sensitivity if r["setting"] == setting}
         lines.append("| "+setting+" | "+" | ".join(f"{values[n]:.5f}" for n in ("wrong_voiced", "far_voiced", "far_matched_rms", "silence", "dc_only", "half_gain", "delayed"))+" |")
-    lines += ["", "フロアはPSDへ加算してから対数化し、その絶対dB値で割るため、単なる表示下限ではない。STFTの窓・周波数帯域・共通ゲイン・包絡重みは物理的な区別の相対重みと順位を変え得る。窓49.152 msでは無音約0.5368がfar_voiced約0.6205より良くなる。窓を長くすると帯域ビンへの成分の広がりと対数誤差が変わるためで、全設定で無音優遇が否定されたわけではない。ただし同じfar波形をRMS一致にすると約0.3152で無音より良くなり、音量差が順位逆転に寄与していたことが分かる。純粋な周波数差だけの効果とは断定しない。表示の[-50,-20] dBはこの計算へ渡していない。感度の全成分と欠落重み0/1/2/4の診断は [sensitivity.json](../results/issue10/audit/sensitivity.json)。", "",
+    lines += ["", "フロアはPSDへ加算してから対数化し、その絶対dB値で割るため、単なる表示下限ではない。STFTの窓・周波数帯域・共通ゲイン・包絡重みは物理的な区別の相対重みと順位を変え得る。窓49.152 msでは無音約0.5368がfar_voiced約0.6205より良くなる。窓を長くすると帯域ビンへの成分の広がりと対数誤差が変わるためで、全設定で無音優遇が否定されたわけではない。ただし同じfar波形をRMS一致にすると約0.3152で無音より良くなり、音量差が順位逆転に寄与していたことが分かる。純粋な周波数差だけの効果とは断定しない。表示の[-50,-20] dBはこの計算へ渡していない。感度の全成分と欠落重み0/1/2/4の診断は [sensitivity.json](../results/Phase1/CaseA/reward_diagnostics/audit/sensitivity.json)。", "",
               f"旧法は10 msごとに最大30 msを切り出し、24.576 ms窓でゼロ埋めする。最初の2区間は全frameがパディングを含み、以降は{temporal['baseline_context_frames'][2]['padded_frames']}/{temporal['baseline_context_frames'][2]['frames']}frameが含む。隣接区間では過去音声を再び評価し、切り出し端と包絡も毎回変わる。全0.35秒の旧誤差と同じ集計ではない。", "",
               f"固定群で全体と割引即時costの順位が逆転した組は `{temporal['baseline_rank_reversals']}`。wrong_voicedとhalf_gainでは全体はhalf_gainが良く、即時報酬はwrong_voicedが良い。新法は物理的な窓の重複を残すが、{temporal['balanced_unique_frames']}個のframeをそれぞれ1回だけ割り当て、重み合計を1とする。開始前の既知のゼロは左だけに補い、未生成の未来を右ゼロ埋めしない。末尾1 sample分のframeを通常frameと等重みにはせず、1/17500で重み付けする。", "",
               "## 2. 差し替え可能な候補の定義", "",
@@ -213,7 +214,7 @@ def main():
               "```", "",
               "Cは周波数累積分布の距離で、無出力にはゼロ分布を拡張使用する。Hz単位の周波数誤差ではない。Cの形状正規化は音量を消すが、絶対包絡A、目標有声時の欠落M、DC差が残る。大音量は包絡差が増え、無音目標への誤発声もAで罰する。極小出力と厳密な0のCには閾値の不連続があり得るが、欠落Mは残る。重みは今回の設計値で、知覚評価に合わせた校正値ではない。", "",
               "alignedではstep tで新規frameのΔL_tを計算し、r_t=−35 ΔL_t / γ^(t−1)。したがって `−Σ γ^(t−1)r_t/35=L` が恒等的に成立する（今回の平滑化罰は0）。γ=0.99を変更せず、最大の割引補償は約1.41。単純な未割引報酬平均はLとは一致しないため両方保存する。報酬尺度も変わるためSACのエントロピー係数適応等との相互作用は分離していない。", "",
-              f"目標frame情報は [target_frames.json](../results/issue10/audit/target_frames.json)。共通スケールS={frames['shared_scale']:.6g}、E_ref={frames['energy_reference']:.6g}。実装は [objectives.py](../objectives.py)、[model_env.py](../model_env.py)。", "",
+              f"目標frame情報は [target_frames.json](../results/Phase1/CaseA/reward_diagnostics/audit/target_frames.json)。共通スケールS={frames['shared_scale']:.6g}、E_ref={frames['energy_reference']:.6g}。実装は [objectives.py](../objectives.py)、[model_env.py](../model_env.py)。", "",
               "## 3. 同一予算・seedの学習比較", "",
               "Case A・ε_lと共通p_sの2行動・35step/episode・0.35秒、同一の目標配列と共通ゲイン。ε_rと左右外力は従来の既定値。SAC/TD3、seed 0/1/2、32×32 MLP、CPU1スレッド、lr=0.0003、batch64、学習開始256、毎step更新、γ=0.99。TD3探索ノイズ0.1、SACの温度係数はSB3の既定適応。評価は探索なしで0stepと350stepごと、最終評価を別に保存する。RLのstep予算に評価呼出は含めない。", "",
               "1050stepを先に実施。alignedが新しい全体損失を初期値から2/3 seed以上で改善し、同予算baselineの新損失平均も下回った手法だけを追加対象とする基準と4200step予算を、初回学習前に [issue10.json](../configs/issue10.json) へ固定した。選ばれた手法は全3profile・全seedを4200stepで最初から学習する。良いseedだけの継ぎ足しではないが、初回結果による手法選択を含む探索的実験である。", "",
@@ -238,7 +239,7 @@ def main():
                 group = [r for r in cohort if r["algorithm"] == algorithm and r["profile"] == profile]
                 results, voices = [r["result"] for r in group], [r["voice"] for r in group]
                 lines.append(f"| {algorithm} | {profile} | {fmt([r['error'] for r in results])} | {fmt([r['objective_error'] for r in results])} | {sum(r['error'] <= config['threshold'] for r in results)}/{len(group)} | {sum(v['sustained_acoustic'] for v in voices)}/{len(group)} | {fmt([v['active_20ms_fraction'] for v in voices],3)} | {fmt([v['motion']['std'][1] for v in voices],2)} | {fmt([v['motion']['std'][3] for v in voices],2)} | {sum(r['training_numerical_failures'] for r in results)} | {results[0]['evaluation_steps']} |")
-        lines += ["", f"![{budget}stepの全seedと平均](../results/issue10/{directory}/comparison_curves.png)", "",
+        lines += ["", f"![{budget}stepの全seedと平均](../results/Phase1/CaseA/reward_diagnostics/{directory}/comparison_curves.png)", "",
                   "細線が各seed、太線が平均。上段は旧指標、下段は新指標。学習で最適化した指標に加え、共通の評価指標を全条件で計算している。", ""]
     if len(cohorts) == 2:
         def mean_metric(algorithm, profile, budget, metric):
@@ -254,8 +255,8 @@ def main():
             steps = group[0].get("search_steps", 0)
             lines.append(f"| {profile} | {method} | {fmt([r['error'] for r in group],6)} | {fmt([r['objective_error'] for r in group],6)} | {steps} |")
     lines += ["", "oracle/constant/randomは各35stepの評価だけで、探索予算0。constantは正規化行動0、randomは各stepで独立一様。oracleの約1e−7は制御encodeのfloat32丸めを含むが、同一配列の固定診断は厳密0。", "",
-              "DEは2個の定数をpopsize3×2次元=6候補、初期＋4世代=30episode・1050環境stepで探索し、各profileの実際の割引報酬costを最小化する。新全体を直接最適化するのはalignedだけである。RLは35×2の時変出力が可能で探索次元が異なる。4200stepのRLに対してDEも4200stepへ延長した対照ではない。評価回数や計算秒数も揃えた計算量比較ではない。全候補の曲線と選択制御は [constant_baselines/](../results/issue10/constant_baselines/)。", "",
-              f"全学習で最小の旧誤差は {best['result']['error']:.5f}（{best['algorithm']} / {best['profile']} / seed {best['seed']} / {best['budget']}step）。これは最良例の記述であり、手法の一貫した優位性ではない。全seedの値・左右速度std・行動変化MSE・実適用制御の平均/標準偏差は [per_seed.csv](../results/issue10/per_seed.csv)。最終評価の35区間別損失、音声、5系列の制御図、重みは各runディレクトリに保存した。", "",
+              "DEは2個の定数をpopsize3×2次元=6候補、初期＋4世代=30episode・1050環境stepで探索し、各profileの実際の割引報酬costを最小化する。新全体を直接最適化するのはalignedだけである。RLは35×2の時変出力が可能で探索次元が異なる。4200stepのRLに対してDEも4200stepへ延長した対照ではない。評価回数や計算秒数も揃えた計算量比較ではない。全候補の曲線と選択制御は [constant_baselines/](../results/Phase1/CaseA/reward_diagnostics/constant_baselines/)。", "",
+              f"全学習で最小の旧誤差は {best['result']['error']:.5f}（{best['algorithm']} / {best['profile']} / seed {best['seed']} / {best['budget']}step）。これは最良例の記述であり、手法の一貫した優位性ではない。全seedの値・左右速度std・行動変化MSE・実適用制御の平均/標準偏差は [per_seed.csv](../results/Phase1/CaseA/reward_diagnostics/per_seed.csv)。最終評価の35区間別損失、音声、5系列の制御図、重みは各runディレクトリに保存した。", "",
               "発声はIssue #9の操作的指標（後半0.1–0.35秒、基準帯域RMS比−60 dB以上の20 ms区間が80%以上）。速度stdは全10 MHz積分点の区間統計を平均差も含めて合成する。位置オフセット、源の運動、出力音声、可視性、模倣誤差を区別し、周期性だけで雑音様の音を除外しない。右速度があってもCase Aの音響出力へ右源が寄与するとは限らない。", "",
               "評価用NPZは元の振幅を保持する。`generated.wav` は聴取用にrunごとのpeakを最大1へ収めたfloat32で、波形ごとの音量調整を含む。このWAVの再生音量で条件間の振幅を比較しない。学習・評価・保存誤差にはこの聴取用調整を使用していない。", "",
               "## 4. glideへの移行と観測の限界", "",
@@ -263,14 +264,14 @@ def main():
     if not glide["selected_algorithms"]:
         oracle = read("glide_oracle/summary.json")
         lines += [f"条件を満たす手法はなかったためglideのRLは実施しなかった。ε_l=3e7→4.6e7の0.35秒目標を生成し、既知制御のみ旧誤差{oracle['error']:.3g}で再現できることを確認した。このoracleをRL成績には含めない。", "",
-                  "![glide既知制御](../results/issue10/glide_oracle/spectrogram.png)", ""]
+                  "![glide既知制御](../results/Phase1/CaseA/reward_diagnostics/glide_oracle/spectrogram.png)", ""]
     else:
         lines += [f"glide学習の対象は {', '.join(glide['selected_algorithms'])}。結果は対応する `glide_*` ディレクトリ。", ""]
     lines += ["現行観測は正規化時刻、前行動2値、現在のx_l,y_l,x_r,y_rの計7次元。遅延線の全履歴、音声フィルタ状態、目標音声の特徴は観測されず、Markov状態を完全には与えていない。固定の一目標で時刻から軌道を覚える設定であり、未知の目標に合わせる目標条件付き模倣とはいえない。今回の比較では観測を変えていない。複数目標では目標特徴と履歴を別条件として検証する必要がある。", "",
               "## 5. 検証・再現・成果物", "",
               "[issue10_validation.txt](issue10_validation.txt) の36テストが成功。旧C++との回帰、RK4・遅延・分割積分、異常終了に加え、oracle/無音/DC/誤周波数の順序、正しい無音・雑音、ゲイン・過大音量・音節時刻、目標マスクの不変性、因果prefix、frameの一度だけの割当て、末尾重み、奇数長窓のpadding診断、割引報酬と全体の一致、baselineの波形と報酬不変、表示設定からの独立性を確認した。", "",
-              f"保存成果物も再計算した。{verification['runs']}本、訓練合計{verification['training_steps']:,}step、評価合計{verification['evaluation_steps']:,}step。旧誤差の再計算との差最大{verification['max_legacy_recalculation_difference']:.3g}、alignedの割引returnと全体損失との差最大{verification['max_aligned_return_difference']:.3g}。目標ハッシュ・2自由度・予算・評価回数の一致を [verification.json](../results/issue10/verification.json) に記録。DEの探索9450stepと固定方策の評価等はこの訓練合計へ含めない。", "",
-              "物理方程式・RK4・dt=1e−7・遅延、`acoustics.py` と表示関数は基準コミットから変更していない。[provenance.json](../results/issue10/provenance.json) にコードと設定のSHA256・基準commitを保存した。図はε_l, ε_r, p_s, f_e,l, f_e,rを使用。表示は10 MHzへリサンプル、Blackman–Harris、245760/184320、gray_r、[-50,-20] dB、0–10 kHz、端を除いた0.012288–0.331776秒を維持する。解析窓・因果報酬と表示窓は別用途として区別する。", "",
+              f"保存成果物も再計算した。{verification['runs']}本、訓練合計{verification['training_steps']:,}step、評価合計{verification['evaluation_steps']:,}step。旧誤差の再計算との差最大{verification['max_legacy_recalculation_difference']:.3g}、alignedの割引returnと全体損失との差最大{verification['max_aligned_return_difference']:.3g}。目標ハッシュ・2自由度・予算・評価回数の一致を [verification.json](../results/Phase1/CaseA/reward_diagnostics/verification.json) に記録。DEの探索9450stepと固定方策の評価等はこの訓練合計へ含めない。", "",
+              "物理方程式・RK4・dt=1e−7・遅延、`acoustics.py` と表示関数は基準コミットから変更していない。[provenance.json](../results/Phase1/CaseA/reward_diagnostics/provenance.json) にコードと設定のSHA256・基準commitを保存した。図はε_l, ε_r, p_s, f_e,l, f_e,rを使用。表示は10 MHzへリサンプル、Blackman–Harris、245760/184320、gray_r、[-50,-20] dB、0–10 kHz、端を除いた0.012288–0.331776秒を維持する。解析窓・因果報酬と表示窓は別用途として区別する。", "",
               "```bash", "export MPLCONFIGDIR=/tmp/birdsong-mpl",
               "Deeplearning/.venv/bin/python -m Deeplearning.issue10 all",
               "Deeplearning/.venv/bin/python -m unittest discover -s Deeplearning/tests -v",

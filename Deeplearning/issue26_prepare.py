@@ -1,4 +1,5 @@
 """Freeze wide-domain behavior protocol and reference provenance before research runs."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 from datetime import datetime,timezone
 import importlib.metadata
@@ -25,17 +26,17 @@ def prepare(before_path=Path('/tmp/birdsong-issue26-before.json'),output=OUT):
     torch.set_num_threads(1);output=Path(output);tick=time.perf_counter()
     if output.exists():raise FileExistsError('Existing study preserved')
     before=json.loads(Path(before_path).read_text())
-    for r in before['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
+    for r in before['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
     references={};names={18:'phase1_3d_domain_diagnostics',22:'phase1_caseA_sac128_reward_weights',
         23:'phase1_caseA_sac128_stability_diagnostics',25:'phase1_caseA_sac128_critic_lr'}
     for issue,name in names.items():
-        path=ROOT/'results'/name/'manifest.json';m=json.loads(path.read_text());assert m['target_sha256']==digest(TARGET)
+        path=resolve_result_path(ROOT/'results'/name/'manifest.json');m=json.loads(path.read_text());assert m['target_sha256']==digest(TARGET)
         if issue!=18:
             assert m['native_library_sha256']==digest(LIBRARY)
-            for p,h in m['source_sha256'].items():assert digest(ROOT/p)==h,p
+            for p,h in m['source_sha256'].items():assert digest(resolve_result_path(ROOT/p))==h,p
         references[issue]=dict(manifest=str(path.relative_to(ROOT)),sha256=digest(path),target_sha256=m['target_sha256'],
             historical_library_sha256=m['native_library_sha256'],library_matches_current=m['native_library_sha256']==digest(LIBRARY))
-    gate_path=ROOT/'results/phase1_restricted3d_weights/model_gate.json';gate=json.loads(gate_path.read_text())
+    gate_path=ROOT/'results/Phase1/CaseA/reward_weights/restricted_domain/model_gate.json';gate=json.loads(gate_path.read_text())
     assert gate['passed'] and gate['x0_storage_only'] and all(p['exact_equal'] for p in gate['comparisons'])
     assert len(re.findall(r'\bx0\b',(ROOT/'native/model.cpp').read_text()))==1
     old=json.loads((BASE/'manifest.json').read_text());versions={p:importlib.metadata.version(p) for p in old['versions']};assert versions==old['versions']

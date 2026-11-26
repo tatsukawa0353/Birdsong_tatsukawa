@@ -1,4 +1,5 @@
 """Case B physical gate; preserve a diagnostic study if its Target fails."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 from datetime import datetime,timezone
 import importlib.metadata
@@ -20,7 +21,7 @@ from .issue16 import digest
 def physics(before=Path('/tmp/birdsong-issue27-before.json')):
     if OUT.exists():raise FileExistsError('Existing study preserved')
     before=json.loads(Path(before).read_text())
-    for r in before['files']:assert digest(ROOT/r['path'])==r['sha256'],r['path']
+    for r in before['files']:assert digest(resolve_result_path(ROOT/r['path']))==r['sha256'],r['path']
     OUT.mkdir(parents=True);(OUT/'preflight').mkdir();write_csv(OUT/'protected_before.csv',before.pop('files'));write_json(OUT/'storage_before.json',before)
     (OUT/'PLAN.md').write_text('''# Issue27 — 計算前の計画
 
@@ -54,7 +55,7 @@ Final/Selected/posthoc/training_bestをCase Bで独立再生し、左右末尾�
         np.testing.assert_array_equal(target['audio'],oracle['audio']);np.testing.assert_array_equal(target['state_end_blocks'],oracle['state_end_blocks'])
         assert max(error[k] for k in ('log_spectral','envelope','total'))<=1e-12
         assert not np.array_equal(target['audio'],contrast['audio'])
-        assert digest(TARGET)!=digest(ROOT/'results/phase1_3d_domain_diagnostics/diagnostics/target.npz')
+        assert digest(TARGET)!=digest(ROOT/'results/Phase1/CaseA/domain_diagnostics/diagnostics/target.npz')
         if not build['unchanged_source_build_binary_exact']:
             reference,_=generate('source_reference','B',False,PROBE.parent/'libsource_reference.so')
             for k in ('audio','state_end_blocks','motion_mean','motion_std'):np.testing.assert_array_equal(target[k],reference[k])

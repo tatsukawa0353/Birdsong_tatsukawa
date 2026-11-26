@@ -29,8 +29,8 @@ Gitの追跡済み削除は通常の作業ツリー差分として残してい�
 開始時の `git status --short` は空で、既存の未コミット変更はなかった。
 調査・削除対象は以下の2ディレクトリだけ:
 
-- `Deeplearning/results/server_smoke_20261113T190418+0900`
-- `Deeplearning/results/server_smoke_gpu_20261113T194403+0900`
+- `Deeplearning/results/reference/environment_checks/cpu`
+- `Deeplearning/results/reference/environment_checks/gpu`
 
 対象外の既存追跡ファイル2333件をハッシュ照合し、意図した `Deeplearning/.gitignore` の1行追加以外の変更なし。
 他の実験結果、実音声、既存のリポジトリ直下 `.venv`、学習コード・報酬・ハイパーパラメータは変更していない。

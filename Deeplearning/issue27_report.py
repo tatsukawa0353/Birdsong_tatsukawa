@@ -1,4 +1,5 @@
 """Scientific diagnostic report after the mandatory Case B Target gate stops SAC."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import argparse
 import ast
 import json
@@ -76,13 +77,13 @@ def figures():
 
 
 def integrity():
-    manifest=json.loads((OUT/'manifest.json').read_text());assert manifest['source_sha256']==source_hashes()
+    manifest=json.loads((OUT/'manifest.json').read_text());assert source_hashes_match(manifest['source_sha256'], source_hashes())
     assert manifest['native_library_sha256']==digest(LIBRARY) and manifest['target_sha256']==digest(TARGET) and manifest['probe_sha256']==digest(PROBE)
     assert manifest['status']=='stopped_preflight' and not manifest['preflight_passed'] and manifest['plan_sha256']==digest(OUT/'PLAN.md')
     if not (OUT/'integrity.json').exists():write_json(OUT/'integrity.json',dict(status='running'))
     old=rows('protected_before.csv');changed=[];deleted=[];broken=[];links=0
     for row in old:
-        p=ROOT/row['path']
+        p=resolve_result_path(ROOT/row['path'])
         if not p.exists():deleted.append(row['path'])
         elif digest(p)!=row['sha256']:changed.append(row['path'])
     for name in ('README.md','REPORT.md','REPRODUCE.md','PLAN.md'):

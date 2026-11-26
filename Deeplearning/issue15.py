@@ -1,4 +1,5 @@
 """Issue 15: analyze saved A, train B/C, audit, then integrate Phase 0."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime
@@ -18,7 +19,7 @@ from zoneinfo import ZoneInfo
 from .issue15_analysis import analyze, write_json
 
 ROOT = Path(__file__).resolve().parent
-PARENT = ROOT/"results/phase0_fixed_target_20261108"
+PARENT = ROOT/"results/Phase0/synthetic"
 LEGACY = ROOT/"results/phase0"
 CONDITIONS = ("spectral_only", "envelope_only")
 
@@ -65,7 +66,7 @@ def execute(workers=6):
     protected = {}
     for filename in subprocess.check_output(["git","ls-files","-z"],cwd=ROOT,text=True).split("\0"):
         if not filename: continue
-        p = ROOT/filename
+        p = resolve_result_path(ROOT/filename)
         if filename.startswith("results/") and not p.is_relative_to(PARENT) and not p.is_relative_to(LEGACY):
             if p.is_file(): protected[filename] = sha(p)
     write_json(output/"control_before.json",control)
@@ -93,7 +94,7 @@ def execute(workers=6):
     provenance=dict(workflow="issue15_reward_ablation",branch=branch,control_commit=commit,
         started_at=datetime.now(ZoneInfo("Asia/Tokyo")).isoformat(),workers=workers,
         base_config=base,package_versions=packages,package_differences_from_control=differences,
-        training_source_sha256={p:sha(ROOT/p) for p in sources},control_retrained=False,
+        training_source_sha256={p:sha(resolve_result_path(ROOT/p)) for p in sources},control_retrained=False,
         common_evaluation="combined full 0.35 s distance and f/A MAE; deterministic separate env",
         source_code_difference="SineConfig reward selector and info fields; baseline branch retains original total exactly",
         weight_tuning_preregistered=False,reproducible_command="PYTHONDONTWRITEBYTECODE=1 Deeplearning/.venv-rl/bin/python -m Deeplearning.issue15 --workers 6")

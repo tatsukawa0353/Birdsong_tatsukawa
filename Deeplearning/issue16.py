@@ -3,6 +3,7 @@
 Only the six 1e-4 runs are trained. The 3e-4 cohort is read, never redrawn.
 Use --prepare, --train, --finish separately to retain reviewable gates/artifacts.
 """
+from .result_paths import resolve as resolve_result_path
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from copy import deepcopy
@@ -22,7 +23,7 @@ from .issue14_audit import Auditor
 from .issue15_analysis import write_json, write_csv
 
 ROOT = Path(__file__).resolve().parent
-BASE = ROOT / 'results/phase0_fixed_target_20261108/reward_ablation/weighted_lambda_0p5'
+BASE = ROOT / 'results/Phase0/synthetic/reward_ablation/weighted_lambda_0p5'
 DEST = BASE.parent / 'learning_rate_comparison'
 WORK = ROOT / '.issue16-work/artifacts'
 ALGORITHMS, SEEDS = ('TD3', 'SAC'), (0, 1, 2)
@@ -40,7 +41,7 @@ def protected_snapshot():
 
 def verify_protected(output):
     entries = json.loads((output/'protected_before.json').read_text())
-    changed = [name for name, sha in entries.items() if not (ROOT/name).is_file() or digest(ROOT/name) != sha]
+    changed = [name for name, sha in entries.items() if not (resolve_result_path(ROOT/name)).is_file() or digest(resolve_result_path(ROOT/name)) != sha]
     if changed:
         raise RuntimeError(f'Existing results changed: {changed}')
     return len(entries)
@@ -53,7 +54,7 @@ def prepare():
     old = json.loads((BASE/'manifest.json').read_text())
     assert base['learning_rate'] == .0003 and base['steps'] == 102400
     assert base['eval_interval'] == 2048 and base['reward_envelope_weight'] == .5
-    hashes = {name: digest(ROOT/name) for name in SCIENCE}
+    hashes = {name: digest(resolve_result_path(ROOT/name)) for name in SCIENCE}
     assert hashes == {name: old['source_sha256'][name] for name in SCIENCE}
     versions = {name: importlib.metadata.version(name) for name in old['versions']}
     assert versions == old['versions']
@@ -93,7 +94,7 @@ def prepare():
 def train(workers):
     settings = json.loads((WORK/'config.json').read_text())
     manifest = json.loads((WORK/'manifest.json').read_text())
-    assert manifest['source_sha256'] == {name:digest(ROOT/name) for name in SCIENCE}
+    assert manifest['source_sha256'] == {name:digest(resolve_result_path(ROOT/name)) for name in SCIENCE}
     assert json.loads((WORK/'smoke.json').read_text())['passed']
     started = time.perf_counter()
     summaries = []

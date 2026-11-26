@@ -1,4 +1,5 @@
 """Build the shareable report from synthetic results; never read private metrics."""
+from .result_paths import resolve as resolve_result_path
 import csv
 import json
 from pathlib import Path
@@ -10,7 +11,7 @@ from .legacy_paths import legacy_phase0_root
 
 
 def read(path):
-    return json.loads((ROOT/path).read_text())
+    return json.loads((resolve_result_path(ROOT/path)).read_text())
 
 
 def fmt(values):
@@ -20,9 +21,9 @@ def fmt(values):
 
 def main():
     p0 = json.loads((legacy_phase0_root()/"summary.json").read_text())
-    p1 = read("results/phase1_constant_020s/history/phase1/summary.json")
-    extended = read("results/phase1_constant_020s/history/phase1_extended/summary.json")
-    baselines = read("results/phase1_constant_020s/history/phase1/baselines.json")
+    p1 = read("results/Phase1/CaseA/parameter_dimension/history/phase1/summary.json")
+    extended = read("results/Phase1/CaseA/parameter_dimension/history/phase1_extended/summary.json")
+    baselines = read("results/Phase1/CaseA/parameter_dimension/history/phase1/baselines.json")
     regression = read("results/reference/regression.json")
     benchmark = read("results/reference/benchmark.json")
     lines = ["# Issue対応レポート", "", "2026-10-30（JST）。作業場所: `Deeplearning/`。", "",
@@ -61,8 +62,8 @@ def main():
     for name in ("SAC", "TD3", "PPO"):
         items = [x for x in p0 if x["algorithm"] == name]
         lines.append(f"| {name} | {fmt([x['error'] for x in items])} | {sum(x['first_threshold_step'] is not None for x in items)}/3 | {np.mean([x['training_and_eval_seconds'] for x in items]):.2f} | {items[0]['evaluation_steps']} |")
-    lines += ["", "![Phase 0学習曲線](results/phase0_fixed_target_20261108/legacy_random_target/learning_curves.png)", "",
-              "この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/phase0_fixed_target_20261108/legacy_random_target/summary.json)。", ""]
+    lines += ["", "![Phase 0学習曲線](results/Phase0/synthetic/legacy_random_target/learning_curves.png)", "",
+              "この予算では最終誤差の中央値が小さい順にTD3、SAC、PPO。TD3とSACを鳴管環境へ継続した。閾値0.08は実験用の暫定値で、知覚上の模倣成功を保証しない。実際の到達stepと全seedの誤差は [summary.json](results/Phase0/synthetic/legacy_random_target/summary.json)。", ""]
     tracking = []
     for item in p0:
         with np.load(legacy_phase0_root()/f"{item['algorithm']}_{item['seed']}/rollout.npz") as data:
@@ -77,7 +78,7 @@ def main():
         writer = csv.DictWriter(stream, fieldnames=list(tracking[0]))
         writer.writeheader()
         writer.writerows(tracking)
-    lines += ["周波数と振幅の追従誤差は [tracking.csv](results/phase0_fixed_target_20261108/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。", "",
+    lines += ["周波数と振幅の追従誤差は [tracking.csv](results/Phase0/synthetic/legacy_random_target/tracking.csv)、実際の制御は各実験の `controls.png` とNPZに保存した。", "",
               "## 3. Phase 1：モデル内生成音", "",
               "条件A。目標は左epsilon=4.1e7、共通ps=3.4e6、左右f0=4.9e4で生成した0.35秒。左右の状態・遅延履歴はゼロから開始し、初期過渡も含める。学習の可動値は左epsilonと共通psの2個。", "",
               "| 学習法 | 予算step/seed | 最終誤差（平均±seed標準偏差） | 0.08以下へ到達 |",
@@ -95,13 +96,13 @@ def main():
         steps = items[0].get("search_env_steps", items[0].get("env_steps"))
         lines.append(f"| {name} | {fmt([x['error'] for x in items])} | {steps} |")
     lines += ["", "主比較のランダム探索・差分進化は、RLと同じ即時報酬の平均を最小化し、30候補×35step=1050step。最終表には選ばれた方策の終端全体誤差を示す。直接探索は2個の**定数**を探索し、RLは時変制御を出力できるため探索次元は異なる。oracleは生成パラメータ既知の検証であり、学習成績ではない。", "",
-              "初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/phase1_constant_020s/history/phase1_terminal_baselines/` に目的関数の注記とともに残した。", "",
+              "初回は終端全体誤差を直接最適化していたため、即時報酬と目的関数が異なることを確認し、同じ報酬による比較を再実行した。初回の結果は `results/Phase1/CaseA/parameter_dimension/history/phase1_terminal_baselines/` に目的関数の注記とともに残した。", "",
               "ランダム行動よりは小さい誤差を得たが、定数制御や直接探索に対するRL固有の優位性は示せていない。既知制御でほぼゼロにできるため、この目標をモデルが表現できないという説明は当てはまらない。最適化・観測・報酬設計を見直す余地がある。", "",
-              "時間変化目標は生成と既知制御による追従まで確認したが、RL学習は未実施。制御周期5/10/17.5 ms、変化ペナルティ0/0.01/0.1の診断は [evaluation_sensitivity.json](results/diagnostics/evaluation_sensitivity.json)。これは同じ学習済み方策の**評価時**の感度で、条件ごとの再学習実験とは区別する。", "",
+              "時間変化目標は生成と既知制御による追従まで確認したが、RL学習は未実施。制御周期5/10/17.5 ms、変化ペナルティ0/0.01/0.1の診断は [evaluation_sensitivity.json](results/reference/implementation_diagnostics/evaluation_sensitivity.json)。これは同じ学習済み方策の**評価時**の感度で、条件ごとの再学習実験とは区別する。", "",
               "## 4. 音響評価", "",
               "Blackman–Harris窓24.576 ms、75%重複。短区間はゼロパディングし、目標と生成音を同じフレームへ置く。音量の比較には共有スケールだけを使い、各音声の独立最大値正規化を避けた。包絡は5 msの二乗平均平方根。即時報酬はPhase 0では10 ms区間、鳴管では最大30 msの直近文脈、終端指標は全0.35秒。", "",
               "同一音で誤差ゼロ、周波数・音量・タイミングのずれで正の誤差となること、無音/雑音/非有限値/長さ不一致、サンプルレート変更に対する秒単位窓、アンチエイリアスをテストした。", "",
-              "SE、既存SCI定義に対応するf_MSF/f_AFF、ACI、自己相関HNR診断は学習後に別途計算した。SCIはSAPとの照合済み値ではなく、HNR・ACIも学習報酬として有効性を確認したものではない。雑音様の目標を自動除外しない。単一の値を複雑さ全体の尺度にせず、時間変動・スペクトル図と併記する。合成音の記述量は [descriptors.json](results/diagnostics/descriptors.json)。", "",
+              "SE、既存SCI定義に対応するf_MSF/f_AFF、ACI、自己相関HNR診断は学習後に別途計算した。SCIはSAPとの照合済み値ではなく、HNR・ACIも学習報酬として有効性を確認したものではない。雑音様の目標を自動除外しない。単一の値を複雑さ全体の尺度にせず、時間変動・スペクトル図と併記する。合成音の記述量は [descriptors.json](results/reference/implementation_diagnostics/descriptors.json)。", "",
               "## 5. 実録音0.35秒", "",
               "ローカル利用許諾はユーザーが確認済み。ユーザーの追加指定に従い0.35秒版のみを使用した。原音を上書きせず、同一の正確な0.35秒区間でA/B/Cを各3 seed、SAC・1050stepで実行した。左右が同時に更新される制御であり、A/B/Cの自由度は3/4/5と異なる。", "",
               "詳細な評価表・学習曲線・スペクトログラム・生成音・制御値・全積分ステップで再測定した左右速度RMSは [非公開レポート](private_runs/phase2/REPORT.md) にまとめた。Git管理対象外なので、公開コミットやIssueへ添付しない。", "",

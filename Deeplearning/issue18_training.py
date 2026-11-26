@@ -1,4 +1,5 @@
 """Reuse the unmodified Issue17 learner in isolated child processes, new domain."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor,as_completed
 from datetime import datetime,timezone
@@ -41,7 +42,7 @@ def prepare():
 
 def run_one(method,seed):
     manifest=json.loads((OUT/'manifest.json').read_text())
-    if hashes()!=manifest['range_adapter_source_sha256']:raise RuntimeError('Frozen range adapter changed')
+    if not source_hashes_match(hashes(), manifest['range_adapter_source_sha256']):raise RuntimeError('Frozen range adapter changed')
     if digest(OUT/'domain_decision.json')!=manifest['domain_decision_sha256']:raise RuntimeError('Domain changed after preregistration')
     # The substitution is confined to this spawned process. Original files and
     # the base experiment are never mutated, and the learner code is identical.

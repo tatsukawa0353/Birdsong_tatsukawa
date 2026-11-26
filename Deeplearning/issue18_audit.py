@@ -1,4 +1,5 @@
 """Independent budget/domain checks and saved-model reloads for Issue18."""
+from .result_paths import source_hashes_match
 import argparse
 import csv
 from concurrent.futures import ProcessPoolExecutor
@@ -59,7 +60,7 @@ def audit():
     assert len(voiced)==702
     assert min(1e7,float(np.ceil(1.5*maximum/1e5)*1e5))==manifest['settings']['domain_restriction']['restricted_f0_high']
     checks+=4
-    assert hashes()==manifest['range_adapter_source_sha256']
+    assert source_hashes_match(hashes(), manifest['range_adapter_source_sha256'])
     assert digest(OUT/'domain_decision.json')==manifest['domain_decision_sha256']
     oracle_env=DomainEnv((0,2,3),target,controls,f0_high=manifest['settings']['domain_restriction']['restricted_f0_high'])
     oracles=[]

@@ -1,4 +1,5 @@
 """Private-only Phase 2 report and paired figures; no public result export."""
+from .result_paths import resolve as resolve_result_path
 import csv
 from dataclasses import asdict
 import hashlib
@@ -52,7 +53,7 @@ def activity_at_ratio(frames, ratio=.1):
 
 def collect(output):
     protocol = json_read(output/"protocol.json")
-    current_hashes = {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in CORE_FILES}
+    current_hashes = {p: hashlib.sha256((resolve_result_path(ROOT/p)).read_bytes()).hexdigest() for p in CORE_FILES}
     if current_hashes != protocol["core_sha256"]:
         raise ValueError("Core source no longer matches this recording experiment")
     config = protocol["experiment"]
@@ -154,7 +155,7 @@ def collect(output):
     unchanged = {}
     for name in ("model.py", "native/model.cpp", "native/reference.cpp", "model_env.py", "acoustics.py", "objectives.py", "plotting.py"):
         original = subprocess.check_output(["git", "show", f"{protocol['base_commit']}:Deeplearning/{name}"], cwd=ROOT)
-        unchanged[name] = original == (ROOT/name).read_bytes()
+        unchanged[name] = original == (resolve_result_path(ROOT/name)).read_bytes()
     assert all(unchanged.values())
     write_csv(output/"per_seed.csv", csv_rows)
     write_csv(output/"paired_differences.csv", pairs)

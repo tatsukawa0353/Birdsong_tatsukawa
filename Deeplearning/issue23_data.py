@@ -1,4 +1,5 @@
 """Fixed inputs and non-mutating diagnostics for the Issue23 reproduction."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import json
 from pathlib import Path
 
@@ -9,7 +10,7 @@ from .issue22_data import (ROOT,OUT as BASE,TARGET,SEEDS,environment,policy_stat
     pack,metric_row,save_audio,target_data)
 from .issue16 import digest
 
-OUT=ROOT/'results/phase1_caseA_sac128_stability_diagnostics'
+OUT=ROOT/'results/Phase1/CaseA/stability_diagnostics'
 NAMES=('epsilon_l','ps','f0_l')
 HALF_WIDTH=np.array([12500000.,750000.,375500.])
 SOURCES=('issue23_data.py','issue23_training.py',*prior_hashes())
@@ -17,7 +18,7 @@ LOCAL_STEPS=(.002,.01)
 LOCAL_ANCHORS=(2944,3840,4096)
 
 
-def source_hashes():return {p:digest(ROOT/p) for p in SOURCES}
+def source_hashes():return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
 
 
 def folder_for(seed,output=OUT):
@@ -38,7 +39,7 @@ def chosen(points):
 def ready(output=OUT):
     from .model import LIBRARY
     m=json.loads((Path(output)/'manifest.json').read_text())
-    assert m['source_sha256']==source_hashes(),'Frozen reproduction implementation changed'
+    assert source_hashes_match(m['source_sha256'], source_hashes()),'Frozen reproduction implementation changed'
     assert m['native_library_sha256']==digest(LIBRARY) and m['target_sha256']==digest(TARGET)
     assert m['stage_a_sha256']==digest(Path(output)/'STAGE_A.md')
     assert m['candidates_sha256']==digest(Path(output)/'fixed_candidates.json')

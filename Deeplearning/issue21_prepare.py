@@ -1,4 +1,5 @@
 """Freeze the single-factor protocol and verify original physics before learning."""
+from .result_paths import resolve as resolve_result_path
 import argparse
 import ctypes
 from datetime import datetime,timezone
@@ -30,7 +31,7 @@ def prepare(before_path=Path('/tmp/birdsong-issue21-before.json'),output=OUT,res
             and not (output/'runs').exists()):raise FileExistsError('Existing study preserved')
     before=json.loads(Path(before_path).read_text())
     for r in before['files']:
-        if digest(ROOT/r['path'])!=r['sha256']:raise RuntimeError(f'Original file changed: {r["path"]}')
+        if digest(resolve_result_path(ROOT/r['path']))!=r['sha256']:raise RuntimeError(f'Original file changed: {r["path"]}')
     output.mkdir(parents=True,exist_ok=resume)
     files=before.pop('files')
     if not (output/'protected_before.csv').exists():
@@ -39,9 +40,9 @@ def prepare(before_path=Path('/tmp/birdsong-issue21-before.json'),output=OUT,res
     tick=time.perf_counter();original=json.loads((BASE/'manifest.json').read_text())
     prior=json.loads((PRIOR/'manifest.json').read_text())
     for name,h in original['source_sha256'].items():
-        if name!='native/model.cpp':assert digest(ROOT/name)==h,name
+        if name!='native/model.cpp':assert digest(resolve_result_path(ROOT/name))==h,name
     for name in ('native/model.cpp','model.py','model_env.py','constant020_env.py','issue18_domain_env.py','acoustics.py'):
-        assert digest(ROOT/name)==prior['source_sha256'][name],name
+        assert digest(resolve_result_path(ROOT/name))==prior['source_sha256'][name],name
     assert digest(model.LIBRARY)==prior['native_library_sha256'],'Actual library differs from numerically verified Issue19 build'
     assert digest(BASE/'diagnostics/target.npz')==prior['target_sha256']
     target,controls=target_data();assert controls.tolist()==[4.1e7,3.5e7,3.4e6,3e5,4.9e4]

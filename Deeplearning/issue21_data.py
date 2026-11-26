@@ -1,4 +1,5 @@
 """Read-only baselines and fixed conditions for the Case A network-width study."""
+from .result_paths import resolve as resolve_result_path, source_hashes_match
 import json
 from pathlib import Path
 
@@ -10,9 +11,9 @@ from .issue19_data import pack, metric_row, save_audio
 from .issue18_domain_env import DomainEnv
 from .issue16 import digest
 
-BASE = ROOT/'results/phase1_3d_domain_diagnostics'
-PRIOR = ROOT/'results/phase1_restricted3d_weights'
-OUT = ROOT/'results/phase1_caseA_3d_network_width'
+BASE = ROOT/'results/Phase1/CaseA/domain_diagnostics'
+PRIOR = ROOT/'results/Phase1/CaseA/reward_weights/restricted_domain'
+OUT = ROOT/'results/Phase1/CaseA/network_width'
 METHODS = ('TD3', 'SAC')
 WIDTHS = (32, 64, 128, 256)
 SEEDS = (0, 1, 2)
@@ -22,7 +23,7 @@ SOURCES = ('issue21_data.py', 'issue21_training.py', 'constant020_env.py',
 
 
 def source_hashes():
-    return {p:digest(ROOT/p) for p in SOURCES}
+    return {p:digest(resolve_result_path(ROOT/p)) for p in SOURCES}
 
 
 def target_data():
@@ -57,7 +58,7 @@ def endpoints(method, width, seed, output=OUT):
 def ready(output=OUT):
     from .model import LIBRARY
     m = json.loads((Path(output)/'manifest.json').read_text())
-    if m['source_sha256'] != source_hashes() or m['native_library_sha256'] != digest(LIBRARY):
+    if not source_hashes_match(m['source_sha256'], source_hashes()) or m['native_library_sha256'] != digest(LIBRARY):
         raise RuntimeError('Frozen numerical implementation or native library changed')
     if m['target_sha256'] != digest(BASE/'diagnostics/target.npz'):
         raise RuntimeError('Original target changed')

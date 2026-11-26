@@ -1,4 +1,5 @@
 """Three unchanged SAC128 runs with read-only diagnostics and separate retention."""
+from .result_paths import source_hashes_match
 import argparse
 from concurrent.futures import ProcessPoolExecutor,as_completed
 import json
@@ -26,7 +27,7 @@ def run_one(seed,output=OUT):
     torch.set_num_threads(1);output=Path(output);manifest=ready(output);config=manifest['settings'];budget=config['episodes']
     folder=folder_for(seed,output)
     if (folder/'summary.json').exists():
-        summary=json.loads((folder/'summary.json').read_text());assert summary['source_sha256']==source_hashes()
+        summary=json.loads((folder/'summary.json').read_text());assert source_hashes_match(summary['source_sha256'], source_hashes())
         for p,h in summary['artifact_sha256'].items():assert digest(folder/p)==h,p
         return summary
     folder.mkdir(parents=True,exist_ok=False);train=environment(.75);evaluation=environment(.75)
