@@ -1,0 +1,101 @@
+{
+  "passed": true,
+  "additional_native_sounds": 402,
+  "training_candidates": 384,
+  "independent_evaluations": 6,
+  "saved_replays": 12,
+  "runs": [
+    {
+      "method": "SAC",
+      "training": 128,
+      "independent_evaluations": 2,
+      "replays": 4,
+      "optimizer_steps": {
+        "actor": 112,
+        "critic": 112,
+        "entropy": 112
+      }
+    },
+    {
+      "method": "TD3",
+      "training": 128,
+      "independent_evaluations": 2,
+      "replays": 4,
+      "optimizer_steps": {
+        "actor": 56,
+        "critic": 112
+      }
+    },
+    {
+      "method": "PPO",
+      "training": 128,
+      "independent_evaluations": 2,
+      "replays": 4,
+      "optimizer_steps": {
+        "policy_value": 40
+      }
+    }
+  ],
+  "replays": [
+    {
+      "method": "SAC",
+      "role": "final",
+      "exact": true
+    },
+    {
+      "method": "SAC",
+      "role": "selected",
+      "exact": true
+    },
+    {
+      "method": "SAC",
+      "role": "posthoc",
+      "exact": true
+    },
+    {
+      "method": "SAC",
+      "role": "training_best",
+      "exact": true
+    },
+    {
+      "method": "TD3",
+      "role": "final",
+      "exact": true
+    },
+    {
+      "method": "TD3",
+      "role": "selected",
+      "exact": true
+    },
+    {
+      "method": "TD3",
+      "role": "posthoc",
+      "exact": true
+    },
+    {
+      "method": "TD3",
+      "role": "training_best",
+      "exact": true
+    },
+    {
+      "method": "PPO",
+      "role": "final",
+      "exact": true
+    },
+    {
+      "method": "PPO",
+      "role": "selected",
+      "exact": true
+    },
+    {
+      "method": "PPO",
+      "role": "posthoc",
+      "exact": true
+    },
+    {
+      "method": "PPO",
+      "role": "training_best",
+      "exact": true
+    }
+  ]
+}

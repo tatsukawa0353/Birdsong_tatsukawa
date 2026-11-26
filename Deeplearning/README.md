@@ -48,6 +48,10 @@ Issueの停止条件に従ってSACは未実施。3音の物理対照・oracle�
 同Issueの [2026-11-26改訂：Case Bの9条件診断](results/phase1_caseB_self_target_020s_methods/README.md) は別成果。
 指定したε_l×p_sの全9点が非持続で、SAC/TD3/PPOの学習は停止条件に従い未開始。
 初回の停止記録と元の物理モデルを保持し、全候補の音・左右状態・寄与を保存した。
+同Issueの [左右外力18点と3手法の再改訂結果](results/phase1_caseB_self_target_020s_methods_f0lr_scan/REPORT.md) は、
+左f0=49000、右f0=1e7/49000の18点が持続proxyを満たし、左右49000の人工Targetを選定した。
+SAC/TD3/PPO×3seed×4096step（36864学習音）と297独立評価、36保存結果の独立再生を完了。
+旧成果と元物理式は保持し、Final/Selected/training_best/posthoc・左右状態・共通PSD図を分けて報告した。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl

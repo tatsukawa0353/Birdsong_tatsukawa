@@ -1,0 +1,36 @@
+test_18_points_oracle_and_native_right_controls (__main__.MethodTests) ... ok
+test_standard_algorithms_match_observed_weights_optimizers_RNG_and_buffers (__main__.MethodTests) ... FAIL
+
+======================================================================
+FAIL: test_standard_algorithms_match_observed_weights_optimizers_RNG_and_buffers (__main__.MethodTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/tests/test_issue27f.py", line 64, in test_standard_algorithms_match_observed_weights_optimizers_RNG_and_buffers
+    agent=make_agent(method,0,env,CONFIG,audited=observed);agent.set_logger(Logger(None,[]));agent.learn(128)
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/.venv-rl/lib/python3.10/site-packages/stable_baselines3/td3/td3.py", line 227, in learn
+    return super().learn(
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/.venv-rl/lib/python3.10/site-packages/stable_baselines3/common/off_policy_algorithm.py", line 335, in learn
+    rollout = self.collect_rollouts(
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/.venv-rl/lib/python3.10/site-packages/stable_baselines3/common/off_policy_algorithm.py", line 583, in collect_rollouts
+    self._store_transition(replay_buffer, buffer_actions, new_obs, rewards, dones, infos)  # type: ignore[arg-type]
+  File "/home/tatsukawa/work/Birdsong_tatsukawa/Deeplearning/issue27f_agent.py", line 20, in _store_transition
+    np.testing.assert_array_equal(stored,buffer_action[0]);np.testing.assert_array_equal(self.policy.scale_action(executed),stored)
+  File "/usr/local/lib/python3.10/dist-packages/numpy/_utils/__init__.py", line 86, in wrapper
+    return fun(*args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/numpy/testing/_private/utils.py", line 1057, in assert_array_equal
+    assert_array_compare(operator.__eq__, actual, desired, err_msg=err_msg,
+  File "/usr/local/lib/python3.10/dist-packages/numpy/testing/_private/utils.py", line 921, in assert_array_compare
+    raise AssertionError(msg)
+AssertionError: 
+Arrays are not equal
+
+Mismatched elements: 2 / 3 (66.7%)
+Max absolute difference among violations: 5.9604645e-08
+Max relative difference among violations: 1.323581e-07
+ ACTUAL: array([ 0.450329, -0.420411, -0.820179], dtype=float32)
+ DESIRED: array([ 0.450329, -0.420411, -0.820179], dtype=float32)
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.963s
+
+FAILED (failures=1)

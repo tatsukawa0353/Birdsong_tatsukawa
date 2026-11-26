@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "choice": {
+    "candidate": "b3_c00",
+    "controls": [
+      30000000.0,
+      35000000.0,
+      3000000.0,
+      49000.0,
+      49000.0
+    ],
+    "reason": "p_s=3.0e6を優先し、③の左右の持続変動を確認。同p_s候補ではε_l=3.0e7がspectral entropy約0.621・PSD peak30と複数の周波数成分を持つ。末尾proxy0.206・直線除去後も適格で、対称ε=3.5e7の単純な調波構造より複雑な自己Targetを選んだ。6候補の波形と共通PSD図を学習前に確認し、RL精度は未観測。",
+    "target_sha256": "8b996e808ee65e2c728f4989b6c9825a8301068585a4ef5320a250e067d4468e",
+    "candidate_sha256": "8b996e808ee65e2c728f4989b6c9825a8301068585a4ef5320a250e067d4468e",
+    "physical_features": {
+      "late_ac_ratio": 0.2060366645266906,
+      "detrended_ac_ratio": 0.20601572769899115,
+      "spectral_entropy": 0.6209996421857161,
+      "spectral_peak_count": 30,
+      "left_motion_periodic_proxy": true,
+      "right_motion_periodic_proxy": true
+    }
+  },
+  "oracle_components": {
+    "log_spectral": 0.0,
+    "envelope": 0.0,
+    "total": 0.0,
+    "target_silent": false,
+    "generated_silent": false
+  },
+  "oracle_J": 0.0,
+  "native_coefficients": {
+    "alpha_l": 1200000.0,
+    "beta_l": 1500.0,
+    "alpha_r": 1200000.0,
+    "beta_r": 1500.0,
+    "f0_l": 49000.0,
+    "f0_r": 49000.0,
+    "epsilon_l": 30000000.0,
+    "epsilon_r": 35000000.0,
+    "ps_l": 3000000.0,
+    "ps_r": 3000000.0,
+    "tau_l": 0.0001,
+    "tau_r": 0.0001,
+    "x0_l": 0.02,
+    "x0_r": 0.02,
+    "D_l": 0.01,
+    "D_r": 0.01,
+    "dt": 1e-07,
+    "gamma": 0.9,
+    "history_size": 1142.0,
+    "history_max_abs": 0.0,
+    "state": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "source_l": 0.0,
+    "source_r": 0.0,
+    "next_delayed_pi": 0.0
+  },
+  "generated_sounds": 19
+}
