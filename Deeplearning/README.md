@@ -42,6 +42,9 @@ Actor/温度LRを3e-4に固定したオンライン6runと、既存12288経験�
 Issue #26の [広域探索と連続局所候補の比較](results/phase1_caseA_wide_local_exploration/README.md) は、
 f0_l上限を1e7へ戻した通常SACと、局所80%・SAC20%の2半径を9runで比較する。
 最初256試行を一致させ、学習候補の発見・Actorの獲得・Finalの保持を分けて記録する。
+Issue #27の [Case B自己Targetの事前診断](results/phase1_caseB_self_target_020s_sac128/README.md) は、
+左右の音響結合と右f0=1e7を実libraryで確認した。指定Targetが非持続だったため、
+Issueの停止条件に従ってSACは未実施。3音の物理対照・oracle一致・左右状態を保存している。
 
 ```bash
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/birdsong-audit-mpl
